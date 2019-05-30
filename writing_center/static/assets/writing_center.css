@@ -1,8 +1,17 @@
+a.dashboard-link{
+    color: black;
+    text-decoration: none;
+}
+
 a.nav-link.button {
     color: #fff !important;
 }
 
 a.nav-link.button.nav-bar-active {
+    color: #FFC600 !important;
+}
+
+a.nav-link:hover{
     color: #FFC600 !important;
 }
 
@@ -18,6 +27,18 @@ body {
     line-height: 1.5;
     position: relative;
     cursor: auto;
+}
+
+div.dashboard-card{
+    background-color: #f2f2f2;
+    border-color: #d8d8d8;
+    margin-top: 10px;
+}
+
+div.dashboard-info{
+    background-color: #f2f2f2;
+    border-color: #d8d8d8;
+    margin-top: 10px;
 }
 
 div.dropdown {
@@ -46,6 +67,10 @@ html, body {
     background-color: #fafafa;
 }
 
+li.list-group-item{
+    background-color: #fafafa;
+}
+
 nav a {
     color: gray;
 }
@@ -58,6 +83,10 @@ span.lab-title{
     color: #ffc600
 }
 
+ul.list-group{
+    margin-top: 10px;
+}
+
 .background-blue {
     background-color: #123563;
 }
@@ -68,10 +97,6 @@ span.lab-title{
 
 .navbar {
     padding: 1em 2em !important;
-}
-
-.navbar-dark .navbar-nav .nav-link:focus, .navbar-dark .navbar-nav .nav-link:hover {
-    text-decoration: underline;
 }
 
 .wc-margins {

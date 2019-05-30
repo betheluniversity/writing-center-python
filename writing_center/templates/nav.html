@@ -3,10 +3,12 @@
         <img height="48" src="https://confluence.bethel.edu/download/attachments/327682/global.logo?version=4&amp;modificationDate=1462424762000&amp;api=v2">
         <span class="ml-2  h6 lab-title">Writing Center</span>
     </a>
+
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
           aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
+
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <div class="form-inline nav-item dropdown">
             <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
@@ -18,13 +20,15 @@
                 <a class="dropdown-item" href="#">View Your Appointments</a>
             </div>
         </div>
+
         <div class="form-inline nav-item dropdown">
             <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false">Reports</a>
+                   aria-haspopup="true" aria-expanded="false">Statistics</a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <a class="dropdown-item" href="#">A List of Reports Will go HERE</a>
             </div>
         </div>
+
         <div class="form-inline nav-item dropdown">
             <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">Users</a>
@@ -33,6 +37,7 @@
                 <a class="dropdown-item" href="#">Manage Student Bans</a>
             </div>
         </div>
+
         <div class="form-inline nav-item dropdown">
             <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">Schedules</a>
@@ -42,14 +47,17 @@
                 <a class="dropdown-item" href="#">View Schedules</a>
             </div>
         </div>
+
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
                 <a id="settings" class="nav-link button" href="#">Settings</a>
             </li>
+
             <li class="nav-item">
                 <a id="email" class="nav-link button" href="#">Email</a>
             </li>
         </ul>
+
         <div class="form-inline nav-item dropdown">
             {% if session['NAME'] %}
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
@@ -62,7 +70,6 @@
             {% else %}
                 <a class="nav-link" id="navbarLogin" role="button" href="{{ url_for('View:index') }}">Login</a>
             {% endif %}
-
         </div>
     </div>
 </nav>
