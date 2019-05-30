@@ -1,3 +1,98 @@
-<h1>Hello World</h1>
-<br>
-<p>{{ temp }}</p>
+{% extends 'writing_center_base.html' %}
+
+{% block body_content %}
+    <div class="card info">
+        <div class="card-body text-center">
+            <h1 class="card-title">Welcome to the Bethel University Writing Center</h1>
+            <h6 class="card-text">Go to the <a href="https://www.bethel.edu/undergrad/academics/support/writing">Writing
+                Support for CAS</a> page to find out more about the Writing Center's services and resources.</h6>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 info-list">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Students</strong> you can schedule appointments and view the
+                    appointments you have made.</li>
+                <li class="list-group-item"><strong>Tutors</strong> you can start your shift and view your schedule for
+                    the semester.</li>
+                <li class="list-group-item"><strong>Observers</strong> you can view all appointments.</li>
+                <li class="list-group-item"><strong>Administrators</strong> you can view all appointments and view the
+                    writing center users.</li>
+                <li class="list-group-item">You can find more options in the navigation at the top of the page.</li>
+            </ul>
+        </div>
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-6">
+                    <a class="dashboard-link" href="#">
+                        <div class="card dashboard-card text-center">
+                            <div class="card-body">
+                                <h4>Schedule an Appointment</h4>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a class="dashboard-link" href="#">
+                        <div class="card dashboard-card text-center">
+                            <div class="card-body">
+                                <h4>View Your Appointments</h4>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <a class="dashboard-link" href="#">
+                        <div class="card dashboard-card text-center">
+                            <div class="card-body">
+                                <h4>Tutor Appointments and Walk Ins</h4>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a class="dashboard-link" href="#">
+                        <div class="card dashboard-card text-center">
+                            <div class="card-body">
+                                <h4>View Tutor Schedule</h4>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <a class="dashboard-link" href="#">
+                        <div class="card dashboard-card text-center">
+                            <div class="card-body">
+                                <h4>View All Appointments</h4>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a class="dashboard-link" href="#">
+                        <div class="card dashboard-card text-center">
+                            <div class="card-body">
+                                <h4>View All Users</h4>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function(){
+
+            $(".dashboard-card").hover(function(){
+                $(this).addClass('shadow');
+            }, function(){
+                $(this).removeClass('shadow');
+            });
+
+        });
+    </script>
+{% endblock %}

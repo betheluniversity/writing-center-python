@@ -1,0 +1,106 @@
+a.dashboard-link{
+    color: black;
+    text-decoration: none;
+}
+
+a.nav-link.button {
+    color: #fff !important;
+}
+
+a.nav-link.button.nav-bar-active {
+    color: #FFC600 !important;
+}
+
+a.nav-link:hover{
+    color: #FFC600 !important;
+}
+
+body {
+    background: #fff;
+    color: #222;
+    padding: 0;
+    margin: 0;
+    font-size: 0.9em;
+    font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1.5;
+    position: relative;
+    cursor: auto;
+}
+
+div.dashboard-card{
+    background-color: #f2f2f2;
+    border-color: #d8d8d8;
+    margin-top: 10px;
+}
+
+div.dashboard-info{
+    background-color: #f2f2f2;
+    border-color: #d8d8d8;
+    margin-top: 10px;
+}
+
+div.dropdown {
+    cursor: pointer;
+    color: #fff;
+}
+
+div.footer {
+    background-color: #fafafa;
+    border-color: #d8d8d8;
+    text-align: left;
+    border-top: 1px solid #eee;
+    margin-top: 3em;
+    color: #6c757d;
+    font-size: 0.9em;
+}
+
+div.info {
+    background-color: #f2f2f2;
+    border-color: #d8d8d8;
+}
+
+html {}
+
+html, body {
+    background-color: #fafafa;
+}
+
+li.list-group-item{
+    background-color: #fafafa;
+}
+
+nav a {
+    color: gray;
+}
+
+nav.navbar{
+    padding: 0 10px;
+}
+
+span.lab-title{
+    color: #ffc600
+}
+
+ul.list-group{
+    margin-top: 10px;
+}
+
+.background-blue {
+    background-color: #123563;
+}
+
+.nav.margins {
+    padding: 0 2em;
+}
+
+.navbar {
+    padding: 1em 2em !important;
+}
+
+.wc-margins {
+    width: 100%;
+    margin: 20px auto;
+    max-width: 95%;
+}
