@@ -1,10 +1,17 @@
+import logging
+
 from flask import Flask
 from flask import session as flask_session
 from datetime import datetime
+from raven.contrib.flask import Sentry
 
 app = Flask(__name__)
 app.config.from_object('config')
 app.debug = True
+
+# sentry = Sentry(app, dsn=app.config['SENTRY_URL'], logging=True, level=logging.INFO)
+# if app.config['ENVIRON'] == 'prod':
+#     from writing_center import error
 
 from writing_center.views import View
 View.register(app)
