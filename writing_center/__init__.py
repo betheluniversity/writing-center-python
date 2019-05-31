@@ -7,7 +7,6 @@ from raven.contrib.flask import Sentry
 
 app = Flask(__name__)
 app.config.from_object('config')
-app.debug = True
 
 # sentry = Sentry(app, dsn=app.config['SENTRY_URL'], logging=True, level=logging.INFO)
 # if app.config['ENVIRON'] == 'prod':
@@ -48,7 +47,3 @@ def utility_processor():
 @app.before_request
 def before_request():
     flask_session['NAME'] = app.config["TEST_NAME"]
-
-
-if __name__ == "__main__":
-    app.run()
