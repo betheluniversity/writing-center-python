@@ -104,3 +104,8 @@ ul.list-group{
     margin: 20px auto;
     max-width: 95%;
 }
+
+.nav-buttons {
+    font-size: 1.6em;
+    color: #123563;
+}
