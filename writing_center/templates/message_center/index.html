@@ -1,5 +1,21 @@
 {% extends 'writing_center_base.html' %}
 
-{% block body_content %}
+{% block header %}
+    <div class="header card">
+        <div class="card-body">
+            <p class="card-text">Send Email.</p>
+        </div>
+    </div>
+{% endblock %}
 
+{% block body_content %}
+    <div class="sub-nav">
+        <a class="nav-buttons" id="message-preferences">Message preferences</a>
+        <a class="nav-buttons" id="message-users">Message Users</a>
+        <a class="nav-buttons" id="message-tutors">Message Tutors</a>
+        <a class="nva-buttons" id="message-students">Message Students</a>
+    </div>
+
+    {% block tab_content %}
+    {% endblock %}
 {% endblock %}
