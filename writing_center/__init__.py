@@ -7,7 +7,9 @@ app.config.from_object('config')
 app.debug = True
 
 from writing_center.views import View
+from writing_center.message_center import MessageCenterView
 View.register(app)
+MessageCenterView.register(app)
 
 
 # This makes these variables open to use everywhere
