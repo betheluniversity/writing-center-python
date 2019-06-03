@@ -1,0 +1,23 @@
+{% extends 'writing_center_base.html' %}
+
+{% block header %}
+    <div class="header card">
+        <div class="card-body">
+            <p class="card-text">Send Email.</p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block body_content %}
+    <div class="sub-nav">
+        <a class="nav-buttons btn btn-link" id="message-preferences" href="{{ url_for('MessageCenterView:message_preferences') }}">Message preferences</a> <!-- url_to message preferences -->
+        <a class="nav-buttons btn btn-link" id="send-message" href="{{ url_for('MessageCenterView:send_message') }}">Send Message</a> <!-- url_to send a message -->
+    </div>
+
+    <br/>
+
+    {% block tab_content %}
+
+    {% endblock %}
+{% endblock %}
+
