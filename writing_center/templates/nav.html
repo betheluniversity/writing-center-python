@@ -45,7 +45,7 @@
             </li>
 
             <li class="nav-item">
-                <a id="email" class="nav-link button" href="{{ 'nav-bar-active' if 'EmailView' in request.url_rule.endpoint }}" href="{{ url_for('EmailView:index') }}">Email</a>
+                <a id="email" class="nav-link button" href="{{ url_for('MessageCenterView:index') }}">Email</a>
             </li>
         </ul>
 

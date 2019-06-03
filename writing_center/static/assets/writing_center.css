@@ -61,7 +61,7 @@ div.info {
     border-color: #d8d8d8;
 }
 
-html {}
+/* html {} */
 
 html, body {
     background-color: #fafafa;
@@ -115,4 +115,27 @@ ul.list-group{
     width: 100%;
     margin: 20px auto;
     max-width: 95%;
+}
+
+.nav-buttons {
+    font-size: 1.6em;
+    color: #123563;
+}
+
+.pref-button {
+    font-size: .8em;
+}
+
+.enable {
+    background-color: greenyellow;
+    border-color: greenyellow;
+}
+
+.disable {
+    background-color: red;
+    border-color: red;
+}
+
+.message-form {
+    display: block;
 }

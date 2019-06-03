@@ -1,1 +1,10 @@
-# There's nothing here yet
+TEST_NAME = ""
+
+secret_key = ""
+SECRET_KEY = ""
+
+SENTRY_URL = ""
+
+ENVIRON = ""
+
+DATABASE_KEY = ""
