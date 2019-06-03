@@ -91,6 +91,18 @@ ul.list-group{
     background-color: #123563;
 }
 
+.chosen-container {
+    min-width: 100%;
+}
+
+.chosen-format {
+    border: 1px solid #aaa !important;
+    border-radius: 0 !important;
+    padding: 0 5px;
+    height: 29px;
+    font-size: .875rem !important;
+}
+
 .nav.margins {
     padding: 0 2em;
 }
