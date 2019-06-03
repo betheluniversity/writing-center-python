@@ -2,7 +2,7 @@
 
 {% block body_content %}
     <div class="jumbotron">
-        <h1>View All Appointments</h1>
+        <h1><b>View All Appointments</b></h1>
         <p>Enter in Student/Tutor usernames, or use first name and last name to find their username</p>
     </div>
     <form>
@@ -63,19 +63,15 @@
             </div>
         </div>
         <div class="form-row">
-            <div class="form-group col-md-12">
+            <div class="form-group col-md-4">
                 <label for="startdate">Click Start Date:</label>
                 <input type="datetime" id="startdate" class="date hasDatepicker chosen-container" style="width: 90%" placeholder="Choose a Starting Date..." readonly>
             </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-12">
+            <div class="form-group col-md-4">
                 <label for="enddate">Click End Date:</label>
                 <input type="datetime" id="enddate" class="date hasDatepicker chosen-container" style="width: 90%" placeholder="Choose an Ending Date..." readonly>
             </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-12">
+            <div class="form-group col-md-4">
                 <label for="courses">Course or Tag:</label>
                 <select id="select-courses" class="chosen-container" style="width: 90%"></select>
             </div>

@@ -33,15 +33,15 @@
 
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a id="stats" class="nav-link button" href="#">Statistics</a>
+                <a id="stats" class="nav-link button {{ 'nav-bar-active' if 'StatisticsView' in request.url_rule.endpoint }}" href="{{ url_for('StatisticsView:index') }}">Statistics</a>
             </li>
 
             <li class="nav-item">
-                <a id="users" class="nav-link button" href="#">Users</a>
+                <a id="users" class="nav-link button" href="{{ 'nav-bar-active' if 'UsersView' in request.url_rule.endpoint }}" href="{{ 'nav-bar-active' if 'UsersView' in request.url_rule.endpoint }}" href="{{ url_for('UsersView:index') }}">Users</a>
             </li>
 
             <li class="nav-item">
-                <a id="settings" class="nav-link button" href="#">Settings</a>
+                <a id="settings" class="nav-link button" href="{{ 'nav-bar-active' if 'SettingsView' in request.url_rule.endpoint }}" href="{{ url_for('SettingsView:index') }}">Settings</a>
             </li>
 
             <li class="nav-item">
