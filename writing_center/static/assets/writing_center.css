@@ -61,6 +61,12 @@ div.info {
     border-color: #d8d8d8;
 }
 
+div.settings-card{
+    background-color: #f2f2f2;
+    border-color: #d8d8d8;
+    margin-top: 10px;
+}
+
 /* html {} */
 
 html, body {
