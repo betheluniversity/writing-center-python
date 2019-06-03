@@ -1,0 +1,113 @@
+{% extends 'writing_center_base.html' %}
+
+{% block body_content %}
+    <div class="jumbotron">
+        <h1>System Settings</h1>
+        <p>You can adjust the system settings here.</p>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card settings-card">
+                <div class="card-body">
+                    <h5>Appointment Limit</h5>
+                    <p>Each student can sign up for TODO appointments in a week.</p> {# TODO #}
+                    <div class="input-group mb-3">
+                        <input id="app-limit" type="text" class="form-control" value="TODO" disabled aria-describedby="edit-app-limit">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" id="edit-app-limit">Edit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card settings-card">
+                <div class="card-body">
+                    <h5>Time Limit</h5>
+                    <p>Each appointment closes sign-ups TODO hours before the start time.</p> {# TODO #}
+                    <div class="input-group mb-3">
+                        <input id="time-limit" type="text" class="form-control" value="TODO" disabled aria-describedby="edit-time-limit">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" id="edit-time-limit">Edit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card settings-card">
+                <div class="card-body">
+                    <h5>Ban Limit</h5>
+                    <p>Each student will be banned after TODO no shows.</p> {# TODO #}
+                    <div class="input-group mb-3">
+                        <input id="ban-limit" type="text" class="form-control" value="TODO" disabled aria-describedby="edit-ban-limit">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" id="edit-ban-limit">Edit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card settings-card">
+                <div class="card-body">
+                    <h5>Qualtrics Link</h5>
+                    <p>Here is the link that will be given after each appointment.</p> {# TODO #}
+                    <div class="input-group mb-3">
+                        <input id="qualtrics" type="text" class="form-control" value="TODO" disabled aria-describedby="edit-qualtrics">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" id="edit-qualtrics">Edit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            $('#edit-app-limit').click(function(){
+                if($(this).text() === "Edit") {
+                    $(this).text("Submit");
+                    document.getElementById("app-limit").disabled = false;
+                }else{
+                    $(this).text("Edit");
+                    document.getElementById("app-limit").disabled = true;
+                }
+            });
+
+            $('#edit-time-limit').click(function(){
+                if($(this).text() === "Edit") {
+                    $(this).text("Submit");
+                    document.getElementById("time-limit").disabled = false;
+                }else{
+                    $(this).text("Edit");
+                    document.getElementById("time-limit").disabled = true;
+                }
+            });
+
+            $('#edit-ban-limit').click(function(){
+                if($(this).text() === "Edit") {
+                    $(this).text("Submit");
+                    document.getElementById("ban-limit").disabled = false;
+                }else{
+                    $(this).text("Edit");
+                    document.getElementById("ban-limit").disabled = true;
+                }
+            });
+
+            $('#edit-qualtrics').click(function(){
+                if($(this).text() === "Edit") {
+                    $(this).text("Submit");
+                    document.getElementById("qualtrics").disabled = false;
+                }else{
+                    $(this).text("Edit");
+                    document.getElementById("qualtrics").disabled = true;
+                }
+            });
+
+        });
+    </script>
+{% endblock %}
