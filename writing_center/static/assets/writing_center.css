@@ -109,3 +109,18 @@ ul.list-group{
     font-size: 1.6em;
     color: #123563;
 }
+
+.pref-button {
+    font-size: .8em;
+    color: #eee
+}
+
+.enable {
+    background-color: greenyellow;
+    border-color: greenyellow;
+}
+
+.disable {
+    background-color: red;
+    border-color: red;
+}

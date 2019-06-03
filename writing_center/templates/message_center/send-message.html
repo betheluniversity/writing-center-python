@@ -1,13 +1,17 @@
-{% extends 'index.html' %}
+{% extends "message_center/index.html" %}
 
 {% block tab_content %}
     <div class="message-box">
         <form id="message-user-form" action="#">
-            <input type="text" name="user-search" id="user-search" value="User"/>
+            <label for="user-search">User:</label>
+            <input type="text" name="user-search" id="user-search"/>
             <!--We should be able to type the name of the person we want and it comes up, similar to google docs
             Also options initially to message all students or all tutors -->
-            <input type="text" name="subject" id="subject" value="Subject"/>
-            <input type="text" name="message-text" id="message-text" value="Message Text"/>
+            <label for="subject">Subject:</label>
+            <input type="text" name="subject" id="subject"/>
+            
+            <label for="message-text">Message Text:</label>            
+            <input type="text" name="message-text" id="message-text"/>
         </form>
     </div>
 {% endblock %}

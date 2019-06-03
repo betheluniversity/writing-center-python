@@ -1,9 +1,9 @@
-{% extends 'index.html' %}
+{% extends "message_center/index.html" %}
 
 {% block tab_content %}
-    <a class="btn btn-primary" id="substitute">Enable</a>
-    <p id="substitue-text">Receive an email when a tutor requests a substitute</p> <!--Backend functionality necessary-->
+    <a class="btn btn-primary pref-button enable" id="substitute">Enable</a>
+    <label id="substitue-text">Receive an email when a tutor requests a substitute</label> <!--Backend functionality necessary-->
     <br/>
-    <a class="btn btn-primary" id="shift">Enable</a>
-    <p id="shift-text">Receive an email when a student signs up for one of your shifts</p> <!--Backend functionality necessary-->
+    <a class="btn btn-primary pref-button disable" id="shift">Disable</a>
+    <label for="shift" id="shift-text">Receive an email when a student signs up for one of your shifts</label> <!--Backend functionality necessary-->
 {% endblock %}
