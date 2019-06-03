@@ -112,7 +112,6 @@ ul.list-group{
 
 .pref-button {
     font-size: .8em;
-    color: #eee
 }
 
 .enable {
@@ -123,4 +122,8 @@ ul.list-group{
 .disable {
     background-color: red;
     border-color: red;
+}
+
+.message-form {
+    display: block;
 }
