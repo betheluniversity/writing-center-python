@@ -17,7 +17,7 @@
                 <a class="dropdown-item" href="{{ url_for('AppointmentsView:view_all_appointments') }}">View All Appointments</a>
                 <a class="dropdown-item" href="#">Tutor Appointments and Walk Ins</a>
                 <a class="dropdown-item" href="#">Schedule An Appointment</a>
-                <a class="dropdown-item" href="#">View Your Appointments</a>
+                <a class="dropdown-item" href="{{ url_for('AppointmentsView:scheduled_appointments') }}">View Your Appointments</a>
             </div>
         </div>
 
