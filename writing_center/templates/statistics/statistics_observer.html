@@ -1,1 +1,128 @@
 {% extends 'statistics/index.html' %}
+
+{% block body_content %}
+    <div class="jumbotron">
+        <h1><b>View Reports</b></h1>
+        <p>Search for various completed appointments. You can also search appointments where the student did not show up.</p>
+        <p>First and last name searches allow for finding usernames.</p>
+        <p>Clicking on the appointments expands them.</p>
+    </div>
+
+
+
+    <form>
+        <h3>Search Appointments</h3>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="studentfirstname">Student First:</label>
+                <input type="text" id="studentfirstname" class="chosen-container" style="width: 90%" name="studentfirstname" placeholder="Student First Name">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="studentlastname">Student Last:</label>
+                <input type="text" id="studentlastname" class="chosen-container" style="width: 90%" name="studentlastname" placeholder="Student Last Name">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="studentusername">Student Username:</label>
+                <input type="text" id="studentusername" class="chosen-container" style="width: 90%" name="studentusername" placeholder="Student Username">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="display-student">Select a Student</label>
+                <select id="select-a-username" class="chosen-container" size="5" style="width: 90%" multiple="multiple"></select>
+            </div>
+        </div>
+        <hr>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="tutorfirstname">Tutor First:</label>
+                <input type="text" id="tutorfirstname" class="chosen-container" style="width: 90%" name="tutorfirstname" placeholder="Tutor First Name">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="tutorlastname">Tutor Last:</label>
+                <input type="text" id="tutorlastname" class="chosen-container" style="width: 90%" name="tutorlastname" placeholder="Tutor Last Name">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="tutorusername">Tutor Username:</label>
+                <input type="text" id="tutorusername" class="chosen-container" style="width: 90%" name="tutorusername" placeholder="Tutor Username">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="display-tutor">Select a Tutor</label>
+                <select id="select-tutor-username" class="chosen-container" size="5" style="width: 90%" multiple="multiple"></select>
+            </div>
+        </div>
+        <hr>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="profusername">Instructor Name:</label>
+                <input type="text" id="profusername" class="chosen-container" style="width: 90%" name="profusername" placeholder="Instructor Name">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <label for="display-prof">Select a Instructor</label>
+                <select id="select-prof-username" class="chosen-container" size="5" style="width: 90%">
+                    <option value="No instructor">No instructor</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="startdate">Click Start Date:</label>
+                <input type="datetime" id="startdate" class="date hasDatepicker chosen-container" style="width: 90%" placeholder="Choose a Starting Date..." readonly>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="enddate">Click End Date:</label>
+                <input type="datetime" id="enddate" class="date hasDatepicker chosen-container" style="width: 90%" placeholder="Choose an Ending Date..." readonly>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="courses">Course or Tag:</label>
+                <select id="select-courses" class="chosen-container" style="width: 90%"></select>
+            </div>
+        </div>
+        <hr>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <input type="button" id="clear" class="btn btn-primary" value="Clear Search" onclick="clearSearch()">
+            </div>
+        </div>
+        <hr>
+        <h3>Search Results:</h3>
+        <div id="results">
+            Please enter parameters to search by.
+        </div>
+    </form>
+
+    <script>
+
+        function clearSearch()//Clears parameter values
+        {
+            document.getElementById('startdate').value="";
+            document.getElementById('enddate').value="";
+            document.getElementById('studentusername').value="";
+            document.getElementById('studentfirstname').value="";
+            document.getElementById('studentlastname').value="";
+            document.getElementById('tutorusername').value="";
+            document.getElementById('tutorfirstname').value="";
+            document.getElementById('tutorlastname').value="";
+            document.getElementById('profusername').value="";
+            var select = document.getElementById('select-student-username');
+            for(var option in select)
+            {
+                select.remove(option);
+            }
+            select = document.getElementById('select-tutor-username');
+            for(var option in select)
+            {
+                select.remove(option);
+            }
+            select = document.getElementById('select-prof-username');
+            for(var option in select)
+            {
+                select.remove(option);
+            }
+        }
+    </script>
+{% endblock %}

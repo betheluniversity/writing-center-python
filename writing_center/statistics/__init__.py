@@ -13,11 +13,12 @@ class StatisticsView(FlaskView):
     def stats(self):
         return render_template('statistics/statistics.html', **locals())
 
+    @route('/observer/statistics/')
     def stats_observer(self):
         return render_template('statistics/statistics_observer.html', **locals())
 
     def view_reports(self):
-        return render_template()
+        return render_template('statistics/view_reports.html', **locals())
 
     def hours_worked(self):
         return render_template('statistics/hours_worked.html', **locals())
