@@ -4,9 +4,9 @@
             <a id="stats" class="nav-link {{ 'active' if 'center-manager/statistics' in request.path else 'disabled'}}"
                href="{{ url_for('StatisticsView:stats') }}">Statistics</a>
             <a id="stats-observer" class="nav-link {{ 'active' if 'observer/statistics' in request.path else 'disabled'}}"
-               href="#">Statistics - Observer</a>
+               href="{{ url_for('StatisticsView:stats_observer') }}">Statistics - Observer</a>
             <a id="view-reports" class="nav-link {{ 'active' if 'reports' in request.path else 'disabled'}}"
-               href="#">View Reports</a>
+               href="{{ url_for('StatisticsView:view_reports') }}">View Reports</a>
             <a id="hours-worked" class="nav-link {{ 'active' if 'hours' in request.path else 'disabled'}}"
                href="{{ url_for('StatisticsView:hours_worked') }}">View Hours Worked</a>
 {% endblock %}

@@ -135,6 +135,11 @@ ul.list-group{
     padding: 1em 2em !important;
 }
 
+a.nav-link:focus, a.nav-link:hover.active {
+    text-decoration: none !important;
+    color: white !important;
+}
+
 .wc-margins {
     width: 100%;
     margin: 20px auto;
