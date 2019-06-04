@@ -33,6 +33,8 @@
 
         {% include 'nav.html' %}
 
+         <div class="nav margins">{% block subnav %}{% endblock %}</div>
+
          <div class="wc-margins">{% block body_content %}{% endblock %}</div>
 
         <div class="footer">
