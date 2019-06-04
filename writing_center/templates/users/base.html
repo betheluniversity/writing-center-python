@@ -1,0 +1,10 @@
+{% extends 'writing_center_base.html' %}
+
+{% block subnav %}
+            <a id="stats" class="nav-link {{ 'active' if 'center-manager/add-user' in request.path else 'disabled'}}"
+               href="#">Add a User</a>
+            <a id="stats-observer" class="nav-link {{ 'active' if 'center-manager/manage-bans' in request.path else 'disabled'}}"
+               href="{{ url_for('UsersView:manage_bans') }}">Manage Student Bans</a>
+            <a id="view-reports" class="nav-link {{ 'active' if 'reports' in request.path else 'disabled'}}"
+               href="#">View All Users</a>
+{% endblock %}
