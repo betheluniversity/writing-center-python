@@ -1,5 +1,5 @@
-from flask import render_template
 from flask_classy import FlaskView, route
+from flask import render_template
 
 
 class SettingsView(FlaskView):
