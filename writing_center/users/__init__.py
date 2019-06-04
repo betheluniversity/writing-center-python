@@ -8,5 +8,6 @@ class UsersView(FlaskView):
     def index(self):
         return render_template('users/index.html', **locals())
 
+    @route('/center-manager/manage-bans/')
     def manage_bans(self):
         return render_template('users/manage_bans.html', **locals())
