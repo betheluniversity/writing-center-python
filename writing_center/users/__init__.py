@@ -5,5 +5,8 @@ class UsersView(FlaskView):
     def __init__(self):
         pass
 
+    def index(self):
+        return render_template('users/index.html', **locals())
+
     def manage_bans(self):
         return render_template('users/manage_bans.html', **locals())
