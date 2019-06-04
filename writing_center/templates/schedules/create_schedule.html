@@ -1,0 +1,129 @@
+{% extends 'writing_center_base.html' %}
+
+{% block body_content %}
+    <div class="jumbotron">
+        <h1>Create Schedule</h1>
+        <p>This is where you create an available time slot for an appointment.</p>
+    </div>
+    <h3>Existing Schedules</h3>
+    <table id="table"  class="table table-striped table-bordered"> {# TODO #}
+        <thead>
+            <tr>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Active</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Start</td>
+                <td>End</td>
+                <td>Yes/No</td>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <h3>Add Schedule Time Slot</h3>
+    <form>
+        <div class="form-row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <input class="form-control" id="start-time" type="text" placeholder="Start Time"/>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <input class="form-control" id="end-time" type="text" placeholder="End Time"/>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <select class="form-control" id="active">
+                        <option id="active">Active</option>
+                        <option id="inactive">Inactive</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-primary" type="submit">Submit</button>
+            </div>
+        </div>
+    </form>
+    <br/>
+    <h3>Assign Shifts to Tutors</h3>
+    <form>
+        <div class="form-row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="start-date">Start Date</label>
+                    <input class="form-control" id="start-date" type="text" placeholder="Click to Select Date"/>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="end-date">End Date</label>
+                    <input class="form-control" id="end-date" type="text" placeholder="Click to Select Date"/>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="multilingual">Multilingual Appointment</label>
+                    <select class="form-control" id="multilingual">
+                        <option id="m-yes">Yes</option>
+                        <option id="m-no">No</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="drop-in">Drop-in Hours Appointment</label>
+                    <select class="form-control" id="drop-in">
+                        <option id="d-yes">Yes</option>
+                        <option id="d-no">No</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="tutors">Select Tutors</label>
+                    <select class="form-control" id="tutors" multiple> {# TODO #}
+                        <option>Tutor</option>
+                        <option>Names</option>
+                        <option>Will</option>
+                        <option>Go</option>
+                        <option>Here</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="days">Select Days</label>
+                    <select class="form-control" id="days" multiple> {# TODO #}
+                        <option>Day</option>
+                        <option>Choices</option>
+                        <option>Will</option>
+                        <option>Go</option>
+                        <option>Here</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="times">Select Time Slots</label>
+                    <select class="form-control" id="times" multiple> {# TODO #}
+                        <option>Time</option>
+                        <option>Slots</option>
+                        <option>Will</option>
+                        <option>Go</option>
+                        <option>Here</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+{% endblock %}
