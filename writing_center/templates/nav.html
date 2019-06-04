@@ -11,7 +11,7 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <div class="form-inline nav-item dropdown">
-            <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
+            <a class="nav-link dropdown-toggle {{ 'nav-bar-active' if 'AppointmentsView' in request.url_rule.endpoint }}" id="navbarDropdown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">Appointments</a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <a class="dropdown-item" href="{{ url_for('AppointmentsView:view_all_appointments') }}">View All Appointments</a>
@@ -37,7 +37,7 @@
             </li>
 
             <li class="nav-item">
-                <a id="users" class="nav-link button" href="{{ 'nav-bar-active' if 'UsersView' in request.url_rule.endpoint }}" href="{{ 'nav-bar-active' if 'UsersView' in request.url_rule.endpoint }}" href="{{ url_for('UsersView:index') }}">Users</a>
+                <a id="users" class="nav-link button {{ 'nav-bar-active' if 'UsersView' in request.url_rule.endpoint }}" href="{{ url_for('UsersView:manage_bans') }}">Users</a>
             </li>
 
             <li class="nav-item">

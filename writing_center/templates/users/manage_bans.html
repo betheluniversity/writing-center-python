@@ -1,0 +1,70 @@
+{% extends 'writing_center_base.html' %}
+
+{% block body_content %}
+    <div class="jumbotron">
+        <h1><b>Manage Bans</b></h1>
+        <p>Ban or unban a student. A banned student is unable to sign-up for appointments.</p>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <h1>Ban a Student</h1>
+        </div>
+    </div>
+    <form>
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                <label for="username">Student Username:</label>
+                <input type="text" id="username" class="chosen-container" name="username" placeholder="Student Username...">
+            </div>
+            <div class="form-group col-md-3">
+                <label for="firstName">Student First Name:</label>
+                <input type="text" id="firstName" class="chosen-container" name="firstName" placeholder="Student First Name...">
+            </div>
+            <div class="form-group col-md-3">
+                <label for="lastName">Student Last Name:</label>
+                <input type="text" id="lastName" class="chosen-container" name="lastName" placeholder="Student Last Name...">
+            </div>
+            <div class="form-group col-md-3">
+                <button class="btn btn-small btn-primary" id="clear-params">Clear search</button>
+            </div>
+        </div>
+        <hr>
+        <div class="form-row">
+            <div class="form-group">
+                <h1><b>Remove Ban</b></h1>
+                <button class="btn btn-small btn-danger" id="unban-all">Remove All Bans</button>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                <b>First Name</b>
+            </div>
+            <div class="form-group col-md-2">
+                <b>Last Name</b>
+            </div>
+            <div class="form-group col-md-2">
+                <b>Username</b>
+            </div>
+            <div class="form-group col-md-2">
+                <b>Date Banned</b>
+            </div>
+            <div class="form-group col-md-2">
+
+            </div>
+            <div class="form-group col-md-2">
+
+            </div>
+            {# TODO ADD IN LIST OF BANNED USERS HERE #}
+        </div>
+    </form>
+
+    <script>
+
+    function clearSearch()//Clears parameter values
+    {
+        document.getElementById('username').value = "";
+        document.getElementById('firstName').value = "";
+        document.getElementById('lastName').value = "";
+    }
+    </script>
+{% endblock %}
