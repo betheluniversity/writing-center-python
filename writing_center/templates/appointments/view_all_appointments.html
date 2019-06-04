@@ -84,39 +84,36 @@
         </div>
     </form>
 
-<script>
+    <script>
 
-    function clearSearch()//Clears parameter values
-    {
-      document.getElementById('startdate').value="";
-      document.getElementById('enddate').value="";
-      document.getElementById('studentusername').value="";
-      document.getElementById('studentfirstname').value="";
-      document.getElementById('studentlastname').value="";
-      document.getElementById('tutorusername').value="";
-      document.getElementById('tutorfirstname').value="";
-      document.getElementById('tutorlastname').value="";
-      document.getElementById('profusername').value="";
-      var select = document.getElementById('select-student-username');
-      for(var option in select)
-      {
-        select.remove(option);
-      }
-      select = document.getElementById('select-tutor-username');
-      for(var option in select)
-      {
-        select.remove(option);
-      }
-      select = document.getElementById('select-prof-username');
-      for(var option in select)
-      {
-        select.remove(option);
-      }
-    }
+        function clearSearch()//Clears parameter values
+        {
+          document.getElementById('startdate').value="";
+          document.getElementById('enddate').value="";
+          document.getElementById('studentusername').value="";
+          document.getElementById('studentfirstname').value="";
+          document.getElementById('studentlastname').value="";
+          document.getElementById('tutorusername').value="";
+          document.getElementById('tutorfirstname').value="";
+          document.getElementById('tutorlastname').value="";
+          document.getElementById('profusername').value="";
+          var select = document.getElementById('select-student-username');
+          for(var option in select)
+          {
+            select.remove(option);
+          }
+          select = document.getElementById('select-tutor-username');
+          for(var option in select)
+          {
+            select.remove(option);
+          }
+          select = document.getElementById('select-prof-username');
+          for(var option in select)
+          {
+            select.remove(option);
+          }
+        }
 
-</script>
-
-
-
+    </script>
 
 {% endblock %}

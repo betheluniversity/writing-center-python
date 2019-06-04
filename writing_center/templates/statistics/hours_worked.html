@@ -5,20 +5,30 @@
         <h1><b>View Hours Worked</b></h1>
         <p>Displays the hours worked within a given time period.</p>
     </div>
+
     <form>
         <div class="form-row">
             <div class="form-group col-md-4">
-                <label for="hours-startdate">Click Start Date:</label>
-                <input type="datetime" id="hours-startdate" class="date hasDatepicker chosen-container"placeholder="Choose a Starting Date..." >
+                <label for="startdate">Click Start Date:</label>
+                <input type="datetime" id="startdate" class="date hasDatepicker chosen-container" style="width: 90%" placeholder="Choose a Starting Date..." readonly>
             </div>
             <div class="form-group col-md-4">
-                <label for="hours-enddate">Click End Date:</label>
-                <input type="datetime" id="hours-enddate" class="date hasDatepicker chosen-container" placeholder="Choose an Ending Date...">
+                <label for="enddate">Click End Date:</label>
+                <input type="datetime" id="enddate" class="date hasDatepicker chosen-container" style="width: 90%" placeholder="Choose an Ending Date..." readonly>
             </div>
             <div class="form-group col-md-4">
-                <label for="clear-hours">aaaaaaa</label>
-                <input type="button" id="clear-hours" class="btn btn-danger" value="Clear Search" onclick="clearSearch('hour')">
+                <input type="button" id="clear" class="btn btn-danger" value="Clear Search" onclick="clearSearch()">
             </div>
         </div>
     </form>
+
+    <script>
+
+        function clearSearch()//Clears parameter values
+        {
+            document.getElementById('startdate').value="";
+            document.getElementById('enddate').value="";
+        }
+
+    </script>
 {% endblock %}
