@@ -1,0 +1,66 @@
+{% extends 'writing_center_base.html' %}
+
+{% block body_content %}
+    <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-6">
+                    <a class="dashboard-link" href="#">
+                        <div class="card dashboard-card text-center">
+                            <div class="card-body">
+                                <h4>User Something</h4>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a class="dashboard-link" href="#">
+                        <div class="card dashboard-card text-center">
+                            <div class="card-body">
+                                <h4>User Other</h4>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <a class="dashboard-link" href="#">
+                        <div class="card dashboard-card text-center">
+                            <div class="card-body">
+                                <h4>User User</h4>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a class="dashboard-link" href="#">
+                        <div class="card dashboard-card text-center">
+                            <div class="card-body">
+                                <h4>User Nobody</h4>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <a class="dashboard-link" href="{{ url_for('UsersView:manage_bans') }}">
+                        <div class="card dashboard-card text-center">
+                            <div class="card-body">
+                                <h4>Manage Bans</h4>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a class="dashboard-link" href="#">
+                        <div class="card dashboard-card text-center">
+                            <div class="card-body">
+                                <h4>View All Users</h4>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+{% endblock %}
