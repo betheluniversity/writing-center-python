@@ -109,6 +109,10 @@ ul.list-group{
     background-color: #123563;
 }
 
+.blue {
+    background-color: #4169E1;
+}
+
 .chosen-container {
     min-width: 100%;
 }
@@ -119,6 +123,10 @@ ul.list-group{
     padding: 0 5px;
     height: 29px;
     font-size: .875rem !important;
+}
+
+.green {
+    background-color: Green;
 }
 
 .nav.margins {
@@ -167,4 +175,14 @@ a.nav-link:focus, a.nav-link:hover.active {
 
 .message-form {
     display: block;
+}
+
+.square-colors {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 4%;
+}
+
+.yellow {
+    background-color: #D4AF37;
 }

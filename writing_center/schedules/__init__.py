@@ -13,3 +13,6 @@ class SchedulesView(FlaskView):
     @route('/center-manager/manage-tutor-schedules')
     def manage_tutor_schedules(self):
         return render_template('schedules/manage_tutor_schedules.html', **locals())
+
+    def view_tutor_schedules(self):
+        return render_template('schedules/view_tutor_schedule.html', **locals())
