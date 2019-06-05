@@ -1,0 +1,57 @@
+{% extends 'users/index.html' %}
+
+{% block body_content %}
+    <div class="jumbotron">
+        <h3>Writing Center Users</h3>
+    </div>
+    <form>
+        <div class="form-row">
+            <table id="table"  class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th data-toggle="tooltip" data-placement="top" title="User Last Name">Last</th>
+                        <th data-toggle="tooltip" data-placement="top" title="User First Name">First</th>
+                        <th data-toggle="tooltip" data-placement="top" title="User Email">Email</th>
+                        <th data-toggle="tooltip" data-placement="top" title="User Role">Role</th>
+                        <th data-toggle="tooltip" data-placement="top" title="Act As This User">Change User</th>
+                        <th data-toggle="tooltip" data-placement="top" title="Edit User">Edit</th>
+                        <th>✓</th>
+                    </tr>
+                    <tr>
+                        <th colspan="6"></th>
+                        <th colspan="2">
+                            <button id="deactivate-users" type="button" class="btn btn-primary btn-danger hover-bright">Deactivate</button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user, role in users_info %}
+                        <tr>
+                            <td>
+                                {{ user.lastName }}
+                            </td>
+                            <td>
+                                {{ user.firstName }}
+                            </td>
+                            <td>
+                                {{ user.email }}
+                            </td>
+                            <td>
+                                {{ role.name }}
+                            </td>
+                                <a id="darkblue" href='{{ url_for('UsersView:act_as_user', user_id=user.id) }}' class="btn btn-primary">Act As User</a>
+                            </td>
+                            <td>
+                                <a id="darkblue" href='{{ url_for('UsersView:edit_user', user_id=user.id) }}' class="btn btn-primary">Edit</a>
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" value="{{ user.id }}" class="deactivate-checkbox">
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </form>
+
+{% endblock %}
