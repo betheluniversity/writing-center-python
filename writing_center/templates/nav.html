@@ -27,7 +27,7 @@
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <a class="dropdown-item" href="{{ url_for('SchedulesView:create_schedule') }}">Create Schedule</a>
                 <a class="dropdown-item" href="{{ url_for('SchedulesView:manage_tutor_schedules') }}">Manage Tutor Schedules</a>
-                <a class="dropdown-item" href="#">View Schedules</a>
+                <a class="dropdown-item" href="{{ url_for('SchedulesView:view_tutor_schedules') }}">View Schedules</a>
             </div>
         </div>
 

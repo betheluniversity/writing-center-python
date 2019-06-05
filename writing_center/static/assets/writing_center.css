@@ -184,3 +184,9 @@ a.nav-link:focus, a.nav-link:hover.active {
 .message-form {
     display: block;
 }
+
+.square-colors {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 4%;
+}
