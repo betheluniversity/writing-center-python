@@ -186,6 +186,7 @@ a.nav-link:focus, a.nav-link:hover.active {
 }
 
 .square-colors {
+    margin-right: 63px;
     width: 30px;
     height: 30px;
     flex: 0 0 4%;
