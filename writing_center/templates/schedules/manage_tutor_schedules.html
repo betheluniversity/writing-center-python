@@ -1,0 +1,92 @@
+{% extends 'writing_center_base.html' %}
+
+{% block body_content %}
+    <div class="jumbotron">
+        <h1><b>Manage Tutor Schedules</b></h1>
+        <p>Assign shifts to a Tutor or view a Tutor's schedule.</p>
+    </div>
+    <form>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <h3>Assign Shifts to a Tutor</h3>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="startdate"><b>Click Start Date:</b></label>
+                <input type="datetime" id="startdate" class="date hasDatepicker chosen-container" style="width: 90%" placeholder="Choose a Starting Date..." readonly>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="enddate"><b>Click End Date:</b></label>
+                <input type="datetime" id="enddate" class="date hasDatepicker chosen-container" style="width: 90%" placeholder="Choose an Ending Date..." readonly>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="multilingual"><b>Multilingual Appointment</b></label>
+                <select id="multilingualSelect" name="multilingual" class="chosen-container">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="drop-in"><b>Drop-In Hours Appointment</b></label>
+                <select id="dropInSelect" name="drop-in" class="chosen-container">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="tutorSelect"><b>Select Tutors</b></label>
+                <select id="tutorSelect" class="chosen-container" size="7" multiple="multiple"></select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="manageTutorsDays"><b>Select Days</b></label>
+                <select id="manageTutorsDays" class="chosen-container" size="7" multiple="multiple">
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                    <option value="Sunday">Sunday</option>
+                </select>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="timeSelect"><b>Select Time Slots</b></label>
+                <select id="timeSelect" class="chosen-container" size="7" multiple="multiple"></select>
+            </div>
+        </div>
+        <hr>
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <h3>View Tutor Schedule</h3>
+                <p>Click a tutor or multiple tutors to have their schedules display.</p>
+                <p>If you assign shifts to a tutor, make sure you click the tutor's name here to see the new shifts.</p>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="lookup-tutor-username" style="display: block;"><b>Tutors</b></label>
+                <select id="lookup-tutor-username" class="chosen-container" size="7" multiple="multiple"></select>
+            </div>
+        </div>
+
+
+        <div id="calendar"></div>
+    </form>
+
+        <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                plugins: [ 'dayGrid' ]
+            });
+
+            calendar.render();
+        });
+
+    </script>
+{% endblock %}
