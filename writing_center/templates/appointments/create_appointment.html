@@ -1,0 +1,42 @@
+{% extends 'writing_center_base.html' %}
+
+{% block body_content %}
+    <div class="jumbotron">
+        <h1>Schedule an Appointment</h1>
+        <p>You can make a one-on-one appointment here or view the drop-in hours.</p>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <h3>Calendar Key</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Color</th>
+                        <th>Meaning</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="calendar-blue">Blue</td>
+                        <td>Open Appointment</td>
+                    </tr>
+                    <tr>
+                        <td class="calendar-orange">Orange</td>
+                        <td>Multilingual Appointment</td>
+                    </tr>
+                    <tr>
+                        <td class="calendar-green">Green</td>
+                        <td>Drop-in Hours</td>
+                    </tr>
+                    <tr>
+                        <td class="calendar-yellow">Yellow</td>
+                        <td>Current Date</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-9">
+
+        </div>
+    </div>
+{% endblock %}

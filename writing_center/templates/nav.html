@@ -16,7 +16,7 @@
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <a class="dropdown-item" href="{{ url_for('AppointmentsView:view_all_appointments') }}">View All Appointments</a>
                 <a class="dropdown-item" href="{{ url_for('AppointmentsView:walk_ins') }}">Tutor Appointments and Walk Ins</a>
-                <a class="dropdown-item" href="#">Schedule An Appointment</a>
+                <a class="dropdown-item" href="{{ url_for('AppointmentsView:create_appointment') }}">Schedule An Appointment</a>
                 <a class="dropdown-item" href="{{ url_for('AppointmentsView:scheduled_appointments') }}">View Your Appointments</a>
             </div>
         </div>

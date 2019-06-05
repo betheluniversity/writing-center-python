@@ -17,3 +17,6 @@ class AppointmentsView(FlaskView):
 
     def scheduled_appointments(self):
         return render_template('appointments/scheduled_appointments.html', **locals())
+
+    def create_appointment(self):
+        return render_template('appointments/create_appointment.html', **locals())
