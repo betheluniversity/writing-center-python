@@ -5,6 +5,9 @@ from flask_mail import Mail, Message
 
 # Local
 from writing_center import app
+from writing_center.db_repository.session_functions import Session  # these three arent written yet
+from writing_center.db_repository.user_functions import User
+from writing_center.db_repository.course_functions import Course
 
 
 class MessageCenterController():

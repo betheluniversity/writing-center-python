@@ -1,0 +1,8 @@
+{% extends 'writing_center_base.html' %}
+
+{% block subnav %}
+            <a id="stats" class="nav-link {{ 'active' if '/message-preferences' in request.path else 'disabled'}}"
+            href="{{ url_for('MessageCenterView:message_preferences') }}">Message Preferences</a>
+            <a id="stats-observer" class="nav-link {{ 'active' if 'send-message' in request.path else 'disabled'}}"
+               href="{{ url_for('MessageCenterView:send_message') }}">Send Message</a>
+{% endblock %}

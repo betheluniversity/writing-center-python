@@ -16,10 +16,10 @@ class MessageCenterView(FlaskView):
     def index(self):
         return render_template('message_center/index.html', **locals())
 
-    @route('/send_message')
+    @route('/send-message')
     def send_message(self):
         return render_template('message_center/send-message.html', **locals())
 
-    @route('/message_preferences')
+    @route('/message-preferences')
     def message_preferences(self):
         return render_template('message_center/preferences.html', **locals())
