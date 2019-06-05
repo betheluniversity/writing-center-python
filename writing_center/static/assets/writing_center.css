@@ -109,6 +109,22 @@ ul.list-group{
     background-color: #123563;
 }
 
+.calendar-blue{
+    background-color: #4169E1;
+}
+
+.calendar-green{
+    background-color: green;
+}
+
+.calendar-orange{
+    background-color: orange;
+}
+
+.calendar-yellow{
+    background-color: yellow;
+}
+
 .chosen-container {
     min-width: 100%;
 }
