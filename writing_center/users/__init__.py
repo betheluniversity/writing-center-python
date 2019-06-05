@@ -15,3 +15,7 @@ class UsersView(FlaskView):
     @route('/center-manager/view-users')
     def view_all_users(self):
         return render_template('users/view_all_users.html', **locals())
+
+    @route("/center-manager/add-user")
+    def add_user(self):
+        return render_template('users/add_user.html', **locals())
