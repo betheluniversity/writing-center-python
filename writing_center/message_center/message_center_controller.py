@@ -1,30 +1,39 @@
 # Packages
 import socket
-from flask import render_template
+from flask import render_template, session
 from flask_mail import Mail, Message
 
 # Local
 from writing_center import app
-from writing_center.db_repository.session_functions import Session  # these three arent written yet
-from writing_center.db_repository.user_functions import User
-from writing_center.db_repository.course_functions import Course
+from writing_center.db_repository.tables import UserTable, WCEmailPreferencesTable, WCAppointmentDataTable
 
 
-class MessageCenterController():
+class MessageCenterController:
 
     def __init__(self):
-        # DB funcitonality required for this to work for me --Boston
-        # self.session = Session()
-        # self.user = User()
-        # self.course = Course()
+        self.user = UserTable()
+        self.email_preferences = WCEmailPreferencesTable()
+        self.appointment = WCAppointmentDataTable()
         pass
 
-    def manage_message_preferences(self):
-        # preferences to receive emails when a tutor requests and substitute
-        # to receive emails when a student signs up for your session
-        pass
+    # preferences to receive emails when a tutor requests a substitute
+    # to receive emails when a student signs up for your session
+    def manage_message_preferences(self, substitute, shift):
+        for row in self.email_preferences:
+            if row.id == session['id']:
+                row.SubRequestEmail = substitute
+                row.StudentSignupEmail = shift
+        self.email_preferences.commit()
+        return render_template('message_center/preferences.html', **locals())
 
-    def close_session_email(self, session_id):
+    def get_message_preferences(self):
+        prefs = []
+        for row in self.email_preferences:
+            if row.id == session['id']:
+                prefs.append({'SubRequestEmail': row.SubRequestEmail, 'StudentSignupEmail': row.StudentSignupEmail})
+        return prefs
+
+    def close_session_email(self, session_id):  # TODO: refactor to work with appointments
         sess = self.session.get_session(session_id)
         subject = '{{{0}}} {1} ({2})'.format(app.config['LAB_TITLE'], sess.name, sess.date.strftime('%m/%d/%Y'))
         opener = self.user.get_user(sess.openerId)
