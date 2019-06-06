@@ -22,7 +22,6 @@ class MessageCenterView(FlaskView):
 
     @route('/message-preferences')
     def message_preferences(self):
-        prefs = []
         prefs = message_center_controller.get_message_preferences()
         return render_template('message_center/preferences.html', **locals())
 

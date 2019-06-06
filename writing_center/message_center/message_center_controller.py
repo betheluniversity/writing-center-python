@@ -5,33 +5,20 @@ from flask_mail import Mail, Message
 
 # Local
 from writing_center import app
-from writing_center.db_repository.tables import UserTable, WCEmailPreferencesTable, WCAppointmentDataTable
+from writing_center.db_repository.email_preference_functions import Email_Preferences
 
 
 class MessageCenterController:
 
     def __init__(self):
-        self.user = UserTable()
-        self.email_preferences = WCEmailPreferencesTable()
-        self.appointment = WCAppointmentDataTable()
-        pass
+        self.email_preferences = Email_Preferences()
 
-    # preferences to receive emails when a tutor requests a substitute
-    # to receive emails when a student signs up for your session
     def manage_message_preferences(self, substitute, shift):
-        for row in self.email_preferences:
-            if row.id == session['id']:
-                row.SubRequestEmail = substitute
-                row.StudentSignupEmail = shift
-        self.email_preferences.commit()
+        self.email_preferences.change_email_preferences(substitute, shift, session['user_id'])
         return render_template('message_center/preferences.html', **locals())
 
     def get_message_preferences(self):
-        prefs = []
-        for row in self.email_preferences:
-            if row.id == session['id']:
-                prefs.append({'SubRequestEmail': row.SubRequestEmail, 'StudentSignupEmail': row.StudentSignupEmail})
-        return prefs
+        return self.email_preferences.get_email_preferences(session['user_id'])
 
     def close_session_email(self, session_id):  # TODO: refactor to work with appointments
         sess = self.session.get_session(session_id)
