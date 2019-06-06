@@ -1,0 +1,91 @@
+{% extends 'users/index.html' %}
+
+{% block body_content %}
+    <div class="jumbotron">
+        <h3>Writing Center Users</h3>
+    </div>
+    <form>
+        <div class="form-row">
+             <table id="table"  class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th data-toggle="tooltip" data-placement="top" title="User Last Name">Last</th>
+                            <th data-toggle="tooltip" data-placement="top" title="User First Name">First</th>
+                            <th data-toggle="tooltip" data-placement="top" title="User Email">Email</th>
+                            <th data-toggle="tooltip" data-placement="top" title="User Role">Role</th>
+                            <th data-toggle="tooltip" data-placement="top" title="Act As This User">Change User</th>
+                            <th data-toggle="tooltip" data-placement="top" title="Edit User">Edit</th>
+                            <th>✓</th>
+                        </tr>
+                        <tr>
+                            <th colspan="6"></th>
+                            <th colspan="2">
+                                <button id="deactivate-users" type="button" class="btn btn-primary btn-danger hover-bright">Deactivate</button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user, role in users %}
+                            <tr>
+                                <td>
+                                    {{ user.lastName }}
+                                </td>
+                                <td>
+                                    {{ user.firstName }}
+                                </td>
+                                <td>
+                                    {{ user.email }}
+                                </td>
+                                <td>
+                                    {{ role.name }}
+                                </td>
+                                <td>
+                                    <a id="darkblue" href='#' class="btn btn-primary btn-info">Act As User</a>
+                                </td>
+                                <td>
+                                    <a id="darkblue" href='{{ url_for('UsersView:edit_user', user_id=user.id) }}' class="btn btn-primary btn-warning">Edit</a>
+                                </td>
+                                <td class="text-center">
+                                    <input type="checkbox" value="{{ user.id }}" class="deactivate-checkbox">
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+             </table>
+        </div>
+    </form>
+
+    <script>
+        $(document).ready( function () {
+            $.extend($.fn.dataTableExt.oStdClasses, {
+                // give some foundation classes to our controls
+                sLength: 'large-4 columns ',
+                sFilter: 'large-12 columns ',
+            });
+
+            var table = $('#table').DataTable({
+                "aaSorting": [[0, 'desc'], [1, 'asc']],
+
+                "aoColumns": [
+                    {"orderSequence": [null]},
+                    {"orderSequence": ["asc", "desc"]},
+                    {"orderSequence": ["asc", "desc"]},
+                    {"orderSequence": ["asc", "desc"]},
+                    {"orderSequence": ["asc", "desc"]},
+                    {"orderSequence": [null]},
+                    {"orderSequence": [null]},
+                    {"orderSequence": [null]},
+                ],
+
+                "columnDefs": [
+                    {"visible": false, "targets": 0}
+                ],
+
+                "bPaginate": false,
+                "bLengthChange": false,
+            });
+
+        });
+    </script>
+
+{% endblock %}
