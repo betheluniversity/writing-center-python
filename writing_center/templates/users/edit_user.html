@@ -1,0 +1,92 @@
+{% extends 'users/index.html' %}
+
+{% block body_content %}
+   <div class="custom-default row">
+        <div class="col-md-8">
+            <form action="{{ url_for('UsersView:save_user_edits') }}" method="post">
+                <input type="hidden" name="user-id" value="{{ user.id }}">
+                 <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <div class="header">
+                            <div class="jumbotron">
+                                <h3>Edit {{ user.firstName }} {{ user.lastName }} ({{ user.username }})</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="user-first-name">First Name</label>
+                        <input type="text" class="form-control chosen-container chosen-format" id="user-first-name" name="first-name"
+                               value="{{ user.firstName }}">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="user-last-name">Last Name</label>
+                        <input type="text" class="form-control chosen-container chosen-format" id="user-last-name" name="last-name" value="{{ user.lastName }}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="user-email">Email</label>
+                        <input type="text" class="form-control chosen-container chosen-format" id="user-email" name="email" value="{{ user.email }}" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="user-username">Username</label>
+                        <input readonly type="text" class="form-control chosen-container chosen-format" id="user-username" name="username"
+                               value="{{ user.username }}" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                    {% if session['USERNAME'] != user.username and session['ADMIN-USERNAME'] != user.username %}
+                        <label for="roles"><strong>Roles</strong></label>
+                        {% for role in roles %}
+                            <div class="custom-control custom-checkbox display-inl-b">
+                                <input type="checkbox" class="role-checkbox custom-control-input" id="{{ role.id }}"
+                                        {{ 'checked' if role.id in user_role_ids }} value="{{ role.name }}" name="roles">
+                                <label class="custom-control-label" for="{{ role.id }}">{{ role.name }}</label>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <button id="save-user" style="margin-right: 10px;" type="submit" class="btn blue btn-primary">Save</button>
+                    </div>
+                    <div class="form-group">
+                        <a href="#" id="deactivate-user"
+                           class="btn btn-primary btn-danger">Deactivate</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <div class="sub-info card info">
+                <div class="card-body">
+                    <p>
+                        To edit the user, make changes and press the <span class="button-labels">Save</span> button.
+                        To remove the user, press the <span id="red" class="button-labels">Deactivate</span> button.
+                    </p>
+                    <p>
+                        Deactivating a user will remove them from the current user list. However, this user's past
+                        activity will be maintained in all historical data reports.
+                    </p>
+                    <p>
+                        You may only edit roles if you are an Administrator. You may not edit your own roles and they
+                        are not displayed.
+                    </p>
+                    <p>
+                        Professors are always able to view their own courses. Administrators can add viewing capability
+                        for a user for any course (this is added by selecting a course not currently viewable for a user
+                        and then choosing "Save").
+                    </p>
+                    <p>
+                        Users receive end of session emails and can view course reports related to all listed user and
+                        viewable courses for the user.
+                    </p>
+                </div>
+            </div>
+        </div>
+   </div>
+{% endblock %}

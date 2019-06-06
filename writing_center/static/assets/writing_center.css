@@ -33,6 +33,10 @@ body {
     cursor: auto;
 }
 
+div.centered {
+    text-align:center;
+}
+
 div.dashboard-card{
     background-color: #f2f2f2;
     border-color: #d8d8d8;
@@ -185,9 +189,20 @@ a.nav-link:focus, a.nav-link:hover.active {
     display: block;
 }
 
+.spinner-img {
+    position: fixed;
+    margin-left: 40%;
+}
+
 .square-colors {
     margin-right: 63px;
     width: 30px;
     height: 30px;
     flex: 0 0 4%;
+}
+
+.user-search-result {
+    border: 1px dotted grey;
+    padding: 10px;
+    float: left;
 }
