@@ -4,7 +4,7 @@
     <div class="col-md-12">
             <div class="row">
                 <div class="col-md-6">
-                    <a class="dashboard-link" href="#">
+                    <a class="dashboard-link" href="{{ url_for('UsersView:add_user') }}">
                         <div class="card dashboard-card text-center">
                             <div class="card-body">
                                 <h4>Add a User</h4>
@@ -24,7 +24,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <a class="dashboard-link" href="#">
+                    <a class="dashboard-link" href="{{ url_for('UsersView:view_all_users') }}">
                         <div class="card dashboard-card text-center">
                             <div class="card-body">
                                 <h4>View All Users</h4>

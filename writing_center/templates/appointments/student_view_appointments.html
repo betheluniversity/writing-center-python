@@ -1,0 +1,19 @@
+{% extends 'writing_center_base.html' %}
+
+{% block body_content %}
+    <div class="jumbotron">
+        <h1>Scheduled Appointments</h1>
+        <p>View or edit your scheduled appointments here.</p>
+    </div>
+    <div id="calendar"></div>
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                plugins: [ 'dayGrid' ]
+            });
+            calendar.render();
+        });
+    </script>
+{% endblock %}

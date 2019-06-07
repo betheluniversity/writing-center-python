@@ -1,0 +1,69 @@
+{% extends 'users/view_all_users.html' %}
+
+{% block header %}
+    <div class="header card">
+        <div class="card-body">
+            <p class="card-text">{{ first_name }} {{ last_name }}: Select Role(s)</p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block body_content %}
+    <div class="custom row">
+        <div class="col-md-8">
+            {% if existing_user %}
+                <div class="centered">
+                    <h4>{{ first_name }} {{ last_name }} already exists</h4>
+                    <p>{{ message }}</p>
+                </div>
+            {% else %}
+                <form action="{{ url_for('UsersView:create_user') }}" method="post">
+                    <input type="hidden" name="first-name" value="{{ first_name }}">
+                    <input type="hidden" name="last-name" value="{{ last_name }}">
+                    <input type="hidden" name="username" value="{{ username }}">
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="roles">Roles</label>
+                            {% for role in roles %}
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="{{ role.id }}"
+                                           value="{{ role.name }}" name="roles">
+                                    <label class="custom-control-label" for="{{ role.id }}">{{ role.name }}</label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <button id="create-user" type="submit" class="btn btn-primary">Create</button>
+                        </div>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+        <div class="col-md-4">
+            <div class="sub-info card info">
+                <div class="card-body">
+                    <p>You may select one or more roles for this user.</p>
+                    <p class="card-text"><span id="darkblue" class="button-labels">Student</span> only has ability to
+                        edit profile and attend a session in the lab.</p>
+                    <p class="card-text"><span id="darkblue" class="button-labels">Professor</span> has the ability to
+                        view reports from their current and past courses, and edit their profile.</p>
+                    <p class="card-text"><span id="darkblue" class="button-labels">Tutor</span> has the ability to edit
+                        their tutor calendar, or edit their profile.</p>
+                    <p class="card-text"><span id="darkblue" class="button-labels">Lead Tutor</span> has the ability to
+                        start a session, edit student attendance during session, as well as all tutor abilities.</p>
+                    <p class="card-text"><span id="darkblue" class="button-labels">Administrator</span> has complete
+                        access to all features of the application, with the exception of editing their own roles.</p>
+                    <p class="card-text"><span id="darkblue" class="button-labels">Academic Counselor</span> has the
+                        ability to view all reports.</p>
+                    <p class="card-text">*<strong> Professors</strong> are automatically added to the user list when
+                        their courses are pulled from Banner when the current term is selected, and need not be added
+                        manually.</p>
+                    <p class="card-text">*Users with first or last names which include spaces may need to be searched
+                        by only the first part of their first or last name.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

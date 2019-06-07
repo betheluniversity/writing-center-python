@@ -2,9 +2,27 @@
 
 {% block body_content %}
     <div class="jumbotron">
-        <h1><b>Scheduled Appointments</b></h1>
-        <p>Please remember to click 'Start' when you arrive.</p>
+        <h1><b>Scheduled Appointments and Walk Ins</b></h1>
+        <p>For scheduled appointments, please remember to click 'Start' when you arrive.</p>
     </div>
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <h3>Enter Student Username To Begin a Walk In Appointment:</h3>
+        </div>
+    </div>
+    <form>
+        <div class="col-md-4">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Enter Username" aria-describedby="walk-in-begin">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit" id="walk-in-begin">Begin</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <br/>
+
     <div class="form-row">
         <div class="form-group col-md-12">
             <h3>Scheduled appointments:</h3>

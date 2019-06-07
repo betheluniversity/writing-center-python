@@ -1,0 +1,56 @@
+{% extends 'users/index.html' %}
+
+{% block body_content %}
+    <div class="jumbotron">
+        <h3>Add a User</h3>
+    </div>
+    <form>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="user-first-name">First Name</label>
+                <input id="user-first-name" type="text" class="chosen-container" placeholder="User's First Name">
+            </div>
+            <div class="form-group col-md-4">
+                <label for="user-last-name">Last Name</label>
+                <input id="user-last-name" type="text" class="chosen-container" placeholder="User's Last Name">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                {# TODO FIX BUTTON STYLING #}
+                <button type="button" class="btn btn-primary" id="search-users">Search</button>
+            </div>
+        </div>
+
+        {# spinner placeholder #}
+        <div id="spinner" class="spinner" style="display: none;">
+            <img id="img-spinner" class="spinner-img" src="https://cdn1.bethel.edu/images/load.gif" alt="Loading"/>
+        </div>
+    </form>
+
+    <div id="search-results"></div>
+
+    <script>
+        $(document).ready(function(){
+
+            function loadUsers(data){
+                $('#search-results').html(data);
+            }
+
+           $('#search-users').click(function(){
+               $('#spinner').show();
+               var name = {
+                   'firstName': $('#user-first-name').val(),
+                   'lastName': $('#user-last-name').val()
+                };
+               var url = "{{ url_for('UsersView:search_users') }}";
+               $.post(url, name, function(data){
+                  loadUsers(data);
+                   $('#spinner').hide();
+               });
+           });
+
+        });
+    </script>
+
+{% endblock %}
