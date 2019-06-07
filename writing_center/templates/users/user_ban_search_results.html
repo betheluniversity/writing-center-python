@@ -4,9 +4,9 @@
             <form action="{{ url_for('UsersView:save_user_ban') }}" method="post">
                 <input type="hidden" name="username" value="{{ user.username }}">
                 <div class="col-md-6 user-search-result">
-                    <button id="ban-user" type="submit" class="btn btn-primary btn-danger">Ban Student</button>
+                    <button id="ban-user" type="submit" class="btn btn-primary btn-danger search-btn">Ban Student</button>
                     <span>
-                        {{ user.firstName }} {{ user.lastName }}<br /><span id="darkblue" class="button-labels">{{ user.username }}</span>
+                        {{ user.firstName }} {{ user.lastName }}<br /><span id="darkblue" class="button-labels darkblue">{{ user.username }}</span>
                     </span>
                 </div>
             </form>
