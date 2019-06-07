@@ -1,10 +1,15 @@
 from flask_classy import FlaskView, route, request
 from flask import render_template, redirect, url_for
 
+import json
+
 from writing_center.users.users_controller import UsersController
 from writing_center.wsapi.wsapi_controller import WSAPIController
 
+
 class UsersView(FlaskView):
+    route_base = '/user'
+
     def __init__(self):
         self.uc = UsersController()
         self.wsapi = WSAPIController()
@@ -14,6 +19,8 @@ class UsersView(FlaskView):
 
     @route('/center-manager/manage-bans/')
     def manage_bans(self):
+        users = self.uc.get_banned_users()
+
         return render_template('users/manage_bans.html', **locals())
 
     @route('/center-manager/view-users')
@@ -74,7 +81,7 @@ class UsersView(FlaskView):
             print(error)
             return redirect(url_for('UsersView:select_user_roles', username=username, first_name=first_name, last_name=last_name))
 
-    @route("/admin/<int:user_id>")
+    @route("/edit/<int:user_id>")
     def edit_user(self, user_id):
         user = self.uc.get_user(user_id)
         roles = self.uc.get_all_roles()
@@ -99,3 +106,29 @@ class UsersView(FlaskView):
         except Exception as error:
             print(error)
             return redirect(url_for('UsersView:edit_user', user_id=user_id))
+
+    @route("/remove-ban/", methods=['post'])
+    def remove_ban(self):
+        user_id = str(json.loads(request.data).get('id'))
+        self.uc.remove_user_ban(user_id)
+        return redirect(url_for('UsersView:manage_bans'))
+
+    @route("/unban-all", methods=['post'])
+    def remove_all_bans(self):
+        self.uc.remove_all_bans()
+        return redirect(url_for('UsersView:manage_bans'))
+
+    @route('/search-ban-users', methods=['post'])
+    def search_ban_users(self):
+        form = request.form
+        first_name = form.get('firstName')
+        last_name = form.get('lastName')
+        user = self.uc.get_user_by_name(first_name, last_name)
+        return render_template('users/user_ban_search_results.html', **locals())
+
+    @route('/ban/user/', methods=['post'])
+    def save_user_ban(self):
+        form = request.form
+        username = form.get('username')
+        self.uc.ban_user(username)
+        return redirect(url_for('UsersView:manage_bans'))
