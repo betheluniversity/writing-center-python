@@ -41,56 +41,8 @@
             <h1><b>Banned Students</b></h1>
         </div>
     </div>
-    <div class="form-row">
-        <table id="table"  class="table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th data-toggle="tooltip" data-placement="top" title="User Last Name">Last</th>
-                    <th data-toggle="tooltip" data-placement="top" title="User First Name">First</th>
-                    <th data-toggle="tooltip" data-placement="top" title="Date Banned">Date Banned</th>
-                    <th data-toggle="tooltip" data-placement="top" title="User Username">Username</th>
-                    <th data-toggle="tooltip" data-placement="top" title="User Email">Email</th>
-                    <th data-toggle="tooltip" data-placement="top" title="Remove Bans">Remove Bans</th>
-                </tr>
-                <tr>
-                    <th colspan="5"></th>
-                    <th colspan="1">
-                    {# TODO MAYBE THINK OF USING AJAX INSTEAD OF A FORM SINCE WE DON'T NEED TO CHANGE THE PAGE, JUST UPDATE THE HTML#}
-                        <form action="{{ url_for('UsersView:remove_all_bans') }}" method="post">
-                        {# TODO ADD SOME SORT OF CONFIRMATION SO THAT YOU CAN'T REMOVE ALL BANS WITH ONE CLICK#}
-                            <button id="remove-all" type="submit" class="btn btn-primary btn-danger hover-bright">Remove All Bans</button>
-                        </form>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for user, banned in users %}
-                <tr>
-                    <td>
-                        {{ user.lastName }}
-                    </td>
-                    <td>
-                        {{ user.firstName }}
-                    </td>
-                    <td>
-                        {{ banned.bannedDate }}
-                    </td>
-                    <td>
-                        {{ user.username }}
-                    </td>
-                    <td>
-                        {{ user.email }}
-                    </td>
-                    <td>
-                        {# TODO MAYBE THINK OF USING AJAX INSTEAD OF A FORM SINCE WE DON'T NEED TO CHANGE THE PAGE, JUST UPDATE THE HTML#}
-                        <form action="{{ url_for('UsersView:remove_ban', user_id=user.id) }}" method="post">
-                            <button id="remove-ban" type="submit" href='#' class="btn btn-primary btn-danger">Remove Ban</button>
-                        </form>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+    <div class="form-row banned-users">
+        {% include 'users/banned_users_table.html' %}
     </div>
 
     <script>

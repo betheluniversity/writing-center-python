@@ -1,6 +1,8 @@
 from flask_classy import FlaskView, route, request
 from flask import render_template, redirect, url_for
 
+import json
+
 from writing_center.users.users_controller import UsersController
 from writing_center.wsapi.wsapi_controller import WSAPIController
 
@@ -105,8 +107,9 @@ class UsersView(FlaskView):
             print(error)
             return redirect(url_for('UsersView:edit_user', user_id=user_id))
 
-    @route("/remove-ban/<int:user_id>", methods=['post'])
-    def remove_ban(self, user_id):
+    @route("/remove-ban/", methods=['post'])
+    def remove_ban(self):
+        user_id = str(json.loads(request.data).get('id'))
         self.uc.remove_user_ban(user_id)
         return redirect(url_for('UsersView:manage_bans'))
 
