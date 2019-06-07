@@ -18,6 +18,6 @@ class Message_Center:
         db_session.commit()
 
     def get_appointment_info(self, appointment_id):
-        pass
-
-
+        return (db_session.query(WCAppointmentDataTable)
+                .filter(WCAppointmentDataTable.ID == appointment_id)
+                .all())
