@@ -1,0 +1,19 @@
+<div class="row">
+    {% if user %}
+        <div class="col-md-12 user-search-results">
+            <form action="{{ url_for('UsersView:save_user_ban') }}" method="post">
+                <input type="hidden" name="username" value="{{ user.username }}">
+                <div class="col-md-6 user-search-result">
+                    <button id="ban-user" type="submit" class="btn btn-primary btn-danger">Ban Student</button>
+                    <span>
+                        {{ user.firstName }} {{ user.lastName }}<br /><span id="darkblue" class="button-labels">{{ user.username }}</span>
+                    </span>
+                </div>
+            </form>
+        </div>
+    {% else %}
+        <div class="col-md-12 user-search-results text-center">
+            <h4>User does not exist in the Writing Center. Add them via "Add a User" and try again.</h4>
+        </div>
+    {% endif %}
+</div>

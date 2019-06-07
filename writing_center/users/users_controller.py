@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from writing_center.db_repository import db_session
-from writing_center.db_repository.tables import UserTable, UserRoleTable, RoleTable, WCEmailPreferencesTable
+from writing_center.db_repository.tables import UserTable, UserRoleTable, RoleTable, WCEmailPreferencesTable, \
+    WCStudentBansTable
 
 class UsersController:
     def __init__(self):
@@ -18,6 +21,12 @@ class UsersController:
     def get_user_by_username(self, username):
         return db_session.query(UserTable)\
             .filter(UserTable.username == username)\
+            .one_or_none()
+
+    def get_user_by_name(self, firstName, lastName):
+        return db_session.query(UserTable)\
+            .filter(UserTable.firstName == firstName)\
+            .filter(UserTable.lastName == lastName)\
             .one_or_none()
 
     def create_user(self, first_name, last_name, username, sub_email_pref, stu_email_pref):
@@ -86,4 +95,31 @@ class UsersController:
             .all()
         for role in roles:
             db_session.delete(role)
+        db_session.commit()
+
+    def get_banned_users(self):
+        return db_session.query(UserTable, WCStudentBansTable)\
+            .filter(UserTable.id == WCStudentBansTable.user_id)\
+            .all()
+
+    def remove_user_ban(self, user_id):
+        banned_user = db_session.query(WCStudentBansTable)\
+            .filter(WCStudentBansTable.user_id == user_id)\
+            .one_or_none()
+        if banned_user:
+            db_session.delete(banned_user)
+            db_session.commit()
+
+    def remove_all_bans(self):
+        banned_users = db_session.query(WCStudentBansTable).all()
+        if banned_users:
+            for user in banned_users:
+                db_session.delete(user)
+            db_session.commit()
+
+    def ban_user(self, username):
+        now = datetime.now()
+        user = self.get_user_by_username(username)
+        user_to_ban = WCStudentBansTable(user_id=user.id, bannedDate=now, Username=username)
+        db_session.add(user_to_ban)
         db_session.commit()
