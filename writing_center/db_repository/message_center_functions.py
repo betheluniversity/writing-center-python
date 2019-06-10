@@ -5,7 +5,7 @@ from writing_center.db_repository import db_session
 from writing_center.db_repository.tables import WCEmailPreferencesTable, WCAppointmentDataTable, WCDropInAppointmentsTable
 
 
-class Message_Center:
+class MessageCenter:
     def get_email_preferences(self, user_id):
         return (db_session.query(WCEmailPreferencesTable)
                 .filter(WCEmailPreferencesTable.id == user_id)

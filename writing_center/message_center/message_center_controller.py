@@ -5,13 +5,15 @@ from flask_mail import Mail, Message
 
 # Local
 from writing_center import app
-from writing_center.db_repository.message_center_functions import Message_Center
+from writing_center.db_repository.message_center_functions import MessageCenter
+from writing_center.db_repository.user_functions import UserFunctions
 
 
 class MessageCenterController:
 
     def __init__(self):
-        self.message_center = Message_Center()
+        self.message_center = MessageCenter()
+        self.user = UserFunctions()
 
     def manage_message_preferences(self, substitute, shift):
         self.message_center.change_email_preferences(substitute, shift, session['user_id'])
@@ -22,10 +24,11 @@ class MessageCenterController:
 
     def close_session_email(self, appointment_id):  # TODO: refactor to work with appointments
         appointment = self.message_center.get_appointment_info(appointment_id)
+        student = self.user.get_user(appointment['StudUsername'])
+        professor = self.user.get_user(appointment['ProfUsername'])
         subject = '{{{0}}} {1} ({2})'.format(app.config['LAB_TITLE'], appointment.StudentUsername, appointment.date.strftime('%m/%d/%Y'))
         tutor = appointment.TutorUsername
         recipients = self.user.get_end_of_session_recipients()  # Not sure what to put here
-        session_courses = self.course.get_courses_for_session(session_id)  # Not sure what toput here
 
         for recipient in recipients:
             recipient_roles = self.user.get_user_roles(recipient.id)  # will use the same people as recipient
@@ -33,37 +36,23 @@ class MessageCenterController:
 
             for role in recipient_roles:
                 recipient_role_names.append(role.name)
-            students_and_courses = {}
-            courses_and_info = {}
+
+            email_info = []
 
             if 'Administrator' in recipient_role_names:
-                session_students = self.session.get_session_students(session_id)
-                for student in session_students:
-                    students_and_courses[student] = self.session.get_report_student_session_courses(session_id, student.id)  # Gets courses attended
-
-                for course in session_courses:
-                    courses_and_info[course] = {}
-                    courses_and_info[course]['students'] = self.session.get_session_course_students(session_id, course.id)  # Gets students for a course in a specific session
-                    courses_and_info[course]['profs'] = self.course.get_profs_from_course(course.id)
+                email_info.append({'student_name': student['FirstName'] + ' ' + student['LastName'],
+                                   'professor_name': professor['FirstName'] + ' ' + professor['LastName'],
+                                   'notes': appointment['Notes'],
+                                   'suggestion': appointment['Suggestions'],
+                                   'course': appointment['CourseCode'],
+                                   'assignment': appointment['Assignment']})
 
             else:  # They must be a prof since get_end_of_session_recipients only gets admins and profs
-                professor_courses = self.course.get_professor_courses(recipient.id, sess.semester_id)
-                professor_course_ids = []
-                for course in professor_courses:
-                    professor_course_ids.append(course.id)
-
-                for course in session_courses:
-                    if course.id in professor_course_ids:
-                        courses_and_info[course] = {}
-                        courses_and_info[course]['students'] = self.session.get_session_course_students(session_id,
-                                                                                                        course.id)  # Same as above
-                        courses_and_info[course]['profs'] = self.course.get_profs_from_course(course.id)
-
-                session_students = self.session.get_prof_session_students(session_id,
-                                                                          professor_course_ids)  # Gets students specific to prof
-                for student in session_students:
-                    students_and_courses[student] = self.session.get_report_student_session_courses(session_id,
-                                                                                                    student.id)  # Same as above
+                email_info.append({'student_name': student['FirstName'] + ' ' + student['LastName'],
+                                   'notes': appointment['Notes'],
+                                   'suggestion': appointment['Suggestions'],
+                                   'course': appointment['CourseCode'],
+                                   'assignment': appointment['Assignment']})
 
             self.send_message(subject, render_template('sessions/email.html', **locals()), recipient.email, None, True)
 

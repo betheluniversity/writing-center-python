@@ -3,7 +3,7 @@ from flask import render_template, request, redirect, url_for
 from flask_classy import FlaskView, route
 
 # Local
-from writing_center.message_center import message_center_controller
+from writing_center.message_center.message_center_controller import MessageCenterController
 
 
 class MessageCenterView(FlaskView):
