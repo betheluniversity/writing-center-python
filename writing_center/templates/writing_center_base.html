@@ -36,10 +36,17 @@
             <script src="{{ url_for('static', filename='core-main.min.js') }}"></script>
             <script src="{{ url_for('static', filename='daygrid-main.min.js') }}"></script>
 
+            <!-- Pikaday Javascript -->
+            <script src="{{ url_for('static', filename='pikaday.js') }}"></script>
+            <script src="{{ url_for('static', filename='pikaday.jquery.js') }}"></script>
+
             {% block styles %}
                 <!-- Full Calendar CSS -->
                 <link rel="stylesheet" href="{{ url_for('static', filename='core-main.min.css') }}">
                 <link rel="stylesheet" href="{{ url_for('static', filename='daygrid-main.min.css') }}">
+
+                <!-- Pikaday CSS -->
+                <link rel="stylesheet" href="{{ url_for('static', filename='pikayday.css') }}">
             {% endblock %}
 
         {% endblock %}
