@@ -75,13 +75,10 @@ class UsersView(FlaskView):
         try:
             self.uc.create_user(first_name, last_name, username, sub_email_pref, stu_email_pref)
             self.uc.set_user_roles(username, roles)
-            print('got here')
-            # self.slc.set_alert('success', '{0} {1} ({2}) added successfully!'.format(first_name, last_name, username))
             self.wcc.set_alert('success', '{0} {1} ({2}) added successfully!'.format(first_name, last_name, username))
             return redirect(url_for('UsersView:view_all_users'))
         except Exception as error:
             self.wcc.set_alert('danger', 'Failed to add user: {0}'.format(str(error)))
-            print(error)
             return redirect(url_for('UsersView:select_user_roles', username=username, first_name=first_name, last_name=last_name))
 
     @route("/edit/<int:user_id>")
