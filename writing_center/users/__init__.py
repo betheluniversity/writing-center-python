@@ -5,6 +5,7 @@ import json
 
 from writing_center.users.users_controller import UsersController
 from writing_center.wsapi.wsapi_controller import WSAPIController
+from writing_center.writing_center_controller import WritingCenterController
 
 
 class UsersView(FlaskView):
@@ -13,6 +14,7 @@ class UsersView(FlaskView):
     def __init__(self):
         self.uc = UsersController()
         self.wsapi = WSAPIController()
+        self.wcc = WritingCenterController()
 
     def index(self):
         return render_template('users/index.html', **locals())
@@ -75,9 +77,10 @@ class UsersView(FlaskView):
             self.uc.set_user_roles(username, roles)
             print('got here')
             # self.slc.set_alert('success', '{0} {1} ({2}) added successfully!'.format(first_name, last_name, username))
+            self.wcc.set_alert('success', '{0} {1} ({2}) added successfully!'.format(first_name, last_name, username))
             return redirect(url_for('UsersView:view_all_users'))
         except Exception as error:
-            # self.slc.set_alert('danger', 'Failed to add user: {0}'.format(str(error)))
+            self.wcc.set_alert('danger', 'Failed to add user: {0}'.format(str(error)))
             print(error)
             return redirect(url_for('UsersView:select_user_roles', username=username, first_name=first_name, last_name=last_name))
 
