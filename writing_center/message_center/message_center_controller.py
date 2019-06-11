@@ -27,12 +27,12 @@ class MessageCenterController:
         student = self.user.get_user(appointment['StudUsername'])
         professor = self.user.get_user(appointment['ProfUsername'])
         tutor = self.user.get_user(appointment['TutorUsername'])
-        subject = '{{{0}}} {1} ({2})'.format(app.config['LAB_TITLE'], appointment.StudentUsername, appointment.date.strftime('%m/%d/%Y'))
+        subject = '{{{0}}} {1} ({2})'.format(appointment['Assignment'], appointment.StudentUsername, appointment.date.strftime('%m/%d/%Y'))
         tutor = appointment.TutorUsername
-        recipients = self.user.get_end_of_session_recipients()  # Not sure what to put here
+        recipients = self.user.get_end_of_session_recipients()  # End of session recipients should be admin, professor, and student
 
         for recipient in recipients:
-            recipient_roles = self.user.get_user_roles(recipient.id)  # will use the same people as recipient
+            recipient_roles = self.user.get_user_roles(recipient.id)  # requires this method to be written in the user functions
             recipient_role_names = []
 
             for role in recipient_roles:
