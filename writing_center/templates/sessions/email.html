@@ -1,0 +1,17 @@
+<h3>Appointment Information</h3>
+
+<p>Appointment report for: {{ student.firstName }} {{ student.lastName }}</p>
+<p>Tutor: {{ tutor.firstName }} {{ tutor.lastName }}</p>
+<p>Session time: {{ appointment.StartTime }} - {{ appointment.EndTime }}</p>
+<p>Arrival: {{ appointment.ActualStartTime }}</p>
+
+<br/>
+<h3>Assignment</h3>
+<p>{{ appointment.Assignment }}</p>
+<p><bold>Professor:</bold>{{ professor.firstName }} {{ professor.lastName }}</p>
+<p><bold>Course: </bold>{{ appointment.CourseCode }}</p>
+
+<br/>
+<h3>Notes and Suggestions</h3>
+<p><bold>Notes: </bold>{{ appointment.Notes }}</p>
+<p><bold>Suggestions: </bold>{{ appointment.Suggestions }}</p>

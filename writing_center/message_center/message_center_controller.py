@@ -26,6 +26,7 @@ class MessageCenterController:
         appointment = self.message_center.get_appointment_info(appointment_id)
         student = self.user.get_user(appointment['StudUsername'])
         professor = self.user.get_user(appointment['ProfUsername'])
+        tutor = self.user.get_user(appointment['TutorUsername'])
         subject = '{{{0}}} {1} ({2})'.format(app.config['LAB_TITLE'], appointment.StudentUsername, appointment.date.strftime('%m/%d/%Y'))
         tutor = appointment.TutorUsername
         recipients = self.user.get_end_of_session_recipients()  # Not sure what to put here
@@ -36,23 +37,6 @@ class MessageCenterController:
 
             for role in recipient_roles:
                 recipient_role_names.append(role.name)
-
-            email_info = []
-
-            if 'Administrator' in recipient_role_names:
-                email_info.append({'student_name': student['FirstName'] + ' ' + student['LastName'],
-                                   'professor_name': professor['FirstName'] + ' ' + professor['LastName'],
-                                   'notes': appointment['Notes'],
-                                   'suggestion': appointment['Suggestions'],
-                                   'course': appointment['CourseCode'],
-                                   'assignment': appointment['Assignment']})
-
-            else:  # They must be a prof since get_end_of_session_recipients only gets admins and profs
-                email_info.append({'student_name': student['FirstName'] + ' ' + student['LastName'],
-                                   'notes': appointment['Notes'],
-                                   'suggestion': appointment['Suggestions'],
-                                   'course': appointment['CourseCode'],
-                                   'assignment': appointment['Assignment']})
 
             self.send_message(subject, render_template('sessions/email.html', **locals()), recipient.email, None, True)
 
