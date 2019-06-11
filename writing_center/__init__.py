@@ -1,6 +1,6 @@
 import logging
 
-from flask import Flask
+from flask import Flask, request
 from flask import session as flask_session
 from datetime import datetime
 from raven.contrib.flask import Sentry
@@ -22,6 +22,7 @@ from writing_center.schedules import SchedulesView
 # from writing_center.settings import SettingsView
 from writing_center.statistics import StatisticsView
 from writing_center.users import UsersView
+from writing_center.writing_center_controller import WritingCenterController as wcc
 
 View.register(app)
 MessageCenterView.register(app)
@@ -40,6 +41,7 @@ def utility_processor():
     to_return = {}
     to_return.update({
         'now': datetime.now(),
+        'alert': wcc().get_alert(),
     })
 
     return to_return
@@ -47,4 +49,17 @@ def utility_processor():
 
 @app.before_request
 def before_request():
+    if '/static/' in request.path \
+            or '/assets/' in request.path \
+            or '/cron/' in request.path \
+            or '/no-cas/' in request.path:
+
+        if 'ALERT' not in flask_session.keys():
+            flask_session['ALERT'] = []
+    else:
+        if 'ALERT' not in flask_session.keys():
+            flask_session['ALERT'] = []
+
+
+
     flask_session['NAME'] = app.config["TEST_NAME"]
