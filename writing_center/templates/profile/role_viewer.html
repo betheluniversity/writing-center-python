@@ -1,0 +1,73 @@
+{% extends 'profile/base.html' %}
+
+{% block body_content %}
+{#    <div class="custom row">#}
+{#        <div class="col-md-8">#}
+{#                <div class="form-row">#}
+{#                    <div class="form-group col-md-12">#}
+{#                        <div class="header card">#}
+{#                            <div class="card-body btn-group">#}
+{#                                <p class="no-margin-padding">View {{ lab_title }} as a different role</p>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#                <div class="form-row">#}
+{#                    <div class="form-group col-md-12">#}
+{#                        <label for="choose-role">Choose a role</label>#}
+{#                        <select data-placeholder="Choose a role ..." class="chosen form-control" id="choose-role" name="role">#}
+{#                            {% for role in role_list %}#}
+{#                                <option value="{{ role.id }}">{{ role.name }}</option>#}
+{#                            {% endfor %}#}
+{#                        </select>#}
+{#                    </div>#}
+{#                </div>#}
+{##}
+{#                <div class="form-row text-right">#}
+{#                    <div class="form-group col-md-12">#}
+{#                        {% if session['ADMIN-VIEWER'] %}#}
+{#                            <strong>You cannot view as a role while already viewing as a user/role</strong>#}
+{#                        {% else %}#}
+{#                            <button type="button" class="btn blue btn-primary" id="change-role">Change role</button>#}
+{#                        {% endif %}#}
+{#                    </div>#}
+{#                </div>#}
+{##}
+{#        </div>#}
+{#        <div class="col-md-4">#}
+{#            <div class="card info">#}
+{#                <div class="card-body">#}
+{#                    <p class="card-text">#}
+{#                        Use this page to view {{ lab_title }} as a specific role. If you are imitating a different role,#}
+{#                        you won't be able to change roles again until you stop imitating the previous role.#}
+{#                    </p>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#    <script>#}
+{#        $(document).ready(function () {#}
+{#            $(".chosen").chosen({#}
+{#                display_disabled_options: true#}
+{#            });#}
+{#        });#}
+{##}
+{#        $(document).ready(function () {#}
+{#           $('#change-role').click(function (){#}
+{#               var chosen_role = $('#choose-role option:selected').text();#}
+{#               $.ajax({#}
+{#                   type: "POST",#}
+{#                   url: "change-role",#}
+{#                   data: JSON.stringify({'chosen-role': chosen_role}),#}
+{#                   contentType: 'application/json;charset=UTF-8',#}
+{#                   success: function (response) {#}
+{#                       window.location.assign("{{ url_for('View:index') }}")#}
+{#                   },#}
+{#                   error: function (error) {#}
+{##}
+{#                   }#}
+{#               });#}
+{#           });#}
+{#        });#}
+{#    </script>#}
+{% endblock %}

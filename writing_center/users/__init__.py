@@ -105,7 +105,6 @@ class UsersView(FlaskView):
             self.uc.set_user_roles(username, roles)
             return redirect(url_for('UsersView:view_all_users'))
         except Exception as error:
-            print(error)
             return redirect(url_for('UsersView:edit_user', user_id=user_id))
 
     @route("/remove-ban/", methods=['post'])
