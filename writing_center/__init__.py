@@ -83,4 +83,3 @@ def before_request():
             flask_session['ADMIN-VIEWER'] = False
         if 'ALERT' not in flask_session.keys():
             flask_session['ALERT'] = []
-    flask_session['NAME'] = app.config["TEST_NAME"]

@@ -54,8 +54,8 @@
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">{{ session['NAME'] }}</a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">My Profile</a>
-                    <a class="dropdown-item" href="#">Act As A Role?</a>
+                    <a class="dropdown-item" href="{{ url_for('ProfileView:index') }}">My Profile</a>
+                    <a class="dropdown-item" href="{{ url_for('ProfileView:role_viewer') }}">Act As A Role</a>
                     <a class="dropdown-item" href="#">Logout</a>
                 </div>
             {% else %}
