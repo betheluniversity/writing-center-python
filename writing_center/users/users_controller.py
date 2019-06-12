@@ -80,6 +80,14 @@ class UsersController:
             user_role_ids.append(role.id)
         return user_role_ids
 
+    def get_user_roles(self, user_id):
+        user_roles = db_session.query(RoleTable)\
+            .filter(RoleTable.id == UserRoleTable.role_id)\
+            .filter(UserRoleTable.user_id == UserTable.id)\
+            .filter(UserTable.id == user_id)\
+            .all()
+        return user_roles
+
     def update_user_info(self, user_id, first_name, last_name, email):
         user = db_session.query(UserTable)\
             .filter(UserTable.id == user_id)\

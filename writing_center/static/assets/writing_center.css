@@ -141,6 +141,20 @@ ul.list-group{
     font-size: .875rem !important;
 }
 
+.custom-user-div {
+    color: white;
+    display: inline-block !important;
+}
+
+.custom-user-p {
+    margin: 10px 0;
+}
+
+.custom-user-nav {
+    padding: 0 10px;
+    background-color: tomato;
+}
+
 .darkblue {
     background-color: #0F2C52;
     color: #ffffff;
@@ -209,6 +223,12 @@ a.nav-link:focus, a.nav-link:hover.active {
     width: 30px;
     height: 30px;
     flex: 0 0 4%;
+}
+
+.transparent {
+    background-color: transparent;
+    border: none;
+    padding: 0px;
 }
 
 .user-search-result {
