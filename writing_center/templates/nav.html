@@ -56,7 +56,7 @@
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="{{ url_for('ProfileView:index') }}">My Profile</a>
                     <a class="dropdown-item" href="{{ url_for('ProfileView:role_viewer') }}">Act As A Role</a>
-                    <a class="dropdown-item" href="#">Logout</a>
+                    <a class="dropdown-item" href="{{ url_for('View:logout') }}">Logout</a>
                 </div>
             {% else %}
                 <a class="nav-link" id="navbarLogin" role="button" href="{{ url_for('View:index') }}">Login</a>
