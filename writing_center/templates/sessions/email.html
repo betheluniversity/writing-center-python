@@ -12,6 +12,12 @@
 <p><bold>Course: </bold>{{ appointment.CourseCode }}</p>
 
 <br/>
-<h3>Notes and Suggestions</h3>
-<p><bold>Notes: </bold>{{ appointment.Notes }}</p>
-<p><bold>Suggestions: </bold>{{ appointment.Suggestions }}</p>
+{{ if appointment.Notes != '' or appointment.Suggestions != '' }}
+    <h3>Notes and Suggestions</h3>
+    {{ if appointment.Notes != ''}}
+        <p><bold>Notes: </bold>{{ appointment.Notes }}</p>
+    {{ endif }}
+    {{ if appointment.Suggestions != ''}}
+        <p><bold>Suggestions: </bold>{{ appointment.Suggestions }}</p>
+    {{ endif }}
+{{ endif }}

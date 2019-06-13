@@ -24,15 +24,18 @@ class MessageCenterController:
 
     def close_session_email(self, appointment_id):  # TODO: refactor to work with appointments
         appointment = self.message_center.get_appointment_info(appointment_id)
-        student = self.user.get_user(appointment['StudUsername'])
-        professor = self.user.get_user(appointment['ProfUsername'])
-        tutor = self.user.get_user(appointment['TutorUsername'])
-        subject = '{{{0}}} {1} ({2})'.format(appointment['Assignment'], appointment.StudentUsername, appointment.date.strftime('%m/%d/%Y'))
+        student = self.user.get_user(appointment.StudUsername)
+
+        if appointment.ProfUsername != '':
+            professor = self.user.get_user(appointment.ProfUsername)
+
+        tutor = self.user.get_user(appointment.TutorUsername)
+        subject = '{{{0}}} {1} ({2})'.format(appointment.StudUsername, appointment.StudentUsername, appointment.date.strftime('%m/%d/%Y'))
         tutor = appointment.TutorUsername
-        recipients = self.user.get_end_of_session_recipients()  # End of session recipients should be admin, professor, and student
+        recipients = self.user.get_end_of_session_recipients(appointment_id)
 
         for recipient in recipients:
-            recipient_roles = self.user.get_user_roles(recipient.id)  # requires this method to be written in the user functions
+            recipient_roles = self.user.get_user_roles(recipient.id)
             recipient_role_names = []
 
             for role in recipient_roles:
