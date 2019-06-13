@@ -36,10 +36,17 @@
             <script src="{{ url_for('static', filename='core-main.min.js') }}"></script>
             <script src="{{ url_for('static', filename='daygrid-main.min.js') }}"></script>
 
+             <!-- JQuery/JS for DataTables -->
+            <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+
+
             {% block styles %}
                 <!-- Full Calendar CSS -->
                 <link rel="stylesheet" href="{{ url_for('static', filename='core-main.min.css') }}">
                 <link rel="stylesheet" href="{{ url_for('static', filename='daygrid-main.min.css') }}">
+
+                <!-- CSS for DataTables -->
+                <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
             {% endblock %}
 
         {% endblock %}
