@@ -48,6 +48,37 @@ def utility_processor():
     return to_return
 
 
+def datetimeformat(value, custom_format=None):
+    if value:
+
+        if custom_format:
+            return value.strftime(custom_format)
+
+        if value.strftime('%l:%M:%p') == '12:00AM':  # Check for midnight
+            return 'midnight'
+
+        if value.strftime('%l:%M:%p') == '12:00PM':  # Check for noon
+            return 'noon'
+
+        if value.strftime('%M') == '00':
+            time = datetime.min.strftime('%l')
+        else:
+            time = datetime.min.strftime('%l:%M')
+
+        if value.strftime('%p') == 'PM':
+            time = '{0} {1}'.format(time, 'p.m.')
+        else:
+            time = '{0} {1}'.format(time, 'a.m.')
+
+        return time
+
+    else:
+        return '???'
+
+
+app.jinja_env.filters['datetimeformat'] = datetimeformat
+
+
 @app.before_request
 def before_request():
     if '/static/' in request.path \

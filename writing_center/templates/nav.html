@@ -14,7 +14,7 @@
             <a class="nav-link dropdown-toggle {{ 'nav-bar-active' if 'AppointmentsView' in request.url_rule.endpoint }}" id="navbarDropdown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">Appointments</a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="{{ url_for('AppointmentsView:view_all_appointments') }}">View All Appointments</a>
+                <a class="dropdown-item" href="{{ url_for('AppointmentsView:index') }}">View Appointments</a>
                 <a class="dropdown-item" href="{{ url_for('AppointmentsView:appointments_and_walk_ins') }}">Tutor Appointments and Walk Ins</a>
                 <a class="dropdown-item" href="{{ url_for('AppointmentsView:create_appointment') }}">Schedule An Appointment</a>
                 <a class="dropdown-item" href="{{ url_for('AppointmentsView:student_view_appointments') }}">View Your Appointments</a>
