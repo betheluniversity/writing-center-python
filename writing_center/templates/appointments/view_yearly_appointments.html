@@ -2,8 +2,8 @@
 
 {% block body_content %}
     <div class="jumbotron">
-        <h1><b>View All Appointments</b></h1>
-        <p>Shows all the appointments.</p>
+        <h1><b>View All Appointments For {{ selected_year }}</b></h1>
+        <p>Views appointments by year.</p>
     </div>
     <div class="row">
         <div class="col-md-12">
@@ -21,7 +21,6 @@
                             <th data-toggle="tooltip" data-placement="top" title="Start Date/Start Time">Start Date/Start Time</th>
                             <th data-toggle="tooltip" data-placement="top" title="End Date/End Time">End Date/End Time</th>
                             <th data-toggle="tooltip" data-placement="top" title="Course or Tag">Course or Tag</th>
-
                         </tr>
                     </thead>
                     <tbody>

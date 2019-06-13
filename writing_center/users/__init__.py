@@ -1,5 +1,6 @@
 from flask_classy import FlaskView, route, request
 from flask import render_template, redirect, url_for
+from flask import session as flask_session
 
 import json
 
@@ -104,7 +105,6 @@ class UsersView(FlaskView):
             self.uc.set_user_roles(username, roles)
             return redirect(url_for('UsersView:view_all_users'))
         except Exception as error:
-            print(error)
             return redirect(url_for('UsersView:edit_user', user_id=user_id))
 
     @route("/remove-ban/", methods=['post'])
@@ -132,3 +132,42 @@ class UsersView(FlaskView):
         username = form.get('username')
         self.uc.ban_user(username)
         return redirect(url_for('UsersView:manage_bans'))
+
+    def act_as_user(self, user_id):
+        if not flask_session['ADMIN-VIEWER']:
+            user_info = self.uc.get_user(user_id)
+            flask_session['ADMIN-VIEWER'] = True
+            # Saving old info to return to
+            flask_session['ADMIN-USERNAME'] = flask_session['USERNAME']
+            flask_session['ADMIN-ROLES'] = flask_session['USER-ROLES']
+            flask_session['ADMIN-NAME'] = flask_session['NAME']
+            # Setting up viewing role
+            flask_session['USERNAME'] = user_info.username
+            flask_session['NAME'] = '{0} {1}'.format(user_info.firstName, user_info.lastName)
+            flask_session['USER-ROLES'] = []
+            user_roles = self.uc.get_user_roles(user_info.id)
+            for role in user_roles:
+                flask_session['USER-ROLES'].append(role.name)
+        return redirect(url_for('View:index'))
+
+    @route('/reset-act-as', methods=['post'])
+    def reset_act_as(self):
+        if flask_session['ADMIN-VIEWER']:
+            try:
+                # Resetting info
+                flask_session['USERNAME'] = flask_session['ADMIN-USERNAME']
+                flask_session['ADMIN-VIEWER'] = False
+                flask_session['NAME'] = flask_session['ADMIN-NAME']
+                flask_session['USER-ROLES'] = flask_session['ADMIN-ROLES']
+                # Clearing out unneeded variables
+                flask_session.pop('ADMIN-USERNAME')
+                flask_session.pop('ADMIN-ROLES')
+                flask_session.pop('ADMIN-NAME')
+                return redirect(url_for('View:index'))
+            except Exception as error:
+                self.wcc.set_alert('danger', 'An error occurred: {0}'.format(str(error)))
+                return redirect(url_for('View:index'))
+        else:
+            self.wcc.set_alert('danger', 'You do not have permission to access this function')
+            return redirect(url_for('View:index'))
+

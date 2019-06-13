@@ -1,0 +1,8 @@
+{% extends 'writing_center_base.html' %}
+
+{% block subnav %}
+    <a id="profile" class="nav-link {{ 'active' if 'edit' in request.path else 'disabled'}}" href="{{ url_for('ProfileView:index') }}">Profile</a>
+{#    {% if 'Administrator' in session['USER-ROLES'] %}#}
+        <a id="profile" class="nav-link {{ 'active' if 'view-role' in request.path else 'disabled'}}" href="{{ url_for('ProfileView:role_viewer') }}">Act As A Role</a>
+{#    {% endif %}#}
+{% endblock %}
