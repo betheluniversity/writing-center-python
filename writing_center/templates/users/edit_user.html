@@ -3,7 +3,7 @@
 {% block body_content %}
    <div class="custom-default row">
         <div class="col-md-8">
-            <form action="{{ url_for('UsersView:save_user_edits') }}" method="post">
+            <form action="{{ url_for('UsersView:save_user_edits') }}" method="POST">
                 <input type="hidden" name="user-id" value="{{ user.id }}">
                  <div class="form-row">
                     <div class="form-group col-md-12">

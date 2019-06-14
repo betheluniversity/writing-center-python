@@ -17,7 +17,7 @@
                     <p>{{ message }}</p>
                 </div>
             {% else %}
-                <form action="{{ url_for('UsersView:create_user') }}" method="post">
+                <form action="{{ url_for('UsersView:create_user') }}" method="POST">
                     <input type="hidden" name="first-name" value="{{ first_name }}">
                     <input type="hidden" name="last-name" value="{{ last_name }}">
                     <input type="hidden" name="username" value="{{ username }}">

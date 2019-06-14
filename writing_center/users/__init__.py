@@ -32,7 +32,7 @@ class UsersView(FlaskView):
     def add_user(self):
         return render_template('users/add_user.html', **locals())
 
-    @route("/search-users", methods=['post'])
+    @route("/search-users", methods=['POST'])
     def search_users(self):
         form = request.form
         first_name = form.get('firstName')
@@ -55,7 +55,7 @@ class UsersView(FlaskView):
                 message = "This user already exists in the system and is activated."
         return render_template('users/select_user_roles.html', **locals())
 
-    @route('/create-user', methods=['post'])
+    @route('/create-user', methods=['POST'])
     def create_user(self):
         form = request.form
         first_name = form.get('first-name')
@@ -89,7 +89,7 @@ class UsersView(FlaskView):
 
         return render_template('users/edit_user.html', **locals())
 
-    @route("/save-user-edits", methods=['post'])
+    @route("/save-user-edits", methods=['POST'])
     def save_user_edits(self):
         form = request.form
         user_id = form.get('user-id')
@@ -107,18 +107,18 @@ class UsersView(FlaskView):
             print(error)
             return redirect(url_for('UsersView:edit_user', user_id=user_id))
 
-    @route("/remove-ban/", methods=['post'])
+    @route("/remove-ban/", methods=['POST'])
     def remove_ban(self):
         user_id = str(json.loads(request.data).get('id'))
         self.uc.remove_user_ban(user_id)
         return redirect(url_for('UsersView:manage_bans'))
 
-    @route("/unban-all", methods=['post'])
+    @route("/unban-all", methods=['POST'])
     def remove_all_bans(self):
         self.uc.remove_all_bans()
         return redirect(url_for('UsersView:manage_bans'))
 
-    @route('/search-ban-users', methods=['post'])
+    @route('/search-ban-users', methods=['POST'])
     def search_ban_users(self):
         form = request.form
         first_name = form.get('firstName')
@@ -126,7 +126,7 @@ class UsersView(FlaskView):
         user = self.uc.get_user_by_name(first_name, last_name)
         return render_template('users/user_ban_search_results.html', **locals())
 
-    @route('/ban/user/', methods=['post'])
+    @route('/ban/user/', methods=['POST'])
     def save_user_ban(self):
         form = request.form
         username = form.get('username')
