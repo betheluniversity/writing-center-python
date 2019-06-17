@@ -5,6 +5,7 @@ from datetime import datetime
 import json
 
 from writing_center.schedules.schedules_controller import SchedulesController
+from writing_center.writing_center_controller import WritingCenterController
 
 
 class SchedulesView(FlaskView):
@@ -12,6 +13,7 @@ class SchedulesView(FlaskView):
 
     def __init__(self):
         self.sc = SchedulesController()
+        self.wcc = WritingCenterController()
 
     @route("/create-schedule")
     def create_schedule(self):
@@ -26,7 +28,7 @@ class SchedulesView(FlaskView):
     def view_tutor_schedules(self):
         return render_template('schedules/view_tutor_schedule.html', **locals())
 
-    @route('/create', methods=['post'])
+    @route('/create', methods=['POST'])
     def create_new_schedule(self):
         now = (datetime.now())
 
@@ -43,5 +45,24 @@ class SchedulesView(FlaskView):
             is_active = 'Yes'
         else:
             is_active = 'No'
-        self.sc.create_schedule(start_time, end_time, is_active)
+        created = self.sc.create_schedule(start_time, end_time, is_active)
+
+        # if created:
+            # TODO SUCCESS MESSAGE
+        # else:
+            # TODO ERROR MESSAGE
+        return self.sc.get_schedules()
+
+    @route('/add-tutors-to-shifts', methods=['POST'])
+    def add_tutors_to_shifts(self):
+        start_date = str(json.loads(request.data).get('startDate'))
+        end_date = str(json.loads(request.data).get('endDate'))
+        # TODO IF START_DATE AND END_DATE ARE EQUAL SET DANGER MESSAGE AND RETURN TO PAGE
+        multilingual = str(json.loads(request.data).get('multilingual'))
+        drop_in = str(json.loads(request.data).get('dropIn'))
+        tutors = str(json.loads(request.data).get('tutors'))
+        days = str(json.loads(request.data).get('days'))
+        time_slots = str(json.loads(request.data).get('timeSlots'))
+        # TODO IF TUTORS, DAYS, OR TIME_SLOTS ARE EMPTY THEN RETURN TO PAGE
+        self.sc.create_tutor_shifts(start_date, end_date, multilingual, drop_in, tutors, days, time_slots)
         return redirect(url_for('SchedulesView:create_schedule'))
