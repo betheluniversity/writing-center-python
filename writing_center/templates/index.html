@@ -24,7 +24,7 @@
         <div class="col-md-8">
             <div class="row">
                 <div class="col-md-6">
-                    <a class="dashboard-link" href="#">
+                    <a class="dashboard-link" href="{{ url_for('AppointmentsView:create_appointment') }}">
                         <div class="card dashboard-card text-center">
                             <div class="card-body">
                                 <h4>Schedule an Appointment</h4>
@@ -33,7 +33,7 @@
                     </a>
                 </div>
                 <div class="col-md-6">
-                    <a class="dashboard-link" href="#">
+                    <a class="dashboard-link" href="{{ url_for('AppointmentsView:student_view_appointments') }}">
                         <div class="card dashboard-card text-center">
                             <div class="card-body">
                                 <h4>View Your Appointments</h4>
@@ -44,7 +44,7 @@
             </div>
             <div class="row">
                 <div class="col-md-6">
-                    <a class="dashboard-link" href="#">
+                    <a class="dashboard-link" href="{{ url_for('AppointmentsView:appointments_and_walk_ins') }}">
                         <div class="card dashboard-card text-center">
                             <div class="card-body">
                                 <h4>Tutor Appointments and Walk Ins</h4>
@@ -64,10 +64,10 @@
             </div>
             <div class="row">
                 <div class="col-md-6">
-                    <a class="dashboard-link" href="#">
+                    <a class="dashboard-link" href="{{ url_for('AppointmentsView:index') }}">
                         <div class="card dashboard-card text-center">
                             <div class="card-body">
-                                <h4>View All Appointments</h4>
+                                <h4>View Appointments</h4>
                             </div>
                         </div>
                     </a>

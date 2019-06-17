@@ -1,6 +1,6 @@
 import logging
 
-from flask import Flask
+from flask import Flask, request
 from flask import session as flask_session
 from datetime import datetime
 from raven.contrib.flask import Sentry
@@ -22,6 +22,8 @@ from writing_center.schedules import SchedulesView
 from writing_center.settings import SettingsView
 from writing_center.statistics import StatisticsView
 from writing_center.users import UsersView
+from writing_center.users.users_controller import UsersController as uc
+from writing_center.writing_center_controller import WritingCenterController as wcc
 
 View.register(app)
 MessageCenterView.register(app)
@@ -40,18 +42,15 @@ def utility_processor():
     to_return = {}
     to_return.update({
         'now': datetime.now(),
+        'alert': wcc().get_alert(),
     })
 
     return to_return
 
 
-@app.before_request
-def before_request():
-    flask_session['NAME'] = app.config["TEST_NAME"]
-
-
 def datetimeformat(value, custom_format=None):
     if value:
+
         if custom_format:
             return value.strftime(custom_format)
 
@@ -62,9 +61,9 @@ def datetimeformat(value, custom_format=None):
             return 'noon'
 
         if value.strftime('%M') == '00':
-            time = value.strftime('%l')
+            time = datetime.min.strftime('%l')
         else:
-            time = value.strftime('%l:%M')
+            time = datetime.min.strftime('%l:%M')
 
         if value.strftime('%p') == 'PM':
             time = '{0} {1}'.format(time, 'p.m.')
@@ -78,3 +77,40 @@ def datetimeformat(value, custom_format=None):
 
 
 app.jinja_env.filters['datetimeformat'] = datetimeformat
+
+
+@app.before_request
+def before_request():
+    if '/static/' in request.path \
+            or '/assets/' in request.path \
+            or '/cron/' in request.path \
+            or '/no-cas/' in request.path:
+
+        if 'ALERT' not in flask_session.keys():
+            flask_session['ALERT'] = []
+    else:
+        if 'USERNAME' not in flask_session.keys():
+            if app.config['ENVIRON'] == 'prod':
+                username = request.environ.get('REMOTE_USER')
+            else:
+                username = app.config['TEST_USERNAME']
+            current_user = uc().get_user_by_username(username)
+            if not current_user:
+                # current_user = User().create_user_at_sign_in(username)
+                pass
+            # if current_user.deletedAt != None:  # User has been soft deleted in the past, needs reactivating
+            #     User().activate_existing_user(current_user.username)
+            flask_session['USERNAME'] = current_user.username
+            flask_session['NAME'] = '{0} {1}'.format(current_user.firstName, current_user.lastName)
+            flask_session['USER-ROLES'] = []
+            user_roles = uc().get_user_roles(current_user.id)
+            for role in user_roles:
+                flask_session['USER-ROLES'].append(role.name)
+        if 'NAME' not in flask_session.keys():
+            flask_session['NAME'] = flask_session['USERNAME']
+        if 'USER-ROLES' not in flask_session.keys():
+            flask_session['USER-ROLES'] = ['STUDENT']
+        if 'ADMIN-VIEWER' not in flask_session.keys():
+            flask_session['ADMIN-VIEWER'] = False
+        if 'ALERT' not in flask_session.keys():
+            flask_session['ALERT'] = []

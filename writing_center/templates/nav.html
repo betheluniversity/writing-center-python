@@ -14,7 +14,7 @@
             <a class="nav-link dropdown-toggle {{ 'nav-bar-active' if 'AppointmentsView' in request.url_rule.endpoint }}" id="navbarDropdown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">Appointments</a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="{{ url_for('AppointmentsView:view_all_appointments') }}">View All Appointments</a>
+                <a class="dropdown-item" href="{{ url_for('AppointmentsView:index') }}">View Appointments</a>
                 <a class="dropdown-item" href="{{ url_for('AppointmentsView:appointments_and_walk_ins') }}">Tutor Appointments and Walk Ins</a>
                 <a class="dropdown-item" href="{{ url_for('AppointmentsView:create_appointment') }}">Schedule An Appointment</a>
                 <a class="dropdown-item" href="{{ url_for('AppointmentsView:student_view_appointments') }}">View Your Appointments</a>
@@ -54,9 +54,9 @@
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">{{ session['NAME'] }}</a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">My Profile</a>
-                    <a class="dropdown-item" href="#">Act As A Role?</a>
-                    <a class="dropdown-item" href="#">Logout</a>
+                    <a class="dropdown-item" href="{{ url_for('ProfileView:index') }}">My Profile</a>
+                    <a class="dropdown-item" href="{{ url_for('ProfileView:role_viewer') }}">Act As A Role</a>
+                    <a class="dropdown-item" href="{{ url_for('View:logout') }}">Logout</a>
                 </div>
             {% else %}
                 <a class="nav-link" id="navbarLogin" role="button" href="{{ url_for('View:index') }}">Login</a>
@@ -64,3 +64,18 @@
         </div>
     </div>
 </nav>
+
+{% if session['ADMIN-VIEWER'] %}
+    <nav class="navbar navbar-expand-lg navbar-dark custom-user-nav">
+        <div class="collapse navbar-collapse custom-user-div" id="navbarSupportedContent">
+            <form action="{{ url_for('UsersView:reset_act_as') }}" method="post">
+                <p class="custom-user-p">Viewing
+                    {% if session['ADMIN-USERNAME'] %}
+                        user: [{{ session['USERNAME'] }}]
+                    {% endif %}
+                    | Return to your <button id="reset-act-as-button" class="transparent" type="submit">account</button>.
+                </p>
+            </form>
+        </div>
+    </nav>
+{% endif %}
