@@ -73,8 +73,8 @@
                 <div class="form-group">
                     <label for="multilingual">Multilingual Appointment</label>
                     <select class="form-control" id="multilingual">
-                        <option id="m-yes">Yes</option>
-                        <option id="m-no">No</option>
+                        <option id="m-yes" value="1">Yes</option>
+                        <option id="m-no" value="0">No</option>
                     </select>
                 </div>
             </div>
@@ -82,8 +82,8 @@
                 <div class="form-group">
                     <label for="drop-in">Drop-in Hours Appointment</label>
                     <select class="form-control" id="drop-in">
-                        <option id="d-yes">Yes</option>
-                        <option id="d-no">No</option>
+                        <option id="d-yes" value="1">Yes</option>
+                        <option id="d-no" value="0">No</option>
                     </select>
                 </div>
             </div>
@@ -175,7 +175,6 @@
         });
 
         $('#add-schedule-ts').click(function () {
-            alert(this.id);
             let startTime = $('#start-time').val();
             let endTime = $('#end-time').val();
             let isActive = $('#isActive option:selected').text();
@@ -199,8 +198,8 @@
         $('#add-shifts').click(function () {
             let startDate = $('#start-date').val();
             let endDate = $('#end-date').val();
-            let multilingual = $('#multilingual option:selected').text();
-            let dropIn = $('#drop-in option:selected').text();
+            let multilingual = $('#multilingual option:selected').val();
+            let dropIn = $('#drop-in option:selected').val();
             let tutors = $('#tutors option:selected').text();
             let days = $('#days option:selected').val();
             let timeSlots = $('#times option:selected').text();

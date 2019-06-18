@@ -21,8 +21,10 @@ class SchedulesView(FlaskView):
         tutors = self.sc.get_tutors()
         return render_template("schedules/create_schedule.html", **locals())
 
-    @route('/center-manager/manage-tutor-schedules')
+    @route('/manage-tutor-schedules')
     def manage_tutor_schedules(self):
+        schedules = self.sc.get_schedules()
+        tutors = self.sc.get_tutors()
         return render_template('schedules/manage_tutor_schedules.html', **locals())
 
     def view_tutor_schedules(self):
@@ -58,6 +60,8 @@ class SchedulesView(FlaskView):
         start_date = str(json.loads(request.data).get('startDate'))
         end_date = str(json.loads(request.data).get('endDate'))
         # TODO IF START_DATE AND END_DATE ARE EQUAL SET DANGER MESSAGE AND RETURN TO PAGE
+        if start_date == end_date:
+            self.wcc.set_alert('danger', 'No Appointments Made! Start Date and End Date must be different days!')
         multilingual = str(json.loads(request.data).get('multilingual'))
         drop_in = str(json.loads(request.data).get('dropIn'))
         tutors = str(json.loads(request.data).get('tutors'))
