@@ -93,15 +93,18 @@
     </div>
     <div class="form-row">
         <div class="form-group col-md-4">
-            <label for="lookup-tutor-username" style="display: block;"><b>Tutors</b></label>
-            <select id="lookup-tutor-username" class="chosen-container" size="7" multiple="multiple">
+            <label for="tutors-schedule" style="display: block;"><b>Tutors</b></label>
+            <select id="tutors-schedule" class="chosen-container" size="7" onchange="tutorChanged()">
                 {% for tutor in tutors %}
                     <option id="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
                 {% endfor %}
             </select>
         </div>
     </div>
-
+    {# spinner placeholder #}
+    <div id="spinner" class="spinner" style="display: none; position: absolute; margin-top: -300px;">
+        <img id="img-spinner" class="spinner-img" src="https://cdn1.bethel.edu/images/load.gif" alt="Loading"/>
+    </div>
     <div id="calendar"></div>
 
     <script>
@@ -149,15 +152,24 @@
             });
         });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
+        var calendarEl = document.getElementById('calendar');
 
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                plugins: [ 'dayGrid' ]
-            });
-
-            calendar.render();
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            plugins: ['dayGrid', 'interaction'],
+            events: [
+                                    {
+                            title: 'test1',
+                            start: '2019-06-20T12:30:00',
+                            end: '2019-06-20T02:30:00'
+                        }, {
+                            title: 'test2',
+                            start: '2019-06-29T12:30:00',
+                            end: '2019-06-30T02:30:00'
+                        }
+            ]
         });
+
+        calendar.render();
 
         $('#add-shifts').click(function () {
             let startDate = $('#start-date').val();
@@ -187,5 +199,33 @@
                 }
             });
         });
+
+        function tutorChanged() {
+            $('#spinner').show();
+            let tutorName = $('#tutors-schedule option:selected').text();
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('SchedulesView:show_tutor_schedule') }}",
+                data: JSON.stringify({
+                    'tutorName': tutorName,
+                }),
+                contentType: 'application/json;charset=UTF-8',
+                success: function (response) {
+                    calendar.removeAllEvents();
+                    let i = 0;
+                    for (i; i < response.length; i ++) {
+                        calendar.addEvent({
+                            title: response[i].studentUsername,
+                            start: response[i].startTime,
+                            end: response[i].endTime
+                        });
+                    }
+                    $('#spinner').hide();
+                },
+                error: function (error) {
+
+                }
+            });
+        }
     </script>
 {% endblock %}
