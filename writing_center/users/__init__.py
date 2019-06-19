@@ -150,7 +150,7 @@ class UsersView(FlaskView):
                 flask_session['USER-ROLES'].append(role.name)
         return redirect(url_for('View:index'))
 
-    @route('/reset-act-as', methods=['post'])
+    @route('/reset-act-as', methods=['POST'])
     def reset_act_as(self):
         if flask_session['ADMIN-VIEWER']:
             try:
@@ -170,4 +170,3 @@ class UsersView(FlaskView):
         else:
             self.wcc.set_alert('danger', 'You do not have permission to access this function')
             return redirect(url_for('View:index'))
-
