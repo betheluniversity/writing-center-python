@@ -7,7 +7,7 @@
     </div>
 
     <div class="message-box">
-        <form id="message-user-form" action="#">
+        <form id="message-user-form" action="{{ url_for('MessageCenterView:send_message')}}">
             <label for="user-search">User:</label>
             <input class="message-form" type="text" name="user-search" id="user-search"/>
             <!--We should be able to type the name of the person we want and it comes up, similar to google docs
@@ -19,7 +19,7 @@
             <input class="message-form" type="text" name="message-text" id="message-text"/>
 
             <br/>
-            <input type="button" name="submit" value="Submit">
+            <input class="message-form" type="button" name="submit" value="Submit">
         </form>
     </div>
 {% endblock %}
