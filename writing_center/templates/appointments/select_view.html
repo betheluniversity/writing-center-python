@@ -16,7 +16,9 @@
         <div class="form-group col-md-auto">
             <a id="first-year" class="btn btn-primary" href="{{ url_for('AppointmentsView:view_yearly_appointments', selected_year=2014) }}">{{ 2014 }}</a>
             {% for year in years %}
-                <a class="btn btn-primary" href="{{ url_for('AppointmentsView:view_yearly_appointments', selected_year=year) }}">{{ year }}</a>
+                {% if year != 2014 %}
+                    <a class="btn btn-primary" href="{{ url_for('AppointmentsView:view_yearly_appointments', selected_year=year) }}">{{ year }}</a>
+                {% endif %}
             {% endfor %}
         </div>
     </div>
