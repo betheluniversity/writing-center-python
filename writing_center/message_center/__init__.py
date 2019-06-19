@@ -3,14 +3,15 @@ from flask import render_template, request, redirect, url_for
 from flask_classy import FlaskView, route
 
 # Local
+from writing_center import app
 from writing_center.message_center.message_center_controller import MessageCenterController
 
 
 class MessageCenterView(FlaskView):
-    route_base = 'message'
+    route_base = 'message-center'
 
     def __init__(self):
-        pass
+        self.base = MessageCenterController()
 
     @route('/')
     def index(self):
@@ -22,9 +23,9 @@ class MessageCenterView(FlaskView):
 
     @route('/message-preferences')
     def message_preferences(self):
-        prefs = message_center_controller.get_message_preferences()
+        prefs = self.base.get_message_preferences()
         return render_template('message_center/preferences.html', **locals())
 
     def change_message_preferences(self):
         data = request.form.to_dict()
-        return message_center_controller.manage_message_preferences(data['substitute'], data['shift'])
+        return self.base.manage_message_preferences(data['substitute'], data['shift'])

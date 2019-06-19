@@ -8,8 +8,8 @@
 
     <div class="message-box">
         <form id="message-user-form" action="{{ url_for('MessageCenterView:send_message')}}">
-            <label for="user-search">User:</label>
-            <input class="message-form" type="text" name="user-search" id="user-search"/>
+            <label for="user-search">Recipient:</label>
+            <input class="message-form" type="text" name="recipient" id="recipient"/>
             <!--We should be able to type the name of the person we want and it comes up, similar to google docs
             Also options initially to message all students or all tutors -->
             <label for="subject">Subject:</label>

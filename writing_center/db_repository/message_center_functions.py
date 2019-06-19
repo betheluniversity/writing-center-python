@@ -9,7 +9,7 @@ class MessageCenter:
     def get_email_preferences(self, user_id):
         return (db_session.query(WCEmailPreferencesTable)
                 .filter(WCEmailPreferencesTable.id == user_id)
-                .all())
+                .one())
 
     def change_email_preferences(self, substitute, shift, user_id):
         row = self.get_email_preferences(user_id)
@@ -20,4 +20,4 @@ class MessageCenter:
     def get_appointment_info(self, appointment_id):
         return (db_session.query(WCAppointmentDataTable)
                 .filter(WCAppointmentDataTable.ID == appointment_id)
-                .all())
+                .one())

@@ -16,11 +16,11 @@ class MessageCenterController:
         self.user = UserFunctions()
 
     def manage_message_preferences(self, substitute, shift):
-        self.message_center.change_email_preferences(substitute, shift, session['user_id'])
+        self.message_center.change_email_preferences(substitute, shift, self.user.get_user(session['USERNAME']).id)
         return render_template('message_center/preferences.html', **locals())
 
     def get_message_preferences(self):
-        return self.message_center.get_email_preferences(session['user_id'])
+        return self.message_center.get_email_preferences(self.user.get_user(session['USERNAME']).id)
 
     def close_session_email(self, appointment_id):  # TODO: refactor to work with appointments
         appointment = self.message_center.get_appointment_info(appointment_id)

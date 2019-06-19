@@ -9,7 +9,7 @@ class UserFunctions:
     def get_user(self, username):
         return (db_session.query(UserTable)
                 .filter(UserTable.username == username)
-                .all())
+                .one())
 
     def get_end_of_session_recipients(self, appointment_id):
         appointment = (db_session.query(WCAppointmentDataTable)
@@ -22,4 +22,4 @@ class UserFunctions:
     def get_user_roles(self, user_id):
         return (db_session.query(UserRoleTable)
                 .filter(UserRoleTable.user_id == user_id)
-                .all())
+                .one())
