@@ -42,6 +42,11 @@ class SchedulesController:
             .filter(UserTable.lastName == lastName)\
             .one_or_none()
 
+    def get_user_by_username(self, username):
+        return db_session.query(UserTable)\
+            .filter(UserTable.username == username)\
+            .one_or_none()
+
     def get_tutors(self):
         return db_session.query(UserTable)\
             .filter(UserTable.id == UserRoleTable.user_id)\
@@ -78,17 +83,7 @@ class SchedulesController:
         except:
             end_ts = datetime.strptime(end_ts, '%H:%M %p')
 
-        # Gets the tutor's first name, last name
-        tutor_name = tutor_name.split(" ")
-        firstname = tutor_name[0]
-        lastname = tutor_name[1]
-        # If a tutor has multiple last names, we use this loop to get them all
-        if len(tutor_name) > 2:
-            lastname = ""
-            for i in range(1, len(tutor_name)):
-                lastname += tutor_name[i] + " "
-        # Gets the tutor's username
-        tutor = self.get_user_by_name(firstname, lastname)
+        tutor = self.get_username_from_name(tutor_name)
 
         if multilingual == "Yes":
             multilingual = 1
@@ -126,30 +121,22 @@ class SchedulesController:
             else:
                 first_date += timedelta(days=1)  # if it hasn't matched, add a day and check again
 
+    def get_tutor_appointments(self, tutor_name):
+        tutor = self.get_username_from_name(tutor_name)
+        appointments = db_session.query(WCAppointmentDataTable).filter(WCAppointmentDataTable.TutorUsername == tutor.username).all()
 
+        return appointments
 
-
-        # class WCAppointmentDataTable(base):
-        #     __tablename__ = 'WCAppointmentData'
-        #     ID = Column(Integer, primary_key=True)
-        #     StudUsername = Column(String(255))
-        #     TutorUsername = Column(String(255))
-        #     Program = Column(String(255))
-        #     StartTime = Column(DateTime)
-        #     EndTime = Column(DateTime)
-        #     ActualStartTime = Column(DateTime)
-        #     CompletedTime = Column(DateTime)
-        #     CheckIn = Column(Integer)
-        #     StudentSignIn = Column(DateTime)
-        #     StudentSignOut = Column(DateTime)
-        #     ProfEmail = Column(String(255))
-        #     RequestSub = Column(String(255))
-        #     Assignment = Column(String(255))
-        #     Notes = Column(String(255))
-        #     Suggestions = Column(String(255))
-        #     multilingual = Column(Integer)
-        #     CourseCode = Column(String(255))
-        #     ProfUsername = Column(String(255))
-        #     CourseSection = Column(Integer)
-        #     DropInAppt = Column(Integer)
-        # )
+    def get_username_from_name(self, name):
+        # Gets the tutor's first name, last name
+        name = name.split(" ")
+        firstname = name[0]
+        lastname = name[1]
+        # If a tutor has multiple last names, we use this loop to get them all
+        if len(name) > 2:
+            lastname = ""
+            for i in range(1, len(name)):
+                lastname += name[i] + " "
+        # Gets the tutor's username
+        name = self.get_user_by_name(firstname, lastname)
+        return name

@@ -52,7 +52,6 @@ def utility_processor():
 
 def datetimeformat(value, custom_format=None):
     if value:
-
         if custom_format:
             return value.strftime(custom_format)
 
@@ -63,9 +62,9 @@ def datetimeformat(value, custom_format=None):
             return 'noon'
 
         if value.strftime('%M') == '00':
-            time = datetime.min.strftime('%l')
+            time = value.strftime('%l')
         else:
-            time = datetime.min.strftime('%l:%M')
+            time = value.strftime('%l:%M')
 
         if value.strftime('%p') == 'PM':
             time = '{0} {1}'.format(time, 'p.m.')

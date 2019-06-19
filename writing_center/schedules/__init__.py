@@ -1,5 +1,5 @@
 from flask_classy import FlaskView, route, request
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect, url_for, jsonify
 from datetime import datetime
 
 import json
@@ -70,3 +70,32 @@ class SchedulesView(FlaskView):
         # TODO IF TUTORS, DAYS, OR TIME_SLOTS ARE EMPTY THEN RETURN TO PAGE
         self.sc.create_tutor_shifts(start_date, end_date, multilingual, drop_in, tutors, days, time_slots)
         return redirect(url_for('SchedulesView:create_schedule'))
+
+    @route('/show-schedule', methods=['POST'])
+    def show_tutor_schedule(self):
+        name = str(json.loads(request.data).get('tutorName'))
+        tut_appts = self.sc.get_tutor_appointments(name)
+        appointments = []
+        for appointment in tut_appts:
+            start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.StartTime.year,
+                                                          appointment.StartTime.strftime('%m'),
+                                                          appointment.StartTime.strftime('%d'),
+                                                          appointment.StartTime.strftime('%I'),
+                                                          appointment.StartTime.strftime('%M'),
+                                                          appointment.StartTime.strftime('%S'))
+            end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.EndTime.year, appointment.EndTime.strftime('%m'),
+                                                        appointment.EndTime.strftime('%d'),
+                                                        appointment.EndTime.strftime('%I'),
+                                                        appointment.EndTime.strftime('%M'),
+                                                        appointment.EndTime.strftime('%S'))
+            appointments.append({
+                'id': appointment.ID,
+                'studentUsername': appointment.StudUsername,
+                'tutorUsername': appointment.TutorUsername,
+                'startTime': start_time,
+                'endTime': end_time,
+                'multilingual': appointment.multilingual,
+                'dropIn': appointment.DropInAppt
+            })
+        print(appointments)
+        return jsonify(appointments)
