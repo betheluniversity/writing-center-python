@@ -97,5 +97,4 @@ class SchedulesView(FlaskView):
                 'multilingual': appointment.multilingual,
                 'dropIn': appointment.DropInAppt
             })
-        print(appointments)
         return jsonify(appointments)
