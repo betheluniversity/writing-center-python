@@ -6,20 +6,80 @@
         <p>Send a message to an individual student, all students, or all tutors</p>
     </div>
 
-    <div class="message-box">
-        <form id="message-user-form" action="{{ url_for('MessageCenterView:send_message')}}">
-            <label for="user-search">Recipient:</label>
-            <input class="message-form" type="text" name="recipient" id="recipient"/>
-            <!--We should be able to type the name of the person we want and it comes up, similar to google docs
-            Also options initially to message all students or all tutors -->
-            <label for="subject">Subject:</label>
-            <input class="message-form" type="text" name="subject" id="subject"/>
-            
-            <label for="message-text">Message Text:</label>            
-            <input class="message-form" type="text" name="message-text" id="message-text"/>
-
-            <br/>
-            <input class="message-form" type="button" name="submit" value="Submit">
-        </form>
+    <div class="custom-default row">
+        <div class="col-md-8">
+            <form action="{{ url_for('MessageCenterView:send_email') }}" method="post">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="choose-recipients">Recipient Groups</label>
+                        <select name="groups" class="chosen form-control" id="choose-recipients" multiple="true"
+                            data-placeholder="Choose recipients ...">
+                            {% for role in role_list %}
+                            <option value="{{ role.id }}">{{ role.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="subject">Subject</label>
+                        <input name="subject" type="text" class="form-control chosen-container chosen-format" id="subject"
+                            autocomplete="off">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-3 btn-group">
+                        <button type="button" class="button-curved blue btn btn-primary" id="show-cc"
+                            onclick="ccFunction()">CC</button>
+                        <button type="button" class="button-curved blue btn btn-primary" id="show-bcc"
+                            onclick="bccFunction()">BCC</button>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div id="cc-div" class="form-group col-md-12 chosen-container email">
+                        <label for="choose-cc">CC</label>
+                        <select name="cc" class="chosen form-control" id="choose-cc" multiple="true"
+                            data-placeholder="Choose CC recipients ...">
+                            {% for user in user_list %}
+                            <option value="{{ user.id }}">{{ user.firstName }} {{ user.lastName }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div id="bcc-div" class="form-group col-md-12 chosen-container email">
+                        <label for="choose-bcc">BCC</label>
+                        <select name="bcc" class="chosen form-control" id="choose-bcc" multiple="true"
+                            data-placeholder="Choose BBC recipients ...">
+                            {% for user in user_list %}
+                            <option value="{{ user.id }}">{{ user.firstName }} {{ user.lastName }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="subject">Message</label>
+                        <textarea name="message" class="form-control" rows="15" cols="67"></textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <button type="submit" class="btn blue btn-primary" id="send-email">Send</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <div class="sub-info card info">
+                <div class="card-body">
+                    <p class="card-text">
+                        This section gives you the option to email users. These
+                        emails are only sent to users who are set to active in the system. See the
+                        <span class="button-labels">Users</span> tab for more information on the users currently in
+                        the system. When the email is sent, all users will be BCC’d, so that Bethel username
+                        information will not appear in the email.
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

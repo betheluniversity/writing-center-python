@@ -33,3 +33,8 @@ class MessageCenterView(FlaskView):
     def toggle_shift(self):
         data = request.form()
         return self.base.toggle_shift(data['shift'])
+    
+    @route('confirm', methods=['POST'])
+    def send_email(self):
+        data = request.form()
+        return self.base.send_message(data['subject'], data['body'], data['recipients'], data['bcc'])
