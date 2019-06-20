@@ -1,91 +1,231 @@
-{% extends 'writing_center_base.html' %}
+{% extends 'schedules/base.html' %}
 
 {% block body_content %}
     <div class="jumbotron">
         <h1><b>Manage Tutor Schedules</b></h1>
         <p>Assign shifts to a Tutor or view a Tutor's schedule.</p>
     </div>
-    <form>
-        <div class="form-row">
-            <div class="form-group col-md-12">
-                <h3>Assign Shifts to a Tutor</h3>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-4">
-                <label for="startdate"><b>Click Start Date:</b></label>
-                <input type="datetime" id="startdate" class="date hasDatepicker chosen-container" style="width: 90%" placeholder="Choose a Starting Date..." readonly>
-            </div>
-            <div class="form-group col-md-4">
-                <label for="enddate"><b>Click End Date:</b></label>
-                <input type="datetime" id="enddate" class="date hasDatepicker chosen-container" style="width: 90%" placeholder="Choose an Ending Date..." readonly>
-            </div>
-            <div class="form-group col-md-2">
-                <label for="multilingual"><b>Multilingual Appointment</b></label>
-                <select id="multilingualSelect" name="multilingual" class="chosen-container">
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-            <div class="form-group col-md-2">
-                <label for="drop-in"><b>Drop-In Hours Appointment</b></label>
-                <select id="dropInSelect" name="drop-in" class="chosen-container">
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-4">
-                <label for="tutorSelect"><b>Select Tutors</b></label>
-                <select id="tutorSelect" class="chosen-container" size="7" multiple="multiple"></select>
-            </div>
-            <div class="form-group col-md-4">
-                <label for="manageTutorsDays"><b>Select Days</b></label>
-                <select id="manageTutorsDays" class="chosen-container" size="7" multiple="multiple">
-                    <option value="Monday">Monday</option>
-                    <option value="Tuesday">Tuesday</option>
-                    <option value="Wednesday">Wednesday</option>
-                    <option value="Thursday">Thursday</option>
-                    <option value="Friday">Friday</option>
-                    <option value="Saturday">Saturday</option>
-                    <option value="Sunday">Sunday</option>
-                </select>
-            </div>
-            <div class="form-group col-md-4">
-                <label for="timeSelect"><b>Select Time Slots</b></label>
-                <select id="timeSelect" class="chosen-container" size="7" multiple="multiple"></select>
-            </div>
-        </div>
-        <hr>
-        <div class="form-row">
-            <div class="form-group col-md-12">
-                <h3>View Tutor Schedule</h3>
-                <p>Click a tutor or multiple tutors to have their schedules display.</p>
-                <p>If you assign shifts to a tutor, make sure you click the tutor's name here to see the new shifts.</p>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-4">
-                <label for="lookup-tutor-username" style="display: block;"><b>Tutors</b></label>
-                <select id="lookup-tutor-username" class="chosen-container" size="7" multiple="multiple"></select>
-            </div>
-        </div>
 
-        <div id="calendar"></div>
+    <form>
+        <h3>Assign Shifts to Tutors</h3>
+        <div class="form-row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="start-date">Start Date</label>
+                    <input class="form-control datepicker" id="start-date" type="text" readonly/>
+                    <div id="start-container"></div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="end-date">End Date</label>
+                    <input class="form-control datepicker" id="end-date" type="text" readonly/>
+                    <div id="end-container"></div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="multilingual">Multilingual Appointment</label>
+                    <select class="form-control" id="multilingual">
+                        <option id="m-yes" value="1">Yes</option>
+                        <option id="m-no" value="0">No</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="drop-in">Drop-in Hours Appointment</label>
+                    <select class="form-control" id="drop-in">
+                        <option id="d-yes" value="1">Yes</option>
+                        <option id="d-no" value="0">No</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="tutors">Select Tutors</label>
+                    <select class="form-control" id="tutors">
+                        {% for tutor in tutors %}
+                            <option id="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="days">Select Days</label>
+                    <select class="form-control" id="days">
+                    <option value="0">Monday</option>
+                    <option value="1">Tuesday</option>
+                    <option value="2">Wednesday</option>
+                    <option value="3">Thursday</option>
+                    <option value="4">Friday</option>
+                    <option value="5">Saturday</option>
+                    <option value="6">Sunday</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="times">Select Time Slots</label>
+                    <select class="form-control" id="times">
+                        {% for schedule in schedules %}
+                            <option id="{{ schedule.id }}">{{ schedule.timeStart|datetimeformat }} - {{ schedule.timeEnd|datetimeformat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <button id="add-shifts" name="submit-shifts" type="submit" class="btn btn-primary">Submit</button>
+        </div>
     </form>
 
-        <script>
+    <hr>
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <h3>View Tutor Schedule</h3>
+            <p>Click a tutor or multiple tutors to have their schedules display.</p>
+            <p>If you assign shifts to a tutor, make sure you click the tutor's name here to see the new shifts.</p>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-4">
+            <label for="tutors-schedule" style="display: block;"><b>Tutors</b></label>
+            <select id="tutors-schedule" class="chosen-container" size="7" multiple onchange="tutorsChanged()">
+                {% for tutor in tutors %}
+                    <option id="{{ tutor.id }}" value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    {# spinner placeholder #}
+    <div id="spinner" class="spinner" style="display: none; position: absolute; margin-top: -300px;">
+        <img id="img-spinner" class="spinner-img" src="https://cdn1.bethel.edu/images/load.gif" alt="Loading"/>
+    </div>
+    <div id="calendar"></div>
 
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
+    <script>
+        $(document).ready(function () {
+            $('.datepicker').each(function () {
+                var current_element = $(this);
+                let maxDate = new Date();
+                let dd = maxDate.getDate();
+                let mm = maxDate.getMonth() + 1;
+                let yyyy = maxDate.getFullYear() + 2;
+                if (dd < 10) {
+                  dd = '0' + dd;
+                }
 
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                plugins: [ 'dayGrid' ]
+                if (mm < 10) {
+                  mm = '0' + mm;
+                }
+                maxDate = yyyy + '-' + mm + '-' + dd;
+                var starting_values = {
+                    field: this,
+                    format: 'MM DD YYYY',
+                    minDate: new Date('2010-01-01'),
+                    maxDate: new Date(maxDate),
+                    yearRange: [2010, yyyy],
+                    disableDayFn: function (date) {
+                        var start_populated = $("#start-date").val();
+                        var end_populated = $("#end-date").val();
+                        if (start_populated == "" && end_populated == "") {
+                            return null;
+                        } else if (start_populated != "" && current_element.attr('id') == 'end-date') {
+                            if (new Date(start_populated) >= date) {
+                                return date;
+                            }
+                        } else if (end_populated != "" && current_element.attr('id') == 'start-date') {
+                            if (new Date(end_populated) <= date) {
+                                return date;
+                            }
+                        }
+                    }
+                };
+                starting_values['defaultDate'] = new Date();
+                starting_values['setDefaultDate'] = true;
+
+                var picker = new Pikaday(starting_values);
             });
-
-            calendar.render();
         });
 
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            plugins: ['dayGrid', 'interaction'],
+            events: [
+                                    {
+                            title: 'test1',
+                            start: '2019-06-20T12:30:00',
+                            end: '2019-06-20T02:30:00'
+                        }, {
+                            title: 'test2',
+                            start: '2019-06-29T12:30:00',
+                            end: '2019-06-30T02:30:00'
+                        }
+            ]
+        });
+
+        calendar.render();
+
+        $('#add-shifts').click(function () {
+            let startDate = $('#start-date').val();
+            let endDate = $('#end-date').val();
+            let multilingual = $('#multilingual option:selected').val();
+            let dropIn = $('#drop-in option:selected').val();
+            let tutors = $('#tutors option:selected').text();
+            let days = $('#days option:selected').val();
+            let timeSlots = $('#times option:selected').text();
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('SchedulesView:add_tutors_to_shifts') }}",
+                async: false,
+                data: JSON.stringify({
+                    'startDate': startDate,
+                    'endDate': endDate,
+                    'multilingual': multilingual,
+                    'dropIn': dropIn,
+                    'tutors': tutors,
+                    'days': days,
+                    'timeSlots': timeSlots,
+                }),
+                contentType: 'application/json;charset=UTF-8',
+                success: function (response) {
+                },
+                error: function (error) {
+                }
+            });
+        });
+
+        function tutorsChanged() {
+            $('#spinner').show();
+            let tutors = $("#tutors-schedule option:selected").map(function(){ return this.text }).get().join(", ");
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('SchedulesView:show_tutor_schedule') }}",
+                data: JSON.stringify({
+                    'tutors': tutors,
+                }),
+                contentType: 'application/json;charset=UTF-8',
+                success: function (response) {
+                    calendar.removeAllEvents();
+                    let i = 0;
+                    for (i; i < response.length; i ++) {
+                        calendar.addEvent({
+                            title: response[i].tutorUsername,
+                            start: response[i].startTime,
+                            end: response[i].endTime
+                        });
+                    }
+                    $('#spinner').hide();
+                },
+                error: function (error) {
+
+                }
+            });
+        }
     </script>
 {% endblock %}

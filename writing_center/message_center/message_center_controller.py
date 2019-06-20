@@ -77,3 +77,4 @@ class MessageCenterController:
             print("Failed to send message: {}".format(body))
             return False
         return True
+

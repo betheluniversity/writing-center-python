@@ -29,21 +29,29 @@
             <!-- Popper JS -->
             <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
 
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/js/bootstrap-datepicker.min.js"></script>
+
             <!-- Latest compiled JavaScript -->
             <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 
             <!-- Full Calendar Javascript -->
             <script src="{{ url_for('static', filename='core-main.min.js') }}"></script>
             <script src="{{ url_for('static', filename='daygrid-main.min.js') }}"></script>
+            <script src="{{ url_for('static', filename='interaction-main.min.js') }}"></script>
 
+            <!-- Pikaday Javascript -->
+            <script src="https://dbushell.com/Pikaday/pikaday.js"></script>
+      
              <!-- JQuery/JS for DataTables -->
             <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-
 
             {% block styles %}
                 <!-- Full Calendar CSS -->
                 <link rel="stylesheet" href="{{ url_for('static', filename='core-main.min.css') }}">
                 <link rel="stylesheet" href="{{ url_for('static', filename='daygrid-main.min.css') }}">
+
+                <!-- Pikaday CSS -->
+                <link href="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.5.1/css/pikaday.min.css" rel="stylesheet"/>
 
                 <!-- CSS for DataTables -->
                 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css">
@@ -51,7 +59,7 @@
 
         {% endblock %}
 
-        {% include 'nav.html' %}
+        {% block nav %}{% include 'nav.html' %}{% endblock %}
 
          <div class="nav margins">{% block subnav %}{% endblock %}</div>
 

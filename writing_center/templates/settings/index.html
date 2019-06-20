@@ -68,11 +68,23 @@
     <script type="text/javascript">
         $(document).ready(function(){
 
+            function makeChange(setting_name, new_setting){
+                var url = '{{ url_for("SettingsView:change_settings") }}';
+                var settings = {
+                    'setting_name': setting_name,
+                    'new_setting': new_setting
+                };
+                $.post(url, settings, function(){
+                    window.location.replace('{{ url_for("SettingsView:index") }}');
+                });
+            }
+
             $('#edit-app-limit').click(function(){
                 if($(this).text() === "Edit") {
                     $(this).text("Submit");
                     document.getElementById("app-limit").disabled = false;
                 }else{
+                    makeChange('apptLimit', $('#app-limit').val());
                     $(this).text("Edit");
                     document.getElementById("app-limit").disabled = true;
                 }
@@ -83,6 +95,7 @@
                     $(this).text("Submit");
                     document.getElementById("time-limit").disabled = false;
                 }else{
+                    makeChange('timeLimit', $('#time-limit').val());
                     $(this).text("Edit");
                     document.getElementById("time-limit").disabled = true;
                 }
@@ -93,6 +106,7 @@
                     $(this).text("Submit");
                     document.getElementById("ban-limit").disabled = false;
                 }else{
+                    makeChange('banLimit', $('#ban-limit').val());
                     $(this).text("Edit");
                     document.getElementById("ban-limit").disabled = true;
                 }
@@ -103,6 +117,7 @@
                     $(this).text("Submit");
                     document.getElementById("qualtrics").disabled = false;
                 }else{
+                    makeChange('qualtricsLink', $('#qualtrics').val());
                     $(this).text("Edit");
                     document.getElementById("qualtrics").disabled = true;
                 }

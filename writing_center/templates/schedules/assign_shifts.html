@@ -1,0 +1,120 @@
+{% block body_content %}
+    <h3>Assign Shifts to Tutors</h3>
+    <form>
+        <div class="form-row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="start-date">Start Date</label>
+                    <input class="form-control datepicker" id="start-date" type="text"/>
+                    <div id="start-container"></div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="end-date">End Date</label>
+                    <input class="form-control datepicker" id="end-date" type="text"/>
+                    <div id="end-container"></div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="multilingual">Multilingual Appointment</label>
+                    <select class="form-control" id="multilingual">
+                        <option id="m-yes">Yes</option>
+                        <option id="m-no">No</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="drop-in">Drop-in Hours Appointment</label>
+                    <select class="form-control" id="drop-in">
+                        <option id="d-yes">Yes</option>
+                        <option id="d-no">No</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="tutors">Select Tutors</label>
+                    <select class="form-control" id="tutors" multiple>
+                        {% for tutor in tutors %}
+                            <option id="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="days">Select Days</label>
+                    <select class="form-control" id="days" multiple>
+                    <option value="Monday">Monday</option>
+                    <option value="Tuesday">Tuesday</option>
+                    <option value="Wednesday">Wednesday</option>
+                    <option value="Thursday">Thursday</option>
+                    <option value="Friday">Friday</option>
+                    <option value="Saturday">Saturday</option>
+                    <option value="Sunday">Sunday</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="times">Select Time Slots</label>
+                    <select class="form-control" id="times" multiple>
+                        {% for schedule in schedules %}
+                            <option id="{{ schedule.id }}">{{ schedule.timeStart|datetimeformat }} - {{ schedule.timeEnd|datetimeformat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <button id="add-shifts" name="submit-shifts" type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+
+    <script>
+        $(document).ready(function () {
+            $('#add-shifts').click(function() {
+                alert('hit');
+                let startDate = $('#start-date').val();
+                let endDate = $('#end-date').val();
+                let multilingual = $('#multilingual option:selected').text();
+                let dropIn = $('#drop-in option:selected').text();
+                let tutors = $('#tutors option:selected').text();
+                let days = $('#days option:selected').text();
+                let timeSlots = $('#times option:selected').text();
+                alert(startDate);
+                alert(endDate);
+                alert(multilingual);
+                alert(dropIn);
+                alert(tutors);
+                alert(days);
+                alert(timeSlots);
+
+                $.ajax({
+                   type: "POST",
+                   url: {{ url_for('SchedulesView:add_tutors_to_shifts') }},
+                   async: false,
+                   data: JSON.stringify({
+                       'startDate': startDate,
+                       'endDate': endDate,
+                       'multilingual': multilingual,
+                       'dropIn': dropIn,
+                       'tutors': tutors,
+                       'days': days,
+                       'timeSlots': timeSlots
+                   }),
+                   contentType: 'application/json;charset=UTF-8',
+                   success: function (response) {
+                   },
+                   error: function (error) {
+                   }
+                });
+            });
+        });
+    </script>
+{% endblock %}

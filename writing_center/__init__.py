@@ -8,6 +8,8 @@ from raven.contrib.flask import Sentry
 app = Flask(__name__)
 app.config.from_object('config')
 
+from writing_center.db_repository import db_session
+
 # sentry = Sentry(app, dsn=app.config['SENTRY_URL'], logging=True, level=logging.INFO)
 # if app.config['ENVIRON'] == 'prod':
 #     from writing_center import error
@@ -50,7 +52,6 @@ def utility_processor():
 
 def datetimeformat(value, custom_format=None):
     if value:
-
         if custom_format:
             return value.strftime(custom_format)
 
@@ -61,9 +62,9 @@ def datetimeformat(value, custom_format=None):
             return 'noon'
 
         if value.strftime('%M') == '00':
-            time = datetime.min.strftime('%l')
+            time = value.strftime('%l')
         else:
-            time = datetime.min.strftime('%l:%M')
+            time = value.strftime('%l:%M')
 
         if value.strftime('%p') == 'PM':
             time = '{0} {1}'.format(time, 'p.m.')
@@ -114,3 +115,10 @@ def before_request():
             flask_session['ADMIN-VIEWER'] = False
         if 'ALERT' not in flask_session.keys():
             flask_session['ALERT'] = []
+
+
+@app.after_request
+def close_db_session(response):
+    # This closes the db session to allow the data to propogate to all threads. It's available for use again right away.
+    db_session.close()
+    return response
