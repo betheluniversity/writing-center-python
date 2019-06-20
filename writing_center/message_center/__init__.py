@@ -26,6 +26,10 @@ class MessageCenterView(FlaskView):
         prefs = self.base.get_message_preferences()
         return render_template('message_center/preferences.html', **locals())
 
-    def change_message_preferences(self):
-        data = request.form.to_dict()
-        return self.base.manage_message_preferences(data['substitute'], data['shift'])
+    def toggle_substitute(self):
+        data = request.form()
+        return self.base.toggle_substitute(data['substitute'])
+
+    def toggle_shift(self):
+        data = request.form()
+        return self.base.toggle_shift(data['shift'])

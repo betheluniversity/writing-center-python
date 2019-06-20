@@ -198,11 +198,13 @@ a.nav-link:focus, a.nav-link:hover.active {
 .enable {
     background-color: greenyellow;
     border-color: greenyellow;
+    color: black;
 }
 
 .disable {
     background-color: red;
     border-color: red;
+    color: black;
 }
 
 .message-form {

@@ -15,9 +15,13 @@ class MessageCenterController:
         self.message_center = MessageCenter()
         self.user = UserFunctions()
 
-    def manage_message_preferences(self, substitute, shift):
-        self.message_center.change_email_preferences(substitute, shift, self.user.get_user(session['USERNAME']).id)
-        return render_template('message_center/preferences.html', **locals())
+    def toggle_substitute(self, substitute):
+        self.message_center.change_email_preferences(substitute, self.message_center.get_email_preferences(self.user.get_user(session['USERNAME']).id).shift, self.user.get_user(session['USERNAME']).id)
+        return
+
+    def toggle_shift(self, shift):
+        print('made it to toggle shift')
+        return
 
     def get_message_preferences(self):
         return self.message_center.get_email_preferences(self.user.get_user(session['USERNAME']).id)

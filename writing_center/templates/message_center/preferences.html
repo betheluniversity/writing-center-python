@@ -6,9 +6,44 @@
         <p>Choose when to receive automated emails</p>
     </div>
 
-    <a class="btn btn-primary pref-button enable" id="substitute">Enable</a>
+    <button class="btn btn-primary pref-button enable" id="substitute" onclick="changeSubstituePref()">Enable</button> <!--need to include logic to reflect users preferences-->
     <label id="substitue-text">Receive an email when a tutor requests a substitute</label> <!--changes email preferences table to reflect this 'subscription-->
     <br/>
-    <a class="btn btn-primary pref-button disable" id="shift">Disable</a>
+    <button class="btn btn-primary pref-button enable" id="shift" onclick="changeShiftPref()">Enable</button>
     <label for="shift" id="shift-text">Receive an email when a student signs up for one of your shifts</label> <!--changes email preferences table to reflect this 'subscription-->
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        function changeSubstituePref() {
+            if($("#substitute").hasClass("enable")) {
+                $("#substitute").removeClass("enable").addClass("disable");
+                $("#substitute").text("Disable");
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ url_for("MessageCenterView:toggle_substitute") }}',
+                    data: {'substitute': 1}
+                })
+            }else {
+                $("#substitute").removeClass("disable").addClass("enable");
+                $("#substitute").text("Enable");
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ url_for("MessageCenterView:toggle_substitute") }}',
+                    data: {'substitute': 0}
+                })
+            }
+        }
+
+        function changeShiftPref() {
+            if($("#shift").hasClass("enable")) {
+                $("#shift").removeClass("enable").addClass("disable");
+                $("#shift").text("Disable");
+            }else {
+                $("#shift").removeClass("disable").addClass("enable");
+                $("#shift").text("Enable");
+            }
+        }
+    </script>
 {% endblock %}
