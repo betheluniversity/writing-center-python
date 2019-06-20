@@ -15,7 +15,7 @@
                         <select name="groups" class="chosen form-control" id="choose-recipients" multiple="true"
                             data-placeholder="Choose recipients ...">
                             {% for role in role_list %}
-                            <option value="{{ role.id }}">{{ role.name }}</option>
+                            <option value="{{ role.id }}">{{ role.name }}</option> <!--TODO: Get roles to place here-->
                             {% endfor %}
                         </select>
                     </div>
@@ -39,7 +39,7 @@
                         <select name="cc" class="chosen form-control" id="choose-cc" multiple="true"
                             data-placeholder="Choose CC recipients ...">
                             {% for user in user_list %}
-                            <option value="{{ user.id }}">{{ user.firstName }} {{ user.lastName }}</option>
+                            <option value="{{ user.id }}">{{ user.firstName }} {{ user.lastName }}</option> <!--TODO: Get users to place here-->
                             {% endfor %}
                         </select>
                     </div>
@@ -50,7 +50,7 @@
                         <select name="bcc" class="chosen form-control" id="choose-bcc" multiple="true"
                             data-placeholder="Choose BBC recipients ...">
                             {% for user in user_list %}
-                            <option value="{{ user.id }}">{{ user.firstName }} {{ user.lastName }}</option>
+                            <option value="{{ user.id }}">{{ user.firstName }} {{ user.lastName }}</option> <!--TODO: Get users to place here-->
                             {% endfor %}
                         </select>
                     </div>
@@ -77,7 +77,7 @@
                         <span class="button-labels">Users</span> tab for more information on the users currently in
                         the system. When the email is sent, all users will be BCC’d, so that Bethel username
                         information will not appear in the email.
-                    </p>
+                    </p> <!--TODO: Reword this to apply to the writing center stuff-->
                 </div>
             </div>
         </div>
