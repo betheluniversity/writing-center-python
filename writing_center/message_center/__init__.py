@@ -17,9 +17,9 @@ class MessageCenterView(FlaskView):
     def index(self):
         return render_template('message_center/index.html', **locals())
 
-    @route('/send-message')
-    def send_message(self):
-        return render_template('message_center/send-message.html', **locals())
+    @route('/send-email')
+    def send_email(self):
+        return render_template('message_center/send-email.html', **locals())
 
     @route('/message-preferences')
     def message_preferences(self):
@@ -27,14 +27,13 @@ class MessageCenterView(FlaskView):
         return render_template('message_center/preferences.html', **locals())
 
     def toggle_substitute(self):
-        data = request.form()
+        data = request.form
         return self.base.toggle_substitute(data['substitute'])
 
     def toggle_shift(self):
-        data = request.form()
+        data = request.form
         return self.base.toggle_shift(data['shift'])
     
-    @route('confirm', methods=['POST'])
-    def send_email(self):
-        data = request.form()
-        return self.base.send_message(data['subject'], data['body'], data['recipients'], data['bcc'])
+    @route('/send', methods=['POST'])
+    def send(self):
+        pass  # TODO: Work this out based on tutorlabs

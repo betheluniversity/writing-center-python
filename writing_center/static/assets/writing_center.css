@@ -238,3 +238,11 @@ a.nav-link:focus, a.nav-link:hover.active {
     padding: 10px;
     float: left;
 }
+
+.chosen-format {
+    border: 1px solid #aaa !important;
+    border-radius: 0 !important;
+    padding: 0 5px;
+    height: 29px;
+    font-size: .875rem !important;
+}
