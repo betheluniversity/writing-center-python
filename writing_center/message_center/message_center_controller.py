@@ -16,17 +16,19 @@ class MessageCenterController:
         self.user = UserFunctions()
 
     def toggle_substitute(self, substitute):
-        self.message_center.change_email_preferences(substitute, self.message_center.get_email_preferences(self.user.get_user(session['USERNAME']).id).shift, self.user.get_user(session['USERNAME']).id)
-        return
+        return self.message_center.change_email_preferences(substitute,
+                                                            self.message_center.get_email_preferences(self.user.get_user(session['USERNAME']).id).shift,
+                                                            self.user.get_user(session['USERNAME']).id)
 
     def toggle_shift(self, shift):
-        print('made it to toggle shift')
-        return
+        return self.message_center.change_email_preferences(shift,
+                                                            self.message_center.get_email_preferences(self.user.get_user(session['USERNAME']).id).substitute,
+                                                            self.user.get_user(session['USERNAME']).id)
 
     def get_message_preferences(self):
         return self.message_center.get_email_preferences(self.user.get_user(session['USERNAME']).id)
 
-    def close_session_email(self, appointment_id):  # TODO: refactor to work with appointments
+    def close_session_email(self, appointment_id):
         appointment = self.message_center.get_appointment_info(appointment_id)
         student = self.user.get_user(appointment.StudUsername)
 
