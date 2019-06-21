@@ -161,6 +161,10 @@ ul.list-group{
     padding: 3px;
 }
 
+.fc-unthemed td.fc-today {
+    background: yellow !important;
+}
+
 .nav.margins {
     padding: 0 2em;
 }

@@ -5,68 +5,56 @@
         <h1><b>View Tutor Schedule</b></h1>
         <p>Displays the appointments a tutor is assigned to.</p>
     </div>
-    <form>
-        <div class="form-row">
-            <div class="form-group col-md-12">
-                <h3>Calendar Color Key</h3>
-            </div>
+    <div class="row">
+        <div class="col-md-3">
+            <h3>Tutors</h3>
+            <select id="lookup-tutor-username" class="chosen-container" size="7" multiple="multiple"></select>
+                {% for tutor in tutors %}
+                {% endfor %}
+            <hr>
+            <br/>
+            <h3>Calendar Key</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Color</th>
+                        <th>Meaning</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="calendar-blue">Blue</td>
+                        <td>Open Appointment</td>
+                    </tr>
+                    <tr>
+                        <td class="calendar-orange">Orange</td>
+                        <td>Multilingual Appointment</td>
+                    </tr>
+                    <tr>
+                        <td class="calendar-green">Green</td>
+                        <td>Drop-in Hours</td>
+                    </tr>
+                    <tr>
+                        <td class="calendar-yellow">Yellow</td>
+                        <td>Current Date</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <hr>
-        <div class="form-row">
-            <div class="form-group col-md-1">
-
-            </div>
-            <div class="form-group col-md-1">
-                <b>Color</b>
-            </div>
-            <div class="form-group col-md-2">
-                <b>Type</b>
-            </div>
+        <div class="col-md-9">
+            <div id="calendar"></div>
         </div>
-        <div class="form-row">
-            <div class="form-group col-md-1 square-colors calendar-blue">
-
-            </div>
-            <div class="form-group col-md-1">
-                Blue
-            </div>
-            <div class="form-group col-md-2">
-                General Appointment
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-1 square-colors calendar-yellow">
-
-            </div>
-            <div class="form-group col-md-1">
-                Yellow
-            </div>
-            <div class="form-group col-md-2">
-                Multilingual Writing Support Appointment
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-1 square-colors calendar-green">
-
-            </div>
-            <div class="form-group col-md-1">
-                Green
-            </div>
-            <div class="form-group col-md-2">
-                Drop-in Hours
-            </div>
-        </div>
-        <hr>
-        <div class="form-row">
-            <div class="form-group col-md-4">
-                <label for="lookup-tutor-username" style="display: block;">Tutors</label>
-                <select id="lookup-tutor-username" class="chosen-container" size="7" multiple="multiple"></select>
-            </div>
-        </div>
-    </form>
-
-    <div id="calendar"></div>
-
+    </div>
+{#        <div class="form-row">#}
+{#            <div class="form-group col-md-4">#}
+{#                <label for="lookup-tutor-username" style="display: block;">Tutors</label>#}
+{#                <select id="lookup-tutor-username" class="chosen-container" size="7" multiple="multiple"></select>#}
+{#            </div>#}
+{#        </div>#}
+{#    </form>#}
+{##}
+{#    <div id="calendar"></div>#}
+{##}
     <script>
 
         document.addEventListener('DOMContentLoaded', function() {
