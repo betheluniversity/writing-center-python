@@ -43,7 +43,12 @@
          document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
-                plugins: [ 'dayGrid' ]
+                plugins: [ 'dayGrid' ],
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,dayGridWeek,dayGridDay'
+                },
             });
             calendar.render();
         });
