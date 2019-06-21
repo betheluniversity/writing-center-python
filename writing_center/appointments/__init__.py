@@ -1,5 +1,6 @@
 from flask_classy import FlaskView, route
-from flask import render_template
+from flask import render_template, jsonify
+from flask import session as flask_session
 from datetime import datetime
 
 from writing_center.appointments.appointments_controller import AppointmentsController
@@ -34,5 +35,35 @@ class AppointmentsView(FlaskView):
     def create_appointment(self):
         return render_template('appointments/create_appointment.html', **locals())
 
+    @route('view-appointments')
     def student_view_appointments(self):
         return render_template('appointments/student_view_appointments.html', **locals())
+
+    @route('get_appointments', methods=['GET'])
+    def get_users_appointments(self):
+        appts = self.ac.get_all_user_appointments(flask_session['USERNAME'])
+        appointments = []
+        for appointment in appts:
+            start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.ActualStartTime.year,
+                                                          appointment.ActualStartTime.strftime('%m'),
+                                                          appointment.ActualStartTime.strftime('%d'),
+                                                          appointment.ActualStartTime.strftime('%I'),
+                                                          appointment.ActualStartTime.strftime('%M'),
+                                                          appointment.ActualStartTime.strftime('%S'))
+            end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.CompletedTime.year,
+                                                        appointment.CompletedTime.strftime('%m'),
+                                                        appointment.CompletedTime.strftime('%d'),
+                                                        appointment.CompletedTime.strftime('%I'),
+                                                        appointment.CompletedTime.strftime('%M'),
+                                                        appointment.CompletedTime.strftime('%S'))
+            appointments.append({
+                'id': appointment.ID,
+                'studentUsername': appointment.StudUsername,
+                'tutorUsername': appointment.TutorUsername,
+                'startTime': start_time,
+                'endTime': end_time,
+                'multilingual': appointment.multilingual,
+                'dropIn': appointment.DropInAppt
+            })
+
+        return jsonify(appointments)
