@@ -122,13 +122,14 @@ class SchedulesController:
             else:
                 first_date += timedelta(days=1)  # if it hasn't matched, add a day and check again
 
-    def get_tutor_appointments(self, tutor_name):
-        tutor = self.get_username_from_name(tutor_name)
-        appointments = db_session.query(WCAppointmentDataTable)\
-            .filter(WCAppointmentDataTable.TutorUsername == tutor.username)\
-            .all()
+    def get_tutor_appointments(self, tutors):
+        tutors = tutors.split(", ")
+        appointment_list = []
+        for tutor_name in tutors:
+            tutor = self.get_username_from_name(tutor_name)
+            appointment_list.append(db_session.query(WCAppointmentDataTable).filter(WCAppointmentDataTable.TutorUsername == tutor.username).all())
 
-        return appointments
+        return appointment_list
 
     def get_username_from_name(self, name):
         # Gets the tutor's first name, last name

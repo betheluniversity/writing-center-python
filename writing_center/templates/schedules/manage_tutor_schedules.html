@@ -94,9 +94,9 @@
     <div class="form-row">
         <div class="form-group col-md-4">
             <label for="tutors-schedule" style="display: block;"><b>Tutors</b></label>
-            <select id="tutors-schedule" class="chosen-container" size="7" onchange="tutorChanged()">
+            <select id="tutors-schedule" class="chosen-container" size="7" multiple onchange="tutorsChanged()">
                 {% for tutor in tutors %}
-                    <option id="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
+                    <option id="{{ tutor.id }}" value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -197,15 +197,14 @@
             });
         });
 
-        function tutorChanged() {
+        function tutorsChanged() {
             $('#spinner').show();
-            {# TODO GET NAMES AND USE A FOR LOOP TO CREATE A LIST OF NAMES AND PASS THAT AS A VARAIBLE TO PYTHON #}
-            let tutorName = $('#tutors-schedule option:selected').text();
+            let tutors = $("#tutors-schedule option:selected").map(function(){ return this.text }).get().join(", ");
             $.ajax({
                 type: "POST",
                 url: "{{ url_for('SchedulesView:show_tutor_schedule') }}",
                 data: JSON.stringify({
-                    'tutorName': tutorName,
+                    'tutors': tutors,
                 }),
                 contentType: 'application/json;charset=UTF-8',
                 success: function (response) {
@@ -213,7 +212,7 @@
                     let i = 0;
                     for (i; i < response.length; i ++) {
                         calendar.addEvent({
-                            title: response[i].studentUsername,
+                            title: response[i].tutorUsername,
                             start: response[i].startTime,
                             end: response[i].endTime
                         });
