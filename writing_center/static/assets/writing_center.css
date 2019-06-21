@@ -3,6 +3,10 @@ a.dashboard-link{
     text-decoration: none;
 }
 
+a.disabled:hover {
+    color: black !important;
+}
+
 a.nav-link.button {
     color: #fff !important;
 }
@@ -15,8 +19,9 @@ a.nav-link:hover{
     color: #FFC600 !important;
 }
 
-a.disabled:hover {
-    color: black !important;
+a.nav-link:focus, a.nav-link:hover.active {
+    text-decoration: none !important;
+    color: white !important;
 }
 
 body {
@@ -129,6 +134,10 @@ ul.list-group{
     background-color: yellow;
 }
 
+.chosen {
+    height: 29px !important;
+}
+
 .chosen-container {
     min-width: 100%;
 }
@@ -173,11 +182,6 @@ ul.list-group{
 
 .navbar {
     padding: 1em 2em !important;
-}
-
-a.nav-link:focus, a.nav-link:hover.active {
-    text-decoration: none !important;
-    color: white !important;
 }
 
 .wc-margins {
@@ -237,12 +241,4 @@ a.nav-link:focus, a.nav-link:hover.active {
     border: 1px dotted grey;
     padding: 10px;
     float: left;
-}
-
-.chosen-format {
-    border: 1px solid #aaa !important;
-    border-radius: 0 !important;
-    padding: 0 5px;
-    height: 29px;
-    font-size: .875rem !important;
 }

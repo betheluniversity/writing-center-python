@@ -5,5 +5,4 @@ config.py
 config/*.py
 *.csv
 *.log
-.vscode/settings.json
-.vscode/launch.json
+**/.vscode/**

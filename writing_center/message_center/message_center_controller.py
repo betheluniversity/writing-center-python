@@ -25,7 +25,7 @@ class MessageCenterController:
                                                             self.message_center.get_email_preferences(self.user.get_user(session['USERNAME']).id).substitute,
                                                             self.user.get_user(session['USERNAME']).id)
 
-    def get_message_preferences(self):
+    def get_email_preferences(self):
         return self.message_center.get_email_preferences(self.user.get_user(session['USERNAME']).id)
 
     def close_session_email(self, appointment_id):
