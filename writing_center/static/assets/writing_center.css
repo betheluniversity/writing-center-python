@@ -110,7 +110,7 @@ ul.list-group{
 }
 
 .background-blue {
-    background-color: #123563;
+    background-color: #123563 !important;
 }
 
 .calendar-blue{

@@ -40,10 +40,10 @@
                                     {{ role.name }}
                                 </td>
                                 <td>
-                                    <a id="act-as" href='{{ url_for('UsersView:act_as_user', user_id=user.id) }}' class="btn btn-primary btn-info">Act As User</a>
+                                    <a id="act-as" href='{{ url_for('UsersView:act_as_user', user_id=user.id) }}' class="btn btn-primary background-blue">Act As User</a>
                                 </td>
                                 <td>
-                                    <a id="edit" href='{{ url_for('UsersView:edit_user', user_id=user.id) }}' class="btn btn-primary btn-warning">Edit</a>
+                                    <a id="edit" href='{{ url_for('UsersView:edit_user', user_id=user.id) }}' class="btn btn-primary background-blue">Edit</a>
                                 </td>
                                 <td class="text-center">
                                     <input type="checkbox" value="{{ user.id }}" class="deactivate-checkbox">
