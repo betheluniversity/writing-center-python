@@ -97,7 +97,8 @@ class SchedulesController:
 
         appt_date = self.get_first_appointment_date(day_of_week, start_date)
         while appt_date < end_date:  # Loop through until our session date is after the end date of the term
-            appointment = WCAppointmentDataTable(TutorUsername=tutor.username, StartTime=start_ts, EndTime=end_ts, CheckIn=-1, multilingual=multilingual, DropInAppt=drop_in)
+            appointment = WCAppointmentDataTable(TutorUsername=tutor.username, StartTime=start_ts, EndTime=end_ts,
+                                                 CheckIn=-1, multilingual=multilingual, DropInAppt=drop_in)
             # TODO CREATE APPOINTMENT FOR THIS DAY
             # TODO ADD NEWLY MADE APPOINTMENT
             db_session.add(appointment)
@@ -123,7 +124,9 @@ class SchedulesController:
 
     def get_tutor_appointments(self, tutor_name):
         tutor = self.get_username_from_name(tutor_name)
-        appointments = db_session.query(WCAppointmentDataTable).filter(WCAppointmentDataTable.TutorUsername == tutor.username).all()
+        appointments = db_session.query(WCAppointmentDataTable)\
+            .filter(WCAppointmentDataTable.TutorUsername == tutor.username)\
+            .all()
 
         return appointments
 
