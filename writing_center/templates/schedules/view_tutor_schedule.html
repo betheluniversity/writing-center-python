@@ -45,27 +45,17 @@
             <div id="calendar"></div>
         </div>
     </div>
-{#        <div class="form-row">#}
-{#            <div class="form-group col-md-4">#}
-{#                <label for="lookup-tutor-username" style="display: block;">Tutors</label>#}
-{#                <select id="lookup-tutor-username" class="chosen-container" size="7" multiple="multiple"></select>#}
-{#            </div>#}
-{#        </div>#}
-{#    </form>#}
-{##}
-{#    <div id="calendar"></div>#}
-{##}
     <script>
 
         document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
+            let calendarEl = document.getElementById('calendar');
 
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                plugins: [ 'dayGrid' ],
+            let calendar = new FullCalendar.Calendar(calendarEl, {
+                plugins: ['interaction', 'dayGrid', 'timeGrid'],
                 header: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'dayGridMonth,dayGridWeek,dayGridDay'
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
             });
 
