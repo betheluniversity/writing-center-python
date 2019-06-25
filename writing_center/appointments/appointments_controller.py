@@ -20,15 +20,15 @@ class AppointmentsController:
             .all()
 
     def get_yearly_appointments(self, selected_year):
-        test = db_session.query(WCAppointmentDataTable)\
+        yearly_appts = db_session.query(WCAppointmentDataTable)\
             .filter(WCAppointmentDataTable.StudUsername != "")\
             .filter(WCAppointmentDataTable.StudUsername != None)\
             .all()
-        tt = []
-        for t in test:
-            if int(t.StartTime.strftime('%Y')) == selected_year:
-                tt.append(t)
-        return tt
+        appts_list = []
+        for appts in yearly_appts:
+            if int(appts.StartTime.strftime('%Y')) == selected_year:
+                appts_list.append(appts)
+        return appts_list
 
     def get_all_user_appointments(self, username):
         return db_session.query(WCAppointmentDataTable)\
@@ -44,4 +44,35 @@ class AppointmentsController:
             years.append(year)
             year += 1
         return years
+
+    def get_all_open_appointments(self):
+        return db_session.query(WCAppointmentDataTable)\
+            .filter(WCAppointmentDataTable.StartTime > datetime.now())\
+            .all()
+
+    def create_appointment(self):
+        pass
+        # appointment = WCAppointmentDataTable(StudUsername=, TutorUsername=, StartTime=, EndTime=)
+
+        # ID = Column(Integer, primary_key=True)
+        # StudUsername = Column(String(255))
+        # TutorUsername = Column(String(255))
+        # Program = Column(String(255))
+        # StartTime = Column(DateTime)
+        # EndTime = Column(DateTime)
+        # ActualStartTime = Column(DateTime)
+        # CompletedTime = Column(DateTime)
+        # CheckIn = Column(Integer)
+        # StudentSignIn = Column(DateTime)
+        # StudentSignOut = Column(DateTime)
+        # ProfEmail = Column(String(255))
+        # RequestSub = Column(String(255))
+        # Assignment = Column(String(255))
+        # Notes = Column(String(255))
+        # Suggestions = Column(String(255))
+        # multilingual = Column(Integer)
+        # CourseCode = Column(String(255))
+        # ProfUsername = Column(String(255))
+        # CourseSection = Column(Integer)
+        # DropInAppt = Column(Integer)
 
