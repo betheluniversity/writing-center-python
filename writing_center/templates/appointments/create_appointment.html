@@ -40,7 +40,27 @@
         </div>
     </div>
     <script type="text/javascript">
-         document.addEventListener('DOMContentLoaded', function() {
+    $(document).ready(function() {
+            $.ajax({
+                type: "GET",
+                url: "{{ url_for('AppointmentsView:get_open_appointments') }}",
+                success: function (response) {
+                    if (response != null) {
+                        let i = 0;
+                        for (i; i < response.length; i ++) {
+                            calendar.addEvent({
+                                id: response[i].id,
+                                title: response[i].tutorUsername,
+                                start: response[i].startTime,
+                                end: response[i].endTime
+                            });
+                        }
+                    }
+
+                },
+                error: function (error) {
+                }
+            });
             let calendarEl = document.getElementById('calendar');
 
             let calendar = new FullCalendar.Calendar(calendarEl, {
@@ -50,8 +70,29 @@
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
+                timeZone: 'UTC',
                 slotEventOverlap: false,
                 nowIndicator: true,
+                displayEventEnd: true,
+                eventClick: function(info) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url_for('AppointmentsView:schedule_appointment') }}",
+                        data: JSON.stringify({
+                            'id': info.event.id,
+                            'startTime': info.event.start,
+                            'endTime': info.event.end
+                        }),
+                        contentType: 'application/json;charset=UTF-8',
+                        success: function (response) {
+                            let event = calendar.getEventById(response);
+                            event.remove();
+                            window.location.reload();
+                            },
+                        error: function (error) {
+                        }
+                    });
+                }
             });
 
             calendar.render();

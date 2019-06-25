@@ -51,10 +51,10 @@ class SchedulesView(FlaskView):
             is_active = 'No'
         created = self.sc.create_schedule(start_time, end_time, is_active)
 
-        # if created:
-            # TODO SUCCESS MESSAGE
-        # else:
-            # TODO ERROR MESSAGE
+        if created:
+            self.wcc.set_alert('success', 'Schedule Created Successfully!')
+        else:
+            self.wcc.set_alert('danger', 'Schedule already exists!')
         return self.sc.get_schedules()
 
     @route('/add-tutors-to-shifts', methods=['POST'])
