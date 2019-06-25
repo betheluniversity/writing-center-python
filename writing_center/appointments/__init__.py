@@ -1,5 +1,5 @@
-from flask_classy import FlaskView, route
-from flask import render_template, jsonify
+from flask_classy import FlaskView, route, request
+from flask import render_template, jsonify, json
 from flask import session as flask_session
 from datetime import datetime
 
@@ -56,6 +56,36 @@ class AppointmentsView(FlaskView):
                                                         appointment.CompletedTime.strftime('%I'),
                                                         appointment.CompletedTime.strftime('%M'),
                                                         appointment.CompletedTime.strftime('%S'))
+            appointments.append({
+                'id': appointment.ID,
+                'studentUsername': appointment.StudUsername,
+                'tutorUsername': appointment.TutorUsername,
+                'startTime': start_time,
+                'endTime': end_time,
+                'multilingual': appointment.multilingual,
+                'dropIn': appointment.DropInAppt
+            })
+
+        return jsonify(appointments)
+
+    @route('open-appointments', methods=['GET'])
+    def get_open_appointments(self):
+        all_open_appts = self.ac.get_all_open_appointments()
+        print(datetime.now())
+        appointments = []
+        for appointment in all_open_appts:
+            start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.StartTime.year,
+                                                          appointment.StartTime.strftime('%m'),
+                                                          appointment.StartTime.strftime('%d'),
+                                                          appointment.StartTime.strftime('%H'),
+                                                          appointment.StartTime.strftime('%M'),
+                                                          appointment.StartTime.strftime('%S'))
+            end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.EndTime.year,
+                                                        appointment.EndTime.strftime('%m'),
+                                                        appointment.EndTime.strftime('%d'),
+                                                        appointment.EndTime.strftime('%H'),
+                                                        appointment.EndTime.strftime('%M'),
+                                                        appointment.EndTime.strftime('%S'))
             appointments.append({
                 'id': appointment.ID,
                 'studentUsername': appointment.StudUsername,
