@@ -15,7 +15,6 @@ class SchedulesController:
             .all()
 
     def create_schedule(self, start_time, end_time, is_active):
-        # TODO ADD CHECK FOR EXISTING SCHEDULES
         try:
             if self.check_for_existing_schedule(start_time, end_time):
                 return False
@@ -27,7 +26,7 @@ class SchedulesController:
             return False
 
     def check_for_existing_schedule(self, start_time, end_time):
-        try:  # TODO return true if there is an existing user
+        try:
             schedule = db_session.query(WCScheduleTable)\
                 .filter(WCScheduleTable.timeStart == start_time)\
                 .filter(WCScheduleTable.timeEnd == end_time)\
@@ -96,16 +95,15 @@ class SchedulesController:
             drop_in = 0
 
         appt_date = self.get_first_appointment_date(day_of_week, start_date)
+
         while appt_date < end_date:  # Loop through until our session date is after the end date of the term
+            # Updates the datetime object with the correct date
+            start_ts = start_ts.replace(year=appt_date.year, month=appt_date.month, day=appt_date.day)
+            end_ts = end_ts.replace(year=appt_date.year, month=appt_date.month, day=appt_date.day)
             appointment = WCAppointmentDataTable(TutorUsername=tutor.username, StartTime=start_ts, EndTime=end_ts,
                                                  CheckIn=-1, multilingual=multilingual, DropInAppt=drop_in)
-            # TODO CREATE APPOINTMENT FOR THIS DAY
-            # TODO ADD NEWLY MADE APPOINTMENT
             db_session.add(appointment)
-            # TODO COMMIT TO DB
             db_session.commit()
-            # sessions.append(schedule_session)
-            # TODO SET THE DATE TO BE ONE WEEK FROM THE CURRENT DATE
             appt_date += timedelta(weeks=1)  # Add a week for next session
         return None
 
