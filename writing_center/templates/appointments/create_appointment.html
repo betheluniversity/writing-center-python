@@ -40,7 +40,26 @@
         </div>
     </div>
     <script type="text/javascript">
-         document.addEventListener('DOMContentLoaded', function() {
+    $(document).ready(function() {
+            $.ajax({
+                type: "GET",
+                url: "{{ url_for('AppointmentsView:get_open_appointments') }}",
+                success: function (response) {
+                    if (response != null) {
+                        let i = 0;
+                        for (i; i < response.length; i ++) {
+                            calendar.addEvent({
+                                title: response[i].studentUsername,
+                                start: response[i].startTime,
+                                end: response[i].endTime
+                            });
+                        }
+                    }
+
+                },
+                error: function (error) {
+                }
+            });
             let calendarEl = document.getElementById('calendar');
 
             let calendar = new FullCalendar.Calendar(calendarEl, {
