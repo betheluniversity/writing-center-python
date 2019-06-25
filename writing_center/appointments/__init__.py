@@ -71,7 +71,6 @@ class AppointmentsView(FlaskView):
     @route('open-appointments', methods=['GET'])
     def get_open_appointments(self):
         all_open_appts = self.ac.get_all_open_appointments()
-        print(datetime.now())
         appointments = []
         for appointment in all_open_appts:
             start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.StartTime.year,
