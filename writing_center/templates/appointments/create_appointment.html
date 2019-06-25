@@ -49,7 +49,7 @@
                         let i = 0;
                         for (i; i < response.length; i ++) {
                             calendar.addEvent({
-                                title: response[i].studentUsername,
+                                title: response[i].tutorUsername,
                                 start: response[i].startTime,
                                 end: response[i].endTime
                             });
@@ -71,6 +71,7 @@
                 },
                 slotEventOverlap: false,
                 nowIndicator: true,
+                displayEventEnd: true,
             });
 
             calendar.render();
