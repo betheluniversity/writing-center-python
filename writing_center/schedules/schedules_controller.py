@@ -96,7 +96,7 @@ class SchedulesController:
 
         appt_date = self.get_first_appointment_date(day_of_week, start_date)
 
-        while appt_date < end_date:  # Loop through until our session date is after the end date of the term
+        while appt_date <= end_date:  # Loop through until our session date is after the end date of the term
             # Updates the datetime object with the correct date
             start_ts = start_ts.replace(year=appt_date.year, month=appt_date.month, day=appt_date.day)
             end_ts = end_ts.replace(year=appt_date.year, month=appt_date.month, day=appt_date.day)
