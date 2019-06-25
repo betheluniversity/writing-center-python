@@ -1,4 +1,5 @@
 from datetime import datetime
+from flask import session as flask_session
 
 from writing_center.db_repository import db_session
 from writing_center.db_repository.tables import UserTable, WCAppointmentDataTable
@@ -47,32 +48,28 @@ class AppointmentsController:
 
     def get_all_open_appointments(self):
         return db_session.query(WCAppointmentDataTable)\
+            .filter(WCAppointmentDataTable.StudUsername == None)\
             .filter(WCAppointmentDataTable.StartTime > datetime.now())\
             .all()
 
-    def create_appointment(self):
-        pass
-        # appointment = WCAppointmentDataTable(StudUsername=, TutorUsername=, StartTime=, EndTime=)
-
-        # ID = Column(Integer, primary_key=True)
-        # StudUsername = Column(String(255))
-        # TutorUsername = Column(String(255))
-        # Program = Column(String(255))
-        # StartTime = Column(DateTime)
-        # EndTime = Column(DateTime)
-        # ActualStartTime = Column(DateTime)
-        # CompletedTime = Column(DateTime)
-        # CheckIn = Column(Integer)
-        # StudentSignIn = Column(DateTime)
-        # StudentSignOut = Column(DateTime)
-        # ProfEmail = Column(String(255))
-        # RequestSub = Column(String(255))
-        # Assignment = Column(String(255))
-        # Notes = Column(String(255))
-        # Suggestions = Column(String(255))
-        # multilingual = Column(Integer)
-        # CourseCode = Column(String(255))
-        # ProfUsername = Column(String(255))
-        # CourseSection = Column(Integer)
-        # DropInAppt = Column(Integer)
-
+    def create_appointment(self, id, start_time, end_time):
+        appointment = db_session.query(WCAppointmentDataTable)\
+            .filter(WCAppointmentDataTable.ID == id)\
+            .one_or_none()
+        # Formats the time to fit the DB's format
+        start_time = start_time.replace("T", " ")
+        start_time = start_time.replace(".000Z", "")
+        end_time = end_time.replace("T", " ")
+        end_time = end_time.replace(".000Z", "")
+        start_time = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
+        end_time = datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S')
+        # Updates the start time, end time, and student username
+        appointment.StartTime = start_time
+        appointment.EndTime = end_time
+        appointment.StudUsername = flask_session['USERNAME']
+        # Commits to DB
+        db_session.commit()
+        if appointment:
+            return True
+        else:
+            return False
