@@ -22,13 +22,15 @@ class MessageCenterView(FlaskView):
         return render_template('message_center/send-email.html', **locals())
 
     @route('/email-preferences')
-    def message_preferences(self):
+    def email_preferences(self):
         prefs = self.base.get_email_preferences()
+        recipients = self.base.send_substitute_message()
         return render_template('message_center/preferences.html', **locals())
 
+    @route('/toggle-substitute', methods=['POST'])
     def toggle_substitute(self):
         data = request.form
-        return self.base.toggle_substitute(data['substitute'])
+        return self.base.toggle_substitute(int(data['substitute']))
 
     def toggle_shift(self):
         data = request.form

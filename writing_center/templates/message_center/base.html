@@ -2,7 +2,7 @@
 
 {% block subnav %}
             <a id="stats" class="nav-link {{ 'active' if '/email-preferences' in request.path else 'disabled'}}"
-            href="{{ url_for('MessageCenterView:message_preferences') }}">Email Preferences</a>
+            href="{{ url_for('MessageCenterView:email_preferences') }}">Email Preferences</a>
             <a id="stats" class="nav-link {{ 'active' if 'send-email' in request.path else 'disabled'}}"
                href="{{ url_for('MessageCenterView:send_email') }}">Send Email</a>
 {% endblock %}

@@ -6,21 +6,29 @@
         <p>Choose when to receive automated emails</p>
     </div>
 
-    <button class="btn btn-primary pref-button enable" id="substitute" onclick="changeSubstituePref()">Enable</button> <!--TODO: need to include logic to reflect users preferences-->
-    <label for="substitute" id="substitue-text">Receive an email when a tutor requests a substitute</label> <!--changes email preferences table to reflect this 'subscription'-->
-    <br/>
-    <button class="btn btn-primary pref-button enable" id="shift" onclick="changeShiftPref()">Enable</button>
-    <label for="shift" id="shift-text">Receive an email when a student signs up for one of your shifts</label> <!--changes email preferences table to reflect this 'subscription'-->
+    {% if prefs.SubRequestEmail == 0 %}
+        <button class="btn btn-primary pref-button enable" id="substitute" onclick="changeSubstituePref()">Enable</button>
+    {% else %}
+        <button class="btn btn-primary pref-button disable" id="substitute" onclick="changeSubstituePref()">Disable</button>
+    {% endif %}
+    <label for="substitute" id="substitue-text">Receive an email when a tutor requests a substitute</label>
+
+    {% if prefs.StudentSignUpEmail == 0 %}
+        <button class="btn btn-primary pref-button enable" id="shift" onclick="changeShiftPref()">Enable</button>
+    {% else %}
+        <button class="btn btn-primary pref-button disable" id="shift" onclick="changeShiftPref()">Disable</button>
+    {% endif %}
+    <label for="shift" id="shift-text">Receive an email when a student signs up for one of your shifts</label>
 {% endblock %}
 
 {% block scripts %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript">
         function changeSubstituePref() {
-            if($("#substitute").hasClass("enable")) {
+            if($("#substitute").hasClass("enable")) {  // If it has enable, get rid of that and add disable
                 $("#substitute").removeClass("enable").addClass("disable");
                 $("#substitute").text("Disable");
-                $.ajax({
+                $.ajax({  // Change the value from 0 to 1 to reflect enabling this setting
                     type: 'POST',
                     url: '{{ url_for("MessageCenterView:toggle_substitute") }}',
                     data: {'substitute': 1}
@@ -28,7 +36,7 @@
             }else {
                 $("#substitute").removeClass("disable").addClass("enable");
                 $("#substitute").text("Enable");
-                $.ajax({
+                $.ajax({  // otherwise, change it from 1 to 0 to reflect disabling the setting
                     type: 'POST',
                     url: '{{ url_for("MessageCenterView:toggle_substitute") }}',
                     data: {'substitute': 0}
@@ -40,9 +48,19 @@
             if($("#shift").hasClass("enable")) {
                 $("#shift").removeClass("enable").addClass("disable");
                 $("#shift").text("Disable");
+                $.ajax({  // Change from 0 to 1 to reflect this setting being activated
+                    type: 'POST',
+                    url: '{{ url_for("MessageCenterView:toggle_shift") }}',
+                    data: {'shift': 1}
+                })
             }else {
                 $("#shift").removeClass("disable").addClass("enable");
                 $("#shift").text("Enable");
+                $.ajax({  // otherwise, change it from 1 to 0 to reflect disabling the setting
+                    type: 'POST',
+                    url: '{{ url_for("MessageCenterView:toggle_shift") }}',
+                    data: {'shift': 0}
+                })
             }
         }
     </script>

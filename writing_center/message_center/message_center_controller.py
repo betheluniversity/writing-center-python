@@ -16,14 +16,18 @@ class MessageCenterController:
         self.user = UserFunctions()
 
     def toggle_substitute(self, substitute):
-        return self.message_center.change_email_preferences(substitute,
-                                                            self.message_center.get_email_preferences(self.user.get_user(session['USERNAME']).id).shift,
-                                                            self.user.get_user(session['USERNAME']).id)
+        self.message_center.change_email_preferences(substitute,
+                                                     self.message_center.get_email_preferences(
+                                                         self.user.get_user(session['USERNAME']).id).StudentSignUpEmail,
+                                                     self.user.get_user(session['USERNAME']).id)
+        return 'success'
 
     def toggle_shift(self, shift):
-        return self.message_center.change_email_preferences(shift,
-                                                            self.message_center.get_email_preferences(self.user.get_user(session['USERNAME']).id).substitute,
-                                                            self.user.get_user(session['USERNAME']).id)
+        self.message_center.change_email_preferences(shift,
+                                                     self.message_center.get_email_preferences(
+                                                         self.user.get_user(session['USERNAME']).id).SubRequestEmail,
+                                                     self.user.get_user(session['USERNAME']).id)
+        return 'success'
 
     def get_email_preferences(self):
         return self.message_center.get_email_preferences(self.user.get_user(session['USERNAME']).id)
@@ -36,7 +40,8 @@ class MessageCenterController:
             professor = self.user.get_user(appointment.ProfUsername)
 
         tutor = self.user.get_user(appointment.TutorUsername)
-        subject = '{{{0}}} {1} ({2})'.format(appointment.StudUsername, appointment.StudentUsername, appointment.date.strftime('%m/%d/%Y'))
+        subject = '{{{0}}} {1} ({2})'.format(appointment.StudUsername, appointment.StudentUsername,
+                                             appointment.date.strftime('%m/%d/%Y'))
         tutor = appointment.TutorUsername
         recipients = self.user.get_end_of_session_recipients(appointment_id)
 
@@ -78,3 +83,10 @@ class MessageCenterController:
             return False
         return True
 
+    def send_substitute_message(self):
+        self.message_center.get_substitute_email_recipients()
+        pass
+
+    def send_shift_message(self):
+        # TODO write the function to send an email when a student signs up for a shift
+        pass
