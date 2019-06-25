@@ -28,6 +28,8 @@ class SchedulesView(FlaskView):
         return render_template('schedules/manage_tutor_schedules.html', **locals())
 
     def view_tutor_schedules(self):
+        schedules = self.sc.get_schedules()
+        tutors = self.sc.get_tutors()
         return render_template('schedules/view_tutor_schedule.html', **locals())
 
     @route('/create', methods=['POST'])
@@ -98,4 +100,5 @@ class SchedulesView(FlaskView):
                     'multilingual': appointment.multilingual,
                     'dropIn': appointment.DropInAppt
                 })
+                
         return jsonify(appointments)

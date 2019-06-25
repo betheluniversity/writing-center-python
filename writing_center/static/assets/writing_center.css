@@ -115,7 +115,7 @@ ul.list-group{
 }
 
 .background-blue {
-    background-color: #123563;
+    background-color: #123563 !important;
 }
 
 .calendar-blue{
@@ -168,6 +168,10 @@ ul.list-group{
     background-color: #0F2C52;
     color: #ffffff;
     padding: 3px;
+}
+
+.fc-unthemed td.fc-today {
+    background: yellow !important;
 }
 
 .nav.margins {

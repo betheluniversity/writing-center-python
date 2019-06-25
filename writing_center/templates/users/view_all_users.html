@@ -19,7 +19,7 @@
                         </tr>
                         <tr>
                             <th colspan="6"></th>
-                            <th colspan="2">
+                            <th colspan="1">
                                 <button id="deactivate-users" type="button" class="btn btn-primary btn-danger hover-bright">Deactivate</button>
                             </th>
                         </tr>
@@ -40,10 +40,10 @@
                                     {{ role.name }}
                                 </td>
                                 <td>
-                                    <a id="act-as" href='{{ url_for('UsersView:act_as_user', user_id=user.id) }}' class="btn btn-primary btn-info">Act As User</a>
+                                    <a id="act-as" href='{{ url_for('UsersView:act_as_user', user_id=user.id) }}' class="btn btn-primary background-blue">Act As User</a>
                                 </td>
                                 <td>
-                                    <a id="edit" href='{{ url_for('UsersView:edit_user', user_id=user.id) }}' class="btn btn-primary btn-warning">Edit</a>
+                                    <a id="edit" href='{{ url_for('UsersView:edit_user', user_id=user.id) }}' class="btn btn-primary background-blue">Edit</a>
                                 </td>
                                 <td class="text-center">
                                     <input type="checkbox" value="{{ user.id }}" class="deactivate-checkbox">
@@ -64,10 +64,9 @@
             });
 
             var table = $('#table').DataTable({
-                "aaSorting": [[0, 'desc'], [1, 'asc']],
+                "aaSorting": [[0, 'asc'], [1, 'asc']],
 
                 "aoColumns": [
-                    {"orderSequence": [null]},
                     {"orderSequence": ["asc", "desc"]},
                     {"orderSequence": ["asc", "desc"]},
                     {"orderSequence": ["asc", "desc"]},
@@ -77,12 +76,8 @@
                     {"orderSequence": [null]},
                 ],
 
-                "columnDefs": [
-                    {"visible": false, "targets": 0}
-                ],
-
-                "bPaginate": false,
-                "bLengthChange": false,
+                "bPaginate": true,
+                "bLengthChange": true,
             });
 
         });

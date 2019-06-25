@@ -30,6 +30,11 @@ class AppointmentsController:
                 tt.append(t)
         return tt
 
+    def get_all_user_appointments(self, username):
+        return db_session.query(WCAppointmentDataTable)\
+            .filter(WCAppointmentDataTable.StudUsername == username)\
+            .all()
+
     def get_years(self):
         years = [2014]
         year = 2015
