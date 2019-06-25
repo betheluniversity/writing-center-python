@@ -4,6 +4,7 @@ from flask import session as flask_session
 from datetime import datetime
 
 from writing_center.appointments.appointments_controller import AppointmentsController
+from writing_center.writing_center_controller import WritingCenterController
 
 
 class AppointmentsView(FlaskView):
@@ -11,6 +12,7 @@ class AppointmentsView(FlaskView):
 
     def __init__(self):
         self.ac = AppointmentsController()
+        self.wcc = WritingCenterController()
 
     def index(self):
         years = self.ac.get_years()
@@ -44,18 +46,32 @@ class AppointmentsView(FlaskView):
         appts = self.ac.get_all_user_appointments(flask_session['USERNAME'])
         appointments = []
         for appointment in appts:
-            start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.ActualStartTime.year,
-                                                          appointment.ActualStartTime.strftime('%m'),
-                                                          appointment.ActualStartTime.strftime('%d'),
-                                                          appointment.ActualStartTime.strftime('%I'),
-                                                          appointment.ActualStartTime.strftime('%M'),
-                                                          appointment.ActualStartTime.strftime('%S'))
-            end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.CompletedTime.year,
-                                                        appointment.CompletedTime.strftime('%m'),
-                                                        appointment.CompletedTime.strftime('%d'),
-                                                        appointment.CompletedTime.strftime('%I'),
-                                                        appointment.CompletedTime.strftime('%M'),
-                                                        appointment.CompletedTime.strftime('%S'))
+            if appointment.ActualStartTime:
+                start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.ActualStartTime.year,
+                                                              appointment.ActualStartTime.strftime('%m'),
+                                                              appointment.ActualStartTime.strftime('%d'),
+                                                              appointment.ActualStartTime.strftime('%I'),
+                                                              appointment.ActualStartTime.strftime('%M'),
+                                                              appointment.ActualStartTime.strftime('%S'))
+                end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.CompletedTime.year,
+                                                            appointment.CompletedTime.strftime('%m'),
+                                                            appointment.CompletedTime.strftime('%d'),
+                                                            appointment.CompletedTime.strftime('%I'),
+                                                            appointment.CompletedTime.strftime('%M'),
+                                                            appointment.CompletedTime.strftime('%S'))
+            else:
+                start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.StartTime.year,
+                                                              appointment.StartTime.strftime('%m'),
+                                                              appointment.StartTime.strftime('%d'),
+                                                              appointment.StartTime.strftime('%I'),
+                                                              appointment.StartTime.strftime('%M'),
+                                                              appointment.StartTime.strftime('%S'))
+                end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.EndTime.year,
+                                                            appointment.EndTime.strftime('%m'),
+                                                            appointment.EndTime.strftime('%d'),
+                                                            appointment.EndTime.strftime('%I'),
+                                                            appointment.EndTime.strftime('%M'),
+                                                            appointment.EndTime.strftime('%S'))
             appointments.append({
                 'id': appointment.ID,
                 'studentUsername': appointment.StudUsername,
@@ -96,3 +112,16 @@ class AppointmentsView(FlaskView):
             })
 
         return jsonify(appointments)
+
+    @route('schedule-appointment', methods=['POST'])
+    def schedule_appointment(self):
+        id = str(json.loads(request.data).get('id'))
+        start_time = str(json.loads(request.data).get('startTime'))
+        end_time = str(json.loads(request.data).get('endTime'))
+        appt = self.ac.create_appointment(id, start_time, end_time)
+        if appt:
+            self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled!')
+        else:
+            self.wcc.set_alert('danger', 'Error! Appointment Not Scheduled!')
+
+        return id
