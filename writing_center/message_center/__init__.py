@@ -24,7 +24,6 @@ class MessageCenterView(FlaskView):
     @route('/email-preferences')
     def email_preferences(self):
         prefs = self.base.get_email_preferences()
-        recipients = self.base.send_substitute_message()
         return render_template('message_center/preferences.html', **locals())
 
     @route('/toggle-substitute', methods=['POST'])

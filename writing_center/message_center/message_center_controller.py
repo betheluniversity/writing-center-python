@@ -5,48 +5,87 @@ from flask_mail import Mail, Message
 
 # Local
 from writing_center import app
-from writing_center.db_repository.message_center_functions import MessageCenter
-from writing_center.db_repository.user_functions import UserFunctions
+from writing_center.db_repository import db_session
+from writing_center.db_repository.tables import UserTable, WCEmailPreferencesTable, WCAppointmentDataTable, UserRoleTable, RoleTable
 
 
 class MessageCenterController:
 
     def __init__(self):
-        self.message_center = MessageCenter()
-        self.user = UserFunctions()
+        pass
+
+    def get_email_preferences(self, user_id):
+        return (db_session.query(WCEmailPreferencesTable)
+                .filter(WCEmailPreferencesTable.id == user_id)
+                .one())
+
+    def get_appointment_info(self, appointment_id):
+        return (db_session.query(WCAppointmentDataTable)
+                .filter(WCAppointmentDataTable.ID == appointment_id)
+                .one())
+
+    def get_user(self, username):
+        return (db_session.query(UserTable)
+                .filter(UserTable.username == username)
+                .one())
+
+    def get_user_roles(self, user_id):
+        return (db_session.query(UserRoleTable)
+                .filter(UserRoleTable.user_id == user_id)
+                .one())
+
+    def get_end_of_session_recipients(self, appointment_id):
+        appointment = (db_session.query(WCAppointmentDataTable)
+                       .filter(WCAppointmentDataTable.ID == appointment_id)
+                       .all())
+
+        recipients = [self.get_user(appointment.ProfUsername), self.get_user(appointment.StudUsername)]
+        return recipients
+
+    def get_substitute_email_recipients(self):
+        return (db_session.query(WCEmailPreferencesTable, RoleTable)
+                .filter(WCEmailPreferencesTable.SubRequestEmail == 1)
+                .filter(RoleTable.role == 'Admin')
+                .all())
+
+    def get_shift_email_recipients(self):
+        """This method is going to select the tutor who's ID matches the ID of the appointment the student signed up for
+        then, it will check if that tutor has the StudentSignUpEmail enabled. After that, it will grab all writing
+        center admin and return that list as recipients"""
 
     def toggle_substitute(self, substitute):
-        self.message_center.change_email_preferences(substitute,
-                                                     self.message_center.get_email_preferences(
-                                                         self.user.get_user(session['USERNAME']).id).StudentSignUpEmail,
-                                                     self.user.get_user(session['USERNAME']).id)
+        user = (db_session.query(UserTable)
+                .filter(UserTable.username == session['USERNAME'])
+                .one())
+        toggle = self.get_email_preferences(user.id)
+        toggle.SubRequestEmail = substitute
+        db_session.commit()
         return 'success'
 
     def toggle_shift(self, shift):
-        self.message_center.change_email_preferences(shift,
-                                                     self.message_center.get_email_preferences(
-                                                         self.user.get_user(session['USERNAME']).id).SubRequestEmail,
-                                                     self.user.get_user(session['USERNAME']).id)
+        user = (db_session.query(UserTable)
+                .filter(UserTable.username == session['USERNAME'])
+                .one())
+        toggle = self.get_email_preferences(user.id)
+        toggle.StudentSignUpEmail = shift
+        db_session.commit()
         return 'success'
 
-    def get_email_preferences(self):
-        return self.message_center.get_email_preferences(self.user.get_user(session['USERNAME']).id)
-
     def close_session_email(self, appointment_id):
-        appointment = self.message_center.get_appointment_info(appointment_id)
-        student = self.user.get_user(appointment.StudUsername)
+        appointment = self.get_appointment_info(appointment_id)
+        student = self.get_user(appointment.StudUsername)
 
         if appointment.ProfUsername != '':
-            professor = self.user.get_user(appointment.ProfUsername)
+            professor = self.get_user(appointment.ProfUsername)
 
-        tutor = self.user.get_user(appointment.TutorUsername)
+        tutor = self.get_user(appointment.TutorUsername)
         subject = '{{{0}}} {1} ({2})'.format(appointment.StudUsername, appointment.StudentUsername,
                                              appointment.date.strftime('%m/%d/%Y'))
         tutor = appointment.TutorUsername
-        recipients = self.user.get_end_of_session_recipients(appointment_id)
+        recipients = self.get_end_of_session_recipients(appointment_id)
 
         for recipient in recipients:
-            recipient_roles = self.user.get_user_roles(recipient.id)
+            recipient_roles = self.get_user_roles(recipient.id)
             recipient_role_names = []
 
             for role in recipient_roles:
@@ -83,10 +122,9 @@ class MessageCenterController:
             return False
         return True
 
-    def send_substitute_message(self):
-        self.message_center.get_substitute_email_recipients()
-        pass
-
     def send_shift_message(self):
         # TODO write the function to send an email when a student signs up for a shift
         pass
+
+    def send_substitute_email(self, appointment_id):
+        recipients = self.get_substitute_email_recipients()
