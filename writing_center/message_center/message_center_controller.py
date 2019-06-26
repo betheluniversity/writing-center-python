@@ -1,6 +1,7 @@
 # Packages
 import socket
 from flask import render_template, session
+from flask_classy import route
 from flask_mail import Mail, Message
 
 # Local
@@ -14,9 +15,10 @@ class MessageCenterController:
     def __init__(self):
         pass
 
-    def get_email_preferences(self, user_id):
+    def get_email_preferences(self):
+        user = self.get_user(session['USERNAME'])
         return (db_session.query(WCEmailPreferencesTable)
-                .filter(WCEmailPreferencesTable.id == user_id)
+                .filter(WCEmailPreferencesTable.id == user.id)
                 .one())
 
     def get_appointment_info(self, appointment_id):
@@ -27,6 +29,11 @@ class MessageCenterController:
     def get_user(self, username):
         return (db_session.query(UserTable)
                 .filter(UserTable.username == username)
+                .one())
+
+    def get_user_by_id(self, id):
+        return (db_session.query(UserTable)
+                .filter(UserTable.id == id)
                 .one())
 
     def get_user_roles(self, user_id):
@@ -126,5 +133,32 @@ class MessageCenterController:
         # TODO write the function to send an email when a student signs up for a shift
         pass
 
+    @route('/sub-email')
     def send_substitute_email(self, appointment_id):
         recipients = self.get_substitute_email_recipients()
+        appointment = self.get_appointment_info(appointment_id)
+
+        recipient_emails = []
+
+        for recipient in recipients:
+            recipient_emails.append(self.get_user_by_id(recipient.id).email)
+
+        mail = Mail(app)
+        msg = Message(subject='Substitute Tutor needed',
+                      sender='',
+                      recipients=recipient_emails)
+
+        msg.html = 'sub_request_body.html'
+
+        if app.config['ENVIRON'] != 'prod':
+            print('Would have sent email to: {}'.format(str(recipients)))
+            print('Subject: {}'.format(msg.subject))
+            print('Body: {}'.format(msg.html))
+            return True
+        else:
+            try:
+                mail.send(msg)
+            except socket.error:
+                print("Failed to send message: {}".format(msg.html))
+                return False
+            return True
