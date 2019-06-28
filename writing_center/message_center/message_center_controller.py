@@ -52,10 +52,10 @@ class MessageCenterController:
     def get_substitute_email_recipients(self):
         return (db_session.query(WCEmailPreferencesTable, RoleTable)
                 .filter(WCEmailPreferencesTable.SubRequestEmail == 1)
-                .filter(RoleTable.role == 'Admin')
+                .filter(RoleTable.id == 1 or RoleTable.id == 2)
                 .all())
 
-    def get_shift_email_recipients(self):
+    def get_shift_email_recipients(self, appointment_id):
         """This method is going to select the tutor who's ID matches the ID of the appointment the student signed up for
         then, it will check if that tutor has the StudentSignUpEmail enabled. After that, it will grab all writing
         center admin and return that list as recipients"""
@@ -73,7 +73,7 @@ class MessageCenterController:
         user = (db_session.query(UserTable)
                 .filter(UserTable.username == session['USERNAME'])
                 .one())
-        toggle = self.get_email_preferences(user.id)
+        toggle = self.get_email_preferences()
         toggle.StudentSignUpEmail = shift
         db_session.commit()
         return 'success'
@@ -140,7 +140,6 @@ class MessageCenterController:
         email_info = {'student': self.get_user(appointment.StudUsername).firstName + ' ' + self.get_user(appointment.StudUsername).lastName,
                       'tutor': self.get_user(appointment.TutorUsername).firstName + ' ' + self.get_user(appointment.TutorUsername).lastName,
                       'start': appointment.StartTime, 'end': appointment.EndTime, 'assignment': appointment.Assignment, 'date': 'NEED THIS'}
-
 
         recipient_emails = []
 
