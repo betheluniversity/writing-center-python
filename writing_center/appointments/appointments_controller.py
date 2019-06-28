@@ -2,7 +2,7 @@ from datetime import datetime
 from flask import session as flask_session
 
 from writing_center.db_repository import db_session
-from writing_center.db_repository.tables import UserTable, WCAppointmentDataTable
+from writing_center.db_repository.tables import UserTable, AppointmentsTable
 
 
 class AppointmentsController:
