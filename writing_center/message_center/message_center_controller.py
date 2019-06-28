@@ -7,7 +7,7 @@ from flask_mail import Mail, Message
 # Local
 from writing_center import app
 from writing_center.db_repository import db_session
-from writing_center.db_repository.tables import UserTable, WCEmailPreferencesTable, WCAppointmentDataTable, UserRoleTable, RoleTable
+from writing_center.db_repository.tables import UserTable, EmailPreferencesTable, AppointmentsTable, UserRoleTable, RoleTable
 
 
 class MessageCenterController:
@@ -17,13 +17,13 @@ class MessageCenterController:
 
     def get_email_preferences(self):
         user = self.get_user(session['USERNAME'])
-        return (db_session.query(WCEmailPreferencesTable)
-                .filter(WCEmailPreferencesTable.id == user.id)
+        return (db_session.query(EmailPreferencesTable)
+                .filter(EmailPreferencesTable.id == user.id)
                 .one())
 
     def get_appointment_info(self, appointment_id):
-        return (db_session.query(WCAppointmentDataTable)
-                .filter(WCAppointmentDataTable.ID == appointment_id)
+        return (db_session.query(AppointmentsTable)
+                .filter(AppointmentsTable.ID == appointment_id)
                 .one())
 
     def get_user(self, username):
@@ -42,16 +42,16 @@ class MessageCenterController:
                 .one())
 
     def get_end_of_session_recipients(self, appointment_id):
-        appointment = (db_session.query(WCAppointmentDataTable)
-                       .filter(WCAppointmentDataTable.ID == appointment_id)
+        appointment = (db_session.query(AppointmentsTable)
+                       .filter(AppointmentsTable.ID == appointment_id)
                        .all())
 
         recipients = [self.get_user(appointment.ProfUsername), self.get_user(appointment.StudUsername)]
         return recipients
 
     def get_substitute_email_recipients(self):
-        return (db_session.query(WCEmailPreferencesTable, RoleTable)
-                .filter(WCEmailPreferencesTable.SubRequestEmail == 1)
+        return (db_session.query(EmailPreferencesTable, RoleTable)
+                .filter(EmailPreferencesTable.SubRequestEmail == 1)
                 .filter(RoleTable.id == 1 or RoleTable.id == 2)
                 .all())
 
