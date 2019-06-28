@@ -1,8 +1,7 @@
 from datetime import datetime
 
 from writing_center.db_repository import db_session
-from writing_center.db_repository.tables import UserTable, UserRoleTable, RoleTable, WCEmailPreferencesTable, \
-    WCStudentBansTable
+from writing_center.db_repository.tables import UserTable, UserRoleTable, RoleTable, EmailPreferencesTable
 
 
 class UsersController:

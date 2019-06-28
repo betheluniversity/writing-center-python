@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, date
 
 
 from writing_center.db_repository import db_session
-from writing_center.db_repository.tables import UserTable, UserRoleTable, RoleTable, WCScheduleTable, WCAppointmentDataTable
+from writing_center.db_repository.tables import UserTable, UserRoleTable, RoleTable, ScheduleTable, AppointmentsTable
 
 
 class SchedulesController:
