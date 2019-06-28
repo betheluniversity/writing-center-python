@@ -64,7 +64,7 @@ class MessageCenterController:
         user = (db_session.query(UserTable)
                 .filter(UserTable.username == session['USERNAME'])
                 .one())
-        toggle = self.get_email_preferences(user.id)
+        toggle = self.get_email_preferences()
         toggle.SubRequestEmail = substitute
         db_session.commit()
         return 'success'
@@ -137,6 +137,10 @@ class MessageCenterController:
     def send_substitute_email(self, appointment_id):
         recipients = self.get_substitute_email_recipients()
         appointment = self.get_appointment_info(appointment_id)
+        email_info = {'student': self.get_user(appointment.StudUsername).firstName + ' ' + self.get_user(appointment.StudUsername).lastName,
+                      'tutor': self.get_user(appointment.TutorUsername).firstName + ' ' + self.get_user(appointment.TutorUsername).lastName,
+                      'start': appointment.StartTime, 'end': appointment.EndTime, 'assignment': appointment.Assignment, 'date': 'NEED THIS'}
+
 
         recipient_emails = []
 

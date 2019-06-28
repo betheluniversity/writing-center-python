@@ -1,0 +1,9 @@
+{% block email_content %}
+    <h1>Tutor Substitute Request</h1>
+        <h3>{{ email_info['tutor']}} is requesting a substitute for this appointment:</h3>
+        <br/>
+        <p>{{ email_info['date'] }}</p> {% comment %} dont have the date actually being pulled in yet, need that to be in appointment info table {% endcomment %}
+        <p>{{ email_info['start'] }} to {{ email_info['end'] }}</p>
+        <p>{{ email_info['student']}}</p>
+        <p>{{ email_info['assignment'] }}</p>
+{% endblock %}
