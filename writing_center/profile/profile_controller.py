@@ -1,5 +1,5 @@
 from writing_center.db_repository import db_session
-from writing_center.db_repository.tables import UserTable, UserRoleTable, RoleTable, WCEmailPreferencesTable
+from writing_center.db_repository.tables import UserTable, UserRoleTable, RoleTable, EmailPreferencesTable
 
 class ProfileController:
     def __init__(self):
