@@ -7,7 +7,6 @@ from writing_center.profile.profile_controller import ProfileController
 from writing_center.writing_center_controller import WritingCenterController
 
 
-
 class ProfileView(FlaskView):
     route_base = '/profile'
 
