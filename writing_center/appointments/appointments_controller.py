@@ -75,4 +75,13 @@ class AppointmentsController:
             return False
 
     def get_user_info(self, user_id):
-        return db_session.query(UserTable).filter(UserTable.id == user_id).one_or_none()
+        return db_session.query(UserTable)\
+            .filter(UserTable.id == user_id)\
+            .one_or_none()
+
+    def begin_appointment(self, username):
+        pass
+        # user = self.get_user_by_username(username)
+        # begin_appt = AppointmentsTable(student_id=user.id, actualStart=datetime.now(), inProgress=1)
+        # db_session.add(begin_appt)
+        # db_session.commit()
