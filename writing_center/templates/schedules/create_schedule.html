@@ -45,9 +45,9 @@
         <tbody id="t-body">
         {% for schedule in schedules %}
             <tr>
-                <td>{{ schedule.timeStart|datetimeformat }}</td>
-                <td>{{ schedule.timeEnd|datetimeformat }}</td>
-                <td>{{ schedule.isActive }}</td>
+                <td>{{ schedule.startTime|datetimeformat }}</td>
+                <td>{{ schedule.endTime|datetimeformat }}</td>
+                <td>{{ schedule.active }}</td>
             </tr>
         {% endfor %}
         </tbody>
@@ -119,7 +119,7 @@
                     <label for="times">Select Time Slots</label>
                     <select class="form-control" id="times">
                         {% for schedule in schedules %}
-                            <option id="{{ schedule.id }}">{{ schedule.timeStart|datetimeformat }} - {{ schedule.timeEnd|datetimeformat }}</option>
+                            <option id="{{ schedule.id }}">{{ schedule.startTime|datetimeformat }} - {{ schedule.endTime|datetimeformat }}</option>
                         {% endfor %}
                     </select>
                 </div>

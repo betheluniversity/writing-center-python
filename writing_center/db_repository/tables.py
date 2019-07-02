@@ -42,9 +42,9 @@ class RoleTable(base):
 class ScheduleTable(base):
     __tablename__ = 'Schedule'
     id = Column(Integer, primary_key=True)
-    timeStart = Column(Time)
-    timeEnd = Column(Time)
-    isActive = Column(Integer)
+    startTime = Column(Time)
+    endTime = Column(Time)
+    active = Column(Integer)
 
 
 class SettingsTable(base):
