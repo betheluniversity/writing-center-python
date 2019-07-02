@@ -1,5 +1,5 @@
 from flask_classy import FlaskView, route, request
-from flask import render_template, jsonify, json
+from flask import render_template, jsonify, json, redirect, url_for
 from flask import session as flask_session
 from datetime import datetime
 
@@ -147,3 +147,15 @@ class AppointmentsView(FlaskView):
             self.wcc.set_alert('danger', 'Error! Appointment Not Scheduled!')
 
         return id
+
+    @route('/begin-appointment', methods=['POST'])
+    def begin_walk_in_appt(self):
+        form = request.form
+        username = form.get('username')
+        user = self.ac.get_user_by_username(username)
+        if user:
+            self.ac.begin_appointment(username)
+            self.wcc.set_alert('success', 'Appointment for ' + user.firstName + ' ' + user.lastName + ' started')
+        else:
+            self.wcc.set_alert('danger', 'Username ' + username + ' doesn\'t exist in Writing Center')
+        return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))
