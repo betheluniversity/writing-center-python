@@ -18,7 +18,7 @@
             </tr>
         </thead>
         <tbody>
-        {% for user, banned in users %}
+        {% for user in users %}
             <tr>
                 <td>
                     {{ user.lastName }}
@@ -27,7 +27,7 @@
                     {{ user.firstName }}
                 </td>
                 <td>
-                    {{ banned.bannedDate }}
+                    {{ user.bannedDate }}
                 </td>
                 <td>
                     {{ user.username }}

@@ -15,8 +15,7 @@ class UsersController:
             .all()
 
     def get_all_roles(self):
-        return db_session.query(RoleTable)\
-            .all()
+        return db_session.query(RoleTable).all()
 
     def get_user_by_username(self, username):
         return db_session.query(UserTable)\
@@ -30,19 +29,17 @@ class UsersController:
             .one_or_none()
 
     def create_user(self, first_name, last_name, username, sub_email_pref, stu_email_pref):
-        email_pref_id = self.create_email_preferences(sub_email_pref, stu_email_pref)
-        new_user = UserTable(username=username, password=None, firstName=first_name, lastName=last_name,
-                             email='{0}@bethel.edu'.format(username), email_pref_id=email_pref_id)
+        self.create_email_preferences(sub_email_pref, stu_email_pref)
+        new_user = UserTable(username=username, firstName=first_name, lastName=last_name,
+                             email='{0}@bethel.edu'.format(username))
         db_session.add(new_user)
         db_session.commit()
         return new_user
 
     def create_email_preferences(self, sub_email_pref, stu_email_pref):
-        new_email_prefs = WCEmailPreferencesTable(SubRequestEmail=sub_email_pref, StudentSignUpEmail=stu_email_pref)
+        new_email_prefs = EmailPreferencesTable(subRequestEmail=sub_email_pref, studentSignUpEmail=stu_email_pref)
         db_session.add(new_email_prefs)
         db_session.commit()
-
-        return new_email_prefs.id
 
     def get_role_by_name(self, role_name):
         return db_session.query(RoleTable)\
@@ -106,28 +103,28 @@ class UsersController:
         db_session.commit()
 
     def get_banned_users(self):
-        return db_session.query(UserTable, WCStudentBansTable)\
-            .filter(UserTable.id == WCStudentBansTable.user_id)\
+        return db_session.query(UserTable)\
+            .filter(UserTable.bannedDate != None)\
             .all()
 
     def remove_user_ban(self, user_id):
-        banned_user = db_session.query(WCStudentBansTable)\
-            .filter(WCStudentBansTable.user_id == user_id)\
+        banned_user = db_session.query(UserTable)\
+            .filter(UserTable.id == user_id)\
+            .filter(UserTable.bannedDate != None)\
             .one_or_none()
         if banned_user:
-            db_session.delete(banned_user)
+            banned_user.bannedDate = None
             db_session.commit()
 
     def remove_all_bans(self):
-        banned_users = db_session.query(WCStudentBansTable).all()
+        banned_users = db_session.query(UserTable).filter(UserTable.bannedDate != None).all()
         if banned_users:
             for user in banned_users:
-                db_session.delete(user)
+                user.bannedDate = None
             db_session.commit()
 
     def ban_user(self, username):
         now = datetime.now()
         user = self.get_user_by_username(username)
-        user_to_ban = WCStudentBansTable(user_id=user.id, bannedDate=now, Username=username)
-        db_session.add(user_to_ban)
+        user.bannedDate = now
         db_session.commit()

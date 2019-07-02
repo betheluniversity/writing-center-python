@@ -65,7 +65,7 @@
                     <label for="times">Select Time Slots</label>
                     <select class="form-control" id="times" multiple>
                         {% for schedule in schedules %}
-                            <option id="{{ schedule.id }}">{{ schedule.timeStart|datetimeformat }} - {{ schedule.timeEnd|datetimeformat }}</option>
+                            <option id="{{ schedule.id }}">{{ schedule.startTime|datetimeformat }} - {{ schedule.endTime|datetimeformat }}</option>
                         {% endfor %}
                     </select>
                 </div>

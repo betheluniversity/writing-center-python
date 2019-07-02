@@ -29,8 +29,8 @@ class AppointmentsTable(base):
 class EmailPreferencesTable(base):
     __tablename__ = 'EmailPreferences'
     user_id = Column(Integer, ForeignKey('User.id'), primary_key=True)
-    SubRequestEmail = Column(Integer)
-    StudentSignUpEmail = Column(Integer)
+    subRequestEmail = Column(Integer)
+    studentSignUpEmail = Column(Integer)
 
 
 class RoleTable(base):
@@ -42,9 +42,9 @@ class RoleTable(base):
 class ScheduleTable(base):
     __tablename__ = 'Schedule'
     id = Column(Integer, primary_key=True)
-    timeStart = Column(Time)
-    timeEnd = Column(Time)
-    isActive = Column(Integer)
+    startTime = Column(Time)
+    endTime = Column(Time)
+    active = Column(Integer)
 
 
 class SettingsTable(base):

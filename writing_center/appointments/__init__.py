@@ -21,13 +21,35 @@ class AppointmentsView(FlaskView):
     @route('/view-all')
     def view_all_appointments(self):
         appointments = self.ac.get_filled_appointments()
-        get_name = self.ac.get_user_by_username
+        appts_data = {}
+        for appt in appointments:
+            student_info = self.ac.get_user_info(appt.student_id)
+            tutor_info = self.ac.get_user_info(appt.tutor_id)
+            appts_data[appt] = {
+                'student_first': student_info.firstName if student_info else None,
+                'student_last': student_info.lastName if student_info else None,
+                'student_username': student_info.username if student_info else None,
+                'tutor_first': tutor_info.firstName if tutor_info else None,
+                'tutor_last': tutor_info.lastName if tutor_info else None,
+                'tutor_username': tutor_info.username if tutor_info else None
+            }
         return render_template('appointments/view_all_appointments.html', **locals())
 
     @route('/view-yearly/<int:selected_year>')
     def view_yearly_appointments(self, selected_year):
         appointments = self.ac.get_yearly_appointments(selected_year)
-        get_name = self.ac.get_user_by_username
+        appts_data = {}
+        for appt in appointments:
+            student_info = self.ac.get_user_info(appt.student_id)
+            tutor_info = self.ac.get_user_info(appt.tutor_id)
+            appts_data[appt] = {
+                'student_first': student_info.firstName,
+                'student_last': student_info.lastName,
+                'student_username': student_info.username,
+                'tutor_first': tutor_info.firstName,
+                'tutor_last': tutor_info.lastName,
+                'tutor_username': tutor_info.username
+            }
         select_year = selected_year
         return render_template('appointments/view_yearly_appointments.html', **locals())
 
@@ -47,39 +69,39 @@ class AppointmentsView(FlaskView):
         appointments = []
         for appointment in appts:
             if appointment.ActualStartTime:
-                start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.ActualStartTime.year,
-                                                              appointment.ActualStartTime.strftime('%m'),
-                                                              appointment.ActualStartTime.strftime('%d'),
-                                                              appointment.ActualStartTime.strftime('%I'),
-                                                              appointment.ActualStartTime.strftime('%M'),
-                                                              appointment.ActualStartTime.strftime('%S'))
-                end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.CompletedTime.year,
-                                                            appointment.CompletedTime.strftime('%m'),
-                                                            appointment.CompletedTime.strftime('%d'),
-                                                            appointment.CompletedTime.strftime('%I'),
-                                                            appointment.CompletedTime.strftime('%M'),
-                                                            appointment.CompletedTime.strftime('%S'))
+                start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
+                                                              appointment.actualStart.strftime('%m'),
+                                                              appointment.actualStart.strftime('%d'),
+                                                              appointment.actualStart.strftime('%I'),
+                                                              appointment.actualStart.strftime('%M'),
+                                                              appointment.actualStart.strftime('%S'))
+                end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualEnd.year,
+                                                            appointment.actualEnd.strftime('%m'),
+                                                            appointment.actualEnd.strftime('%d'),
+                                                            appointment.actualEnd.strftime('%I'),
+                                                            appointment.actualEnd.strftime('%M'),
+                                                            appointment.actualEnd.strftime('%S'))
             else:
-                start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.StartTime.year,
-                                                              appointment.StartTime.strftime('%m'),
-                                                              appointment.StartTime.strftime('%d'),
-                                                              appointment.StartTime.strftime('%I'),
-                                                              appointment.StartTime.strftime('%M'),
-                                                              appointment.StartTime.strftime('%S'))
-                end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.EndTime.year,
-                                                            appointment.EndTime.strftime('%m'),
-                                                            appointment.EndTime.strftime('%d'),
-                                                            appointment.EndTime.strftime('%I'),
-                                                            appointment.EndTime.strftime('%M'),
-                                                            appointment.EndTime.strftime('%S'))
+                start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
+                                                              appointment.scheduledStart.strftime('%m'),
+                                                              appointment.scheduledStart.strftime('%d'),
+                                                              appointment.scheduledStart.strftime('%I'),
+                                                              appointment.scheduledStart.strftime('%M'),
+                                                              appointment.scheduledStart.strftime('%S'))
+                end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledEnd.year,
+                                                            appointment.scheduledEnd.strftime('%m'),
+                                                            appointment.scheduledEnd.strftime('%d'),
+                                                            appointment.scheduledEnd.strftime('%I'),
+                                                            appointment.scheduledEnd.strftime('%M'),
+                                                            appointment.scheduledEnd.strftime('%S'))
             appointments.append({
-                'id': appointment.ID,
-                'studentUsername': appointment.StudUsername,
-                'tutorUsername': appointment.TutorUsername,
+                'id': appointment.id,
+                'studentId': appointment.student_id,
+                'tutorId': appointment.tutor_id,
                 'startTime': start_time,
                 'endTime': end_time,
                 'multilingual': appointment.multilingual,
-                'dropIn': appointment.DropInAppt
+                'dropIn': appointment.dropIn
             })
 
         return jsonify(appointments)
@@ -89,26 +111,26 @@ class AppointmentsView(FlaskView):
         all_open_appts = self.ac.get_all_open_appointments()
         appointments = []
         for appointment in all_open_appts:
-            start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.StartTime.year,
-                                                          appointment.StartTime.strftime('%m'),
-                                                          appointment.StartTime.strftime('%d'),
-                                                          appointment.StartTime.strftime('%H'),
-                                                          appointment.StartTime.strftime('%M'),
-                                                          appointment.StartTime.strftime('%S'))
-            end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.EndTime.year,
-                                                        appointment.EndTime.strftime('%m'),
-                                                        appointment.EndTime.strftime('%d'),
-                                                        appointment.EndTime.strftime('%H'),
-                                                        appointment.EndTime.strftime('%M'),
-                                                        appointment.EndTime.strftime('%S'))
+            start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
+                                                          appointment.scheduledStart.strftime('%m'),
+                                                          appointment.scheduledStart.strftime('%d'),
+                                                          appointment.scheduledStart.strftime('%H'),
+                                                          appointment.scheduledStart.strftime('%M'),
+                                                          appointment.scheduledStart.strftime('%S'))
+            end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledEnd.year,
+                                                        appointment.scheduledEnd.strftime('%m'),
+                                                        appointment.scheduledEnd.strftime('%d'),
+                                                        appointment.scheduledEnd.strftime('%H'),
+                                                        appointment.scheduledEnd.strftime('%M'),
+                                                        appointment.scheduledEnd.strftime('%S'))
             appointments.append({
-                'id': appointment.ID,
-                'studentUsername': appointment.StudUsername,
-                'tutorUsername': appointment.TutorUsername,
+                'id': appointment.id,
+                'studentId': appointment.student_id,
+                'tutorId': appointment.tutor_id,
                 'startTime': start_time,
                 'endTime': end_time,
                 'multilingual': appointment.multilingual,
-                'dropIn': appointment.DropInAppt
+                'dropIn': appointment.dropIn
             })
 
         return jsonify(appointments)
