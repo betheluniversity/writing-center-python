@@ -29,8 +29,8 @@ class AppointmentsTable(base):
 class EmailPreferencesTable(base):
     __tablename__ = 'EmailPreferences'
     user_id = Column(Integer, ForeignKey('User.id'), primary_key=True)
-    SubRequestEmail = Column(Integer)
-    StudentSignUpEmail = Column(Integer)
+    subRequestEmail = Column(Integer)
+    studentSignUpEmail = Column(Integer)
 
 
 class RoleTable(base):
