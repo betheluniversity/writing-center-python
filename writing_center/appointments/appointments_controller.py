@@ -75,4 +75,6 @@ class AppointmentsController:
             return False
 
     def get_user_info(self, user_id):
-        return db_session.query(UserTable).filter(UserTable.id == user_id).one_or_none()
+        return db_session.query(UserTable)\
+            .filter(UserTable.id == user_id)\
+            .one_or_none()
