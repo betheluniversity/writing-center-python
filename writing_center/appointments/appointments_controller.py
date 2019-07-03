@@ -80,8 +80,9 @@ class AppointmentsController:
             .one_or_none()
 
     def begin_appointment(self, username):
-        pass
-        # user = self.get_user_by_username(username)
-        # begin_appt = AppointmentsTable(student_id=user.id, actualStart=datetime.now(), inProgress=1)
-        # db_session.add(begin_appt)
-        # db_session.commit()
+        appts = db_session.query(AppointmentsTable).order_by(AppointmentsTable.id.desc()).all()
+        id = appts[0].id + 1
+        user = self.get_user_by_username(username)
+        begin_appt = AppointmentsTable(id=id, student_id=user.id, actualStart=datetime.now(), inProgress=1)
+        db_session.add(begin_appt)
+        db_session.commit()
