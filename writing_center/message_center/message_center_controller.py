@@ -52,13 +52,14 @@ class MessageCenterController:
 
     def get_substitute_email_recipients(self):
         users = (db_session.query(EmailPreferencesTable.user_id)
-                      .filter(EmailPreferencesTable.SubRequestEmail)
-                      .all())
+                 .filter(EmailPreferencesTable.SubRequestEmail == 1)
+                 .all())
 
-        users.append(db_session.query(EmailPreferencesTable.user_id)
-                          .filter(EmailPreferencesTable.SubRequestEmail == 1)
-                          .all())
+        users.append(db_session.query(UserRoleTable.user_id)
+                     .filter(UserRoleTable.role_id == 1 or UserRoleTable.role_id == 2)
+                     .all())
 
+        users = list(dict.fromkeys(users))
         recipients = []
         for user in users:
             recipients.append(self.get_user_by_id(user).email)
@@ -66,9 +67,20 @@ class MessageCenterController:
         return recipients
 
     def get_shift_email_recipients(self, appointment_id):
-        """TODO This method is going to select the tutor who's ID matches the ID of the appointment the student signed up for
-        then, it will check if that tutor has the StudentSignUpEmail enabled. After that, it will grab all writing
-        center admin and return that list as recipients"""
+        users = []
+
+        users.append(self.get_appointment_info(appointment_id).tutor_id)
+
+        users.append(db_session.query(UserRoleTable.user_id)
+                     .filter(UserRoleTable.role_id == 1 or UserRoleTable.role_id == 2)
+                     .all())
+
+        users = list(dict.fromkeys(users))
+        recipients = []
+        for user in users:
+            recipients.append(self.get_user_by_id(user).email)
+
+        return recipients
 
     def toggle_substitute(self, substitute):
         user = (db_session.query(UserTable)
