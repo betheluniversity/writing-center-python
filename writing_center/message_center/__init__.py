@@ -37,4 +37,5 @@ class MessageCenterView(FlaskView):
     
     @route('/send', methods=['POST'])
     def send(self):
-        pass  # TODO: Work this out based on tutorlabs
+
+        return

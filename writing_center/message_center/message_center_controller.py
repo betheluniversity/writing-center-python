@@ -7,7 +7,8 @@ from flask_mail import Mail, Message
 # Local
 from writing_center import app
 from writing_center.db_repository import db_session
-from writing_center.db_repository.tables import UserTable, EmailPreferencesTable, AppointmentsTable, UserRoleTable, RoleTable
+from writing_center.db_repository.tables import UserTable, EmailPreferencesTable, AppointmentsTable, UserRoleTable, \
+    RoleTable
 
 
 class MessageCenterController:
@@ -18,7 +19,7 @@ class MessageCenterController:
     def get_email_preferences(self):
         user = self.get_user(session['USERNAME'])
         return (db_session.query(EmailPreferencesTable)
-                .filter(EmailPreferencesTable.id == user.id)
+                .filter(EmailPreferencesTable.user_id == user.id)
                 .one())
 
     def get_appointment_info(self, appointment_id):
@@ -46,17 +47,26 @@ class MessageCenterController:
                        .filter(AppointmentsTable.ID == appointment_id)
                        .all())
 
-        recipients = [self.get_user(appointment.ProfUsername), self.get_user(appointment.StudUsername)]
+        recipients = [appointment.profEmail, self.get_user(appointment.student_id).email]
         return recipients
 
     def get_substitute_email_recipients(self):
-        return (db_session.query(EmailPreferencesTable, RoleTable)
-                .filter(EmailPreferencesTable.SubRequestEmail == 1)
-                .filter(RoleTable.id == 1 or RoleTable.id == 2)
-                .all())
+        users = (db_session.query(EmailPreferencesTable.user_id)
+                      .filter(EmailPreferencesTable.SubRequestEmail)
+                      .all())
+
+        users.append(db_session.query(EmailPreferencesTable.user_id)
+                          .filter(EmailPreferencesTable.SubRequestEmail == 1)
+                          .all())
+
+        recipients = []
+        for user in users:
+            recipients.append(self.get_user_by_id(user).email)
+
+        return recipients
 
     def get_shift_email_recipients(self, appointment_id):
-        """This method is going to select the tutor who's ID matches the ID of the appointment the student signed up for
+        """TODO This method is going to select the tutor who's ID matches the ID of the appointment the student signed up for
         then, it will check if that tutor has the StudentSignUpEmail enabled. After that, it will grab all writing
         center admin and return that list as recipients"""
 
@@ -87,18 +97,11 @@ class MessageCenterController:
 
         tutor = self.get_user(appointment.TutorUsername)
         subject = '{{{0}}} {1} ({2})'.format(appointment.StudUsername, appointment.StudentUsername,
-                                             appointment.date.strftime('%m/%d/%Y'))
+                                             appointment.date.strftime('%m/%d/%Y'))  # TODO work this out
         tutor = appointment.TutorUsername
         recipients = self.get_end_of_session_recipients(appointment_id)
 
-        for recipient in recipients:
-            recipient_roles = self.get_user_roles(recipient.id)
-            recipient_role_names = []
-
-            for role in recipient_roles:
-                recipient_role_names.append(role.name)
-
-            self.send_message(subject, render_template('sessions/email.html', **locals()), recipient.email, None, True)
+        self.send_message(subject, render_template('sessions/email.html', **locals()), recipients, None, True)
 
     def send_message(self, subject, body, recipients, bcc, html=False):
         if app.config['ENVIRON'] != 'prod':
@@ -137,19 +140,17 @@ class MessageCenterController:
     def send_substitute_email(self, appointment_id):
         recipients = self.get_substitute_email_recipients()
         appointment = self.get_appointment_info(appointment_id)
-        email_info = {'student': self.get_user(appointment.StudUsername).firstName + ' ' + self.get_user(appointment.StudUsername).lastName,
-                      'tutor': self.get_user(appointment.TutorUsername).firstName + ' ' + self.get_user(appointment.TutorUsername).lastName,
-                      'start': appointment.StartTime, 'end': appointment.EndTime, 'assignment': appointment.Assignment, 'date': 'NEED THIS'}
-
-        recipient_emails = []
-
-        for recipient in recipients:
-            recipient_emails.append(self.get_user_by_id(recipient.id).email)
+        email_info = {'student': self.get_user_by_id(appointment.student_id).firstName + ' ' + self.get_user_by_id(
+            appointment.student_id).lastName,
+                      'tutor': self.get_user_by_id(appointment.tutor_id).firstName + ' ' + self.get_user_by_id(
+                          appointment.tutor_id).lastName,
+                      'start': appointment.scheduledStart, 'end': appointment.scheduledEnd,
+                      'assignment': appointment.assignment, 'date': 'NEED THIS'}
 
         mail = Mail(app)
         msg = Message(subject='Substitute Tutor needed',
                       sender='',
-                      recipients=recipient_emails)
+                      recipients=recipients)
 
         msg.html = 'sub_request_body.html'
 
