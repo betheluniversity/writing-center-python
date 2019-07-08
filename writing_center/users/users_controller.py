@@ -12,6 +12,7 @@ class UsersController:
         return db_session.query(UserTable, RoleTable)\
             .filter(UserTable.id == UserRoleTable.user_id)\
             .filter(UserRoleTable.role_id == RoleTable.id)\
+            .filter(UserTable.deletedAt == None)\
             .all()
 
     def get_all_roles(self):
@@ -29,15 +30,15 @@ class UsersController:
             .one_or_none()
 
     def create_user(self, first_name, last_name, username, sub_email_pref, stu_email_pref):
-        self.create_email_preferences(sub_email_pref, stu_email_pref)
         new_user = UserTable(username=username, firstName=first_name, lastName=last_name,
-                             email='{0}@bethel.edu'.format(username))
+                             email='{0}@bethel.edu'.format(username), bannedDate=None, deletedAt=None)
         db_session.add(new_user)
         db_session.commit()
+        self.create_email_preferences(new_user.id, sub_email_pref, stu_email_pref)
         return new_user
 
-    def create_email_preferences(self, sub_email_pref, stu_email_pref):
-        new_email_prefs = EmailPreferencesTable(subRequestEmail=sub_email_pref, studentSignUpEmail=stu_email_pref)
+    def create_email_preferences(self, user_id, sub_email_pref, stu_email_pref):
+        new_email_prefs = EmailPreferencesTable(user_id=user_id, subRequestEmail=sub_email_pref, studentSignUpEmail=stu_email_pref)
         db_session.add(new_email_prefs)
         db_session.commit()
 
@@ -127,4 +128,9 @@ class UsersController:
         now = datetime.now()
         user = self.get_user_by_username(username)
         user.bannedDate = now
+        db_session.commit()
+
+    def deactivate_user(self, user_id):
+        user = self.get_user(user_id)
+        user.deletedAt = datetime.now()
         db_session.commit()

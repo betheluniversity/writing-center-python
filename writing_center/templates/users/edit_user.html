@@ -55,7 +55,7 @@
                         <button id="save-user" style="margin-right: 10px;" type="submit" class="btn blue btn-primary">Save</button>
                     </div>
                     <div class="form-group">
-                        <a href="#" id="deactivate-user"
+                        <a href="{{ url_for('UsersView:deactivate_user', user_id=user.id) }}" id="deactivate-user"
                            class="btn btn-primary btn-danger">Deactivate</a>
                     </div>
                 </div>

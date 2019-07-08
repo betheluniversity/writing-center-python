@@ -170,3 +170,14 @@ class UsersView(FlaskView):
         else:
             self.wcc.set_alert('danger', 'You do not have permission to access this function')
             return redirect(url_for('View:index'))
+
+    # This method deactivates users both from view_all_users and edit_user
+    @route('/deactivate/<int:user_id>', methods=['POST', 'GET'])
+    def deactivate_user(self, user_id):
+        try:
+            self.uc.deactivate_user(user_id)
+            self.wcc.set_alert('success', 'Users deactivated successfully!')
+            return redirect(url_for("UsersView:view_all_users"))
+        except Exception as e:
+            self.wcc.set_alert('danger', 'Failed to deactivate user(s)')
+            return redirect(url_for("UsersView:edit", user_id=user_id))
