@@ -15,25 +15,24 @@ class AppointmentsController:
             .one_or_none()
 
     def get_filled_appointments(self):
-        return db_session.query(WCAppointmentDataTable)\
-            .filter(WCAppointmentDataTable.StudUsername != "")\
-            .filter(WCAppointmentDataTable.StudUsername != None)\
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.student_id != None)\
             .all()
 
     def get_yearly_appointments(self, selected_year):
-        yearly_appts = db_session.query(WCAppointmentDataTable)\
-            .filter(WCAppointmentDataTable.StudUsername != "")\
-            .filter(WCAppointmentDataTable.StudUsername != None)\
+        yearly_appts = db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.student_id != None)\
             .all()
         appts_list = []
         for appts in yearly_appts:
-            if int(appts.StartTime.strftime('%Y')) == selected_year:
+            if int(appts.scheduledStart.strftime('%Y')) == selected_year:
                 appts_list.append(appts)
         return appts_list
 
     def get_all_user_appointments(self, username):
-        return db_session.query(WCAppointmentDataTable)\
-            .filter(WCAppointmentDataTable.StudUsername == username)\
+        user = self.get_user_by_username(username)
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.student_id == user.id)\
             .all()
 
     def get_years(self):
@@ -47,14 +46,14 @@ class AppointmentsController:
         return years
 
     def get_all_open_appointments(self):
-        return db_session.query(WCAppointmentDataTable)\
-            .filter(WCAppointmentDataTable.StudUsername == None)\
-            .filter(WCAppointmentDataTable.StartTime > datetime.now())\
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.student_id == None)\
+            .filter(AppointmentsTable.scheduledStart > datetime.now())\
             .all()
 
     def create_appointment(self, id, start_time, end_time):
-        appointment = db_session.query(WCAppointmentDataTable)\
-            .filter(WCAppointmentDataTable.ID == id)\
+        appointment = db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.id == id)\
             .one_or_none()
         # Formats the time to fit the DB's format
         start_time = start_time.replace("T", " ")
@@ -64,12 +63,18 @@ class AppointmentsController:
         start_time = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
         end_time = datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S')
         # Updates the start time, end time, and student username
-        appointment.StartTime = start_time
-        appointment.EndTime = end_time
-        appointment.StudUsername = flask_session['USERNAME']
+        appointment.scheduledStart = start_time
+        appointment.scheduledEnd = end_time
+        user = self.get_user_by_username(flask_session['USERNAME'])
+        appointment.student_id = user.id
         # Commits to DB
         db_session.commit()
         if appointment:
             return True
         else:
             return False
+
+    def get_user_info(self, user_id):
+        return db_session.query(UserTable)\
+            .filter(UserTable.id == user_id)\
+            .one_or_none()

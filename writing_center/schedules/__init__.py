@@ -80,25 +80,26 @@ class SchedulesView(FlaskView):
         appointments = []
         for tutor_appts in all_tutor_appts:
             for appointment in tutor_appts:
-                start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.StartTime.year,
-                                                              appointment.StartTime.strftime('%m'),
-                                                              appointment.StartTime.strftime('%d'),
-                                                              appointment.StartTime.strftime('%H'),
-                                                              appointment.StartTime.strftime('%M'),
-                                                              appointment.StartTime.strftime('%S'))
-                end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.EndTime.year, appointment.EndTime.strftime('%m'),
-                                                            appointment.EndTime.strftime('%d'),
-                                                            appointment.EndTime.strftime('%H'),
-                                                            appointment.EndTime.strftime('%M'),
-                                                            appointment.EndTime.strftime('%S'))
+                start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
+                                                              appointment.scheduledStart.strftime('%m'),
+                                                              appointment.scheduledStart.strftime('%d'),
+                                                              appointment.scheduledStart.strftime('%H'),
+                                                              appointment.scheduledStart.strftime('%M'),
+                                                              appointment.scheduledStart.strftime('%S'))
+                end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledEnd.year,
+                                                            appointment.scheduledEnd.strftime('%m'),
+                                                            appointment.scheduledEnd.strftime('%d'),
+                                                            appointment.scheduledEnd.strftime('%H'),
+                                                            appointment.scheduledEnd.strftime('%M'),
+                                                            appointment.scheduledEnd.strftime('%S'))
                 appointments.append({
-                    'id': appointment.ID,
-                    'studentUsername': appointment.StudUsername,
-                    'tutorUsername': appointment.TutorUsername,
+                    'id': appointment.id,
+                    'studentId': appointment.student_id,
+                    'tutorId': appointment.tutor_id,
                     'startTime': start_time,
                     'endTime': end_time,
                     'multilingual': appointment.multilingual,
-                    'dropIn': appointment.DropInAppt
+                    'dropIn': appointment.dropIn
                 })
                 
         return jsonify(appointments)

@@ -25,18 +25,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for app_data in appointments %}
+                        {% for appt, info in appts_data.items() %}
                             <tr>
-                                <td>{{ get_name(app_data.StudUsername).firstName }}</td>
-                                <td>{{ get_name(app_data.StudUsername).lastName }}</td>
-                                <td>{{ app_data.StudUsername }}</td>
-                                <td>{{ get_name(app_data.TutorUsername).firstName }}</td>
-                                <td>{{ get_name(app_data.TutorUsername).lastName }}</td>
-                                <td>{{ app_data.TutorUsername }}</td>
-                                <td>{{ app_data.ProfUsername }}</td>
-                                <td>{{ app_data.StartTime|datetimeformat('%m/%d/%y') }} - {{ app_data.StartTime|datetimeformat }}</td>
-                                <td>{{ app_data.EndTime|datetimeformat('%m/%d/%y') }} - {{ app_data.EndTime|datetimeformat }}</td>
-                                <td>{{ app_data.CourseCode }}</td>
+                                <td>{{ info['student_first'] }}</td>
+                                <td>{{ info['student_last'] }}</td>
+                                <td>{{ info['student_username'] }}</td>
+                                <td>{{ info['tutor_first'] }}</td>
+                                <td>{{ info['tutor_last'] }}</td>
+                                <td>{{ info['tutor_username'] }}</td>
+                                <td>{{ appt.profName }}</td>
+                                <td>{{ appt.scheduledStart|datetimeformat('%m/%d/%y') }} - {{ appt.scheduledStart|datetimeformat }}</td>
+                                <td>{{ appt.scheduledEnd|datetimeformat('%m/%d/%y') }} - {{ appt.scheduledEnd|datetimeformat }}</td>
+                                <td>{{ appt.courseCode }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>

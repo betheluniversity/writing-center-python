@@ -1,5 +1,5 @@
 from writing_center.db_repository import db_session
-from writing_center.db_repository.tables import UserTable, UserRoleTable, RoleTable, EmailPreferencesTable
+from writing_center.db_repository.tables import UserTable, RoleTable
 
 class ProfileController:
     def __init__(self):
@@ -17,5 +17,4 @@ class ProfileController:
         db_session.commit()
 
     def get_all_roles(self):
-        return db_session.query(RoleTable) \
-            .all()
+        return db_session.query(RoleTable).all()

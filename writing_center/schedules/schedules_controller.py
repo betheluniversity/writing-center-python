@@ -11,14 +11,13 @@ class SchedulesController:
         pass
 
     def get_schedules(self):
-        return db_session.query(WCScheduleTable)\
-            .all()
+        return db_session.query(ScheduleTable).all()
 
     def create_schedule(self, start_time, end_time, is_active):
         try:
             if self.check_for_existing_schedule(start_time, end_time):
                 return False
-            new_schedule = WCScheduleTable(timeStart=start_time, timeEnd=end_time, isActive=is_active)
+            new_schedule = ScheduleTable(startTime=start_time, endTime=end_time, active=is_active)
             db_session.add(new_schedule)
             db_session.commit()
             return True
@@ -27,18 +26,18 @@ class SchedulesController:
 
     def check_for_existing_schedule(self, start_time, end_time):
         try:
-            schedule = db_session.query(WCScheduleTable)\
-                .filter(WCScheduleTable.timeStart == start_time)\
-                .filter(WCScheduleTable.timeEnd == end_time)\
+            schedule = db_session.query(ScheduleTable)\
+                .filter(ScheduleTable.startTime == start_time)\
+                .filter(ScheduleTable.endTime == end_time)\
                 .one()
             return True
         except orm.exc.NoResultFound:  # otherwise return false
             return False
 
-    def get_user_by_name(self, firstName, lastName):
+    def get_user_by_name(self, first_name, last_name):
         return db_session.query(UserTable)\
-            .filter(UserTable.firstName == firstName)\
-            .filter(UserTable.lastName == lastName)\
+            .filter(UserTable.firstName == first_name)\
+            .filter(UserTable.lastName == last_name)\
             .one_or_none()
 
     def get_user_by_username(self, username):
@@ -50,7 +49,7 @@ class SchedulesController:
         return db_session.query(UserTable)\
             .filter(UserTable.id == UserRoleTable.user_id)\
             .filter(UserRoleTable.role_id == RoleTable.id)\
-            .filter(RoleTable.role == 'role_tutor')\
+            .filter(RoleTable.name == 'Tutor')\
             .all()
 
     def create_tutor_shifts(self, start_date, end_date, multilingual, drop_in, tutor_name, day_of_week, time_slot):
@@ -100,8 +99,8 @@ class SchedulesController:
             # Updates the datetime object with the correct date
             start_ts = start_ts.replace(year=appt_date.year, month=appt_date.month, day=appt_date.day)
             end_ts = end_ts.replace(year=appt_date.year, month=appt_date.month, day=appt_date.day)
-            appointment = WCAppointmentDataTable(TutorUsername=tutor.username, StartTime=start_ts, EndTime=end_ts,
-                                                 CheckIn=-1, multilingual=multilingual, DropInAppt=drop_in)
+            appointment = AppointmentsTable(tutor_id=tutor.id, scheduledStart=start_ts, scheduledEnd=end_ts,
+                                            inProgress=0, multilingual=multilingual, dropIn=drop_in, sub=0, noShow=0)
             db_session.add(appointment)
             db_session.commit()
             appt_date += timedelta(weeks=1)  # Add a week for next session
@@ -125,7 +124,7 @@ class SchedulesController:
         appointment_list = []
         for tutor_name in tutors:
             tutor = self.get_username_from_name(tutor_name)
-            appointment_list.append(db_session.query(WCAppointmentDataTable).filter(WCAppointmentDataTable.TutorUsername == tutor.username).all())
+            appointment_list.append(db_session.query(AppointmentsTable).filter(AppointmentsTable.tutor_id == tutor.id).all())
 
         return appointment_list
 
