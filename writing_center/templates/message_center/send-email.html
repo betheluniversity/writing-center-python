@@ -12,7 +12,7 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="choose-recipients">Recipient Groups</label>
-                        <select name="groups" class="chosen form-control" id="choose-recipients" multiple="true"
+                        <select name="groups" class="form-control" id="choose-recipients" multiple="true"
                             data-placeholder="Choose recipients ...">
                             {% for role in role_list %}
                             <option value="{{ role.id }}">{{ role.name }}</option> <!--TODO: Get roles to place here-->
@@ -21,20 +21,14 @@
                     </div>
                     <div class="form-group col-md-6">
                         <label for="subject">Subject</label>
-                        <input name="subject" type="text" class="chosen form-control" id="subject"
+                        <input name="subject" type="text" class="form-control" id="subject"
                             autocomplete="off">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group col-md-3 btn-group">
-                        <button type="button" class="button-curved blue btn btn-primary" id="show-cc" onclick="ccFunction()">CC</button>
-                        <button type="button" class="button-curved blue btn btn-primary" id="show-bcc"onclick="bccFunction()">BCC</button>
                     </div>
                 </div>
                 <div class="form-row">
                     <div id="cc-div" class="form-group col-md-12 chosen-container email">
                         <label for="choose-cc">CC</label>
-                        <select name="cc" class="chosen form-control" id="choose-cc" multiple="true"
+                        <select name="cc" class="form-control" id="choose-cc" multiple="true"
                             data-placeholder="Choose CC recipients ...">
                             {% for user in user_list %}
                             <option value="{{ user.id }}">{{ user.firstName }} {{ user.lastName }}</option> <!--TODO: Get users to place here-->
@@ -45,8 +39,8 @@
                 <div class="form-row">
                     <div id="bcc-div" class="form-group col-md-12 chosen-container email">
                         <label for="choose-bcc">BCC</label>
-                        <select name="bcc" class="chosen form-control" id="choose-bcc" multiple="true"
-                            data-placeholder="Choose BBC recipients ...">
+                        <select name="bcc" class="form-control" id="choose-bcc" multiple="true"
+                            data-placeholder="Choose BCC recipients ...">
                             {% for user in user_list %}
                             <option value="{{ user.id }}">{{ user.firstName }} {{ user.lastName }}</option> <!--TODO: Get users to place here-->
                             {% endfor %}
