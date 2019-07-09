@@ -14,6 +14,16 @@ class AppointmentsController:
             .filter(UserTable.username == username)\
             .one_or_none()
 
+    def get_user_by_id(self, student_id):
+        return db_session.query(UserTable)\
+            .filter(UserTable.id == student_id)\
+            .one_or_none()
+
+    def get_user_by_appt(self, appt_id):
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.id == appt_id)\
+            .one_or_none()
+
     def get_filled_appointments(self):
         return db_session.query(AppointmentsTable)\
             .filter(AppointmentsTable.student_id != None)\
@@ -78,3 +88,62 @@ class AppointmentsController:
         return db_session.query(UserTable)\
             .filter(UserTable.id == user_id)\
             .one_or_none()
+
+    def begin_appointment(self, username):
+        user = self.get_user_by_username(username)
+        begin_appt = AppointmentsTable(student_id=user.id, actualStart=datetime.now(), inProgress=1)
+        db_session.add(begin_appt)
+        db_session.commit()
+
+    def get_scheduled_appointments(self, username):
+        tutor = self.get_user_by_username(username)
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.tutor_id == tutor.id)\
+            .all()
+
+    def mark_no_show(self, appt_id):
+        try:
+            appointment = db_session.query(AppointmentsTable)\
+                .filter(AppointmentsTable.id == appt_id)\
+                .one_or_none()
+            appointment.noShow = 1
+            db_session.commit()
+            return True
+        except Exception as e:
+            return False
+
+    def continue_appointment(self, appt_id):
+        try:
+            appointment = db_session.query(AppointmentsTable)\
+                .filter(AppointmentsTable.id == appt_id)\
+                .one_or_none()
+            appointment.inProgress = 1
+            appointment.actualEnd = None
+            db_session.commit()
+            return True
+        except Exception as e:
+            return False
+
+    def start_appointment(self, appt_id):
+        try:
+            appointment = db_session.query(AppointmentsTable) \
+                .filter(AppointmentsTable.id == appt_id) \
+                .one_or_none()
+            appointment.inProgress = 1
+            appointment.actualStart = datetime.now()
+            db_session.commit()
+            return True
+        except Exception as e:
+            return False
+
+    def end_appointment(self, appt_id):
+        try:
+            appointment = db_session.query(AppointmentsTable)\
+                .filter(AppointmentsTable.id == appt_id)\
+                .one_or_none()
+            appointment.inProgress = 0
+            appointment.actualEnd = datetime.now()
+            db_session.commit()
+            return True
+        except Exception as e:
+            return False

@@ -90,7 +90,7 @@ class UsersView(FlaskView):
 
         return render_template('users/edit_user.html', **locals())
 
-    @route("/save-user-edits", methods=['POST'])
+    @route('/save-user-edits', methods=['POST'])
     def save_user_edits(self):
         form = request.form
         user_id = form.get('user-id')
