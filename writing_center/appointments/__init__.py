@@ -54,6 +54,16 @@ class AppointmentsView(FlaskView):
         return render_template('appointments/view_yearly_appointments.html', **locals())
 
     def appointments_and_walk_ins(self):
+        tutor = flask_session['USERNAME']
+        appointments = self.ac.get_scheduled_appointments(tutor)
+        users = {}
+        for appt in appointments:
+            user = self.ac.get_user_by_id(appt.student_id)
+            if user != None:
+                name = '{0} {1}'.format(user.firstName, user.lastName)
+            else:
+                name = ""
+            users.update({appt.student_id: name})
         return render_template('appointments/appointments_and_walk_ins.html', **locals())
 
     def create_appointment(self):
@@ -158,4 +168,37 @@ class AppointmentsView(FlaskView):
             self.wcc.set_alert('success', 'Appointment for ' + user.firstName + ' ' + user.lastName + ' started')
         else:
             self.wcc.set_alert('danger', 'Username ' + username + ' doesn\'t exist in Writing Center')
+        return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))
+
+    @route('/handle-scheduled-appointments', methods=['POST'])
+    def handle_scheduled_appointments(self):
+        btn_id = str(json.loads(request.data).get('id'))
+        appt_id = str(json.loads(request.data).get('value'))
+        if btn_id == 'start':
+            appt = self.ac.start_appointment(appt_id)
+            if appt:
+                self.wcc.set_alert('success', 'Appointment Started Successfully!')
+            else:
+                self.wcc.set_alert('danger', 'Appointment Failed To Start.')
+        elif btn_id == 'continue':
+            appt = self.ac.continue_appointment(appt_id)
+            if appt:
+                self.wcc.set_alert('success', 'Appointment Successfully Re-started!')
+            else:
+                self.wcc.set_alert('danger', 'Appointment Failed To Continue!')
+        elif btn_id == 'end':
+            appt = self.ac.end_appointment(appt_id)
+            if appt:
+                self.wcc.set_alert('success', 'Successfully Ended Appointment')
+            else:
+                self.wcc.set_alert('danger', 'Failed To End Appointment')
+        elif btn_id == 'no-show':
+            appt = self.ac.mark_no_show(appt_id)
+            if appt:
+                appointment = self.ac.get_user_by_appt(appt_id)
+                user = self.ac.get_user_by_id(appointment.student_id)
+                message = '{0} {1} Marked As No Show'.format(user.firstName, user.lastName)
+                self.wcc.set_alert('success', message)
+            else:
+                self.wcc.set_alert('danger', 'Failed To Set As No Show')
         return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))
