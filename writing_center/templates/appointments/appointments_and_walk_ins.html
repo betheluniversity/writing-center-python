@@ -40,7 +40,7 @@
         <tbody>
             {% if appointments|length > 0 %}
                 {% for appointment in appointments %}
-                    {% if appointment.student_id and appointment.scheduledStart <= now %}
+                    {% if appointment.student_id and appointment.scheduledStart >= now %}
                         <tr>
                             <td>
                                 {{ users[appointment.student_id] }}
