@@ -246,3 +246,11 @@ ul.list-group{
     padding: 10px;
     float: left;
 }
+
+.hidden {
+    visibility: hidden;
+}
+
+.shown {
+    visibility: show; 
+}

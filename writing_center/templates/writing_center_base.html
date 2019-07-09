@@ -42,9 +42,13 @@
 
             <!-- Pikaday Javascript -->
             <script src="https://dbushell.com/Pikaday/pikaday.js"></script>
-      
-             <!-- JQuery/JS for DataTables -->
+
+            <!-- JQuery/JS for DataTables -->
             <script type="text/javascript" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+
+            <!-- JQuery/JS/CSS for Chosen -->
+            <link rel="stylesheet" href="{{ url_for('static', filename='chosen.min.css') }}">
+            <script src="{{ url_for('static', filename='chosen.jquery.min.js') }}"></script>
 
             {% block styles %}
                 <!-- Full Calendar CSS -->

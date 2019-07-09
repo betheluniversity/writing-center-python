@@ -78,4 +78,18 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function ccFunction() {
+            document.getElementById('cc-div').style.display = 'block';
+        }
+        function bccFunction() {
+            document.getElementById('bcc-div').style.display = 'block';
+        }
+        $(document).ready(function () {
+            $(".chosen").chosen({
+                display_disabled_options: true
+            });
+        });
+    </script>
 {% endblock %}
