@@ -42,14 +42,18 @@ class AppointmentsView(FlaskView):
         for appt in appointments:
             student_info = self.ac.get_user_info(appt.student_id)
             tutor_info = self.ac.get_user_info(appt.tutor_id)
-            appts_data[appt] = {
-                'student_first': student_info.firstName,
-                'student_last': student_info.lastName,
-                'student_username': student_info.username,
-                'tutor_first': tutor_info.firstName,
-                'tutor_last': tutor_info.lastName,
-                'tutor_username': tutor_info.username
-            }
+            if student_info:
+                appts_data[appt] = {
+                    'student_first': student_info.firstName,
+                    'student_last': student_info.lastName,
+                    'student_username': student_info.username,
+                }
+            if tutor_info:
+                appts_data[appt].update({
+                    'tutor_first': tutor_info.firstName,
+                    'tutor_last': tutor_info.lastName,
+                    'tutor_username': tutor_info.username
+                })
         select_year = selected_year
         return render_template('appointments/view_yearly_appointments.html', **locals())
 
