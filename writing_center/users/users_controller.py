@@ -12,6 +12,7 @@ class UsersController:
         return db_session.query(UserTable, RoleTable)\
             .filter(UserTable.id == UserRoleTable.user_id)\
             .filter(UserRoleTable.role_id == RoleTable.id)\
+            .filter(UserTable.deletedAt == None)\
             .all()
 
     def get_all_roles(self):
