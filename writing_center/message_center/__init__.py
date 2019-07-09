@@ -19,6 +19,8 @@ class MessageCenterView(FlaskView):
 
     @route('/send-email')
     def send_email(self):
+        users = self.base.get_all_users()
+        users = sorted(users, key = lambda i: i.lastName)
         return render_template('message_center/send-email.html', **locals())
 
     @route('/email-preferences')

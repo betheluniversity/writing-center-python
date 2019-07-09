@@ -7,14 +7,17 @@ from flask_mail import Mail, Message
 # Local
 from writing_center import app
 from writing_center.db_repository import db_session
-from writing_center.db_repository.tables import UserTable, EmailPreferencesTable, AppointmentsTable, UserRoleTable, \
-    RoleTable
+from writing_center.db_repository.tables import UserTable, EmailPreferencesTable, AppointmentsTable, UserRoleTable, RoleTable
 
 
 class MessageCenterController:
 
     def __init__(self):
         pass
+
+    def get_all_users(self):
+        return (db_session.query(UserTable)
+                .all())
 
     def get_email_preferences(self):
         user = self.get_user(session['USERNAME'])

@@ -5,44 +5,40 @@
         <h1><b>Send Email</b></h1>
         <p>Send emails to an individual student, all students, or all tutors</p>
     </div>
-
     <div class="custom-default row">
         <div class="col-md-8">
             <form action="{{ url_for('MessageCenterView:send_email') }}" method="post">
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                        <label for="choose-recipients">Recipient Groups</label>
-                        <select name="groups" class="form-control" id="choose-recipients" multiple="true"
-                            data-placeholder="Choose recipients ...">
-                            {% for role in role_list %}
-                            <option value="{{ role.id }}">{{ role.name }}</option> <!--TODO: Get roles to place here-->
+                        <label for="choose-recipients">Recipients</label>
+                        <select name="groups" class="email-form" id="choose-recipients" multiple>
+                            {% for user in users %}
+                                <option value="{{ user.id }}">{{ user.lastName}}, {{ user.firstName }} | {{ user.email }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="form-group col-md-6">
+                    <div class="form-group col-md-6 email">
                         <label for="subject">Subject</label>
-                        <input name="subject" type="text" class="form-control" id="subject"
+                        <input name="subject" type="text" class="form-control email-form" id="subject"
                             autocomplete="off">
                     </div>
                 </div>
                 <div class="form-row">
-                    <div id="cc-div" class="form-group col-md-12 chosen-container email">
+                    <div id="cc-div" class="form-group col-md-12 email">
                         <label for="choose-cc">CC</label>
-                        <select name="cc" class="form-control" id="choose-cc" multiple="true"
-                            data-placeholder="Choose CC recipients ...">
-                            {% for user in user_list %}
-                            <option value="{{ user.id }}">{{ user.firstName }} {{ user.lastName }}</option> <!--TODO: Get users to place here-->
+                        <select name="cc" class="email-form" id="choose-cc" multiple>
+                            {% for user in users %}
+                                <option value="{{ user.id }}">{{ user.lastName}}, {{ user.firstName }} | {{ user.email }}</option>
                             {% endfor %}
                         </select>
                     </div>
                 </div>
                 <div class="form-row">
-                    <div id="bcc-div" class="form-group col-md-12 chosen-container email">
+                    <div id="bcc-div" class="form-group col-md-12 email">
                         <label for="choose-bcc">BCC</label>
-                        <select name="bcc" class="form-control" id="choose-bcc" multiple="true"
-                            data-placeholder="Choose BCC recipients ...">
+                        <select name="ccc" class="email-form" id="choose-bcc" multiple>
                             {% for user in user_list %}
-                            <option value="{{ user.id }}">{{ user.firstName }} {{ user.lastName }}</option> <!--TODO: Get users to place here-->
+                            <option value="{{ user.id }}">{{ user.lastName}}, {{ user.firstName }} | {{ user.email }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -73,17 +69,25 @@
         </div>
     </div>
 
-    <script>
-        function ccFunction() {
-            document.getElementById('cc-div').style.display = 'block';
-        }
-        function bccFunction() {
-            document.getElementById('bcc-div').style.display = 'block';
-        }
-        $(document).ready(function () {
-            $(".chosen").chosen({
-                display_disabled_options: true
-            });
+    <script type="text/javascript">
+        $(document).ready(function() {
+            new SlimSelect({
+                select: '#choose-recipients',
+                placeholder: 'Choose Recipients ...',
+                closeOnSelect: false
+            })
+
+            new SlimSelect({
+                select: '#choose-cc',
+                placeholder: 'Choose CC Recipients',
+                closeOnSelect: false
+            })
+
+            new SlimSelect({
+                select: '#choose-bcc',
+                placeholder: 'Choose BCC Recipients',
+                closeOnSelect: false
+            })
         });
     </script>
 {% endblock %}

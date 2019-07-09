@@ -247,10 +247,6 @@ ul.list-group{
     float: left;
 }
 
-.hidden {
-    visibility: hidden;
-}
-
-.shown {
-    visibility: show; 
+.email-form {
+    height: 30px;
 }
