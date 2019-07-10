@@ -6,3 +6,4 @@ config/*.py
 *.csv
 *.log
 .vscode/settings.json
+**/.vscode/**
