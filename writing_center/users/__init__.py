@@ -170,3 +170,26 @@ class UsersView(FlaskView):
         else:
             self.wcc.set_alert('danger', 'You do not have permission to access this function')
             return redirect(url_for('View:index'))
+
+    @route('/deactivate/<int:user_id>', methods=['POST', 'GET'])
+    def deactivate_user(self, user_id):
+        try:
+            self.uc.deactivate_user(user_id)
+            self.wcc.set_alert('success', 'Users deactivated successfully!')
+            return redirect(url_for("UsersView:view_all_users"))
+        except Exception as e:
+            self.wcc.set_alert('danger', 'Failed to deactivate user(s)')
+            return redirect(url_for("UsersView:edit", user_id=user_id))
+
+    @route("/deactivate-users", methods=['post'])
+    def deactivate_users(self):
+        form = request.form
+        json_user_ids = form.get('jsonUserIds')
+        user_ids = json.loads(json_user_ids)
+        try:
+            for user in user_ids:
+                self.uc.deactivate_user(user)
+            self.wcc.set_alert('success', 'User(s) deactivated successfully!')
+        except Exception as error:
+            self.wcc.set_alert('danger', 'Failed to deactivate user(s): {0}'.format(str(error)))
+        return 'done'  # Return doesn't matter: success or failure take you to the same page. Only the alert changes.
