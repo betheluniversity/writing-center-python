@@ -7,124 +7,106 @@
     </div>
     <form>
         <div class="form-row">
-            <div class="form-group col-md-4">
-                <label for="startdate">Click Start Date:</label>
-                <input type="datetime" id="startdate" class="date hasDatepicker chosen-container"placeholder="Choose a Starting Date..." readonly>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="start-date">Start Date</label>
+                    <input class="form-control datepicker" id="start-date" type="text" readonly/>
+                    <div id="start-container"></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="end-date">End Date</label>
+                    <input class="form-control datepicker" id="end-date" type="text" readonly/>
+                    <div id="end-container"></div>
+                </div>
             </div>
             <div class="form-group col-md-4">
-                <label for="enddate">Click End Date:</label>
-                <input type="datetime" id="enddate" class="date hasDatepicker chosen-container" placeholder="Choose an Ending Date..." readonly>
-            </div>
-            <div class="form-group col-md-4">
-                <label class="radio"><input style="margin: 0px 5px" type="radio" name="multilingual" value="all" checked>All Appointments</label>
-                <label class="radio"><input style="margin: 0px 5px" type="radio" name="multilingual" value="non">Only Non-Multilingual Appointments</label>
-                <label class="radio"><input style="margin: 0px 5px" type="radio" name="multilingual" value="multilingual">Only Multilingual Appointments</label>
+                <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="all" onchange="inputParamsChanged()" checked>All Appointments</label>
+                <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="non" onchange="inputParamsChanged()">Only Non-Multilingual Appointments</label>
+                <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="multilingual" onchange="inputParamsChanged()">Only Multilingual Appointments</label>
             </div>
         </div>
-        <div class="form-row">
-            <div class="form-group col-md-12 form-check">
-                <div class="form-check"><label class="form-check-label" for="view-all"><input id="view-all" class="form-check-input" type="checkbox" checked>View All</label></div>
-                <div class="form-check"><label class="form-check-label" for="total-visits"><input id="total-visits" class="form-check-input" type="checkbox">Total Visits</label></div>
-                <div class="form-check"><label class="form-check-label" for="busiest-time-of-day"><input id="busiest-time-of-day" class="form-check-input" type="checkbox">Busiest Time of Day</label></div>
-                <div class="form-check"><label class="form-check-label" for="busiest-day"><input id="busiest-day" class="form-check-input" type="checkbox">Busiest Day</label></div>
-                <div class="form-check"><label class="form-check-label" for="busiest-tutor"><input id="busiest-tutor" class="form-check-input" type="checkbox">Busiest Tutor</label></div>
-                <div class="form-check"><label class="form-check-label" for="no-shows"><input id="no-shows" class="form-check-input" type="checkbox">No Shows</label></div>
-                <div class="form-check"><label class="form-check-label" for="busiest-week"><input id="busiest-week" class="form-check-input" type="checkbox">Busiest Week</label></div>
-                <div class="form-check"><label class="form-check-label" for="by-course"><input id="by-course" class="form-check-input" type="checkbox">By Course</label></div>
-            </div>
+        {# spinner placeholder #}
+        <div id="spinner" class="spinner" style="display: none;">
+            <img id="img-spinner" class="spinner-img" src="https://cdn1.bethel.edu/images/load.gif" alt="Loading"/>
         </div>
-        <div class="form-row">
-            <div class="form-group col-md-12">
-                <button id="search" class="btn btn-primary">Search</button>
-                <input type="button" id="clear" class="btn btn-danger" value="Clear Search" onclick="clearSearch()"
-            </div>
+        <div id="results">
+            {% include 'statistics/statistics_tables.html' %}
         </div>
+
     </form>
 
     <script>
-        function clearSearch()//Clears parameter values
-        {
-            document.getElementById('startdate').value="";
-            document.getElementById('enddate').value="";
-        }
-        //Load the datepicker jquery
-        $(function() {
-            $( "#startdate" ).datepicker({dateFormat: 'yy-mm-dd'});
-            $( "#enddate" ).datepicker({dateFormat: 'yy-mm-dd'});
-        });
-        //Clear the startdate and enddate
-        $(document).ready(function() {
-            $("#clear").click(function(){
-                $(".view-reports-input").change();
-                $(".checkbox").prop('checked', false);
-            })
-        });
-        $(document).ready(function() {
-            $("#search").click(function(){
-                viewAll = false;
-                totalVisits = false;
-                busiestTimeOfDay = false;
-                busiestDay = false;
-                busiestTutor = false;
-                noShows = false;
-                busiestWeek = false;
-                byCourse = false;
-                //getStudentEmail = false;
-                // getProfEmail = false;
-
-                //Date issues.
-                if($("#startdate").val() == "" || $("#enddate").val() == ""){
-                    alert("Please Select a Date Range.")
-                    return;
+        $(document).ready(function () {
+            $('.datepicker').each(function () {
+                var current_element = $(this);
+                let maxDate = new Date();
+                let dd = maxDate.getDate();
+                let mm = maxDate.getMonth() + 1;
+                let yyyy = maxDate.getFullYear() + 2;
+                if (dd < 10) {
+                  dd = '0' + dd;
                 }
 
-                if($("#startdate").val() != "")
-                    startdate = $("#startdate").val();
-                else
-                    startdate = "none";
-
-                if($("#enddate").val() != "")
-                    enddate = $("#enddate").val();
-                else
-                    enddate = "none";
-
-                if($("#startdate").val() >= $("#enddate").val() ){
-                    alert("Please choose a startdate that comes before the enddate");
-                    return;
+                if (mm < 10) {
+                  mm = '0' + mm;
                 }
+                maxDate = yyyy + '-' + mm + '-' + dd;
+                var starting_values = {
+                    field: this,
+                    format: 'MM DD YYYY',
+                    minDate: new Date('2010-01-01'),
+                    maxDate: new Date(maxDate),
+                    yearRange: [2010, yyyy],
+                    disableDayFn: function (date) {
+                        var start_populated = $("#start-date").val();
+                        var end_populated = $("#end-date").val();
+                        if (start_populated == "" && end_populated == "") {
+                            return null;
+                        } else if (start_populated != "" && current_element.attr('id') == 'end-date') {
+                            if (new Date(start_populated) >= date) {
+                                return date;
+                            }
+                        } else if (end_populated != "" && current_element.attr('id') == 'start-date') {
+                            if (new Date(end_populated) <= date) {
+                                return date;
+                            }
+                        }
+                    },
+                    onSelect: function(date) {
+                        inputParamsChanged();
+                    },
+                };
+                starting_values['defaultDate'] = new Date();
+                starting_values['setDefaultDate'] = true;
 
-                //Gets the value of multilingual
-                multilingual = $('input[name=multilingual]:checked').val();
-
-                if($("#view-all").is(":checked"))
-                    viewAll = true;
-                if($("#total-visits").is(":checked"))
-                    totalVisits = true;
-                if($("#busiest-time-of-day").is(":checked"))
-                    busiestTimeOfDay = true;
-                if($("#busiest-day").is(":checked"))
-                    busiestDay = true;
-                if($("#busiest-tutor").is(":checked"))
-                    busiestTutor = true;
-                if($("#no-shows").is(":checked"))
-                    noShows = true;
-                if($("#busiest-week").is(":checked"))
-                    busiestWeek = true;
-                if($("#by-course").is(":checked"))
-                    byCourse = true;
-                // if($("#get-student-email").is(":checked"))
-                //  getStudentEmail = true;
-                // if($("#get-prof-email").is(":checked"))
-                //  getProfEmail = true;
-                $.ajax({
-                    type: "POST",
-                    url: "/writingcenter/observer/statistics/call",
-                    data: { startdate: startdate, enddate: enddate, multilingual:multilingual, viewAll: viewAll, totalVisits: totalVisits, busiestTimeOfDay:busiestTimeOfDay, busiestDay:busiestDay, busiestTutor:busiestTutor, noShows:noShows, busiestWeek:busiestWeek, byCourse: byCourse}//, getStudentEmail:getStudentEmail, getProfEmail:getProfEmail}
-                    }).done(function ( data ) {
-                        $("#content").html(data);
-                    });
+                var picker = new Pikaday(starting_values);
             });
         });
+
+        function inputParamsChanged() {
+            $('#spinner').show();
+            let startDate = $('#start-date').val();
+            let endDate = $('#end-date').val();
+            let value = $('input[name=radios]:checked').val();
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('StatisticsView:handle_stats_change') }}",
+                data: JSON.stringify({
+                    'startDate': startDate,
+                    'endDate': endDate,
+                    'value': value
+                }),
+                contentType: 'application/json;charset=UTF-8',
+                success: function (response) {
+                    $('#results').html(response);
+                    $('#spinner').hide();
+                },
+                error: function (error) {
+                }
+            });
+        }
     </script>
 
 {% endblock %}
