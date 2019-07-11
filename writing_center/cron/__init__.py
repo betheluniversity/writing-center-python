@@ -46,6 +46,7 @@ class CronView(FlaskView):
         try:
             upcoming_appointments = self.cron.get_upcoming_appointments()
             for appointment in upcoming_appointments:
+                student = self.cron.get_student_email(appointment.student_id)
                 self.mail.send()  # TODO: need contact and message
             return 'success'
         except Exception as error:
