@@ -240,3 +240,8 @@ a.nav-link:focus, a.nav-link:hover.active {
     padding: 10px;
     float: left;
 }
+
+#spinner {
+    position: absolute;
+    z-index: 999;
+}
