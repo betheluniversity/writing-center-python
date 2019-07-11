@@ -1,0 +1,222 @@
+{% block body_content %}
+    <div class="form-row">
+        <div class="form-group col-md-6">
+
+            <table id="total-visits"  class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Type of Visit</th>
+                        <th>Number of Visits</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if appointments|length + walk_in_appts|length != 0 %}
+                        <tr>
+                            <td>Appointments</td>
+                            <td>{{ appointments|length }}</td>
+                        </tr>
+                        <tr>
+                            <td>Walk In Appointments</td>
+                            <td>{{ walk_in_appts|length }}</td>
+                        </tr>
+                        <tr>
+                            <td>Total Visits</td>
+                            <td>{{appointments|length + walk_in_appts|length }}</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+
+        </div>
+        <div class="form-group col-md-6">
+
+            <table id="no-shows"  class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>No Show Appointments</th>
+                        <th>Number of No Show Appointments</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if no_show_appts|length != 0 %}
+                        <tr>
+                            <td>No Shows</td>
+                            <td>{{ no_show_appts|length }}</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+
+        </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-4">
+
+            <table id="busiest-day"  class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Number of Appointments</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for day, number_of_appts in busiest_day.items() %}
+                            <tr>
+                                <td>{{ day }}</td>
+                                <td>{{ number_of_appts }}</td>
+                            </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+        <div class="form-group col-md-4">
+
+            <table id="busiest-tod"  class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Time of Day</th>
+                        <th>Number of Appointments</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tod, number_of_appts in busiest_tod.items() %}
+                        <tr>
+                            <td>{{ tod }}</td>
+                            <td>{{ number_of_appts }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+        <div class="form-group col-md-4">
+
+            <table id="busiest-week"  class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Week</th>
+                        <th>Number of Appointments</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for week in busiest_week %}
+                        <tr>
+                            <td>{{ week }}</td>
+                            <td>{{ busiest_week[week] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <table id="busiest-tutor"  class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Tutor</th>
+                        <th>Number of Appointments</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for username, hours in busiest_tutors.items() %}
+                            <tr>
+                                <td>{{ username }}</td>
+                                <td>{{ hours }}</td>
+                            </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="form-group col-md-6">
+            <table id=""  class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Course</th>
+                        <th>Number of Appointments</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <script>
+        $(document).ready( function () {
+            $.extend($.fn.dataTableExt.oStdClasses, {
+                // give some foundation classes to our controls
+                sLength: 'large-4 columns ',
+                sFilter: 'large-12 columns ',
+            });
+
+            let table1 = $('#total-visits').DataTable( {
+                "ordering": false,
+                "bPaginate": false,
+                "bLengthChange": false,
+                "bFilter": false,
+                "bInfo": false
+            });
+
+            let table2 = $('#no-shows').DataTable( {
+                "ordering": false,
+                "bPaginate": false,
+                "bLengthChange": false,
+                "bFilter": false,
+                "bInfo": false
+            });
+
+            let table3 = $('#busiest-day').DataTable( {
+                "aoColumns": [
+                    { "orderSequence": [ "asc", "desc" ] },
+                    { "orderSequence": [ "asc", "desc" ] },
+                ],
+                "bPaginate": false,
+                "bLengthChange": false,
+                "bFilter": false,
+                "bInfo": false
+            });
+
+            let table4 = $('#busiest-tod').DataTable( {
+                "aoColumns": [
+                    { "orderSequence": [ "asc", "desc" ] },
+                    { "orderSequence": [ "asc", "desc" ] },
+                ],
+                "bPaginate": false,
+                "bLengthChange": false,
+                "bFilter": false,
+                "bInfo": false
+            });
+
+            let table5 = $('#busiest-week').DataTable( {
+                "aoColumns": [
+                    { "orderSequence": [ "asc", "desc" ] },
+                    { "orderSequence": [ "asc", "desc" ] },
+                ],
+                "bPaginate": false,
+                "bLengthChange": false,
+                "bFilter": false,
+                "bInfo": false
+            });
+
+            let table6 = $('#busiest-tutor').DataTable( {
+                "aoColumns": [
+                    { "orderSequence": [ "asc", "desc" ] },
+                    { "orderSequence": [ "asc", "desc" ] },
+                ],
+                "bPaginate": false,
+                "bLengthChange": false,
+                "bFilter": false,
+                "bInfo": false
+            });
+
+        });
+    </script>
+{% endblock %}
