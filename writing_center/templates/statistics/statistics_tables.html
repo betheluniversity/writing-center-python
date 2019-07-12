@@ -103,7 +103,7 @@
                     {% for week in busiest_week %}
                         <tr>
                             <td>{{ week }}</td>
-                            <td>{{ busiest_week[week] }}</td>
+                            <td>{{ busiest_week[week]['count'] }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -174,10 +174,7 @@
             });
 
             let table3 = $('#busiest-day').DataTable( {
-                "aoColumns": [
-                    { "orderSequence": [ "asc", "desc" ] },
-                    { "orderSequence": [ "asc", "desc" ] },
-                ],
+                "order": [],
                 "bPaginate": false,
                 "bLengthChange": false,
                 "bFilter": false,
@@ -185,10 +182,7 @@
             });
 
             let table4 = $('#busiest-tod').DataTable( {
-                "aoColumns": [
-                    { "orderSequence": [ "asc", "desc" ] },
-                    { "orderSequence": [ "asc", "desc" ] },
-                ],
+                "order": [],
                 "bPaginate": false,
                 "bLengthChange": false,
                 "bFilter": false,
@@ -196,10 +190,7 @@
             });
 
             let table5 = $('#busiest-week').DataTable( {
-                "aoColumns": [
-                    { "orderSequence": [ "asc", "desc" ] },
-                    { "orderSequence": [ "asc", "desc" ] },
-                ],
+                "order": [],
                 "bPaginate": false,
                 "bLengthChange": false,
                 "bFilter": false,
