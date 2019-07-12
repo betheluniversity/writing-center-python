@@ -80,6 +80,21 @@
                 "bLengthChange": true,
             });
 
+            $('#deactivate-users').click(function(){
+                var userIds = [];
+                $(".deactivate-checkbox:checked").each(function(){
+                    userIds.push($(this).val());
+                });
+                var jsonUserIds = JSON.stringify(userIds);
+                var users = {
+                    'jsonUserIds': jsonUserIds
+                };
+                var url = '{{ url_for('UsersView:deactivate_users') }}';
+                $.post(url, users, function(){
+                    window.location.replace('{{ url_for('UsersView:view_all_users') }}');
+                });
+            });
+
         });
     </script>
 

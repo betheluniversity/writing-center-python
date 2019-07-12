@@ -25,8 +25,8 @@ class WSAPIController:
         path = '/username/{0}/courses'.format(username)
         return self.get_hmac_request(path)
 
-    def get_course_info(self, course_dept, course_num):
-        path = '/course/info/{0}/{1}'.format(course_dept, course_num)
+    def get_course_info(self, course_dept, course_num, date_offset=0):
+        path = '/course/info/{0}/{1}/{2}'.format(course_dept, course_num, date_offset)
         return self.get_hmac_request(path)
 
     def validate_course(self, course_dept, course_num):

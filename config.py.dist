@@ -1,4 +1,5 @@
 TEST_NAME = ""
+TEST_EMAILS = ""
 
 secret_key = ""
 SECRET_KEY = ""
