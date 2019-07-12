@@ -6,27 +6,7 @@
         <p>Displays various statistics over the current term.</p>
     </div>
     <form>
-        <div class="form-row">
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label for="start-date">Start Date</label>
-                    <input class="form-control datepicker" id="start-date" type="text" readonly/>
-                    <div id="start-container"></div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label for="end-date">End Date</label>
-                    <input class="form-control datepicker" id="end-date" type="text" readonly/>
-                    <div id="end-container"></div>
-                </div>
-            </div>
-            <div class="form-group col-md-4">
-                <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="all" onchange="inputParamsChanged()" checked>All Appointments</label>
-                <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="non" onchange="inputParamsChanged()">Only Non-Multilingual Appointments</label>
-                <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="multilingual" onchange="inputParamsChanged()">Only Multilingual Appointments</label>
-            </div>
-        </div>
+        {% include 'macros/date_selector.html' %}
         {# spinner placeholder #}
         <div id="spinner" class="spinner" style="display: none;">
             <img id="img-spinner" class="spinner-img" src="https://cdn1.bethel.edu/images/load.gif" alt="Loading"/>
@@ -36,77 +16,5 @@
         </div>
 
     </form>
-
-    <script>
-        $(document).ready(function () {
-            $('.datepicker').each(function () {
-                var current_element = $(this);
-                let maxDate = new Date();
-                let dd = maxDate.getDate();
-                let mm = maxDate.getMonth() + 1;
-                let yyyy = maxDate.getFullYear() + 2;
-                if (dd < 10) {
-                  dd = '0' + dd;
-                }
-
-                if (mm < 10) {
-                  mm = '0' + mm;
-                }
-                maxDate = yyyy + '-' + mm + '-' + dd;
-                var starting_values = {
-                    field: this,
-                    format: 'MM DD YYYY',
-                    minDate: new Date('2010-01-01'),
-                    maxDate: new Date(maxDate),
-                    yearRange: [2010, yyyy],
-                    disableDayFn: function (date) {
-                        var start_populated = $("#start-date").val();
-                        var end_populated = $("#end-date").val();
-                        if (start_populated == "" && end_populated == "") {
-                            return null;
-                        } else if (start_populated != "" && current_element.attr('id') == 'end-date') {
-                            if (new Date(start_populated) >= date) {
-                                return date;
-                            }
-                        } else if (end_populated != "" && current_element.attr('id') == 'start-date') {
-                            if (new Date(end_populated) <= date) {
-                                return date;
-                            }
-                        }
-                    },
-                    onSelect: function(date) {
-                        inputParamsChanged();
-                    },
-                };
-                starting_values['defaultDate'] = new Date();
-                starting_values['setDefaultDate'] = true;
-
-                var picker = new Pikaday(starting_values);
-            });
-        });
-
-        function inputParamsChanged() {
-            $('#spinner').show();
-            let startDate = $('#start-date').val();
-            let endDate = $('#end-date').val();
-            let value = $('input[name=radios]:checked').val();
-            $.ajax({
-                type: "POST",
-                url: "{{ url_for('StatisticsView:handle_stats_change') }}",
-                data: JSON.stringify({
-                    'startDate': startDate,
-                    'endDate': endDate,
-                    'value': value
-                }),
-                contentType: 'application/json;charset=UTF-8',
-                success: function (response) {
-                    $('#results').html(response);
-                    $('#spinner').hide();
-                },
-                error: function (error) {
-                }
-            });
-        }
-    </script>
 
 {% endblock %}
