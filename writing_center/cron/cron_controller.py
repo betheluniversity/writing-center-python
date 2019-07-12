@@ -9,12 +9,12 @@ class CronController:
         pass
 
     def get_upcoming_appointments(self):
-        now = datetime.now()
+        tomorrow = datetime.now() + timedelta(days=1)
         return db_session.query(AppointmentsTable)\
             .filter(AppointmentsTable.student_id != None)\
-            .filter(AppointmentsTable.scheduledStart > now)\
-            .filter(AppointmentsTable.scheduledStart < now + timedelta(days=1))\
+            .filter(AppointmentsTable.scheduledStart > tomorrow)\
+            .filter(AppointmentsTable.scheduledStart < tomorrow + timedelta(days=1))\
             .all()
 
-    def get_student_email(self, student_id):
-        return db_session.query(UserTable).filter(UserTable.id == student_id).one()
+    def get_user(self, user_id):
+        return db_session.query(UserTable).filter(UserTable.id == user_id).one()
