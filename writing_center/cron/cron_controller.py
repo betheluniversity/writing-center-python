@@ -12,6 +12,7 @@ class CronController:
         now = datetime.now()
         return db_session.query(AppointmentsTable)\
             .filter(AppointmentsTable.student_id != None)\
+            .filter(AppointmentsTable.scheduledStart > now)\
             .filter(AppointmentsTable.scheduledStart < now + timedelta(days=1))\
             .all()
 

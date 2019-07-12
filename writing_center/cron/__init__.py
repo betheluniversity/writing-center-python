@@ -43,11 +43,22 @@ class CronView(FlaskView):
     @requires_auth
     @route('/reminders', methods=['get'])
     def send_reminder_emails(self):
+        print("Start of cron")
+        cron_message = "Cron sending reminder emails...\n"
         try:
             upcoming_appointments = self.cron.get_upcoming_appointments()
+            print("Got appts")
             for appointment in upcoming_appointments:
                 student = self.cron.get_student_email(appointment.student_id)
-                self.mail.send()  # TODO: need contact and message
-            return 'success'
+                subject = "Writing Center Appointment Reminder"
+                message = "This is a reminder that you have an appointment at the writing center at {0} tomorrow, {1}" \
+                          " with {2}. See you then!"
+                self.mail.send_message(subject, message, student.email, None, False)
+                cron_message += "Email sent successfully to {0} {1}\n".format(student.firstName, student.lastName)
+            cron_message += "All reminders sent\n\n"
+            print("Done Success")
+            return cron_message
         except Exception as error:
-            return 'failed: {0}'.format(str(error))
+            cron_message += "An error occurred: {0}\n\n".format(str(error))
+            print("Done Failed")
+            return cron_message
