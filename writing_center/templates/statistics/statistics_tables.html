@@ -132,17 +132,26 @@
             </table>
         </div>
         <div class="form-group col-md-6">
-            <table id=""  class="table table-striped table-bordered">
+            <table id="courses"  class="table table-striped table-bordered">
                 <thead>
                     <tr>
                         <th>Course</th>
+                        <th>Tag</th>
+                        <th>Section</th>
+                        <th>Prof Name</th>
                         <th>Number of Appointments</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td></td>
-                    </tr>
+                    {% for course in courses %}
+                        <tr>
+                            <td>{{ courses[course]['courseCode'] }}</td>
+                            <td>{{ courses[course]['tag'] }}</td>
+                            <td>{{ courses[course]['section'] }}</td>
+                            <td>{{ courses[course]['profName'] }}</td>
+                            <td>{{ courses[course]['count'] }}</td>
+                        </tr>
+                    {% endfor %}
                 </tbody>
             </table>
 
@@ -199,6 +208,20 @@
 
             let table6 = $('#busiest-tutor').DataTable( {
                 "aoColumns": [
+                    { "orderSequence": [ "asc", "desc" ] },
+                    { "orderSequence": [ "asc", "desc" ] },
+                ],
+                "bPaginate": false,
+                "bLengthChange": false,
+                "bFilter": false,
+                "bInfo": false
+            });
+
+            let table7 = $('#courses').DataTable( {
+                "aoColumns": [
+                    { "orderSequence": [ "asc", "desc" ] },
+                    { "orderSequence": [ "asc", "desc" ] },
+                    { "orderSequence": [ "asc", "desc" ] },
                     { "orderSequence": [ "asc", "desc" ] },
                     { "orderSequence": [ "asc", "desc" ] },
                 ],
