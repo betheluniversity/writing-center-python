@@ -118,10 +118,10 @@ class MessageCenterController:
 
         self.send_message(subject, render_template('sessions/email.html', **locals()), recipients, None, True)
 
-    def send_message(self, subject, body, recipients, bcc, html=False):
+    def send_message(self, subject, body, recipients, cc, bcc, html=False):
         if app.config['ENVIRON'] != 'prod':
-            print('Would have sent email to: {0} {1}'.format(str(recipients), str(bcc)))
-            subject = '{0} {1} {2}'.format(subject, str(recipients), str(bcc))
+            print('Would have sent email to: {0} cc: {1}, bcc: {2}'.format(str(recipients), str(cc), str(bcc)))
+            subject = '{0}'.format(subject)
             recipients = app.config['TEST_EMAILS']
             bcc = []
 
@@ -130,11 +130,14 @@ class MessageCenterController:
             recipients = [recipients]
         if isinstance(bcc, str):
             bcc = [bcc]
+        if isinstance(cc, str):
+            cc = [cc]
 
         mail = Mail(app)
         msg = Message(subject=subject,
                       sender='noreply@bethel.edu',
                       recipients=recipients,
+                      cc=cc,
                       bcc=bcc)
         if html:
             msg.html = body

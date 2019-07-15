@@ -5,6 +5,7 @@ import json
 
 from writing_center.profile.profile_controller import ProfileController
 from writing_center.writing_center_controller import WritingCenterController
+from writing_center.message_center.message_center_controller import MessageCenterController
 
 
 class ProfileView(FlaskView):
@@ -13,6 +14,7 @@ class ProfileView(FlaskView):
     def __init__(self):
         self.pc = ProfileController()
         self.wcc = WritingCenterController()
+        self.mcc = MessageCenterController()
 
     @route('/edit')
     def index(self):
@@ -54,3 +56,13 @@ class ProfileView(FlaskView):
             flask_session['NAME'] = ""
             flask_session['USER-ROLES'] = role
         return redirect(url_for('ProfileView:role_viewer'))
+
+    @route('/toggle-substitute', methods=['POST'])
+    def toggle_substitute(self):
+        data = request.form
+        return self.mcc.toggle_substitute(int(data['substitute']))
+
+    @route('/toggle-shift', methods=['POST'])
+    def toggle_shift(self):
+        data = request.form
+        return self.mcc.toggle_shift(data['shift'])

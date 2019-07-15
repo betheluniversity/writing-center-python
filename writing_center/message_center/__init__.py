@@ -15,29 +15,13 @@ class MessageCenterView(FlaskView):
 
     @route('/')
     def index(self):
-        return render_template('message_center/index.html', **locals())
-
-    @route('/send-email')
-    def send_email(self):
         users = self.base.get_all_users()
-        users = sorted(users, key = lambda i: i.lastName)
+        users = sorted(users, key=lambda i: i.lastName)
         return render_template('message_center/send-email.html', **locals())
-
-    @route('/email-preferences')
-    def email_preferences(self):
-        prefs = self.base.get_email_preferences()
-        return render_template('message_center/preferences.html', **locals())
-
-    @route('/toggle-substitute', methods=['POST'])
-    def toggle_substitute(self):
-        data = request.form
-        return self.base.toggle_substitute(int(data['substitute']))
-
-    def toggle_shift(self):
-        data = request.form
-        return self.base.toggle_shift(data['shift'])
     
     @route('/send', methods=['POST'])
     def send(self):
+        data = request.form  # The recipient box may change to groups instead of individual users
+        # need to check that all the stuff is actually filled in, if its not, I need to fill it with an empty value
 
-        return
+        return self.base.send_message(data['subject'], data['message'], data['recipients'], data['cc'], data['bcc'])
