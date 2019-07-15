@@ -5,16 +5,10 @@
         <h1><b>View Statistics</b></h1>
         <p>Displays various statistics over the current term.</p>
     </div>
-    <form>
-        {% include 'macros/date_selector.html' %}
-        {# spinner placeholder #}
-        <div id="spinner" class="spinner" style="display: none;">
-            <img id="img-spinner" class="spinner-img" src="https://cdn1.bethel.edu/images/load.gif" alt="Loading"/>
-        </div>
-        <div id="results">
-            {% include 'statistics/statistics_tables.html' %}
-        </div>
 
-    </form>
+    <div id="results">
+        {% include 'statistics/statistics_tables.html' %}
+    </div>
+
 
 {% endblock %}
