@@ -20,13 +20,12 @@ class StatisticsView(FlaskView):
     @route('/observer/statistics/')
     def stats_observer(self):
         # Use the default start and end dates to get the first tables of data
-        start = datetime.now()
-        start = start.replace(hour=0, minute=0, second=0)
-        end = datetime.now()
-        end = end.replace(hour=23, minute=59, second=59)
+        start = flask_session['DATE-SELECTOR-START']
+        end = flask_session['DATE-SELECTOR-END']
+        value = flask_session['DATE-SELECTOR-VALUE']
 
         appointments, walk_in_appts, no_show_appts, busiest_day, busiest_tod, busiest_week, busiest_tutors, courses\
-            = self.get_statistics_data(start, end, 'all')
+            = self.get_statistics_data(start, end, value)
 
         return render_template('statistics/statistics_observer.html', **locals())
 
@@ -96,6 +95,10 @@ class StatisticsView(FlaskView):
         return render_template('statistics/statistics_tables.html', **locals())
 
     def get_statistics_data(self, start, end, value):
+
+        flask_session['DATE-SELECTOR-START'] = start
+        flask_session['DATE-SELECTOR-END'] = end
+        flask_session['DATE-SELECTOR-VALUE'] = value
         # Gets some basic appointment data
         appointments = self.sc.get_appointments(start, end, value)
         walk_in_appts = self.sc.get_walk_in_appointments(start, end, value)

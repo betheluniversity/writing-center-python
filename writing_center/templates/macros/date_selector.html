@@ -2,21 +2,34 @@
     <div class="col-md-4">
         <div class="form-group">
             <label for="start-date">Start Date</label>
-            <input class="form-control datepicker" id="start-date" type="text" readonly/>
+            <input class="form-control datepicker" id="start-date" value="{{ session['DATE-SELECTOR-START'] }}" type="text" readonly/>
             <div id="start-container"></div>
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
             <label for="end-date">End Date</label>
-            <input class="form-control datepicker" id="end-date" type="text" readonly/>
+            <input class="form-control datepicker" id="end-date" type="text" value="{{ session['DATE-SELECTOR-END'] }}" readonly/>
             <div id="end-container"></div>
         </div>
     </div>
     <div class="form-group col-md-4">
-        <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="all" onchange="inputParamsChanged()" checked>All Appointments</label>
-        <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="non" onchange="inputParamsChanged()">Only Non-Multilingual Appointments</label>
-        <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="multilingual" onchange="inputParamsChanged()">Only Multilingual Appointments</label>
+        {% if session['DATE-SELECTOR-VALUE'] == 'all' %}
+            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="all" onchange="inputParamsChanged()" checked>All Appointments</label>
+        {% else %}
+            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="all" onchange="inputParamsChanged()" >All Appointments</label>
+        {% endif %}
+        {% if session['DATE-SELECTOR-VALUE'] == 'non' %}
+            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="non" onchange="inputParamsChanged()" checked>Only Non-Multilingual Appointments</label>
+        {% else %}
+            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="non" onchange="inputParamsChanged()">Only Non-Multilingual Appointments</label>
+        {% endif %}
+        {% if session['DATE-SELECTOR-VALUE'] == 'multilingual' %}
+            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="multilingual" onchange="inputParamsChanged()" checked>Only Multilingual Appointments</label>
+        {% else %}
+            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="multilingual" onchange="inputParamsChanged()">Only Multilingual Appointments</label>
+        {% endif %}
+
     </div>
 </div>
 <script>
@@ -60,12 +73,10 @@
                     inputParamsChanged();
                 },
             };
-            starting_values['defaultDate'] = new Date();
-            starting_values['setDefaultDate'] = true;
 
             var picker = new Pikaday(starting_values);
         });
-    });
+        });
 
     function inputParamsChanged() {
         $('#spinner').show();
