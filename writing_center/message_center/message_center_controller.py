@@ -170,7 +170,7 @@ class MessageCenterController:
                       sender='',
                       recipients=recipients)
 
-        msg.html = 'sub_request_body.html'
+        msg.html = 'sub_request.html'
 
         if app.config['ENVIRON'] != 'prod':
             print('Would have sent email to: {}'.format(str(recipients)))
