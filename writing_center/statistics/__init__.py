@@ -24,9 +24,6 @@ class StatisticsView(FlaskView):
 
         return render_template('statistics/statistics.html', **locals())
 
-    def view_reports(self):
-        return render_template('statistics/view_reports.html', **locals())
-
     @route('/hours-worked')
     def hours_worked(self):
         return render_template('statistics/hours_worked.html', **locals())
