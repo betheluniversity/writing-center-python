@@ -15,19 +15,19 @@
     </div>
     <div class="form-group col-md-4">
         {% if session['DATE-SELECTOR-VALUE'] == 'all' %}
-            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="all" onchange="inputParamsChanged()" checked>All Appointments</label>
+            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="all" onchange="inputParamsChanged('date-appt-change')" checked>All Appointments</label>
         {% else %}
-            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="all" onchange="inputParamsChanged()" >All Appointments</label>
+            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="all" onchange="inputParamsChanged('date-appt-change')" >All Appointments</label>
         {% endif %}
         {% if session['DATE-SELECTOR-VALUE'] == 'non' %}
-            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="non" onchange="inputParamsChanged()" checked>Only Non-Multilingual Appointments</label>
+            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="non" onchange="inputParamsChanged('date-appt-change')" checked>Only Non-Multilingual Appointments</label>
         {% else %}
-            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="non" onchange="inputParamsChanged()">Only Non-Multilingual Appointments</label>
+            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="non" onchange="inputParamsChanged('date-appt-change')">Only Non-Multilingual Appointments</label>
         {% endif %}
         {% if session['DATE-SELECTOR-VALUE'] == 'multilingual' %}
-            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="multilingual" onchange="inputParamsChanged()" checked>Only Multilingual Appointments</label>
+            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="multilingual" onchange="inputParamsChanged('date-appt-change')" checked>Only Multilingual Appointments</label>
         {% else %}
-            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="multilingual" onchange="inputParamsChanged()">Only Multilingual Appointments</label>
+            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="multilingual" onchange="inputParamsChanged('date-appt-change')">Only Multilingual Appointments</label>
         {% endif %}
 
     </div>
@@ -74,7 +74,7 @@
                     }
                 },
                 onSelect: function(date) {
-                    inputParamsChanged();
+                    inputParamsChanged('date-appt-change');
                 },
             };
 
@@ -82,7 +82,7 @@
         });
         });
 
-    function inputParamsChanged() {
+    function inputParamsChanged(clicked_id) {
         $('#spinner').show();
         let startDate = $('#start-date').val();
         let endDate = $('#end-date').val();
@@ -93,7 +93,8 @@
             data: JSON.stringify({
                 'startDate': startDate,
                 'endDate': endDate,
-                'value': value
+                'value': value,
+                'id': clicked_id
             }),
             contentType: 'application/json;charset=UTF-8',
             success: function (response) {

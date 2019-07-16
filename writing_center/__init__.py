@@ -124,6 +124,8 @@ def before_request():
             flask_session['DATE-SELECTOR-START'] = start
             flask_session['DATE-SELECTOR-END'] = end
             flask_session['DATE-SELECTOR-VALUE'] = 'all'
+        if 'STATISTICS-PAGE' not in flask_session.keys():
+            flask_session['STATISTICS-PAGE'] = 'main'
 
 
 @app.after_request

@@ -212,6 +212,10 @@ a.nav-link:focus, a.nav-link:hover.active {
     display: block;
 }
 
+.no-decoration {
+    text-decoration: none !important;
+}
+
 .search-btn {
     float: right;
 }
