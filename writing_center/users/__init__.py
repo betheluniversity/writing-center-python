@@ -130,7 +130,10 @@ class UsersView(FlaskView):
     def save_user_ban(self):
         form = request.form
         username = form.get('username')
-        self.uc.ban_user(username)
+        if flask_session['USERNAME'] == username:
+            self.wcc.set_alert('danger', 'Error! You Can\'t Ban Yourself!')
+        else:
+            self.uc.ban_user(username)
         return redirect(url_for('UsersView:manage_bans'))
 
     def act_as_user(self, user_id):
