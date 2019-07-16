@@ -70,6 +70,9 @@ class AppointmentsView(FlaskView):
             users.update({appt.student_id: name})
         return render_template('appointments/appointments_and_walk_ins.html', **locals())
 
+    def search_appointments(self):
+        return render_template('appointments/search_appointments.html', **locals())
+
     def create_appointment(self):
         return render_template('appointments/create_appointment.html', **locals())
 
