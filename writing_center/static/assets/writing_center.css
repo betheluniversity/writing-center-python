@@ -166,13 +166,12 @@ ul.list-group{
 }
 
 .nav.margins {
-    padding: 0 2em;
+    padding: 0 40px;
 }
 
 .margins {
     width: 100%;
     margin: 20px auto;
-    max-width: 70rem;
 }
 
 .navbar {
