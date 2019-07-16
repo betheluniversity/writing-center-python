@@ -115,6 +115,17 @@ def before_request():
             flask_session['ADMIN-VIEWER'] = False
         if 'ALERT' not in flask_session.keys():
             flask_session['ALERT'] = []
+        if 'DATE-SELECTOR-START' not in flask_session.keys() and 'DATE-SELECTOR-END' not in flask_session.keys() \
+                and 'DATE-SELECTOR-VALUE' not in flask_session.keys():
+            start = datetime.now()
+            start = start.replace(hour=0, minute=0, second=0)
+            end = datetime.now()
+            end = end.replace(hour=23, minute=59, second=59)
+            flask_session['DATE-SELECTOR-START'] = start
+            flask_session['DATE-SELECTOR-END'] = end
+            flask_session['DATE-SELECTOR-VALUE'] = 'all'
+        if 'STATISTICS-PAGE' not in flask_session.keys():
+            flask_session['STATISTICS-PAGE'] = 'main'
 
 
 @app.after_request

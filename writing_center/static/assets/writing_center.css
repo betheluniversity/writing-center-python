@@ -175,13 +175,12 @@ ul.list-group{
 }
 
 .nav.margins {
-    padding: 0 2em;
+    padding: 0 40px;
 }
 
 .margins {
     width: 100%;
     margin: 20px auto;
-    max-width: 70rem;
 }
 
 .navbar {
@@ -219,6 +218,10 @@ ul.list-group{
     display: block;
 }
 
+.no-decoration {
+    text-decoration: none !important;
+}
+
 .search-btn {
     float: right;
 }
@@ -245,6 +248,12 @@ ul.list-group{
     border: 1px dotted grey;
     padding: 10px;
     float: left;
+}
+
+
+#spinner {
+    position: absolute;
+    z-index: 999;
 }
 
 .email-form {
