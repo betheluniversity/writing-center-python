@@ -1,6 +1,7 @@
 {% block email_content %}
 <!-- Writing Center Logo -->
     <h3>Appointment Information</h3>
+        <p>Tutor: {{ appt_info['tutor'] }}</p>
         <p>Actual Time: {{ appt_info['actual_start']}}-{{ appt_info['actual_end'] }}</p>
         <p>Assignment: {{ appt_info['assignment'] }}</p>
         <p>Notes: {{ appt_info['notes'] }}</p>

@@ -1,12 +1,10 @@
 {% block email_content %}
 <!-- Writing Center Logo -->
-    {% comment %}
-        This email is for tutors and Professors if applicable
-        - Your meeting information
-        - Actual start time
-        - Actual end time
-        - Assignment
-        br 
-        - QCC 'here'
-    {% endcomment %}
+    <h3>Appointment Information</h3>
+        <p>Student: {{ appt_info['student'] }}</p>
+        <p>Type: {{ appt_info['drop_in'] }}</p> <!-- Was it a drop in appointment or nah? Logic probably needed -->
+        <p>Actual Time: {{ appt_info['actual_start']}}-{{ appt_info['actual_end'] }}</p>
+        <p>Assignment: {{ appt_info['assignment'] }}</p>
+        <br/>
+        <p>If you have any questions, comments or concerns, contact <a href="#">SOMEONE</a></p>
 {% endblock %}
