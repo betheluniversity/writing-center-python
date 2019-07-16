@@ -1,5 +1,5 @@
 from flask_classy import FlaskView, route
-from flask import render_template, request, json, redirect, url_for
+from flask import render_template, request, json
 from flask import session as flask_session
 from datetime import datetime, timedelta
 
