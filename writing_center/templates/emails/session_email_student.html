@@ -1,13 +1,10 @@
 {% block email_content %}
 <!-- Writing Center Logo -->
-    {% comment %}
-        - Your post-appointment information
-        - Actual start time
-        - Actual end time
-        - Assignment
-        - Suggestions
-        - Notes
-        br 
-        - QCC 'here'
-    {% endcomment %}
+    <h3>Appointment Information</h3>
+        <p>Actual Time: {{ appt_info['actual_start']}}-{{ appt_info['actual_end'] }}</p>
+        <p>Assignment: {{ appt_info['assignment'] }}</p>
+        <p>Notes: {{ appt_info['notes'] }}</p>
+        <p>Suggestions: {{ appt_info['suggetions'] }}</p>
+        <br/>
+        <p>If you have any questions, comments or concerns, contact <a href="#">SOMEONE</a></p>
 {% endblock %}
