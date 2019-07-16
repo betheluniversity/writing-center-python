@@ -43,10 +43,36 @@ class CronView(FlaskView):
     @requires_auth
     @route('/reminders', methods=['get'])
     def send_reminder_emails(self):
+        cron_message = "Cron sending reminder emails...\n"
         try:
             upcoming_appointments = self.cron.get_upcoming_appointments()
             for appointment in upcoming_appointments:
-                self.mail.send()  # TODO: need contact and message
-            return 'success'
+                student = self.cron.get_user(appointment.student_id)
+                tutor = self.cron.get_user(appointment.tutor_id)
+                if appointment.multilingual:
+                    subject = "Writing Center Multilingual Appointment Reminder"
+                    message = "Thank you for signing up for a multilingual writing support appointment with the " \
+                              "Writing Center. Here are the details of your appointment tomorrow:\n\nTutor: " \
+                              "{0} {1}\nStart Time: {2}\nEnd Time: {3}\nLocation: Writing Center (HC 324)\n\nIf " \
+                              "there's an error or you need to cancel, visit the Writing Center website " \
+                              "(https://tutorlabs.bethel.edu/writing-center), click View Your Appointments, and " \
+                              "click on the appointment to cancel.".format(tutor.firstName, tutor.lastName,
+                                                                           appointment.scheduledStart,
+                                                                           appointment.scheduledEnd)
+                else:
+                    subject = "Writing Center Appointment Reminder"
+                    message = "Thank you for signing up for a writing support appointment with the Writing " \
+                              "Center. Here are the details of your appointment tomorrow:\n\nTutor: {0} {1}\nStart " \
+                              "Time: {2}\nEnd Time: {3}\nLocation: Writing Center (HC 324)\n\nIf there's an error " \
+                              "or you need to cancel, visit the Writing Center website " \
+                              "(https://tutorlabs.bethel.edu/writing-center), click View Your Appointments, and " \
+                              "click on the appointment to cancel.".format(tutor.firstName, tutor.lastName,
+                                                                           appointment.scheduledStart,
+                                                                           appointment.scheduledEnd)
+                self.mail.send_message(subject, message, student.email, None, False)
+                cron_message += "Email sent successfully to {0} {1}\n".format(student.firstName, student.lastName)
+            cron_message += "All reminders sent\n\n"
+            return cron_message
         except Exception as error:
-            return 'failed: {0}'.format(str(error))
+            cron_message += "An error occurred: {0}\n\n".format(str(error))
+            return cron_message

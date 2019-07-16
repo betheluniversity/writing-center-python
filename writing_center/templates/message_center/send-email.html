@@ -1,0 +1,93 @@
+{% extends "message_center/index.html" %}
+
+{% block body_content %}
+    <div class="jumbotron">
+        <h1><b>Send Email</b></h1>
+        <p>Send emails to an individual student, all students, or all tutors</p>
+    </div>
+    <div class="custom-default row">
+        <div class="col-md-8">
+            <form action="{{ url_for('MessageCenterView:send_email') }}" method="post">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="choose-recipients">Recipients</label>
+                        <select name="groups" class="email-form" id="choose-recipients" multiple>
+                            {% for user in users %}
+                                <option value="{{ user.id }}">{{ user.lastName}}, {{ user.firstName }} | {{ user.email }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group col-md-6 email">
+                        <label for="subject">Subject</label>
+                        <input name="subject" type="text" class="form-control email-form" id="subject"
+                            autocomplete="off">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div id="cc-div" class="form-group col-md-12 email">
+                        <label for="choose-cc">CC</label>
+                        <select name="cc" class="email-form" id="choose-cc" multiple>
+                            {% for user in users %}
+                                <option value="{{ user.id }}">{{ user.lastName}}, {{ user.firstName }} | {{ user.email }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div id="bcc-div" class="form-group col-md-12 email">
+                        <label for="choose-bcc">BCC</label>
+                        <select name="ccc" class="email-form" id="choose-bcc" multiple>
+                            {% for user in user_list %}
+                            <option value="{{ user.id }}">{{ user.lastName}}, {{ user.firstName }} | {{ user.email }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="subject">Message</label>
+                        <textarea name="message" class="form-control" rows="15" cols="67"></textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <button type="submit" class="btn blue btn-primary" id="send-email">Send</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <div class="sub-info card info">
+                <div class="card-body">
+                    <p class="card-text">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                        aliqua. Amet nisl purus in mollis nunc sed id semper risus. Mi in nulla posuere sollicitudin aliquam. Dictum at tempor
+                        commodo ullamcorper. 
+                    </p> <!--TODO: Reword this to apply to the writing center stuff-->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            new SlimSelect({
+                select: '#choose-recipients',
+                placeholder: 'Choose Recipients ...',
+                closeOnSelect: false
+            })
+
+            new SlimSelect({
+                select: '#choose-cc',
+                placeholder: 'Choose CC Recipients',
+                closeOnSelect: false
+            })
+
+            new SlimSelect({
+                select: '#choose-bcc',
+                placeholder: 'Choose BCC Recipients',
+                closeOnSelect: false
+            })
+        });
+    </script>
+{% endblock %}

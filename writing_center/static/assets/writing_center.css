@@ -3,6 +3,10 @@ a.dashboard-link{
     text-decoration: none;
 }
 
+a.disabled:hover {
+    color: black !important;
+}
+
 a.nav-link.button {
     color: #fff !important;
 }
@@ -15,8 +19,9 @@ a.nav-link:hover{
     color: #FFC600 !important;
 }
 
-a.disabled:hover {
-    color: black !important;
+a.nav-link:focus, a.nav-link:hover.active {
+    text-decoration: none !important;
+    color: white !important;
 }
 
 body {
@@ -129,6 +134,10 @@ ul.list-group{
     background-color: yellow;
 }
 
+.chosen {
+    height: 29px !important;
+}
+
 .chosen-container {
     min-width: 100%;
 }
@@ -178,11 +187,6 @@ ul.list-group{
     padding: 1em 2em !important;
 }
 
-a.nav-link:focus, a.nav-link:hover.active {
-    text-decoration: none !important;
-    color: white !important;
-}
-
 .wc-margins {
     width: 100%;
     margin: 20px auto;
@@ -201,11 +205,13 @@ a.nav-link:focus, a.nav-link:hover.active {
 .enable {
     background-color: greenyellow;
     border-color: greenyellow;
+    color: black;
 }
 
 .disable {
     background-color: red;
     border-color: red;
+    color: black;
 }
 
 .message-form {
@@ -244,7 +250,12 @@ a.nav-link:focus, a.nav-link:hover.active {
     float: left;
 }
 
+
 #spinner {
     position: absolute;
     z-index: 999;
+}
+
+.email-form {
+    height: 30px;
 }

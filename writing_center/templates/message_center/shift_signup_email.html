@@ -1,0 +1,7 @@
+{% block email_content %}
+    <h1>{{ email_info['student']}} has signed up for an appointment</h1>
+    <br/>
+        <p>{{ email_info['date'] }} {% comment %} dont have the date actually being pulled in yet, need that to be in appointment info table {% endcomment %}
+        <p>{{ email_info['start'] }} to {{ email_info['end'] }}</p>
+        <p>{{ email_info['assignment'] }}</p>
+{% endblock %}
