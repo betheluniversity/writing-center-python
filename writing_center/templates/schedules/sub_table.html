@@ -1,0 +1,117 @@
+<div class="form-row">
+    <div id="all-subbed" class="form-group col-md-12">
+        <table id="table"  class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Student Username</th>
+                    <th>Tutor Username</th>
+                    <th>Scheduled Start Time</th>
+                    <th>Scheduled End Time</th>
+                    <th>Drop In Hours</th>
+                    <th>Multilingual</th>
+                    <th>Email Student</th>
+                    <th>Request A Sub</th>
+                </tr>
+                <tr>
+                    <th colspan="5"></th>
+                    <th colspan="2">
+                        {# TODO FIGURE OUT HOW TO GET ALL THE APPOINTMENT IDS AND PASS THEM TO PYTHON #}
+                        {# TODO MAYBE ADD IN AN EMAIL STUDENT THING TO INFORM THEM ABOUT SUB/INFORMATION #}
+                        <button id="sub-all" type="button" class="btn btn-primary btn-danger" onclick="subRequested('all')">Request A Substitute For All Appointments</button>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            {% set list = [] %}
+                {% for appts in sub_appts %}
+                    {% for appt in appts %}
+                        {% if list.append(appt.id) %}{% endif %}
+                        <tr>
+                            <td>
+                                {{ id_to_user(appt.student_id).username }}
+                            </td>
+                            <td>
+                                {{ id_to_user(appt.tutor_id).username }}
+                            </td>
+                            <td>
+                                {{ appt.scheduledStart|datetimeformat }}
+                            </td>
+                            <td>
+                                {{ appt.scheduledEnd|datetimeformat }}
+                            </td>
+                            <td>
+                                {% if appt.dropIn == 1 %}Yes{% else %}No{% endif %}
+                            </td>
+                            <td>
+                                {% if appt.multilingual == 1 %}Yes{% else %}No{% endif %}
+                            </td>
+                            <td>
+                                <a href="mailto:{{ id_to_user(appt.student_id).username }}@bethel.edu">Send Email to {{ id_to_user(appt.student_id).username }}</a>
+                            </td>
+                            <td id="{{ appt.id }}" class="test">
+                                <button type="button" class="btn btn-primary darkblue" onclick="subRequested({{ appt.id }})">Request A Substitute</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    $(document).ready( function () {
+        $.extend($.fn.dataTableExt.oStdClasses, {
+            // give some foundation classes to our controls
+            sLength: 'large-4 columns ',
+            sFilter: 'large-12 columns ',
+        });
+
+        var table = $('#table').DataTable({
+            "aaSorting": [[0, 'asc'], [1, 'asc']],
+
+            "aoColumns": [
+                {"orderSequence": ["asc", "desc"]},
+                {"orderSequence": ["asc", "desc"]},
+                {"orderSequence": ["asc", "desc"]},
+                {"orderSequence": ["asc", "desc"]},
+                {"orderSequence": ["asc", "desc"]},
+                {"orderSequence": ["asc", "desc"]},
+                {"orderSequence": [null, null]},
+            ],
+
+            "bPaginate": true,
+            "bLengthChange": true,
+        });
+    });
+
+    function subRequested(apptID) {
+        let id = '#' + apptID;
+        let list = [];
+        if (apptID === 'all') {
+            list = {{ list }};
+        }
+         $.ajax({
+            type: "POST",
+            url: "{{ url_for('SchedulesView:request_sub') }}",
+            data: JSON.stringify({
+                'apptID': apptID,
+                'apptIDList': list
+            }),
+            contentType: 'application/json;charset=UTF-8',
+            success: function (response) {
+                if (id === '#all') {
+                    $('#all-subbed').html("<h3 style=\"padding: 10px; border: 1px solid #000000\">Requested Substitutes for All Appointments!</h3>");
+                    {#for (let i = 0; i < list.length; i ++) {#}
+                    {#    let id = '#' + list[i];#}
+                    {#    $(id).html('√');#}
+                    {#{}#}
+                } else {
+                    $(id).html('√');
+                }
+            },
+            error: function (error) {
+
+            }
+        });
+    }
+</script>

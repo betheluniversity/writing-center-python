@@ -98,6 +98,10 @@ nav.navbar{
     padding: 0 10px;
 }
 
+option.select-hr {
+    border-bottom: 1px solid #000;
+}
+
 span.lab-title{
     color: #ffc600
 }
@@ -166,6 +170,18 @@ ul.list-group{
     padding: 3px;
 }
 
+.confirmation {
+    border: 1px dotted grey;
+    padding: 10px;
+    float: left;
+}
+
+.disable {
+    background-color: red;
+    border-color: red;
+    color: black;
+}
+
 .fc-unthemed td.fc-today {
     background: yellow !important;
 }
@@ -189,14 +205,10 @@ ul.list-group{
     max-width: 95%;
 }
 
-.nav-buttons {
-    font-size: 1.6em;
-    color: #123563;
+.email-form {
+    height: 30px;
 }
 
-.pref-button {
-    font-size: .8em;
-}
 
 .enable {
     background-color: greenyellow;
@@ -204,18 +216,21 @@ ul.list-group{
     color: black;
 }
 
-.disable {
-    background-color: red;
-    border-color: red;
-    color: black;
-}
-
 .message-form {
     display: block;
 }
 
+.nav-buttons {
+    font-size: 1.6em;
+    color: #123563;
+}
+
 .no-decoration {
     text-decoration: none !important;
+}
+
+.pref-button {
+    font-size: .8em;
 }
 
 .search-btn {
@@ -246,12 +261,11 @@ ul.list-group{
     float: left;
 }
 
+#delete-confirm {
+    margin-bottom: 15px;
+}
 
 #spinner {
     position: absolute;
     z-index: 999;
-}
-
-.email-form {
-    height: 30px;
 }
