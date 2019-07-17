@@ -90,7 +90,7 @@
     <script>
         $(document).ready(function () {
             $('.datepicker').each(function () {
-                var current_element = $(this);
+                let current_element = $(this);
                 let maxDate = new Date();
                 let dd = maxDate.getDate();
                 let mm = maxDate.getMonth() + 1;
@@ -103,19 +103,15 @@
                   mm = '0' + mm;
                 }
                 maxDate = yyyy + '-' + mm + '-' + dd;
-                var starting_values = {
+                let starting_values = {
                     field: this,
                     format: 'MM DD YYYY',
                     minDate: new Date('2010-01-01'),
                     maxDate: new Date(maxDate),
                     yearRange: [2010, yyyy],
                     disableDayFn: function (date) {
-                        var start_populated = $("#start-date").val();
-                        var end_populated = $("#end-date").val();
-                        {#let end_split = end_populated.split(" ");#}
-                        {#let day = parseInt(end_split[2]);#}
-                        {#end_split[2] = day;#}
-                        {#end_populated = end_split.join(" ");#}
+                        let start_populated = $("#start-date").val();
+                        let end_populated = $("#end-date").val();
                         if (start_populated == "") {
                             return null;
                         } else if (current_element.attr('id') == 'start-date') {
@@ -132,7 +128,7 @@
 
                 starting_values['defaultDate'] = new Date(new Date().getTime() + 48 * 60 * 60 * 1000);
                 starting_values['setDefaultDate'] = true;
-                var picker = new Pikaday(starting_values);
+                let picker = new Pikaday(starting_values);
             });
         });
         let calendarEl = document.getElementById('calendar');
