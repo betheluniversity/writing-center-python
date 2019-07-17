@@ -120,6 +120,9 @@ class SchedulesView(FlaskView):
         end = datetime.strptime(end_date, '%a %b %d %Y').date()
         tutor_ids = json.loads(request.data).get('tutors')
         names = []
+        invalid_date = False
+        if start_date > end_date:
+            invalid_date = True
         if tutor_ids[0] == 'view-all':
             tutors = self.sc.get_tutors()
             for tutor in tutors:
@@ -127,13 +130,11 @@ class SchedulesView(FlaskView):
                 name = '{0} {1}'.format(user.firstName, user.lastName)
                 names.append(name)
         else:
-            for id in tutor_ids:
-                user = self.sc.get_user_by_id(id)
+            for tutor_id in tutor_ids:
+                user = self.sc.get_user_by_id(tutor_id)
                 if user:
                     name = '{0} {1}'.format(user.firstName, user.lastName)
                     names.append(name)
-        # start = datetime.combine(start_date, datetime.min.time())
-        # today = datetime.combine(datetime.today(), datetime.max.time())
 
         return render_template('schedules/delete_confirmation.html', **locals())
 
@@ -143,12 +144,11 @@ class SchedulesView(FlaskView):
         end_date = str(json.loads(request.data).get('endDate'))
         start_date = datetime.strptime(start_date, '%a %b %d %Y').date()
         end_date = datetime.strptime(end_date, '%a %b %d %Y').date()
-        start_date = datetime.combine(start_date, datetime.min.time())
-        today = datetime.combine(datetime.today(), datetime.max.time())
 
-        if start_date <= today:
-            pass
-            # TODO IF START_DATE IS <= TODAY, THEN THROW AN ERROR SINCE WE CAN'T DELETE DATES FROM TODAY OR BEFORE
+        if start_date > end_date:
+            self.wcc.set_alert('danger', 'Shifts NOT Deleted! End Date Was Less Than Start Date!')
+            return redirect(url_for('SchedulesView:show_tutor_schedule'))
+
         tutor_ids = json.loads(request.data).get('tutors')
         if tutor_ids[0] == 'view-all':
             tutors = self.sc.get_tutors()

@@ -112,25 +112,29 @@
                     disableDayFn: function (date) {
                         var start_populated = $("#start-date").val();
                         var end_populated = $("#end-date").val();
-                        if (start_populated == "" && end_populated == "") {
+                        {#let end_split = end_populated.split(" ");#}
+                        {#let day = parseInt(end_split[2]);#}
+                        {#end_split[2] = day;#}
+                        {#end_populated = end_split.join(" ");#}
+                        if (start_populated == "") {
                             return null;
-                        } else if (start_populated != "" && current_element.attr('id') == 'end-date') {
-                            if (new Date(start_populated) >= date) {
+                        } else if (current_element.attr('id') == 'start-date') {
+                            if (new Date(end_populated) > date) {
                                 return date;
                             }
-                        } else if (end_populated != "" && current_element.attr('id') == 'start-date') {
-                            if (new Date(end_populated) <= date) {
+                        } else if (current_element.attr('id') == 'end-date') {
+                            if (new Date(end_populated) > date) {
                                 return date;
                             }
                         }
                     }
                 };
-                starting_values['defaultDate'] = new Date();
+
+                starting_values['defaultDate'] = new Date(new Date().getTime() + 48 * 60 * 60 * 1000);
                 starting_values['setDefaultDate'] = true;
                 var picker = new Pikaday(starting_values);
             });
         });
-
         let calendarEl = document.getElementById('calendar');
 
         let calendar = new FullCalendar.Calendar(calendarEl, {
@@ -149,7 +153,6 @@
 
         function tutorsChanged() {
             $('#spinner').show();
-            {#let tutors = $("#tutors-schedule option:selected").map(function(){ return this.id }).get().join(", ");#}
             let tutors = [];
             $("#tutors-schedule option:selected").each(function() {
                 tutors.push(this.id);

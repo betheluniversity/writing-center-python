@@ -15,6 +15,7 @@
                     <th colspan="5"></th>
                     <th colspan="2">
                         {# TODO FIGURE OUT HOW TO GET ALL THE APPOINTMENT IDS AND PASS THEM TO PYTHON #}
+                        {# TODO MAYBE ADD IN AN EMAIL STUDENT THING TO INFORM THEM ABOUT SUB/INFORMATION #}
                         <button id="sub-all" type="button" class="btn btn-primary btn-danger" onclick="subRequested('all')">Request A Substitute For All Appointments</button>
                     </th>
                 </tr>
@@ -95,7 +96,7 @@
             contentType: 'application/json;charset=UTF-8',
             success: function (response) {
                 if (id === '#all') {
-                    $('#all-subbed').html('<h3 style=\'padding: 10px; border: 1px solid #000000\'>Requested Substitutes for All Appointments!</h3>');
+                    $('#all-subbed').html("<h3 style=\"padding: 10px; border: 1px solid #000000\">Requested Substitutes for All Appointments!</h3>");
                     {#for (let i = 0; i < list.length; i ++) {#}
                     {#    let id = '#' + list[i];#}
                     {#    $(id).html('√');#}
