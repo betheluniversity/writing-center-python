@@ -1,12 +1,12 @@
 {% if invalid_date %}
-<div class="row">
+<div class="form-row">
     <div class="col-md-6 confirmation">
         <h6>Error! Your End Date ({{ start }}) Is Less Than Your Start Date ({{ end }})</h6>
         <button type="button" class="btn btn-primary darkblue" onclick="confirmedNo()">Ok</button>
     </div>
 </div>
 {% else %}
-<div class="row">
+<div class="form-row">
     <div class="col-md-6 confirmation">
         <h6>Are you sure you want to delete shifts for {% for name in names %}{% if not loop.last %}{{ name }}, {% elif loop.last %}and {{ name }} {% endif %}{% endfor %} between {{ start }} and {{ end }}?</h6>
         <a class="btn btn-primary btn-danger" onclick="deleteShifts()">Yes</a>
