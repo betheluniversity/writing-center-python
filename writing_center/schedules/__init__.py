@@ -163,7 +163,7 @@ class SchedulesView(FlaskView):
         sub_appts = self.sc.delete_tutor_shifts(tutor_ids, start, end)
         if not sub_appts:
             self.wcc.set_alert('danger', 'Failed to Delete Appointments!')
-        return render_template('schedules/sub_table.html', **locals())
+        return render_template('schedules/sub_table.html', **locals(), id_to_user=self.sc.get_user_by_id)
 
     @route('request-sub', methods=['POST'])
     def request_sub(self):
