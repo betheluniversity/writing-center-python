@@ -168,11 +168,14 @@ class SchedulesController:
                                 .filter(AppointmentsTable.sub == 0)
                                 .filter(AppointmentsTable.student_id != None)
                                 .all())
-        for tutor_appts in delete_list:
-            for appt in tutor_appts:
-                # TODO DELETE APPOINTMENTS
-                pass
-        # TODO LOOK UP EITHER ADD USER OR SOME TABLE TO FIGURE OUT HOW TO INSERT THE HTML SUB TABLE INTO THE PAGE
+        try:
+            for tutor_appts in delete_list:
+                for appt in tutor_appts:
+                    db_session.delete(appt)
+            db_session.commit()
+        except Exception:
+            return False
+
         return sub_list
 
     def request_substitute(self, appt_id):
