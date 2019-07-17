@@ -120,7 +120,6 @@ class SchedulesView(FlaskView):
         end = datetime.strptime(end_date, '%a %b %d %Y').date()
         tutor_ids = json.loads(request.data).get('tutors')
         names = []
-        invalid_date = False
         if start_date > end_date:
             invalid_date = True
         if tutor_ids[0] == 'view-all':
@@ -142,12 +141,12 @@ class SchedulesView(FlaskView):
     def delete_tutors_from_shifts(self):
         start_date = str(json.loads(request.data).get('startDate'))
         end_date = str(json.loads(request.data).get('endDate'))
-        start_date = datetime.strptime(start_date, '%a %b %d %Y').date()
-        end_date = datetime.strptime(end_date, '%a %b %d %Y').date()
+        start = datetime.strptime(start_date, '%a %b %d %Y').date()
+        end = datetime.strptime(end_date, '%a %b %d %Y').date()
 
-        if start_date > end_date:
-            self.wcc.set_alert('danger', 'Shifts NOT Deleted! End Date Was Less Than Start Date!')
-            return redirect(url_for('SchedulesView:show_tutor_schedule'))
+        if start > end:
+            invalid_date = True
+            return render_template('schedules/delete_confirmation.html', **locals())
 
         tutor_ids = json.loads(request.data).get('tutors')
         if tutor_ids[0] == 'view-all':
@@ -155,7 +154,7 @@ class SchedulesView(FlaskView):
             tutor_ids = []
             for ids in tutors:
                 tutor_ids.append(str(ids.id))
-        sub_appts = self.sc.delete_tutor_shifts(tutor_ids, start_date, end_date)
+        sub_appts = self.sc.delete_tutor_shifts(tutor_ids, start, end)
         return render_template('schedules/sub_table.html', **locals())
 
     @route('request-sub', methods=['POST'])
