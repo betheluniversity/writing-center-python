@@ -1,0 +1,7 @@
+<div class="row">
+    <div class="col-md-6 delete-confirmation">
+        <h6>Are you sure you want to delete shifts for {% for name in names %}{% if not loop.last %}{{ name }}, {% elif loop.last %}and {{ name }} {% endif %}{% endfor %} between {{ start }} and {{ end }}?</h6>
+        <a class="btn btn-primary btn-danger" onclick="deleteShifts()">Yes</a>
+        <a class="btn btn-primary" onclick="confirmedNo()">No</a>
+    </div>
+</div>

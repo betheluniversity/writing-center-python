@@ -1,6 +1,6 @@
 from flask_classy import FlaskView, route, request
 from flask import render_template, redirect, url_for, jsonify
-from datetime import datetime
+from datetime import datetime, date
 
 import json
 
@@ -61,6 +61,9 @@ class SchedulesView(FlaskView):
     def add_tutors_to_shifts(self):
         start_date = str(json.loads(request.data).get('startDate'))
         end_date = str(json.loads(request.data).get('endDate'))
+        # Formats the date strings into date objects
+        start_date = datetime.strptime(start_date, '%a %b %d %Y').date()
+        end_date = datetime.strptime(end_date, '%a %b %d %Y').date()
         # TODO IF START_DATE AND END_DATE ARE EQUAL SET DANGER MESSAGE AND RETURN TO PAGE
         if start_date == end_date:
             self.wcc.set_alert('danger', 'No Appointments Made! Start Date and End Date must be different days!')
@@ -75,7 +78,12 @@ class SchedulesView(FlaskView):
 
     @route('/show-schedule', methods=['POST'])
     def show_tutor_schedule(self):
-        names = str(json.loads(request.data).get('tutors'))
+        names = json.loads(request.data).get('tutors')
+        if names[0] == 'view-all':
+            tutors = self.sc.get_tutors()
+            names = []
+            for tutor in tutors:
+                names.append(str(tutor.id))
         all_tutor_appts = self.sc.get_tutor_appointments(names)
         appointments = []
         for tutor_appts in all_tutor_appts:
@@ -103,3 +111,63 @@ class SchedulesView(FlaskView):
                 })
                 
         return jsonify(appointments)
+
+    @route('delete-confirmation', methods=['POST'])
+    def confirm_delete(self):
+        start_date = str(json.loads(request.data).get('startDate'))
+        end_date = str(json.loads(request.data).get('endDate'))
+        start = datetime.strptime(start_date, '%a %b %d %Y').date()
+        end = datetime.strptime(end_date, '%a %b %d %Y').date()
+        tutor_ids = json.loads(request.data).get('tutors')
+        names = []
+        if tutor_ids[0] == 'view-all':
+            tutors = self.sc.get_tutors()
+            for tutor in tutors:
+                user = self.sc.get_user_by_id(tutor.id)
+                name = '{0} {1}'.format(user.firstName, user.lastName)
+                names.append(name)
+        else:
+            for id in tutor_ids:
+                user = self.sc.get_user_by_id(id)
+                if user:
+                    name = '{0} {1}'.format(user.firstName, user.lastName)
+                    names.append(name)
+        # start = datetime.combine(start_date, datetime.min.time())
+        # today = datetime.combine(datetime.today(), datetime.max.time())
+
+        return render_template('schedules/delete_confirmation.html', **locals())
+
+    @route('delete-tutor-shifts', methods=['POST'])
+    def delete_tutors_from_shifts(self):
+        start_date = str(json.loads(request.data).get('startDate'))
+        end_date = str(json.loads(request.data).get('endDate'))
+        start_date = datetime.strptime(start_date, '%a %b %d %Y').date()
+        end_date = datetime.strptime(end_date, '%a %b %d %Y').date()
+        start_date = datetime.combine(start_date, datetime.min.time())
+        today = datetime.combine(datetime.today(), datetime.max.time())
+
+        if start_date <= today:
+            pass
+            # TODO IF START_DATE IS <= TODAY, THEN THROW AN ERROR SINCE WE CAN'T DELETE DATES FROM TODAY OR BEFORE
+        tutor_ids = json.loads(request.data).get('tutors')
+        if tutor_ids[0] == 'view-all':
+            tutors = self.sc.get_tutors()
+            tutor_ids = []
+            for ids in tutors:
+                tutor_ids.append(str(ids.id))
+        sub_appts = self.sc.delete_tutor_shifts(tutor_ids, start_date, end_date)
+        return render_template('schedules/sub_table.html', **locals())
+
+    @route('request-sub', methods=['POST'])
+    def request_sub(self):
+        appt_id = json.loads(request.data).get('apptID')
+        appt_id_list = json.loads(request.data).get('apptIDList')
+        if appt_id == 'all':
+            worked = self.sc.sub_all(appt_id_list)
+            if not worked:
+                self.wcc.set_alert('danger', 'Failed to request a substitute for all appointments')
+        else:
+            worked = self.sc.request_substitute(appt_id)
+            if not worked:
+                self.wcc.set_alert('danger', 'Failed to request a substitute for appointment id {0}'.format(appt_id))
+        return 'Substitute Requested Successfully'

@@ -45,6 +45,11 @@ class SchedulesController:
             .filter(UserTable.username == username)\
             .one_or_none()
 
+    def get_user_by_id(self, id):
+        return db_session.query(UserTable)\
+            .filter(UserTable.id == id)\
+            .one_or_none()
+
     def get_tutors(self):
         return db_session.query(UserTable)\
             .filter(UserTable.id == UserRoleTable.user_id)\
@@ -53,9 +58,6 @@ class SchedulesController:
             .all()
 
     def create_tutor_shifts(self, start_date, end_date, multilingual, drop_in, tutor_name, day_of_week, time_slot):
-        # Formats the date strings into date objects
-        start_date = datetime.strptime(start_date, '%a %b %d %Y').date()
-        end_date = datetime.strptime(end_date, '%a %b %d %Y').date()
         # Splits the time slot into a start time and end time
         time_slot = time_slot.split('-')
         start_ts = time_slot[0]
@@ -120,11 +122,13 @@ class SchedulesController:
                 first_date += timedelta(days=1)  # if it hasn't matched, add a day and check again
 
     def get_tutor_appointments(self, tutors):
-        tutors = tutors.split(", ")
         appointment_list = []
-        for tutor_name in tutors:
-            tutor = self.get_username_from_name(tutor_name)
-            appointment_list.append(db_session.query(AppointmentsTable).filter(AppointmentsTable.tutor_id == tutor.id).all())
+        for tutor_id in tutors:
+            tutor = self.get_user_by_id(tutor_id)
+            if tutor:
+                appointment_list.append(db_session.query(AppointmentsTable)
+                                        .filter(AppointmentsTable.tutor_id == tutor.id)
+                                        .all())
 
         return appointment_list
 
@@ -141,3 +145,56 @@ class SchedulesController:
         # Gets the tutor's username
         name = self.get_user_by_name(firstname, lastname)
         return name
+
+    def delete_tutor_shifts(self, tutors, start_date, end_date):
+        delete_list = []
+        sub_list = []
+        for tutor_id in tutors:
+            tutor = self.get_user_by_id(tutor_id)
+            if tutor:
+                # Gets all of the appointments where no students are signed up for slots and 
+                delete_list.append(db_session.query(AppointmentsTable)
+                                   .filter(AppointmentsTable.tutor_id == tutor.id)
+                                   .filter(AppointmentsTable.scheduledStart >= start_date)
+                                   .filter(AppointmentsTable.scheduledEnd <= end_date)
+                                   .filter(AppointmentsTable.student_id == None)
+                                   .all())
+                # Gets all the appointments where there is a student signed up for that we now potentially need
+                # subtitutes for
+                sub_list.append(db_session.query(AppointmentsTable)
+                                .filter(AppointmentsTable.tutor_id == tutor.id)
+                                .filter(AppointmentsTable.scheduledStart >= start_date)
+                                .filter(AppointmentsTable.scheduledEnd <= end_date)
+                                .filter(AppointmentsTable.sub == 0)
+                                .filter(AppointmentsTable.student_id != None)
+                                .all())
+        for tutor_appts in delete_list:
+            for appt in tutor_appts:
+                # TODO DELETE APPOINTMENTS
+                pass
+        # TODO LOOK UP EITHER ADD USER OR SOME TABLE TO FIGURE OUT HOW TO INSERT THE HTML SUB TABLE INTO THE PAGE
+        return sub_list
+
+    def request_substitute(self, appt_id):
+        try:
+            appointment = db_session.query(AppointmentsTable)\
+                .filter(AppointmentsTable.id == appt_id)\
+                .one_or_none()
+            appointment.sub = 1
+            db_session.commit()
+            return True
+        except Exception as e:
+            return False
+
+    def sub_all(self, appt_id_list):
+        try:
+            for appt_id in appt_id_list:
+                appointment = db_session.query(AppointmentsTable)\
+                    .filter(AppointmentsTable.id == appt_id)\
+                    .one_or_none()
+                appointment.sub = 1
+            db_session.commit()
+            return True
+        except Exception as e:
+            return False
+
