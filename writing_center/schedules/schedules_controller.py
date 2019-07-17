@@ -179,6 +179,7 @@ class SchedulesController:
         return sub_list
 
     def request_substitute(self, appt_id):
+        # Requests a substitute for a specific appointment
         try:
             appointment = db_session.query(AppointmentsTable)\
                 .filter(AppointmentsTable.id == appt_id)\
@@ -190,6 +191,7 @@ class SchedulesController:
             return False
 
     def sub_all(self, appt_id_list):
+        # Requests substitutes for all appointments in the list
         try:
             for appt_id in appt_id_list:
                 appointment = db_session.query(AppointmentsTable)\
