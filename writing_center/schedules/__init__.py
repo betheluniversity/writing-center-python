@@ -114,6 +114,8 @@ class SchedulesView(FlaskView):
 
     @route('delete-confirmation', methods=['POST'])
     def confirm_delete(self):
+        # Post method that displays a confirmation before appointments within a given range for selected tutors are
+        # deleted to make sure the person knows what they are doing
         start_date = str(json.loads(request.data).get('startDate'))
         end_date = str(json.loads(request.data).get('endDate'))
         start = datetime.strptime(start_date, '%a %b %d %Y').date()
@@ -139,15 +141,19 @@ class SchedulesView(FlaskView):
 
     @route('delete-tutor-shifts', methods=['POST'])
     def delete_tutors_from_shifts(self):
+        # Post method to delete appointments which selected tutors are running in a given date range
         start_date = str(json.loads(request.data).get('startDate'))
         end_date = str(json.loads(request.data).get('endDate'))
         start = datetime.strptime(start_date, '%a %b %d %Y').date()
         end = datetime.strptime(end_date, '%a %b %d %Y').date()
 
+        # If start > end that means start is further into the future than end in so we should the confirmation html
+        # again to tell them to fix that
         if start > end:
             invalid_date = True
             return render_template('schedules/delete_confirmation.html', **locals())
 
+        # If we get past that check, then we delete the appointment(s) and show the substitution table
         tutor_ids = json.loads(request.data).get('tutors')
         if tutor_ids[0] == 'view-all':
             tutors = self.sc.get_tutors()
@@ -161,6 +167,7 @@ class SchedulesView(FlaskView):
 
     @route('request-sub', methods=['POST'])
     def request_sub(self):
+        # Post method to request a sub for a given appointment or subs for all given appointments
         appt_id = json.loads(request.data).get('apptID')
         appt_id_list = json.loads(request.data).get('apptIDList')
         if appt_id == 'all':
