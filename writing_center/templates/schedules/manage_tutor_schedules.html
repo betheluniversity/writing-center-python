@@ -46,7 +46,8 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="tutors">Select Tutors</label>
-                    <select class="form-control" id="tutors">
+                    <select class="form-control" id="tutors" multiple="multiple" required="required">
+                        <option id="select-all" class="select-hr" value="Select All Tutors">Select All Tutors</option>
                         {% for tutor in tutors %}
                             <option id="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
                         {% endfor %}
@@ -56,7 +57,7 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="days">Select Days</label>
-                    <select class="form-control" id="days">
+                    <select class="form-control" id="days" multiple="multiple" required="required">
                     <option value="0">Monday</option>
                     <option value="1">Tuesday</option>
                     <option value="2">Wednesday</option>
@@ -70,7 +71,7 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="times">Select Time Slots</label>
-                    <select class="form-control" id="times">
+                    <select class="form-control" id="times" multiple="multiple" required="required">
                         {% for schedule in schedules %}
                             <option id="{{ schedule.id }}">{{ schedule.startTime|datetimeformat }} - {{ schedule.endTime|datetimeformat }}</option>
                         {% endfor %}
@@ -79,7 +80,7 @@
             </div>
         </div>
         <div class="form-row">
-            <button id="add-shifts" name="submit-shifts" type="submit" class="btn btn-primary">Submit</button>
+            <button id="add-shifts" name="submit-shifts" type="submit" class="btn btn-primary darkblue">Submit</button>
         </div>
     </form>
 
@@ -173,9 +174,19 @@
             let endDate = $('#end-date').val();
             let multilingual = $('#multilingual option:selected').val();
             let dropIn = $('#drop-in option:selected').val();
-            let tutors = $('#tutors option:selected').text();
-            let days = $('#days option:selected').val();
-            let timeSlots = $('#times option:selected').text();
+            let tutors = [];
+            $("#tutors option:selected").each(function() {
+                tutors.push(this.text);
+            });
+            let days = [];
+            $('#days option:selected').each(function() {
+                days.push(this.value);
+            });
+
+            let timeSlots = [];
+            $('#times option:selected').each(function() {
+               timeSlots.push(this.text)
+            });
             $.ajax({
                 type: "POST",
                 url: "{{ url_for('SchedulesView:add_tutors_to_shifts') }}",
