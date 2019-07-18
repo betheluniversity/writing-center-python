@@ -166,8 +166,8 @@ ul.list-group{
 
 .darkblue {
     background-color: #0F2C52;
+    border-color: #0F2C52;
     color: #ffffff;
-    padding: 3px;
 }
 
 .confirmation {
