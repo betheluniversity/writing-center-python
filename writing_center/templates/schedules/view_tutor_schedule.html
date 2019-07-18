@@ -191,7 +191,6 @@
                 }),
                 contentType: 'application/json;charset=UTF-8',
                 success: function (data) {
-                    {# TODO ON SUCCESS LOAD IN THE SUBLIST ALONG WITH A BUTTON FOR APRIL TO CLICK TO REQUEST SUB/REQUEST SUB FOR ALL#}
                     $('#delete-confirm').html(data)
                 },
                 error: function (error) {
@@ -222,7 +221,6 @@
                 }),
                 contentType: 'application/json;charset=UTF-8',
                 success: function (data) {
-                    {# TODO ON SUCCESS LOAD IN THE SUBLIST ALONG WITH A BUTTON FOR APRIL TO CLICK TO REQUEST SUB/REQUEST SUB FOR ALL#}
                     $('#delete-confirm').html("<input type=\"button\" id=\"delete-shifts\" class=\"btn btn-primary btn-danger\" value=\"Delete Shifts\" onclick=\"confirmDelete()\">")
                     $('#sub-list-results').html(data)
                 },
