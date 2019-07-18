@@ -3,7 +3,6 @@
 {% block body_content %}
     <div class="jumbotron">
         <h1><b>Send Email</b></h1>
-        <p>THIS TEXT WILL CHANGE TO SOMETHING MORE ALONG THE LINES OF WHAT THIS FUNCTIONALITY REALLY DOES <3</p>
     </div>
     <div class="custom-default row">
         <div class="col-md-8">
@@ -11,7 +10,6 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="choose-recipients">Recipients</label>
-                        <!--realistically this wil change to groups instead of individuals-->
                         <select name="recipients" class="email-form" id="choose-recipients" multiple>
                             {% for role in roles %}
                                 <option value="{{ role.id }}">{{ role.name }}</option>
@@ -38,7 +36,7 @@
                     <div id="bcc-div" class="form-group col-md-12 email">
                         <label for="choose-bcc">BCC</label>
                         <select name="bcc" class="email-form" id="choose-bcc" multiple>
-                            {% for user in user_list %}
+                            {% for user in users %}
                                 <option value="{{ user.id }}">{{ user.lastName}}, {{ user.firstName }} | {{ user.email }}</option>
                             {% endfor %}
                         </select>
