@@ -28,7 +28,7 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <button id="add-schedule-ts" name="add-schedule" class="btn btn-primary" type="submit">Submit</button>
+                <button id="add-schedule-ts" name="add-schedule" class="btn btn-primary darkblue" type="submit">Submit</button>
             </div>
         </div>
     </form>
@@ -127,7 +127,7 @@
             </div>
         </div>
         <div class="form-row">
-            <button id="add-shifts" name="submit-shifts" type="submit" class="btn btn-primary">Submit</button>
+            <button id="add-shifts" name="submit-shifts" type="submit" class="btn btn-primary darkblue">Submit</button>
         </div>
     </form>
 
@@ -202,7 +202,6 @@
             let endDate = $('#end-date').val();
             let multilingual = $('#multilingual option:selected').val();
             let dropIn = $('#drop-in option:selected').val();
-            {#let tutors = $('#tutors option:selected').text();#}
             let tutors = [];
             $("#tutors option:selected").each(function() {
                 tutors.push(this.text);
