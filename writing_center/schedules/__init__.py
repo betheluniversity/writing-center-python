@@ -70,9 +70,9 @@ class SchedulesView(FlaskView):
             self.wcc.set_alert('danger', 'No Appointments Made! Start Date and End Date must be different days!')
         multilingual = str(json.loads(request.data).get('multilingual'))
         drop_in = str(json.loads(request.data).get('dropIn'))
-        tutors = str(json.loads(request.data).get('tutors'))
-        days = str(json.loads(request.data).get('days'))
-        time_slots = str(json.loads(request.data).get('timeSlots'))
+        tutors = json.loads(request.data).get('tutors')
+        days = json.loads(request.data).get('days')
+        time_slots = json.loads(request.data).get('timeSlots')
         # TODO IF TUTORS, DAYS, OR TIME_SLOTS ARE EMPTY THEN RETURN TO PAGE
         self.sc.create_tutor_shifts(start_date, end_date, multilingual, drop_in, tutors, days, time_slots)
         return redirect(url_for('SchedulesView:create_schedule'))
