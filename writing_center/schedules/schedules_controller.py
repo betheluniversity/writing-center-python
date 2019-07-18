@@ -3,7 +3,8 @@ from datetime import datetime, timedelta, date
 
 
 from writing_center.db_repository import db_session
-from writing_center.db_repository.tables import UserTable, UserRoleTable, RoleTable, ScheduleTable, AppointmentsTable
+from writing_center.db_repository.tables import UserTable, UserRoleTable, RoleTable, ScheduleTable, AppointmentsTable, \
+    SettingsTable
 
 
 class SchedulesController:
@@ -145,6 +146,11 @@ class SchedulesController:
         # Gets the tutor's username
         name = self.get_user_by_name(firstname, lastname)
         return name
+
+    def get_time_setting(self):
+        return db_session.query(SettingsTable.value)\
+            .filter(SettingsTable.id == 2)\
+            .one_or_none()
 
     def delete_tutor_shifts(self, tutors, start_date, end_date):
         delete_list = []

@@ -30,6 +30,7 @@ class SchedulesView(FlaskView):
     def view_tutor_schedules(self):
         schedules = self.sc.get_schedules()
         tutors = self.sc.get_tutors()
+        time_setting = self.sc.get_time_setting()[0]
         return render_template('schedules/view_tutor_schedule.html', **locals())
 
     @route('/create', methods=['POST'])

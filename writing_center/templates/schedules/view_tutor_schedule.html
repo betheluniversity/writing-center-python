@@ -121,8 +121,8 @@
                         }
                     }
                 };
-
-                starting_values['defaultDate'] = new Date(new Date().getTime() + 48 * 60 * 60 * 1000);
+                let timeSetting = ({{ time_setting }});
+                starting_values['defaultDate'] = new Date(new Date().getTime() + timeSetting * 60 * 60 * 1000);
                 starting_values['setDefaultDate'] = true;
                 let picker = new Pikaday(starting_values);
             });
