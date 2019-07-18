@@ -1,11 +1,12 @@
 {% block email_content %}
     <!-- Writing Center logo -->
-    <h3>Appointment Info</h3>
-    <br/>
+    <h3>You signed up for an appointment:</h3>
+        <br/>
         <p>Date: {{ appt_info['date']}}</p>
         <p>Your scheduled start time: {{ appt_info['start_time'] }}</p>
         <p>Tutor: {{ appt_info['tutor'] }}</p>
         <br/>
         <p>If you have any questions, comments or concerns, contact <a href="#">SOMEONE</a></p>
         <p>Cancel your appointment <a href="#">here</a></p>
+    <!-- Bethel University Footer -->
 {% endblock %}

@@ -1,6 +1,7 @@
 {% block email_content %}
-<!-- Writing Center Logo -->
-    <h3>Appointment Information</h3>
+    <!-- Writing Center Logo -->
+    <h3>Appointment Information:</h3>
+        <br/>
         <p>Tutor: {{ appt_info['tutor'] }}</p>
         <p>Actual Time: {{ appt_info['actual_start']}}-{{ appt_info['actual_end'] }}</p>
         <p>Assignment: {{ appt_info['assignment'] }}</p>
@@ -10,4 +11,5 @@
         <p>Suggestions: {{ appt_info['suggetions'] }}</p>
         <br/>
         <p>If you have any questions, comments or concerns, contact <a href="#">SOMEONE</a></p>
+    <!-- Bethel University Footer -->
 {% endblock %}

@@ -1,8 +1,8 @@
 {% block email_content %}
-<!-- Writing Center Logo -->
-    {% comment %}
-        - Your substitute request has been fulfilled by {{ tutor }}
-        br 
-        - Questions, Comments or concerns 'here'
-    {% endcomment %}
+    <!-- Writing Center Logo -->
+    <h3>Substitute Request Filled:</h3>
+        <br/>
+        <p>{{ appt_info['tutor'] }} has filled your tutor request</p>
+        <p>If you have any questions, comments or concerns, contact <a href="#">SOMEONE</a></p>
+    <!-- Bethel University Footer -->
 {% endblock %}
