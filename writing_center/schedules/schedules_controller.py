@@ -58,34 +58,7 @@ class SchedulesController:
             .filter(RoleTable.name == 'Tutor')\
             .all()
 
-    def create_tutor_shifts(self, start_date, end_date, multilingual, drop_in, tutor_name, day_of_week, time_slot):
-        # Splits the time slot into a start time and end time
-        time_slot = time_slot.split('-')
-        start_ts = time_slot[0]
-        # Formats the meridiems to work with datetime
-        start_ts = start_ts.replace('a.m.', "AM")
-        start_ts = start_ts.replace('p.m.', "PM")
-        # Removes whitespace
-        start_ts = start_ts.strip()
-        # Formats the string into a datetime object
-        try:
-            start_ts = datetime.strptime(start_ts, '%H %p')
-        except:
-            start_ts = datetime.strptime(start_ts, '%H:%M %p')
-        end_ts = time_slot[1]
-        # Formats the meridiems to work with datetime
-        end_ts = end_ts.replace('a.m.', "AM")
-        end_ts = end_ts.replace('p.m.', "PM")
-        # Removes whitespace
-        end_ts = end_ts.strip()
-        # Formats the string into a datetime object
-        try:
-            end_ts = datetime.strptime(end_ts, '%H %p')
-        except:
-            end_ts = datetime.strptime(end_ts, '%H:%M %p')
-
-        tutor = self.get_username_from_name(tutor_name)
-
+    def create_tutor_shifts(self, start_date, end_date, multilingual, drop_in, tutor_names, days_of_week, time_slots):
         if multilingual == "Yes":
             multilingual = 1
         else:
@@ -95,18 +68,51 @@ class SchedulesController:
             drop_in = 1
         else:
             drop_in = 0
-
-        appt_date = self.get_first_appointment_date(day_of_week, start_date)
-
-        while appt_date <= end_date:  # Loop through until our session date is after the end date of the term
-            # Updates the datetime object with the correct date
-            start_ts = start_ts.replace(year=appt_date.year, month=appt_date.month, day=appt_date.day)
-            end_ts = end_ts.replace(year=appt_date.year, month=appt_date.month, day=appt_date.day)
-            appointment = AppointmentsTable(tutor_id=tutor.id, scheduledStart=start_ts, scheduledEnd=end_ts,
-                                            inProgress=0, multilingual=multilingual, dropIn=drop_in, sub=0, noShow=0)
-            db_session.add(appointment)
-            db_session.commit()
-            appt_date += timedelta(weeks=1)  # Add a week for next session
+        # I honestly hate this but since we have 3 different selects which all can be multiple I think this is the only
+        # way we can achieve the desired effect.
+        for day in days_of_week:
+            for tutor_name in tutor_names:
+                # print(tutor_name)
+                tutor = self.get_username_from_name(tutor_name)
+                if tutor:
+                    for time_slot in time_slots:
+                        # Splits the time slot into a start time and end time
+                        time_slot = time_slot.split('-')
+                        start_ts = time_slot[0]
+                        # Formats the meridiems to work with datetime
+                        start_ts = start_ts.replace('a.m.', "AM")
+                        start_ts = start_ts.replace('p.m.', "PM")
+                        # Removes whitespace
+                        start_ts = start_ts.strip()
+                        # Formats the string into a datetime object
+                        try:
+                            start_ts = datetime.strptime(start_ts, '%H %p')
+                        except:
+                            start_ts = datetime.strptime(start_ts, '%H:%M %p')
+                        end_ts = time_slot[1]
+                        # Formats the meridiems to work with datetime
+                        end_ts = end_ts.replace('a.m.', "AM")
+                        end_ts = end_ts.replace('p.m.', "PM")
+                        # Removes whitespace
+                        end_ts = end_ts.strip()
+                        # Formats the string into a datetime object
+                        try:
+                            end_ts = datetime.strptime(end_ts, '%H %p')
+                        except:
+                            end_ts = datetime.strptime(end_ts, '%H:%M %p')
+                        appt_date = self.get_first_appointment_date(day, start_date)
+                        while appt_date <= end_date:  # Loop through until our session date is after the end date of the term
+                            # print('ot')
+                            # Updates the datetime object with the correct date
+                            # print(start_ts)
+                            # print(tutor.firstName, tutor.lastName)
+                            start_ts = start_ts.replace(year=appt_date.year, month=appt_date.month, day=appt_date.day)
+                            end_ts = end_ts.replace(year=appt_date.year, month=appt_date.month, day=appt_date.day)
+                            appointment = AppointmentsTable(tutor_id=tutor.id, scheduledStart=start_ts, scheduledEnd=end_ts,
+                                                            inProgress=0, multilingual=multilingual, dropIn=drop_in, sub=0, noShow=0)
+                            db_session.add(appointment)
+                            db_session.commit()
+                            appt_date += timedelta(weeks=1)  # Add a week for next session
         return None
 
     def get_first_appointment_date(self, week_day, start_date):

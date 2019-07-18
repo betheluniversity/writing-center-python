@@ -85,7 +85,7 @@ class AppointmentsView(FlaskView):
         appts = self.ac.get_all_user_appointments(flask_session['USERNAME'])
         appointments = []
         for appointment in appts:
-            if appointment.ActualStartTime:
+            if appointment.actualStart:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
                                                               appointment.actualStart.strftime('%m'),
                                                               appointment.actualStart.strftime('%d'),
