@@ -28,7 +28,32 @@ class UsersView(FlaskView):
 
     @route('/center-manager/view-users')
     def view_all_users(self):
-        users = self.uc.get_users()
+        users_query = self.uc.get_users()
+        users = {}
+        for user, role in users_query:
+            try:
+                if users[user.id]['roles'] != None:
+                    roles = '{0}, {1}'.format(users[user.id]['roles'], role.name)
+                    users.update({
+                        user.id: {
+                            'id': user.id,
+                            'firstName': user.firstName,
+                            'lastName': user.lastName,
+                            'email': user.email,
+                            'roles': roles
+                        }
+                    })
+            except:
+                users.update({
+                    user.id: {
+                        'id': user.id,
+                        'firstName': user.firstName,
+                        'lastName': user.lastName,
+                        'email': user.email,
+                        'roles': role.name
+                    }
+                })
+
         return render_template('users/view_all_users.html', **locals())
 
     @route("/center-manager/add-user")
