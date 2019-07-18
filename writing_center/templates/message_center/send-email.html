@@ -13,8 +13,8 @@
                         <label for="choose-recipients">Recipients</label>
                         <!--realistically this wil change to groups instead of individuals-->
                         <select name="recipients" class="email-form" id="choose-recipients" multiple>
-                            {% for user in users %}
-                                <option value="{{ user.id }}">{{ user.lastName}}, {{ user.firstName }} | {{ user.email }}</option>
+                            {% for role in roles %}
+                                <option value="{{ role.id }}">{{ role.name }}</option>
                             {% endfor %}
                         </select>
                     </div>

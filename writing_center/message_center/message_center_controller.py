@@ -19,6 +19,10 @@ class MessageCenterController:
         return (db_session.query(UserTable)
                 .all())
 
+    def get_roles(self):
+        return (db_session.query(RoleTable)
+                .all())
+
     def get_email_preferences(self):
         user = self.get_user(session['USERNAME'])
         return (db_session.query(EmailPreferencesTable)
