@@ -1,14 +1,12 @@
 {% block email_content %}
 <!-- Writing Center Logo -->
-    {% comment %}
-        - Tutor requesting substitute
-        - Appointment information
-            - Date
-            - Start time
-            - Student
-            - Assignment
-        br
-        - Fill this substitute request 'here'
-        - Questions, Comments or concerns 'here'
-    {% endcomment %}
+<h3>Substitute Request</h3>
+<br/>
+    <p>Date: {{ appt_info['date'] }}</p>
+    <p>Time: {{ appt_info['start_time'] }}</p>
+    <p>Student: {{ appt_info['student'] }}</p>
+    <p>Assignment: {{ appt_info['assignment'] }}</p>
+    <br/>
+    <p>Fill this substitute request <a href="#">here</a></p>
+    <p>If you have any questions, comments or concerns, contact <a href="#">SOMEONE</a></p>
 {% endblock %}
