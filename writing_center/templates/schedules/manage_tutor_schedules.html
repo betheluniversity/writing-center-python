@@ -95,11 +95,12 @@
     <div class="form-row">
         <div class="form-group col-md-4">
             <label for="tutors-schedule" style="display: block;"><b>Tutors</b></label>
-            <select id="tutors-schedule" class="chosen-container" size="7" multiple onchange="tutorsChanged()">
-                {% for tutor in tutors %}
-                    <option id="{{ tutor.id }}" value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
-                {% endfor %}
-            </select>
+                <select id="tutors-schedule" class="chosen-container" size="7" multiple="multiple" onchange="tutorsChanged()">
+                    <option id="view-all" class="select-hr" value="View All" selected="selected">Select All Tutors</option>
+                    {% for tutor in tutors %}
+                        <option id="{{ tutor.id }}" value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
+                    {% endfor %}
+                </select>
         </div>
     </div>
     {# spinner placeholder #}
@@ -210,7 +211,10 @@
 
         function tutorsChanged() {
             $('#spinner').show();
-            let tutors = $("#tutors-schedule option:selected").map(function(){ return this.text }).get().join(", ");
+            let tutors = [];
+            $("#tutors-schedule option:selected").each(function() {
+                tutors.push(this.id);
+            });
             $.ajax({
                 type: "POST",
                 url: "{{ url_for('SchedulesView:show_tutor_schedule') }}",
