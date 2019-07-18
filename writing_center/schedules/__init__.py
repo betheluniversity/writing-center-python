@@ -73,8 +73,15 @@ class SchedulesView(FlaskView):
         tutors = json.loads(request.data).get('tutors')
         days = json.loads(request.data).get('days')
         time_slots = json.loads(request.data).get('timeSlots')
-        # TODO IF TUTORS, DAYS, OR TIME_SLOTS ARE EMPTY THEN RETURN TO PAGE
-        self.sc.create_tutor_shifts(start_date, end_date, multilingual, drop_in, tutors, days, time_slots)
+        try:
+            if tutors[0] == 'Select All Tutors':
+                tutors = []
+                for tutor in self.sc.get_tutors():
+                    name = '{0} {1}'.format(tutor.firstName, tutor.lastName)
+                    tutors.append(name)
+            self.sc.create_tutor_shifts(start_date, end_date, multilingual, drop_in, tutors, days, time_slots)
+        except:
+            pass
         return redirect(url_for('SchedulesView:create_schedule'))
 
     @route('/show-schedule', methods=['POST'])
