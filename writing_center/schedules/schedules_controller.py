@@ -58,7 +58,7 @@ class SchedulesController:
             .filter(RoleTable.name == 'Tutor')\
             .all()
 
-    def create_tutor_shifts(self, start_date, end_date, multilingual, drop_in, tutor_names, days_of_week, time_slots):
+    def create_tutor_shifts(self, start_date, end_date, multilingual, drop_in, tutor_ids, days_of_week, time_slots):
         if multilingual == "Yes":
             multilingual = 1
         else:
@@ -71,9 +71,8 @@ class SchedulesController:
         # I honestly hate this but since we have 3 different selects which all can be multiple I think this is the only
         # way we can achieve the desired effect.
         for day in days_of_week:
-            for tutor_name in tutor_names:
-                # print(tutor_name)
-                tutor = self.get_username_from_name(tutor_name)
+            for tutor_id in tutor_ids:
+                tutor = self.get_user_by_id(tutor_id)
                 if tutor:
                     for time_slot in time_slots:
                         # Splits the time slot into a start time and end time
@@ -138,20 +137,6 @@ class SchedulesController:
                                         .all())
 
         return appointment_list
-
-    def get_username_from_name(self, name):
-        # Gets the tutor's first name, last name
-        name = name.split(" ")
-        firstname = name[0]
-        lastname = name[1]
-        # If a tutor has multiple last names, we use this loop to get them all
-        if len(name) > 2:
-            lastname = ""
-            for i in range(1, len(name)):
-                lastname += name[i] + " "
-        # Gets the tutor's username
-        name = self.get_user_by_name(firstname, lastname)
-        return name
 
     def get_time_setting(self):
         return db_session.query(SettingsTable.value)\
