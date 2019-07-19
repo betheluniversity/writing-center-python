@@ -139,8 +139,11 @@ class AppointmentsView(FlaskView):
         appt = self.ac.create_appointment(appt_id)
         if appt:
             self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your Appointments, Go To The "View Your Appointments" Page!')
+        username = flask_session['USERNAME']
+        user = self.ac.get_user_by_username(username)
+        if not user.bannedDate:
         else:
-            self.wcc.set_alert('danger', 'Error! Appointment Not Scheduled!')
+            self.wcc.set_alert('danger', 'You are banned from making appointments! If you have any questions email a Writing Center Administrator')
 
         return appt_id
 
