@@ -2,7 +2,6 @@ from datetime import datetime
 from flask import session as flask_session
 
 from writing_center.db_repository import db_session
-from writing_center.db_repository.tables import UserTable, AppointmentsTable
 from writing_center.db_repository.tables import UserTable, AppointmentsTable, SettingsTable
 
 
@@ -123,7 +122,6 @@ class AppointmentsController:
 
     def get_open_appointments_in_range(self, start, end):
         return db_session.query(AppointmentsTable) \
-            .filter(AppointmentsTable.scheduledStart > datetime.now()) \
             .filter(AppointmentsTable.scheduledStart >= start)\
             .filter(AppointmentsTable.scheduledEnd <= end)\
             .filter(AppointmentsTable.tutor_id != None)\
@@ -134,6 +132,12 @@ class AppointmentsController:
         return db_session.query(AppointmentsTable)\
             .filter(AppointmentsTable.id == appt_id)\
             .one_or_none()
+
+    def get_future_user_appointments(self, user_id):
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.student_id == user_id)\
+            .filter(AppointmentsTable.scheduledStart > datetime.now())\
+            .all()
 
     def get_appointment_limit(self):
         return db_session.query(SettingsTable.value)\
