@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 
 from writing_center.appointments.appointments_controller import AppointmentsController
 from writing_center.writing_center_controller import WritingCenterController
+from writing_center.wsapi.wsapi_controller import WSAPIController
 
 
 class AppointmentsView(FlaskView):
@@ -13,6 +14,7 @@ class AppointmentsView(FlaskView):
     def __init__(self):
         self.ac = AppointmentsController()
         self.wcc = WritingCenterController()
+        self.wsapi = WSAPIController()
 
     def view_appointments(self):
         return render_template('appointments/view_appointments.html', **locals())
@@ -141,18 +143,26 @@ class AppointmentsView(FlaskView):
         user = self.ac.get_user_by_username(username)
         # TODO CHECK FOR APPOINTMENT ALREADY AT THE SAME TIME?
         if not user.bannedDate:
-            appt_limit = self.ac.get_appointment_limit()[0]
+            appt_limit = int(self.ac.get_appointment_limit()[0])
             user_appointments = self.ac.get_future_user_appointments(user.id)
             if len(user_appointments) < appt_limit:
-                appt = self.ac.create_appointment(appt_id)
-                if appt:
-                    self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your Appointments, Go To The "View Your Appointments" Page!')
+                roles = self.wsapi.get_roles_for_username('ces55739')
+                cas = False
+                for role in roles:
+                    if 'STUDENT-CAS' == roles[role]['userRole']:
+                        cas = True
+                if cas:
+                    appt = self.ac.create_appointment(appt_id)
+                    if appt:
+                        self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your Appointments, Go To The "View Your Appointments" Page!')
+                    else:
+                        self.wcc.set_alert('danger', 'Error! Appointment Not Scheduled!')
                 else:
-                    self.wcc.set_alert('danger', 'Error! Appointment Not Scheduled!')
+                    self.wcc.set_alert('danger', 'Appointment NOT scheduled! Only CAS students can schedule appointments here. If you wish to schedule an appointment email a Writing Center Administrator.')
             else:
-                self.wcc.set_alert('danger', 'Failed to schedule appointment. You already have ' + appt_limit + ' appointments scheduled and can\'t schedule any more')
+                self.wcc.set_alert('danger', 'Failed to schedule appointment. You already have ' + appt_limit + ' appointments scheduled and can\'t schedule any more.')
         else:
-            self.wcc.set_alert('danger', 'You are banned from making appointments! If you have any questions email a Writing Center Administrator')
+            self.wcc.set_alert('danger', 'You are banned from making appointments! If you have any questions email a Writing Center Administrator.')
 
         return appt_id
 
