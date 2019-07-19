@@ -40,20 +40,11 @@ class AppointmentsController:
             year += 1
         return years
 
-    def create_appointment(self, id, start_time, end_time):
+    def create_appointment(self, appt_id):
         appointment = db_session.query(AppointmentsTable)\
-            .filter(AppointmentsTable.id == id)\
+            .filter(AppointmentsTable.id == appt_id)\
             .one_or_none()
-        # Formats the time to fit the DB's format
-        start_time = start_time.replace("T", " ")
-        start_time = start_time.replace(".000Z", "")
-        end_time = end_time.replace("T", " ")
-        end_time = end_time.replace(".000Z", "")
-        start_time = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
-        end_time = datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S')
-        # Updates the start time, end time, and student username
-        appointment.scheduledStart = start_time
-        appointment.scheduledEnd = end_time
+        # Updates the student username
         user = self.get_user_by_username(flask_session['USERNAME'])
         appointment.student_id = user.id
         # Commits to DB
