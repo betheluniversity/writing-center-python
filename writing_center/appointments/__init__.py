@@ -1,6 +1,7 @@
 from flask_classy import FlaskView, route, request
 from flask import render_template, jsonify, json, redirect, url_for
 from flask import session as flask_session
+from datetime import datetime, timedelta
 
 from writing_center.appointments.appointments_controller import AppointmentsController
 from writing_center.writing_center_controller import WritingCenterController
@@ -13,7 +14,57 @@ class AppointmentsView(FlaskView):
         self.ac = AppointmentsController()
         self.wcc = WritingCenterController()
 
+    def view_appointments(self):
+        return render_template('appointments/view_appointments.html', **locals())
+
+    @route('load-appointments', methods=['POST'])
+    def load_appointments(self):
+        dates = json.loads(request.data).get('dates')
+        schedule_appt = json.loads(request.data).get('scheduleAppt')
+        start = dates['start']
+        end = dates['end']
+        start = start.replace("T", " ").split(" ")[0]
+        start = datetime.strptime(start, '%Y-%m-%d')
+        end = end.replace("T", " ").split(" ")[0]
+        end = datetime.strptime(end, '%Y-%m-%d').date() - timedelta(days=1)
+        end = datetime.combine(end, datetime.max.time())
+        if schedule_appt:
+            range_appointments = self.ac.get_open_appointments_in_range(start, end)
+        else:
+            range_appointments = self.ac.get_appointments_in_range(start, end)
+        appointments = []
+        if range_appointments:
+            for appointment in range_appointments:
+                start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
+                                                              appointment.scheduledStart.strftime('%m'),
+                                                              appointment.scheduledStart.strftime('%d'),
+                                                              appointment.scheduledStart.strftime('%H'),
+                                                              appointment.scheduledStart.strftime('%M'),
+                                                              appointment.scheduledStart.strftime('%S'))
+                end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledEnd.year,
+                                                            appointment.scheduledEnd.strftime('%m'),
+                                                            appointment.scheduledEnd.strftime('%d'),
+                                                            appointment.scheduledEnd.strftime('%H'),
+                                                            appointment.scheduledEnd.strftime('%M'),
+                                                            appointment.scheduledEnd.strftime('%S'))
+                appointments.append({
+                    'id': appointment.id,
+                    'studentId': appointment.student_id,
+                    'tutorId': appointment.tutor_id,
+                    'startTime': start_time,
+                    'endTime': end_time,
+                    'multilingual': appointment.multilingual,
+                    'dropIn': appointment.dropIn
                 })
+        return jsonify(appointments)
+
+    @route('load-appointment', methods=['POST'])
+    def load_appointment_table(self):
+        appointment_id = str(json.loads(request.data).get('id'))
+        schedule_appt = json.loads(request.data).get('scheduleAppt')
+        appt = self.ac.get_one_appointment(appointment_id)
+
+        return render_template('appointments/appointment_information.html', **locals(), id_to_user=self.ac.get_user_by_id)
 
     def appointments_and_walk_ins(self):
         tutor = flask_session['USERNAME']
@@ -83,10 +134,15 @@ class AppointmentsView(FlaskView):
 
     @route('schedule-appointment', methods=['POST'])
     def schedule_appointment(self):
+        appt_id = str(json.loads(request.data).get('appt_id'))
+
+        appt = self.ac.create_appointment(appt_id)
         if appt:
+            self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your Appointments, Go To The "View Your Appointments" Page!')
         else:
             self.wcc.set_alert('danger', 'Error! Appointment Not Scheduled!')
 
+        return appt_id
 
     @route('/begin-appointment', methods=['POST'])
     def begin_walk_in_appt(self):
