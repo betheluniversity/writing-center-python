@@ -81,35 +81,6 @@ class AppointmentsView(FlaskView):
 
         return jsonify(appointments)
 
-    @route('open-appointments', methods=['GET'])
-    def get_open_appointments(self):
-        all_open_appts = self.ac.get_all_open_appointments()
-        appointments = []
-        for appointment in all_open_appts:
-            start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
-                                                          appointment.scheduledStart.strftime('%m'),
-                                                          appointment.scheduledStart.strftime('%d'),
-                                                          appointment.scheduledStart.strftime('%H'),
-                                                          appointment.scheduledStart.strftime('%M'),
-                                                          appointment.scheduledStart.strftime('%S'))
-            end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledEnd.year,
-                                                        appointment.scheduledEnd.strftime('%m'),
-                                                        appointment.scheduledEnd.strftime('%d'),
-                                                        appointment.scheduledEnd.strftime('%H'),
-                                                        appointment.scheduledEnd.strftime('%M'),
-                                                        appointment.scheduledEnd.strftime('%S'))
-            appointments.append({
-                'id': appointment.id,
-                'studentId': appointment.student_id,
-                'tutorId': appointment.tutor_id,
-                'startTime': start_time,
-                'endTime': end_time,
-                'multilingual': appointment.multilingual,
-                'dropIn': appointment.dropIn
-            })
-
-        return jsonify(appointments)
-
     @route('schedule-appointment', methods=['POST'])
     def schedule_appointment(self):
         id = str(json.loads(request.data).get('id'))

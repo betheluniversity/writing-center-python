@@ -40,12 +40,6 @@ class AppointmentsController:
             year += 1
         return years
 
-    def get_all_open_appointments(self):
-        return db_session.query(AppointmentsTable)\
-            .filter(AppointmentsTable.student_id == None)\
-            .filter(AppointmentsTable.scheduledStart > datetime.now())\
-            .all()
-
     def create_appointment(self, id, start_time, end_time):
         appointment = db_session.query(AppointmentsTable)\
             .filter(AppointmentsTable.id == id)\
