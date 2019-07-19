@@ -121,7 +121,8 @@ class AppointmentsController:
             .all()
 
     def get_open_appointments_in_range(self, start, end):
-        return db_session.query(AppointmentsTable)\
+        return db_session.query(AppointmentsTable) \
+            .filter(AppointmentsTable.scheduledStart > datetime.now()) \
             .filter(AppointmentsTable.scheduledStart >= start)\
             .filter(AppointmentsTable.scheduledEnd <= end)\
             .filter(AppointmentsTable.tutor_id != None)\
