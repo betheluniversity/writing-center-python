@@ -3,6 +3,7 @@ from flask import session as flask_session
 
 from writing_center.db_repository import db_session
 from writing_center.db_repository.tables import UserTable, AppointmentsTable
+from writing_center.db_repository.tables import UserTable, AppointmentsTable, SettingsTable
 
 
 class AppointmentsController:
@@ -132,4 +133,8 @@ class AppointmentsController:
     def get_one_appointment(self, appt_id):
         return db_session.query(AppointmentsTable)\
             .filter(AppointmentsTable.id == appt_id)\
+            .one_or_none()
+    def get_time_limit(self):
+        return db_session.query(SettingsTable.value)\
+            .filter(SettingsTable.id == 2)\
             .one_or_none()

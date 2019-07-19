@@ -28,7 +28,10 @@ class AppointmentsView(FlaskView):
         end = end.replace("T", " ").split(" ")[0]
         end = datetime.strptime(end, '%Y-%m-%d').date() - timedelta(days=1)
         end = datetime.combine(end, datetime.max.time())
+
         if schedule_appt:
+            time_limit = int(self.ac.get_time_limit()[0])
+            start = start + timedelta(hours=time_limit)
             range_appointments = self.ac.get_open_appointments_in_range(start, end)
         else:
             range_appointments = self.ac.get_appointments_in_range(start, end)
