@@ -1,7 +1,7 @@
 from flask_classy import FlaskView, route, request
 from flask import render_template, jsonify, json, redirect, url_for
 from flask import session as flask_session
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from writing_center.appointments.appointments_controller import AppointmentsController
 from writing_center.writing_center_controller import WritingCenterController
@@ -14,48 +14,57 @@ class AppointmentsView(FlaskView):
         self.ac = AppointmentsController()
         self.wcc = WritingCenterController()
 
-    def index(self):
-        years = self.ac.get_years()
-        return render_template('appointments/select_view.html', **locals())
+    def view_appointments(self):
+        return render_template('appointments/view_appointments.html', **locals())
 
-    @route('/view-all')
-    def view_all_appointments(self):
-        appointments = self.ac.get_filled_appointments()
-        appts_data = {}
-        for appt in appointments:
-            student_info = self.ac.get_user_info(appt.student_id)
-            tutor_info = self.ac.get_user_info(appt.tutor_id)
-            appts_data[appt] = {
-                'student_first': student_info.firstName if student_info else None,
-                'student_last': student_info.lastName if student_info else None,
-                'student_username': student_info.username if student_info else None,
-                'tutor_first': tutor_info.firstName if tutor_info else None,
-                'tutor_last': tutor_info.lastName if tutor_info else None,
-                'tutor_username': tutor_info.username if tutor_info else None
-            }
-        return render_template('appointments/view_all_appointments.html', **locals())
-
-    @route('/view-yearly/<int:selected_year>')
-    def view_yearly_appointments(self, selected_year):
-        appointments = self.ac.get_yearly_appointments(selected_year)
-        appts_data = {}
-        for appt in appointments:
-            student_info = self.ac.get_user_info(appt.student_id)
-            tutor_info = self.ac.get_user_info(appt.tutor_id)
-            if student_info:
-                appts_data[appt] = {
-                    'student_first': student_info.firstName,
-                    'student_last': student_info.lastName,
-                    'student_username': student_info.username,
-                }
-            if tutor_info:
-                appts_data[appt].update({
-                    'tutor_first': tutor_info.firstName,
-                    'tutor_last': tutor_info.lastName,
-                    'tutor_username': tutor_info.username
+    @route('load-appointments', methods=['POST'])
+    def load_appointments(self):
+        dates = json.loads(request.data).get('dates')
+        schedule_appt = json.loads(request.data).get('scheduleAppt')
+        start = dates['start']
+        end = dates['end']
+        start = start.replace("T", " ").split(" ")[0]
+        start = datetime.strptime(start, '%Y-%m-%d')
+        end = end.replace("T", " ").split(" ")[0]
+        end = datetime.strptime(end, '%Y-%m-%d').date() - timedelta(days=1)
+        end = datetime.combine(end, datetime.max.time())
+        if schedule_appt:
+            range_appointments = self.ac.get_open_appointments_in_range(start, end)
+        else:
+            range_appointments = self.ac.get_appointments_in_range(start, end)
+        appointments = []
+        if range_appointments:
+            for appointment in range_appointments:
+                start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
+                                                              appointment.scheduledStart.strftime('%m'),
+                                                              appointment.scheduledStart.strftime('%d'),
+                                                              appointment.scheduledStart.strftime('%H'),
+                                                              appointment.scheduledStart.strftime('%M'),
+                                                              appointment.scheduledStart.strftime('%S'))
+                end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledEnd.year,
+                                                            appointment.scheduledEnd.strftime('%m'),
+                                                            appointment.scheduledEnd.strftime('%d'),
+                                                            appointment.scheduledEnd.strftime('%H'),
+                                                            appointment.scheduledEnd.strftime('%M'),
+                                                            appointment.scheduledEnd.strftime('%S'))
+                appointments.append({
+                    'id': appointment.id,
+                    'studentId': appointment.student_id,
+                    'tutorId': appointment.tutor_id,
+                    'startTime': start_time,
+                    'endTime': end_time,
+                    'multilingual': appointment.multilingual,
+                    'dropIn': appointment.dropIn
                 })
-        select_year = selected_year
-        return render_template('appointments/view_yearly_appointments.html', **locals())
+        return jsonify(appointments)
+
+    @route('load-appointment', methods=['POST'])
+    def load_appointment_table(self):
+        appointment_id = str(json.loads(request.data).get('id'))
+        schedule_appt = json.loads(request.data).get('scheduleAppt')
+        appt = self.ac.get_one_appointment(appointment_id)
+
+        return render_template('appointments/appointment_information.html', **locals(), id_to_user=self.ac.get_user_by_id)
 
     def appointments_and_walk_ins(self):
         tutor = flask_session['USERNAME']
@@ -123,47 +132,17 @@ class AppointmentsView(FlaskView):
 
         return jsonify(appointments)
 
-    @route('open-appointments', methods=['GET'])
-    def get_open_appointments(self):
-        all_open_appts = self.ac.get_all_open_appointments()
-        appointments = []
-        for appointment in all_open_appts:
-            start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
-                                                          appointment.scheduledStart.strftime('%m'),
-                                                          appointment.scheduledStart.strftime('%d'),
-                                                          appointment.scheduledStart.strftime('%H'),
-                                                          appointment.scheduledStart.strftime('%M'),
-                                                          appointment.scheduledStart.strftime('%S'))
-            end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledEnd.year,
-                                                        appointment.scheduledEnd.strftime('%m'),
-                                                        appointment.scheduledEnd.strftime('%d'),
-                                                        appointment.scheduledEnd.strftime('%H'),
-                                                        appointment.scheduledEnd.strftime('%M'),
-                                                        appointment.scheduledEnd.strftime('%S'))
-            appointments.append({
-                'id': appointment.id,
-                'studentId': appointment.student_id,
-                'tutorId': appointment.tutor_id,
-                'startTime': start_time,
-                'endTime': end_time,
-                'multilingual': appointment.multilingual,
-                'dropIn': appointment.dropIn
-            })
-
-        return jsonify(appointments)
-
     @route('schedule-appointment', methods=['POST'])
     def schedule_appointment(self):
-        id = str(json.loads(request.data).get('id'))
-        start_time = str(json.loads(request.data).get('startTime'))
-        end_time = str(json.loads(request.data).get('endTime'))
-        appt = self.ac.create_appointment(id, start_time, end_time)
+        appt_id = str(json.loads(request.data).get('appt_id'))
+
+        appt = self.ac.create_appointment(appt_id)
         if appt:
-            self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled!')
+            self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your Appointments, Go To The "View Your Appointments" Page!')
         else:
             self.wcc.set_alert('danger', 'Error! Appointment Not Scheduled!')
 
-        return id
+        return appt_id
 
     @route('/begin-appointment', methods=['POST'])
     def begin_walk_in_appt(self):

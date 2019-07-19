@@ -24,21 +24,6 @@ class AppointmentsController:
             .filter(AppointmentsTable.id == appt_id)\
             .one_or_none()
 
-    def get_filled_appointments(self):
-        return db_session.query(AppointmentsTable)\
-            .filter(AppointmentsTable.student_id != None)\
-            .all()
-
-    def get_yearly_appointments(self, selected_year):
-        yearly_appts = db_session.query(AppointmentsTable)\
-            .filter(AppointmentsTable.student_id != None)\
-            .all()
-        appts_list = []
-        for appts in yearly_appts:
-            if int(appts.scheduledStart.strftime('%Y')) == selected_year:
-                appts_list.append(appts)
-        return appts_list
-
     def get_all_user_appointments(self, username):
         user = self.get_user_by_username(username)
         return db_session.query(AppointmentsTable)\
@@ -55,26 +40,11 @@ class AppointmentsController:
             year += 1
         return years
 
-    def get_all_open_appointments(self):
-        return db_session.query(AppointmentsTable)\
-            .filter(AppointmentsTable.student_id == None)\
-            .filter(AppointmentsTable.scheduledStart > datetime.now())\
-            .all()
-
-    def create_appointment(self, id, start_time, end_time):
+    def create_appointment(self, appt_id):
         appointment = db_session.query(AppointmentsTable)\
-            .filter(AppointmentsTable.id == id)\
+            .filter(AppointmentsTable.id == appt_id)\
             .one_or_none()
-        # Formats the time to fit the DB's format
-        start_time = start_time.replace("T", " ")
-        start_time = start_time.replace(".000Z", "")
-        end_time = end_time.replace("T", " ")
-        end_time = end_time.replace(".000Z", "")
-        start_time = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
-        end_time = datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S')
-        # Updates the start time, end time, and student username
-        appointment.scheduledStart = start_time
-        appointment.scheduledEnd = end_time
+        # Updates the student username
         user = self.get_user_by_username(flask_session['USERNAME'])
         appointment.student_id = user.id
         # Commits to DB
@@ -83,11 +53,6 @@ class AppointmentsController:
             return True
         else:
             return False
-
-    def get_user_info(self, user_id):
-        return db_session.query(UserTable)\
-            .filter(UserTable.id == user_id)\
-            .one_or_none()
 
     def begin_appointment(self, username):
         user = self.get_user_by_username(username)
@@ -147,3 +112,23 @@ class AppointmentsController:
             return True
         except Exception as e:
             return False
+
+    def get_appointments_in_range(self, start, end):
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.scheduledStart >= start)\
+            .filter(AppointmentsTable.scheduledEnd <= end)\
+            .filter(AppointmentsTable.tutor_id != None)\
+            .all()
+
+    def get_open_appointments_in_range(self, start, end):
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.scheduledStart >= start)\
+            .filter(AppointmentsTable.scheduledEnd <= end)\
+            .filter(AppointmentsTable.tutor_id != None)\
+            .filter(AppointmentsTable.student_id == None)\
+            .all()
+
+    def get_one_appointment(self, appt_id):
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.id == appt_id)\
+            .one_or_none()
