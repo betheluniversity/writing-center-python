@@ -31,8 +31,7 @@ class AppointmentsView(FlaskView):
 
         if schedule_appt:
             time_limit = int(self.ac.get_time_limit()[0])
-            start = start + timedelta(hours=time_limit)
-            range_appointments = self.ac.get_open_appointments_in_range(start, end)
+            range_appointments = self.ac.get_open_appointments_in_range(start, end, time_limit)
         else:
             range_appointments = self.ac.get_appointments_in_range(start, end)
         appointments = []
