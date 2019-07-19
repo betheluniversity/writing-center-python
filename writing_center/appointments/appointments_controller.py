@@ -134,6 +134,12 @@ class AppointmentsController:
         return db_session.query(AppointmentsTable)\
             .filter(AppointmentsTable.id == appt_id)\
             .one_or_none()
+
+    def get_appointment_limit(self):
+        return db_session.query(SettingsTable.value)\
+            .filter(SettingsTable.id == 1)\
+            .one_or_none()
+
     def get_time_limit(self):
         return db_session.query(SettingsTable.value)\
             .filter(SettingsTable.id == 2)\

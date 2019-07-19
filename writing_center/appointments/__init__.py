@@ -138,13 +138,20 @@ class AppointmentsView(FlaskView):
     @route('schedule-appointment', methods=['POST'])
     def schedule_appointment(self):
         appt_id = str(json.loads(request.data).get('appt_id'))
-
-        appt = self.ac.create_appointment(appt_id)
-        if appt:
-            self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your Appointments, Go To The "View Your Appointments" Page!')
         username = flask_session['USERNAME']
         user = self.ac.get_user_by_username(username)
+        # TODO CHECK FOR APPOINTMENT ALREADY AT THE SAME TIME?
         if not user.bannedDate:
+            appt_limit = self.ac.get_appointment_limit()[0]
+            user_appointments = self.ac.get_future_user_appointments(user.id)
+            if len(user_appointments) < appt_limit:
+                appt = self.ac.create_appointment(appt_id)
+                if appt:
+                    self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your Appointments, Go To The "View Your Appointments" Page!')
+                else:
+                    self.wcc.set_alert('danger', 'Error! Appointment Not Scheduled!')
+            else:
+                self.wcc.set_alert('danger', 'Failed to schedule appointment. You already have ' + appt_limit + ' appointments scheduled and can\'t schedule any more')
         else:
             self.wcc.set_alert('danger', 'You are banned from making appointments! If you have any questions email a Writing Center Administrator')
 
