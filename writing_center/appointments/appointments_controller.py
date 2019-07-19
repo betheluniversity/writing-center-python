@@ -112,3 +112,23 @@ class AppointmentsController:
             return True
         except Exception as e:
             return False
+
+    def get_appointments_in_range(self, start, end):
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.scheduledStart >= start)\
+            .filter(AppointmentsTable.scheduledEnd <= end)\
+            .filter(AppointmentsTable.tutor_id != None)\
+            .all()
+
+    def get_open_appointments_in_range(self, start, end):
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.scheduledStart >= start)\
+            .filter(AppointmentsTable.scheduledEnd <= end)\
+            .filter(AppointmentsTable.tutor_id != None)\
+            .filter(AppointmentsTable.student_id == None)\
+            .all()
+
+    def get_one_appointment(self, appt_id):
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.id == appt_id)\
+            .one_or_none()
