@@ -83,16 +83,10 @@ class AppointmentsView(FlaskView):
 
     @route('schedule-appointment', methods=['POST'])
     def schedule_appointment(self):
-        id = str(json.loads(request.data).get('id'))
-        start_time = str(json.loads(request.data).get('startTime'))
-        end_time = str(json.loads(request.data).get('endTime'))
-        appt = self.ac.create_appointment(id, start_time, end_time)
         if appt:
-            self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled!')
         else:
             self.wcc.set_alert('danger', 'Error! Appointment Not Scheduled!')
 
-        return id
 
     @route('/begin-appointment', methods=['POST'])
     def begin_walk_in_appt(self):
