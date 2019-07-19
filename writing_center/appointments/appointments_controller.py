@@ -24,21 +24,6 @@ class AppointmentsController:
             .filter(AppointmentsTable.id == appt_id)\
             .one_or_none()
 
-    def get_filled_appointments(self):
-        return db_session.query(AppointmentsTable)\
-            .filter(AppointmentsTable.student_id != None)\
-            .all()
-
-    def get_yearly_appointments(self, selected_year):
-        yearly_appts = db_session.query(AppointmentsTable)\
-            .filter(AppointmentsTable.student_id != None)\
-            .all()
-        appts_list = []
-        for appts in yearly_appts:
-            if int(appts.scheduledStart.strftime('%Y')) == selected_year:
-                appts_list.append(appts)
-        return appts_list
-
     def get_all_user_appointments(self, username):
         user = self.get_user_by_username(username)
         return db_session.query(AppointmentsTable)\
@@ -83,11 +68,6 @@ class AppointmentsController:
             return True
         else:
             return False
-
-    def get_user_info(self, user_id):
-        return db_session.query(UserTable)\
-            .filter(UserTable.id == user_id)\
-            .one_or_none()
 
     def begin_appointment(self, username):
         user = self.get_user_by_username(username)

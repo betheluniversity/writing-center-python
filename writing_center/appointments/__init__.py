@@ -1,7 +1,6 @@
 from flask_classy import FlaskView, route, request
 from flask import render_template, jsonify, json, redirect, url_for
 from flask import session as flask_session
-from datetime import datetime
 
 from writing_center.appointments.appointments_controller import AppointmentsController
 from writing_center.writing_center_controller import WritingCenterController
@@ -14,48 +13,7 @@ class AppointmentsView(FlaskView):
         self.ac = AppointmentsController()
         self.wcc = WritingCenterController()
 
-    def index(self):
-        years = self.ac.get_years()
-        return render_template('appointments/select_view.html', **locals())
-
-    @route('/view-all')
-    def view_all_appointments(self):
-        appointments = self.ac.get_filled_appointments()
-        appts_data = {}
-        for appt in appointments:
-            student_info = self.ac.get_user_info(appt.student_id)
-            tutor_info = self.ac.get_user_info(appt.tutor_id)
-            appts_data[appt] = {
-                'student_first': student_info.firstName if student_info else None,
-                'student_last': student_info.lastName if student_info else None,
-                'student_username': student_info.username if student_info else None,
-                'tutor_first': tutor_info.firstName if tutor_info else None,
-                'tutor_last': tutor_info.lastName if tutor_info else None,
-                'tutor_username': tutor_info.username if tutor_info else None
-            }
-        return render_template('appointments/view_all_appointments.html', **locals())
-
-    @route('/view-yearly/<int:selected_year>')
-    def view_yearly_appointments(self, selected_year):
-        appointments = self.ac.get_yearly_appointments(selected_year)
-        appts_data = {}
-        for appt in appointments:
-            student_info = self.ac.get_user_info(appt.student_id)
-            tutor_info = self.ac.get_user_info(appt.tutor_id)
-            if student_info:
-                appts_data[appt] = {
-                    'student_first': student_info.firstName,
-                    'student_last': student_info.lastName,
-                    'student_username': student_info.username,
-                }
-            if tutor_info:
-                appts_data[appt].update({
-                    'tutor_first': tutor_info.firstName,
-                    'tutor_last': tutor_info.lastName,
-                    'tutor_username': tutor_info.username
                 })
-        select_year = selected_year
-        return render_template('appointments/view_yearly_appointments.html', **locals())
 
     def appointments_and_walk_ins(self):
         tutor = flask_session['USERNAME']
