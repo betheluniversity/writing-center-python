@@ -5,6 +5,12 @@
         <h1><b>Schedule an Appointment</b></h1>
         <p>You can make a one-on-one appointment here or view the drop-in hours.</p>
     </div>
+    {# spinner placeholder #}
+    <div id="spinner" class="spinner" style="display: none;margin-top: -300px;">
+        <img id="img-spinner" class="spinner-img" src="https://cdn1.bethel.edu/images/load.gif" alt="Loading"/>
+    </div>
+    <div id="results"></div>
+    <hr>
     <div class="row">
         <div class="col-md-3">
             <h3>Calendar Key</h3>
@@ -36,27 +42,60 @@
         </div>
     </div>
     <script type="text/javascript">
-    $(document).ready(function() {
-            $.ajax({
-                type: "GET",
-                url: "{{ url_for('AppointmentsView:get_open_appointments') }}",
-                success: function (response) {
-                    if (response != null) {
-                        let i = 0;
-                        for (i; i < response.length; i ++) {
-                            calendar.addEvent({
-                                id: response[i].id,
-                                title: response[i].tutor_id,
-                                start: response[i].startTime,
-                                end: response[i].endTime
-                            });
-                        }
+        $(document).ready(function() {
+            function GetCalendarDateRange(cal) {
+                $('#spinner').show();
+                let view = cal.view;
+                let start = view.activeStart;
+                let end = view.activeEnd;
+                let dates = { start: start, end: end };
+                calendar.removeAllEvents();
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url_for('AppointmentsView:load_appointments') }}",
+                    data: JSON.stringify({
+                        'dates': dates,
+                        'scheduleAppt': true
+                    }),
+                    contentType: 'application/json;charset=UTF-8',
+                    success: function (response) {
+                        calendar.batchRendering(function() {
+                            for (let i = 0; i < response.length; i ++) {
+                                if (response[i].multilingual === 1) {
+                                    calendar.addEvent({
+                                        id: response[i].id,
+                                        title: response[i].tutor_id,
+                                        start: response[i].startTime,
+                                        end: response[i].endTime,
+                                        color: 'orange'
+                                    });
+                                } else if (response[i].dropIn === 1) {
+                                    calendar.addEvent({
+                                        id: response[i].id,
+                                        title: response[i].tutor_id,
+                                        start: response[i].startTime,
+                                        end: response[i].endTime,
+                                        color: 'green'
+                                    });
+                                } else {
+                                    calendar.addEvent({
+                                        id: response[i].id,
+                                        title: response[i].tutor_id,
+                                        start: response[i].startTime,
+                                        end: response[i].endTime,
+                                        color: '#4169E1'
+                                    });
+                                }
+                            }
+                        });
+                        $('#spinner').hide();
+                    },
+                    error: function (error) {
+                        $('#spinner').hide();
                     }
+                });
+            }
 
-                },
-                error: function (error) {
-                }
-            });
             let calendarEl = document.getElementById('calendar');
 
             let calendar = new FullCalendar.Calendar(calendarEl, {
@@ -66,25 +105,25 @@
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
-                timeZone: 'UTC',
+                datesRender: function(cal) {
+                    GetCalendarDateRange(cal)
+                },
                 slotEventOverlap: false,
                 nowIndicator: true,
                 displayEventEnd: true,
+                timeZone: 'UTC',
                 eventClick: function(info) {
                     $.ajax({
                         type: "POST",
-                        url: "{{ url_for('AppointmentsView:schedule_appointment') }}",
+                        url: "{{ url_for('AppointmentsView:load_appointment_table') }}",
                         data: JSON.stringify({
                             'id': info.event.id,
-                            'startTime': info.event.start,
-                            'endTime': info.event.end
+                            'scheduleAppt': true
                         }),
                         contentType: 'application/json;charset=UTF-8',
                         success: function (response) {
-                            let event = calendar.getEventById(response);
-                            event.remove();
-                            window.location.reload();
-                            },
+                            $('#results').html(response)
+                        },
                         error: function (error) {
                         }
                     });
