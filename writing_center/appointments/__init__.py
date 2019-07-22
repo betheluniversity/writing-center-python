@@ -155,8 +155,8 @@ class AppointmentsView(FlaskView):
                     appt = self.ac.get_appointment_by_id(appt_id)
                     already_scheduled = False
                     for appointment in user_appointments:
-                        if appointment.scheduledStart <= appt.scheduledStart <= appointment.scheduledEnd or \
-                                appointment.scheduledStart <= appt.scheduledEnd <= appointment.scheduledEnd:
+                        if appointment.scheduledStart < appt.scheduledStart < appointment.scheduledEnd or \
+                                appointment.scheduledStart < appt.scheduledEnd < appointment.scheduledEnd:
                             already_scheduled = True
                     if already_scheduled:
                         self.wcc.set_alert('danger', 'Failed to schedule appointment! You already have an appointment '
