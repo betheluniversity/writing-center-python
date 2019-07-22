@@ -68,7 +68,8 @@ class AppointmentsView(FlaskView):
         schedule_appt = json.loads(request.data).get('scheduleAppt')
         appt = self.ac.get_one_appointment(appointment_id)
 
-        return render_template('appointments/appointment_information.html', **locals(), id_to_user=self.ac.get_user_by_id)
+        return render_template('appointments/appointment_information.html', **locals(),
+                               id_to_user=self.ac.get_user_by_id)
 
     def appointments_and_walk_ins(self):
         tutor = flask_session['USERNAME']
@@ -154,17 +155,22 @@ class AppointmentsView(FlaskView):
                 if cas:
                     appt = self.ac.create_appointment(appt_id)
                     if appt:
-                        self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your Appointments, Go To The "View Your Appointments" Page!')
+                        self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your Appointments,'
+                                                      ' Go To The "View Your Appointments" Page!')
                     else:
                         self.wcc.set_alert('danger', 'Error! Appointment Not Scheduled!')
                 else:
                     # TODO MAYBE GIVE THEM A SPECIFIC EMAIL TO EMAIL?
-                    self.wcc.set_alert('danger', 'Appointment NOT scheduled! Only CAS students can schedule appointments here. If you wish to schedule an appointment email a Writing Center Administrator.')
+                    self.wcc.set_alert('danger', 'Appointment NOT scheduled! Only CAS students can schedule'
+                                                 ' appointments here. If you wish to schedule an appointment email a'
+                                                 ' Writing Center Administrator.')
             else:
-                self.wcc.set_alert('danger', 'Failed to schedule appointment. You already have ' + appt_limit + ' appointments scheduled and can\'t schedule any more.')
+                self.wcc.set_alert('danger', 'Failed to schedule appointment. You already have ' + appt_limit +
+                                   ' appointments scheduled and can\'t schedule any more.')
         else:
             # TODO MAYBE GIVE THEM A SPECIFIC EMAIL TO EMAIL?
-            self.wcc.set_alert('danger', 'You are banned from making appointments! If you have any questions email a Writing Center Administrator.')
+            self.wcc.set_alert('danger', 'You are banned from making appointments! If you have any questions email a'
+                                         ' Writing Center Administrator.')
 
         return appt_id
 
