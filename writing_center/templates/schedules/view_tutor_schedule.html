@@ -159,9 +159,8 @@
                 contentType: 'application/json;charset=UTF-8',
                 success: function (response) {
                     calendar.removeAllEvents();
-                    let i = 0;
                     calendar.batchRendering(function() {
-                        for (i; i < response.length; i++) {
+                        for (let i = 0; i < response.length; i++) {
                             calendar.addEvent({
                                 title: response[i].tutor_id,
                                 start: response[i].startTime,

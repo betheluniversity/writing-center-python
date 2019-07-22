@@ -224,14 +224,13 @@
                 contentType: 'application/json;charset=UTF-8',
                 success: function (response) {
                     calendar.removeAllEvents();
-                    let i = 0;
-                    for (i; i < response.length; i ++) {
                         calendar.addEvent({
                             title: response[i].tutor_id,
                             start: response[i].startTime,
                             end: response[i].endTime
                         });
                     }
+                        for (let i = 0; i < response.length; i++) {
                     $('#spinner').hide();
                 },
                 error: function (error) {
