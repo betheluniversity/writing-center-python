@@ -46,9 +46,9 @@ class SchedulesController:
             .filter(UserTable.username == username)\
             .one_or_none()
 
-    def get_user_by_id(self, id):
+    def get_user_by_id(self, user_id):
         return db_session.query(UserTable)\
-            .filter(UserTable.id == id)\
+            .filter(UserTable.id == user_id)\
             .one_or_none()
 
     def get_tutors(self):
@@ -206,3 +206,7 @@ class SchedulesController:
             .filter(AppointmentsTable.tutor_id == user.id)\
             .all()
 
+    def get_one_appointment(self, appt_id):
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.id == appt_id)\
+            .one_or_none()

@@ -228,3 +228,10 @@ class SchedulesView(FlaskView):
             })
 
         return jsonify(appointments)
+
+    @route('load-appointment', methods=['POST'])
+    def load_appointment_table(self):
+        appointment_id = str(json.loads(request.data).get('id'))
+        appt = self.sc.get_one_appointment(appointment_id)
+        return render_template('schedules/appointment_information.html', **locals(),
+                               id_to_user=self.sc.get_user_by_id)

@@ -5,6 +5,8 @@
         <h1><b>View Tutor Schedule</b></h1>
         <p>Displays the appointments a tutor is assigned to.</p>
     </div>
+    <div id="results"></div>
+    <hr>
     <div class="row">
         <div class="col-md-3">
             <div id="tutors">
@@ -94,6 +96,7 @@
                         calendar.batchRendering(function() {
                             for (let i = 0; i < response.length; i++) {
                                 calendar.addEvent({
+                                    id: response[i].id,
                                     title: response[i].tutorId,
                                     start: response[i].startTime,
                                     end: response[i].endTime
@@ -162,6 +165,23 @@
             slotEventOverlap: false,
             nowIndicator: true,
             displayEventEnd: true,
+            timeZone: 'UTC',
+            eventClick: function(info) {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url_for('SchedulesView:load_appointment_table') }}",
+                    data: JSON.stringify({
+                        'id': info.event.id,
+                        'scheduleAppt': false
+                    }),
+                    contentType: 'application/json;charset=UTF-8',
+                    success: function (response) {
+                        $('#results').html(response)
+                    },
+                    error: function (error) {
+                    }
+                });
+            }
         });
 
         calendar.render();
@@ -184,6 +204,7 @@
                     calendar.batchRendering(function() {
                         for (let i = 0; i < response.length; i++) {
                             calendar.addEvent({
+                                id: response[i].id,
                                 title: response[i].tutor_id,
                                 start: response[i].startTime,
                                 end: response[i].endTime
