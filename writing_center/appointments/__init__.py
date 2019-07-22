@@ -142,23 +142,32 @@ class AppointmentsView(FlaskView):
         appt_id = str(json.loads(request.data).get('appt_id'))
         username = flask_session['USERNAME']
         user = self.ac.get_user_by_username(username)
-        # TODO CHECK FOR APPOINTMENT ALREADY AT THE SAME TIME?
         if not user.bannedDate:
             appt_limit = int(self.ac.get_appointment_limit()[0])
             user_appointments = self.ac.get_future_user_appointments(user.id)
             if len(user_appointments) < appt_limit:
-                roles = self.wsapi.get_roles_for_username('ces55739')
+                roles = self.wsapi.get_roles_for_username(username)
                 cas = False
                 for role in roles:
                     if 'STUDENT-CAS' == roles[role]['userRole']:
                         cas = True
                 if cas:
-                    appt = self.ac.create_appointment(appt_id)
-                    if appt:
-                        self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your Appointments,'
-                                                      ' Go To The "View Your Appointments" Page!')
+                    appt = self.ac.get_appointment_by_id(appt_id)
+                    already_scheduled = False
+                    for appointment in user_appointments:
+                        if appointment:
+                            if appointment.scheduledStart <= appt.scheduledStart <= appointment.scheduledEnd or appointment.scheduledStart <= appt.scheduledEnd <= appointment.scheduledEnd:
+                                already_scheduled = True
+                    if already_scheduled:
+                        self.wcc.set_alert('danger', 'Failed to schedule appointment! You already have an overlapping appointment scheduled!')
                     else:
-                        self.wcc.set_alert('danger', 'Error! Appointment Not Scheduled!')
+                        # pass
+                        appt = self.ac.create_appointment(appt_id)
+                        if appt:
+                            self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your Appointments,'
+                                                          ' Go To The "View Your Appointments" Page!')
+                        else:
+                            self.wcc.set_alert('danger', 'Error! Appointment Not Scheduled!')
                 else:
                     # TODO MAYBE GIVE THEM A SPECIFIC EMAIL TO EMAIL?
                     self.wcc.set_alert('danger', 'Appointment NOT scheduled! Only CAS students can schedule'

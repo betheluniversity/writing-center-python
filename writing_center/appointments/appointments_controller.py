@@ -113,6 +113,11 @@ class AppointmentsController:
         except Exception as e:
             return False
 
+    def get_appointment_by_id(self, appt_id):
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.id == appt_id)\
+            .one_or_none()
+
     def get_appointments_in_range(self, start, end):
         return db_session.query(AppointmentsTable)\
             .filter(AppointmentsTable.scheduledStart >= start)\
