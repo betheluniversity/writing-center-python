@@ -11,77 +11,117 @@
     <div class="row">
         <div class="col-md-4 info-list">
             <ul class="list-group list-group-flush">
-                <li class="list-group-item"><strong>Students</strong> you can schedule appointments and view the
-                    appointments you have made.</li>
-                <li class="list-group-item"><strong>Tutors</strong> you can start your shift and view your schedule for
-                    the semester.</li>
-                <li class="list-group-item"><strong>Observers</strong> you can view all appointments.</li>
-                <li class="list-group-item"><strong>Administrators</strong> you can view all appointments and view the
-                    writing center users.</li>
+                {% if 'Student' in session['USER_ROLES'] or 'Administrator' in session['USER-ROLES'] %}
+                    <li class="list-group-item"><strong>Students</strong> can schedule new appointments and view the
+                        appointments they have already scheduled.</li>
+                {% endif %}
+                {% if 'Tutor' in session['USER-ROLES'] or 'Administrator' in session['USER-ROLES'] %}
+                    <li class="list-group-item"><strong>Tutors</strong> can start their shifts and view their schedule
+                        for the semester.</li>
+                {% endif %}
+                {% if 'Observer' in session['USER-ROLES'] or 'Administrator' in session['USER-ROLES'] %}
+                    <li class="list-group-item"><strong>Observers</strong> can view appointments and statistics.</li>
+                {% endif %}
+                {% if 'Administrator' in session['USER-ROLES'] %}
+                    <li class="list-group-item"><strong>Administrators</strong> can view all of the above, and can also
+                    search appointments and manage tutor schedules.</li>
+                {% endif %}
                 <li class="list-group-item">You can find more options in the navigation at the top of the page.</li>
             </ul>
         </div>
         <div class="col-md-8">
-            <div class="row">
-                <div class="col-md-6">
-                    <a class="dashboard-link" href="{{ url_for('AppointmentsView:create_appointment') }}">
-                        <div class="card dashboard-card text-center">
-                            <div class="card-body">
-                                <h4>Schedule an Appointment</h4>
+            {% if 'Student' in session['USER-ROLES'] or 'Administrator' in session['USER-ROLES'] %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <a class="dashboard-link" href="{{ url_for('AppointmentsView:create_appointment') }}">
+                            <div class="card dashboard-card text-center">
+                                <div class="card-body">
+                                    <h4>Schedule an Appointment</h4>
+                                </div>
                             </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-6">
-                    <a class="dashboard-link" href="{{ url_for('AppointmentsView:student_view_appointments') }}">
-                        <div class="card dashboard-card text-center">
-                            <div class="card-body">
-                                <h4>View Your Appointments</h4>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a class="dashboard-link" href="{{ url_for('AppointmentsView:student_view_appointments') }}">
+                            <div class="card dashboard-card text-center">
+                                <div class="card-body">
+                                    <h4>View Your Appointments</h4>
+                                </div>
                             </div>
-                        </div>
-                    </a>
+                        </a>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <a class="dashboard-link" href="{{ url_for('AppointmentsView:appointments_and_walk_ins') }}">
-                        <div class="card dashboard-card text-center">
-                            <div class="card-body">
-                                <h4>Tutor Appointments and Walk Ins</h4>
+            {% endif %}
+            {% if 'Tutor' in session['USER-ROLES'] or 'Administrator' in session['USER-ROLES'] %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <a class="dashboard-link" href="{{ url_for('AppointmentsView:appointments_and_walk_ins') }}">
+                            <div class="card dashboard-card text-center">
+                                <div class="card-body">
+                                    <h4>Appointments and Walk Ins</h4>
+                                </div>
                             </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-6">
-                    <a class="dashboard-link" href="{{ url_for('SchedulesView:manage_tutor_schedules') }}">
-                        <div class="card dashboard-card text-center">
-                            <div class="card-body">
-                                <h4>View Tutor Schedule</h4>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a class="dashboard-link" href="{{ url_for('SchedulesView:manage_tutor_schedules') }}">
+                            <div class="card dashboard-card text-center">
+                                <div class="card-body">
+                                    {% if 'Tutor' in session['USER-ROLES'] %}
+                                        <h4>View Your Schedule</h4>
+                                    {% else %}
+                                        <h4>View Tutor Schedules</h4>
+                                    {% endif %}
+                                </div>
                             </div>
-                        </div>
-                    </a>
+                        </a>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <a class="dashboard-link" href="{{ url_for('AppointmentsView:view_appointments') }}">
-                        <div class="card dashboard-card text-center">
-                            <div class="card-body">
-                                <h4>View Appointments</h4>
+            {% endif %}
+            {% if 'Observer' in session['USER-ROLES'] or 'Administrator' in session['USER-ROLES'] %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <a class="dashboard-link" href="{{ url_for('AppointmentsView:view_appointments') }}">
+                            <div class="card dashboard-card text-center">
+                                <div class="card-body">
+                                    <h4>View All Appointments</h4>
+                                </div>
                             </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-md-6">
-                    <a class="dashboard-link" href="{{ url_for('UsersView:view_all_users') }}">
-                        <div class="card dashboard-card text-center">
-                            <div class="card-body">
-                                <h4>View All Users</h4>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a class="dashboard-link" href="{{ url_for('StatisticsView:index') }}">
+                            <div class="card dashboard-card text-center">
+                                <div class="card-body">
+                                    <h4>Statistics</h4>
+                                </div>
                             </div>
-                        </div>
-                    </a>
+                        </a>
+                    </div>
                 </div>
-            </div>
+            {% endif %}
+            {% if 'Administrator' in session['USER-ROLES'] %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <a class="dashboard-link" href="{{ url_for('AppointmentsView:search_appointments') }}">
+                            <div class="card dashboard-card text-center">
+                                <div class="card-body">
+                                    <h4>Search Appointments</h4>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a class="dashboard-link" href="{{ url_for('SchedulesView:manage_tutor_schedules') }}">
+                            <div class="card dashboard-card text-center">
+                                <div class="card-body">
+                                    <h4>Tutor Schedules</h4>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
         </div>
     </div>
     <script>
