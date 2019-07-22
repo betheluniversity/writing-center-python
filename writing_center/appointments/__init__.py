@@ -94,7 +94,7 @@ class AppointmentsView(FlaskView):
     def student_view_appointments(self):
         return render_template('appointments/student_view_appointments.html', **locals())
 
-    @route('get_appointments', methods=['GET'])
+    @route('get-appointments', methods=['GET'])
     def get_users_appointments(self):
         appts = self.ac.get_all_user_appointments(flask_session['USERNAME'])
         appointments = []
