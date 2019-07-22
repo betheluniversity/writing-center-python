@@ -119,7 +119,8 @@
                         calendar.batchRendering(function() {
                             for (let i = 0; i < response.length; i++) {
                                 calendar.addEvent({
-                                    title: response[i].tutorId,
+                                    id: response[i].id,
+                                    title: response[i].tutorUsername,
                                     start: response[i].startTime,
                                     end: response[i].endTime
                                 });
