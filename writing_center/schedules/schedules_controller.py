@@ -200,3 +200,9 @@ class SchedulesController:
         except Exception as e:
             return False
 
+    def get_all_user_appointments(self, username):
+        user = self.get_user_by_username(username)
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.tutor_id == user.id)\
+            .all()
+

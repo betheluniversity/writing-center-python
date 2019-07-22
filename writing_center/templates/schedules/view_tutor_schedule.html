@@ -86,6 +86,29 @@
     <div id="sub-list-results" class="form-row"></div>
     <script>
         $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "{{ url_for('SchedulesView:get_users_appointments') }}",
+                success: function (response) {
+                    alert('it');
+                    if (response != null) {
+                        calendar.batchRendering(function() {
+                            for (let i = 0; i < response.length; i++) {
+                                calendar.addEvent({
+                                    title: response[i].tutorId,
+                                    start: response[i].startTime,
+                                    end: response[i].endTime
+                                });
+                            }
+                        });
+                    }
+                    alert('rip');
+                },
+                error: function (error) {
+                }
+            });
+
+
             $('.datepicker').each(function () {
                 let current_element = $(this);
                 let maxDate = new Date();
@@ -128,6 +151,7 @@
                 let picker = new Pikaday(starting_values);
             });
         });
+
         let calendarEl = document.getElementById('calendar');
 
         let calendar = new FullCalendar.Calendar(calendarEl, {
