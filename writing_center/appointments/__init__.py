@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 
 from writing_center.appointments.appointments_controller import AppointmentsController
 from writing_center.writing_center_controller import WritingCenterController
+from writing_center.wsapi.wsapi_controller import WSAPIController
 
 
 class AppointmentsView(FlaskView):
@@ -13,6 +14,7 @@ class AppointmentsView(FlaskView):
     def __init__(self):
         self.ac = AppointmentsController()
         self.wcc = WritingCenterController()
+        self.wsapi = WSAPIController()
 
     def view_appointments(self):
         return render_template('appointments/view_appointments.html', **locals())
@@ -28,8 +30,10 @@ class AppointmentsView(FlaskView):
         end = end.replace("T", " ").split(" ")[0]
         end = datetime.strptime(end, '%Y-%m-%d').date() - timedelta(days=1)
         end = datetime.combine(end, datetime.max.time())
+
         if schedule_appt:
-            range_appointments = self.ac.get_open_appointments_in_range(start, end)
+            time_limit = int(self.ac.get_time_limit()[0])
+            range_appointments = self.ac.get_open_appointments_in_range(start, end, time_limit)
         else:
             range_appointments = self.ac.get_appointments_in_range(start, end)
         appointments = []
@@ -64,7 +68,8 @@ class AppointmentsView(FlaskView):
         schedule_appt = json.loads(request.data).get('scheduleAppt')
         appt = self.ac.get_one_appointment(appointment_id)
 
-        return render_template('appointments/appointment_information.html', **locals(), id_to_user=self.ac.get_user_by_id)
+        return render_template('appointments/appointment_information.html', **locals(),
+                               id_to_user=self.ac.get_user_by_id)
 
     def appointments_and_walk_ins(self):
         tutor = flask_session['USERNAME']
@@ -135,12 +140,47 @@ class AppointmentsView(FlaskView):
     @route('schedule-appointment', methods=['POST'])
     def schedule_appointment(self):
         appt_id = str(json.loads(request.data).get('appt_id'))
-
-        appt = self.ac.create_appointment(appt_id)
-        if appt:
-            self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your Appointments, Go To The "View Your Appointments" Page!')
+        username = flask_session['USERNAME']
+        user = self.ac.get_user_by_username(username)
+        if not user.bannedDate:
+            appt_limit = int(self.ac.get_appointment_limit()[0])
+            user_appointments = self.ac.get_future_user_appointments(user.id)
+            if len(user_appointments) < appt_limit:
+                roles = self.wsapi.get_roles_for_username(username)
+                cas = False
+                for role in roles:
+                    if 'STUDENT-CAS' == roles[role]['userRole']:
+                        cas = True
+                if cas:
+                    appt = self.ac.get_appointment_by_id(appt_id)
+                    already_scheduled = False
+                    for appointment in user_appointments:
+                        if appointment.scheduledStart <= appt.scheduledStart <= appointment.scheduledEnd or \
+                                appointment.scheduledStart <= appt.scheduledEnd <= appointment.scheduledEnd:
+                            already_scheduled = True
+                    if already_scheduled:
+                        self.wcc.set_alert('danger', 'Failed to schedule appointment! You already have an appointment '
+                                                     'that overlaps with the one you are trying to schedule.')
+                    else:
+                        # pass
+                        appt = self.ac.create_appointment(appt_id)
+                        if appt:
+                            self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your '
+                                                          'Appointments, Go To The "View Your Appointments" Page!')
+                        else:
+                            self.wcc.set_alert('danger', 'Error! Appointment Not Scheduled!')
+                else:
+                    # TODO MAYBE GIVE THEM A SPECIFIC EMAIL TO EMAIL?
+                    self.wcc.set_alert('danger', 'Appointment NOT scheduled! Only CAS students can schedule'
+                                                 ' appointments here. If you wish to schedule an appointment email a'
+                                                 ' Writing Center Administrator.')
+            else:
+                self.wcc.set_alert('danger', 'Failed to schedule appointment. You already have ' + appt_limit +
+                                   ' appointments scheduled and can\'t schedule any more.')
         else:
-            self.wcc.set_alert('danger', 'Error! Appointment Not Scheduled!')
+            # TODO MAYBE GIVE THEM A SPECIFIC EMAIL TO EMAIL?
+            self.wcc.set_alert('danger', 'You are banned from making appointments! If you have any questions email a'
+                                         ' Writing Center Administrator.')
 
         return appt_id
 

@@ -20,6 +20,10 @@ class WSAPIController:
         req_info = json.loads(req.content)
         return req_info
 
+    def get_roles_for_username(self, username):
+        path = '/username/{0}/roles'.format(username)
+        return self.get_hmac_request(path)
+
     # TODO: I left these in as examples but I don't know which ones we will use
     def get_student_courses(self, username):
         path = '/username/{0}/courses'.format(username)

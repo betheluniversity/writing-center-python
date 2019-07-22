@@ -1,8 +1,8 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import session as flask_session
 
 from writing_center.db_repository import db_session
-from writing_center.db_repository.tables import UserTable, AppointmentsTable
+from writing_center.db_repository.tables import UserTable, AppointmentsTable, SettingsTable
 
 
 class AppointmentsController:
@@ -113,6 +113,11 @@ class AppointmentsController:
         except Exception as e:
             return False
 
+    def get_appointment_by_id(self, appt_id):
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.id == appt_id)\
+            .one_or_none()
+
     def get_appointments_in_range(self, start, end):
         return db_session.query(AppointmentsTable)\
             .filter(AppointmentsTable.scheduledStart >= start)\
@@ -120,9 +125,10 @@ class AppointmentsController:
             .filter(AppointmentsTable.tutor_id != None)\
             .all()
 
-    def get_open_appointments_in_range(self, start, end):
+    def get_open_appointments_in_range(self, start, end, time_limit):
+        time_limit = datetime.now() + timedelta(hours=time_limit)
         return db_session.query(AppointmentsTable) \
-            .filter(AppointmentsTable.scheduledStart > datetime.now()) \
+            .filter(AppointmentsTable.scheduledStart >= time_limit)\
             .filter(AppointmentsTable.scheduledStart >= start)\
             .filter(AppointmentsTable.scheduledEnd <= end)\
             .filter(AppointmentsTable.tutor_id != None)\
@@ -132,4 +138,20 @@ class AppointmentsController:
     def get_one_appointment(self, appt_id):
         return db_session.query(AppointmentsTable)\
             .filter(AppointmentsTable.id == appt_id)\
+            .one_or_none()
+
+    def get_future_user_appointments(self, user_id):
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.student_id == user_id)\
+            .filter(AppointmentsTable.scheduledStart > datetime.now())\
+            .all()
+
+    def get_appointment_limit(self):
+        return db_session.query(SettingsTable.value)\
+            .filter(SettingsTable.id == 1)\
+            .one_or_none()
+
+    def get_time_limit(self):
+        return db_session.query(SettingsTable.value)\
+            .filter(SettingsTable.id == 2)\
             .one_or_none()
