@@ -24,23 +24,6 @@
             </thead>
             <tbody>
                 {% set tutor = id_to_user(appt.tutor_id) %}
-                {% if schedule_appt == True %}
-                    <tr>
-
-                        <td>{{ tutor.firstName }}</td>
-                        <td>{{ tutor.lastName }}</td>
-                        <td>{{ tutor.username }}</td>
-                        <td>{{ appt.profName }}</td>
-                        <td>{{ appt.scheduledStart|datetimeformat('%m/%d/%y') }} - {{ appt.scheduledStart|datetimeformat }}</td>
-                        <td>{{ appt.scheduledEnd|datetimeformat('%m/%d/%y') }} - {{ appt.scheduledEnd|datetimeformat }}</td>
-                        {% if appt.dropIn == 1 or appt.multilingual == 1 %}
-                            <td>Yes</td>
-                        {% endif %}
-                    </tr>
-                    <tr>
-                        <td colspan="10"><button class="btn btn-primary darkblue" onclick="scheduleAppointment({{ appt.id }})">Schedule Appointment</button></td>
-                    </tr>
-                {% else %}
                     <tr>
                         {% set student = id_to_user(appt.student_id) %}
                         <td>{{ student.firstName }}</td>
@@ -57,7 +40,17 @@
                         {% endif %}
                         <td>{{ appt.courseCode }}</td>
                     </tr>
-                {% endif %}
+                    {% if appt.scheduledStart > now %}
+                        {% if appt.sub == 1 %}
+                            <tr>
+                                <td colspan="10"><button class="btn btn-primary darkblue" onclick="subAppointment({{ appt.id }})">Request Substitue</button></td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="10"><button class="btn btn-primary darkblue" onclick="requestSub({{ appt.id }})">Request Substitue</button></td>
+                            </tr>
+                        {% endif %}
+                    {% endif %}
             </tbody>
         </table>
     </div>
@@ -72,4 +65,12 @@
             pageLength: false,
         });
     });
+
+    function subAppointment(appt_id) {
+
+    }
+
+    function requestSub(appt_id) {
+        
+    }
 </script>
