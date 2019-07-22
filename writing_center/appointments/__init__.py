@@ -155,16 +155,18 @@ class AppointmentsView(FlaskView):
                     appt = self.ac.get_appointment_by_id(appt_id)
                     already_scheduled = False
                     for appointment in user_appointments:
-                        if appointment.scheduledStart <= appt.scheduledStart <= appointment.scheduledEnd or appointment.scheduledStart <= appt.scheduledEnd <= appointment.scheduledEnd:
+                        if appointment.scheduledStart <= appt.scheduledStart <= appointment.scheduledEnd or \
+                                appointment.scheduledStart <= appt.scheduledEnd <= appointment.scheduledEnd:
                             already_scheduled = True
                     if already_scheduled:
-                        self.wcc.set_alert('danger', 'Failed to schedule appointment! You already have an overlapping appointment scheduled!')
+                        self.wcc.set_alert('danger', 'Failed to schedule appointment! You already have an appointment '
+                                                     'that overlaps with the one you are trying to schedule.')
                     else:
                         # pass
                         appt = self.ac.create_appointment(appt_id)
                         if appt:
-                            self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your Appointments,'
-                                                          ' Go To The "View Your Appointments" Page!')
+                            self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your '
+                                                          'Appointments, Go To The "View Your Appointments" Page!')
                         else:
                             self.wcc.set_alert('danger', 'Error! Appointment Not Scheduled!')
                 else:
