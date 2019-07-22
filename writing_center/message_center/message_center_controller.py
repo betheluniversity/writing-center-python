@@ -89,6 +89,11 @@ class MessageCenterController:
 
         return recipients
 
+    # def get_group_emails(self, groups):
+    #     recipients = []
+
+    #     recipients.append(db_session.query())
+
     def toggle_substitute(self, substitute):
         user = (db_session.query(UserTable)
                 .filter(UserTable.username == session['USERNAME'])

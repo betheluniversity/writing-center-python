@@ -19,6 +19,7 @@ class ProfileView(FlaskView):
     @route('/edit')
     def index(self):
         user = self.pc.get_user_by_username(flask_session['USERNAME'])
+        preferences = self.mcc.get_email_preferences()
         return render_template('profile/profile.html', **locals())
 
     @route('/save-edits', methods=['post'])
@@ -28,6 +29,17 @@ class ProfileView(FlaskView):
             first_name = form.get('first-name')
             last_name = form.get('last-name')
             username = form.get('username')
+
+            if isinstance(form.get('shift'), str):  # if shift is there the box is checked and should be set to true
+                self.mcc.toggle_shift(1)
+            else:  # otherwise, it should be set to false
+                self.mcc.toggle_shift(0)
+
+            if isinstance(form.get('substitute'), str):  # if sub is there the box is checked and should ebe set to true
+                self.mcc.toggle_substitute(1)
+            else:  # otherwise, it should be set to false
+                self.mcc.toggle_substitute(0)
+
             self.pc.edit_user(first_name,last_name, username)
             # Need to reset the users name, which appears in the upper right corner
             flask_session['NAME'] = '{0} {1}'.format(first_name, last_name)

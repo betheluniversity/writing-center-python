@@ -45,3 +45,16 @@
         </form>
     </div>
 {% endblock %}
+
+{% block scripts %}
+    <script type="javascript/text">
+        document.onLoad = function() {
+            if(preferences.subRequestEmail == 1){
+                $('#substitute').prop('checked', true);
+            }
+            if(preferences.studentSignUpEmail == 1){
+                $('#shift').prop('checked', true);
+            }
+        };
+    </script>
+{% endblock %}
