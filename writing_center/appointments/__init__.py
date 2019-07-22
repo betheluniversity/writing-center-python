@@ -158,10 +158,12 @@ class AppointmentsView(FlaskView):
                     else:
                         self.wcc.set_alert('danger', 'Error! Appointment Not Scheduled!')
                 else:
+                    # TODO MAYBE GIVE THEM A SPECIFIC EMAIL TO EMAIL?
                     self.wcc.set_alert('danger', 'Appointment NOT scheduled! Only CAS students can schedule appointments here. If you wish to schedule an appointment email a Writing Center Administrator.')
             else:
                 self.wcc.set_alert('danger', 'Failed to schedule appointment. You already have ' + appt_limit + ' appointments scheduled and can\'t schedule any more.')
         else:
+            # TODO MAYBE GIVE THEM A SPECIFIC EMAIL TO EMAIL?
             self.wcc.set_alert('danger', 'You are banned from making appointments! If you have any questions email a Writing Center Administrator.')
 
         return appt_id
