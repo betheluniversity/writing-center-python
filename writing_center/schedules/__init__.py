@@ -188,11 +188,9 @@ class SchedulesView(FlaskView):
 
     @route('get-appointments', methods=['GET'])
     def get_users_appointments(self):
-        print(flask_session['USERNAME'])
         appts = self.sc.get_all_user_appointments(flask_session['USERNAME'])
         appointments = []
         for appointment in appts:
-            print(appointment.id)
             if appointment.actualStart and appointment.actualEnd:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
                                                               appointment.actualStart.strftime('%m'),

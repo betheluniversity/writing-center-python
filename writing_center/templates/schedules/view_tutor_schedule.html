@@ -90,7 +90,6 @@
                 type: "GET",
                 url: "{{ url_for('SchedulesView:get_users_appointments') }}",
                 success: function (response) {
-                    alert('it');
                     if (response != null) {
                         calendar.batchRendering(function() {
                             for (let i = 0; i < response.length; i++) {
@@ -102,7 +101,6 @@
                             }
                         });
                     }
-                    alert('rip');
                 },
                 error: function (error) {
                 }
