@@ -14,14 +14,15 @@
                 url: "{{ url_for('AppointmentsView:get_users_appointments') }}",
                 success: function (response) {
                     if (response != null) {
-                        let i = 0;
-                        for (i; i < response.length; i ++) {
-                            calendar.addEvent({
-                                title: response[i].student_id,
-                                start: response[i].startTime,
-                                end: response[i].endTime
-                            });
-                        }
+                        calendar.batchRendering(function() {
+                            for (let i = 0; i < response.length; i++) {
+                                calendar.addEvent({
+                                    title: response[i].student_id,
+                                    start: response[i].startTime,
+                                    end: response[i].endTime
+                                });
+                            }
+                        });
                     }
 
                 },
