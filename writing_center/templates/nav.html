@@ -14,40 +14,58 @@
             <a class="nav-link dropdown-toggle {{ 'nav-bar-active' if 'AppointmentsView' in request.url_rule.endpoint }}" id="navbarDropdown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">Appointments</a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="{{ url_for('AppointmentsView:view_appointments') }}">View Appointments</a>
-                <a class="dropdown-item" href="{{ url_for('AppointmentsView:appointments_and_walk_ins') }}">Tutor Appointments and Walk Ins</a>
-                <a class="dropdown-item" href="{{ url_for('AppointmentsView:create_appointment') }}">Schedule An Appointment</a>
-                <a class="dropdown-item" href="{{ url_for('AppointmentsView:search_appointments') }}">Search Appointments</a>
-                <a class="dropdown-item" href="{{ url_for('AppointmentsView:student_view_appointments') }}">View Your Appointments</a>
+                {% if 'Student' in session['USER-ROLES'] or 'Administrator' in session['USER-ROLES'] %}
+                    <a class="dropdown-item" href="{{ url_for('AppointmentsView:create_appointment') }}">Schedule An Appointment</a>
+                    <a class="dropdown-item" href="{{ url_for('AppointmentsView:student_view_appointments') }}">View Your Appointments</a>
+                {% endif %}
+                {% if 'Tutor' in session['USER-ROLES'] or 'Administrator' in session['USER-ROLES'] %}
+                    <a class="dropdown-item" href="{{ url_for('AppointmentsView:appointments_and_walk_ins') }}">Appointments and Walk Ins</a>
+                {% endif %}
+                {% if 'Observer' in session['USER-ROLES'] or 'Administrator' in session['USER-ROLES'] %}
+                    <a class="dropdown-item" href="{{ url_for('AppointmentsView:view_appointments') }}">View All Appointments</a>
+                    <a class="dropdown-item" href="{{ url_for('AppointmentsView:search_appointments') }}">Search Appointments</a>
+                {% endif %}
             </div>
         </div>
 
-        <div class="form-inline nav-item dropdown">
-            <a class="nav-link dropdown-toggle {{ 'nav-bar-active' if 'SchedulesView' in request.url_rule.endpoint }}" id="navbarDropdown" role="button" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false">Schedules</a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="{{ url_for('SchedulesView:create_schedule') }}">Create Schedule</a>
-                <a class="dropdown-item" href="{{ url_for('SchedulesView:manage_tutor_schedules') }}">Manage Tutor Schedules</a>
-                <a class="dropdown-item" href="{{ url_for('SchedulesView:view_tutor_schedules') }}">View Schedules</a>
+        {% if 'Administrator' in session['USER-ROLES'] %}
+            <div class="form-inline nav-item dropdown">
+                <a class="nav-link dropdown-toggle {{ 'nav-bar-active' if 'SchedulesView' in request.url_rule.endpoint }}" id="navbarDropdown" role="button" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">Schedules</a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="{{ url_for('SchedulesView:create_schedule') }}">Create Schedule</a>
+                    <a class="dropdown-item" href="{{ url_for('SchedulesView:manage_tutor_schedules') }}">Manage Tutor Schedules</a>
+                    <a class="dropdown-item" href="{{ url_for('SchedulesView:view_tutor_schedules') }}">View Schedules</a>
+                </div>
             </div>
-        </div>
+        {% endif %}
 
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a id="stats" class="nav-link button {{ 'nav-bar-active' if 'StatisticsView' in request.url_rule.endpoint }}" href="{{ url_for('StatisticsView:index') }}">Statistics</a>
-            </li>
+            {% if 'Tutor' in session['USER-ROLES'] and 'Administrator' not in session['USER-ROLES'] %}
+                <li class="nav-item">
+                    <a id="schedule" class="nav-link button {{ 'nav-bar-active' if 'StatisticsView' in request.url_rule.endpoint }}" href="{{ url_for('SchedulesView:view_tutor_schedules') }}">Schedule</a>
+                </li>
+            {% endif %}
 
-            <li class="nav-item">
-                <a id="users" class="nav-link button {{ 'nav-bar-active' if 'UsersView' in request.url_rule.endpoint }}" href="{{ url_for('UsersView:index') }}">Users</a>
-            </li>
+            {% if 'Administrator' in session['USER-ROLES'] or 'Observer' in session['USER-ROLES'] %}
+                <li class="nav-item">
+                    <a id="stats" class="nav-link button {{ 'nav-bar-active' if 'StatisticsView' in request.url_rule.endpoint }}" href="{{ url_for('StatisticsView:index') }}">Statistics</a>
+                </li>
+            {% endif %}
 
-            <li class="nav-item">
-                <a id="settings" class="nav-link button {{ 'nav-bar-active' if 'SettingsView' in request.url_rule.endpoint }}" href="{{ url_for('SettingsView:index') }}">Settings</a>
-            </li>
+            {% if 'Administrator' in session['USER-ROLES'] %}
+                <li class="nav-item">
+                    <a id="users" class="nav-link button {{ 'nav-bar-active' if 'UsersView' in request.url_rule.endpoint }}" href="{{ url_for('UsersView:index') }}">Users</a>
+                </li>
 
-            <li class="nav-item">
-                <a id="email" class="nav-link button {{ 'nav-bar-active' if 'MessageCenterView' in request.url_rule.endpoint }}" href="{{ url_for('MessageCenterView:index') }}">Message Center</a>
-            </li>
+                <li class="nav-item">
+                    <a id="settings" class="nav-link button {{ 'nav-bar-active' if 'SettingsView' in request.url_rule.endpoint }}" href="{{ url_for('SettingsView:index') }}">Settings</a>
+                </li>
+
+                <li class="nav-item">
+                    <a id="email" class="nav-link button {{ 'nav-bar-active' if 'MessageCenterView' in request.url_rule.endpoint }}" href="{{ url_for('MessageCenterView:index') }}">Message Center</a>
+                </li>
+            {% endif %}
         </ul>
 
         <div class="form-inline nav-item dropdown">
@@ -56,7 +74,9 @@
                    aria-haspopup="true" aria-expanded="false">{{ session['NAME'] }}</a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="{{ url_for('ProfileView:index') }}">My Profile</a>
-                    <a class="dropdown-item" href="{{ url_for('ProfileView:role_viewer') }}">Act As A Role</a>
+                    {% if 'Administrator' in session['USER-ROLES'] %}
+                        <a class="dropdown-item" href="{{ url_for('ProfileView:role_viewer') }}">Act As A Role</a>
+                    {% endif %}
                     <a class="dropdown-item" href="{{ url_for('View:logout') }}">Logout</a>
                 </div>
             {% else %}
