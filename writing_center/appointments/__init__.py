@@ -162,7 +162,6 @@ class AppointmentsView(FlaskView):
                         self.wcc.set_alert('danger', 'Failed to schedule appointment! You already have an appointment '
                                                      'that overlaps with the one you are trying to schedule.')
                     else:
-                        # pass
                         appt = self.ac.create_appointment(appt_id)
                         if appt:
                             self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your '
