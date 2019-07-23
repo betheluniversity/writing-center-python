@@ -43,11 +43,21 @@
                     {% if appt.scheduledStart > now %}
                         {% if appt.sub == 1 %}
                             <tr>
-                                <td id="pickup" colspan="10"><button class="btn btn-primary darkblue" onclick="subAppointment({{ appt.id }})">Pick Up Shift</button></td>
+                                <td id="pickup" colspan="10">
+                                    <button class="btn btn-primary darkblue" onclick="subAppointment({{ appt.id }})">Pick Up Shift</button>
+                                    {% if 'Administrator' in session['USER-ROLES'] %}
+                                        <button style="margin-left: 10px" class="btn btn-primary btn-danger" onclick="deleteAppointment({{ appt.id }})">Delete Appointment</button>
+                                    {% endif %}
+                                </td>
                             </tr>
                         {% else %}
                             <tr>
-                                <td id="request" colspan="10"><button class="btn btn-primary darkblue" onclick="requestSub({{ appt.id }})">Request Substitute</button></td>
+                                <td id="request" colspan="10">
+                                    <button class="btn btn-primary darkblue" onclick="requestSub({{ appt.id }})">Request Substitute</button>
+                                    {% if 'Administrator' in session['USER-ROLES'] %}
+                                        <button style="margin-left: 10px" class="btn btn-primary btn-danger" onclick="deleteAppointment({{ appt.id }})">Delete Appointment</button>
+                                    {% endif %}
+                                </td>
                             </tr>
                         {% endif %}
                     {% endif %}
@@ -65,6 +75,24 @@
             pageLength: false,
         });
     });
+
+    function deleteAppointment(appt_id) {
+        $.ajax({
+            type: "POST",
+            url: "{{ url_for('SchedulesView:delete_appointment') }}",
+            data: JSON.stringify({
+                'appt_id': appt_id,
+            }),
+            contentType: 'application/json;charset=UTF-8',
+            success: function (response) {
+                let event = calendar.getEventById(response);
+                event.remove()
+                $('#results').html('')
+            },
+            error: function (error) {
+            }
+        });
+    }
 
     function subAppointment(appt_id) {
         $.ajax({

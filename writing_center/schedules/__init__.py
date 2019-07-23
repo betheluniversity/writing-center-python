@@ -146,6 +146,16 @@ class SchedulesView(FlaskView):
 
         return render_template('schedules/delete_confirmation.html', **locals())
 
+    @route('delete-appointment', methods=['POST'])
+    def delete_appointment(self):
+        appt_id = str(json.loads(request.data).get('appt_id'))
+        deleted = self.sc.delete_appointment(appt_id)
+        if deleted:
+            return appt_id
+        else:
+            self.wcc.set_alert('danger', 'Failed to delete appointment!')
+            return redirect(url_for('SchedulesView:view_tutor_schedules'))
+
     @route('delete-tutor-shifts', methods=['POST'])
     def delete_tutors_from_shifts(self):
         # Post method to delete appointments which selected tutors are running in a given date range
