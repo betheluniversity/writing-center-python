@@ -1,5 +1,5 @@
 from flask_classy import FlaskView, route
-from flask import render_template, request
+from flask import render_template, request, redirect, url_for
 
 from writing_center.writing_center_controller import WritingCenterController
 from writing_center.settings.settings_controller import SettingsController
@@ -27,3 +27,12 @@ class SettingsView(FlaskView):
         except Exception as error:
             self.wcc.set_alert('danger', 'Failed to update settings: {0}'.format(str(error)))
             return 'failed'
+
+    @route('cleanse', methods=['get'])
+    def cleanse(self):
+        try:
+            self.sc.cleanse()
+            self.wcc.set_alert('success', 'System cleansed successfully!')
+        except Exception as error:
+            self.wcc.set_alert('danger', 'Failed to cleanse system: {0}'.format(str(error)))
+        return redirect(url_for('SettingsView:index'))
