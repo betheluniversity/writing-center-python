@@ -103,11 +103,10 @@ def before_request():
             #     User().activate_existing_user(current_user.username)
             flask_session['USERNAME'] = current_user.username
             flask_session['NAME'] = '{0} {1}'.format(current_user.firstName, current_user.lastName)
-            flask_session['USER-ROLES'] = app.config['TEST_ROLES']
-            # flask_session['USER-ROLES'] = []
-            # user_roles = uc().get_user_roles(current_user.id)
-            # for role in user_roles:
-            #     flask_session['USER-ROLES'].append(role.name)
+            flask_session['USER-ROLES'] = []
+            user_roles = uc().get_user_roles(current_user.id)
+            for role in user_roles:
+                flask_session['USER-ROLES'].append(role.name)
         if 'NAME' not in flask_session.keys():
             flask_session['NAME'] = flask_session['USERNAME']
         if 'USER-ROLES' not in flask_session.keys():

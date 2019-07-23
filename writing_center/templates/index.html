@@ -11,7 +11,7 @@
     <div class="row">
         <div class="col-md-4 info-list">
             <ul class="list-group list-group-flush">
-                {% if 'Student' in session['USER_ROLES'] or 'Administrator' in session['USER-ROLES'] %}
+                {% if 'Student' in session['USER-ROLES'] or 'Administrator' in session['USER-ROLES'] %}
                     <li class="list-group-item"><strong>Students</strong> can schedule new appointments and view the
                         appointments they have already scheduled.</li>
                 {% endif %}
