@@ -221,7 +221,49 @@ class SchedulesView(FlaskView):
             appointments.append({
                 'id': appointment.id,
                 'studentId': appointment.student_id,
-                'tutorUsername': self.sc.get_user_by_id(appointment.tutor_id),
+                'tutorUsername': self.sc.get_user_by_id(appointment.tutor_id).username,
+                'startTime': start_time,
+                'endTime': end_time,
+                'multilingual': appointment.multilingual,
+                'dropIn': appointment.dropIn
+            })
+
+        return jsonify(appointments)
+
+    def get_sub_appointments(self):
+        appts = self.sc.get_sub_appointments()
+        appointments = []
+        for appointment in appts:
+            if appointment.actualStart and appointment.actualEnd:
+                start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
+                                                              appointment.actualStart.strftime('%m'),
+                                                              appointment.actualStart.strftime('%d'),
+                                                              appointment.actualStart.strftime('%I'),
+                                                              appointment.actualStart.strftime('%M'),
+                                                              appointment.actualStart.strftime('%S'))
+                end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualEnd.year,
+                                                            appointment.actualEnd.strftime('%m'),
+                                                            appointment.actualEnd.strftime('%d'),
+                                                            appointment.actualEnd.strftime('%I'),
+                                                            appointment.actualEnd.strftime('%M'),
+                                                            appointment.actualEnd.strftime('%S'))
+            else:
+                start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
+                                                              appointment.scheduledStart.strftime('%m'),
+                                                              appointment.scheduledStart.strftime('%d'),
+                                                              appointment.scheduledStart.strftime('%I'),
+                                                              appointment.scheduledStart.strftime('%M'),
+                                                              appointment.scheduledStart.strftime('%S'))
+                end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledEnd.year,
+                                                            appointment.scheduledEnd.strftime('%m'),
+                                                            appointment.scheduledEnd.strftime('%d'),
+                                                            appointment.scheduledEnd.strftime('%I'),
+                                                            appointment.scheduledEnd.strftime('%M'),
+                                                            appointment.scheduledEnd.strftime('%S'))
+            appointments.append({
+                'id': appointment.id,
+                'studentId': appointment.student_id,
+                'tutorUsername': self.sc.get_user_by_id(appointment.tutor_id).username,
                 'startTime': start_time,
                 'endTime': end_time,
                 'multilingual': appointment.multilingual,
@@ -236,3 +278,29 @@ class SchedulesView(FlaskView):
         appt = self.sc.get_one_appointment(appointment_id)
         return render_template('schedules/appointment_information.html', **locals(),
                                id_to_user=self.sc.get_user_by_id)
+
+    @route('pickup-shift', methods=['POST'])
+    def pickup_shift(self):
+        appointment_id = str(json.loads(request.data).get('appt_id'))
+        appt = self.sc.get_one_appointment(appointment_id)
+        # TODO SET SUB TO 0, SET TUTOR_ID AND MAYBE EMAIL STUDENT ABOUT TUTOR CHANGE IF APPLICABLE?
+        picked_up = self.sc.pickup_shift(appointment_id, flask_session['USERNAME'])
+        if picked_up:
+            self.wcc.set_alert('success', 'Successfully picked up the shift!')
+            return render_template('schedules/appointment_information.html', **locals(),
+                                   id_to_user=self.sc.get_user_by_id)
+        else:
+            self.wcc.set_alert('danger', 'Failed to pick up the shift.')
+
+    @route('request-subtitute', methods=['POST'])
+    def request_substitute(self):
+        appointment_id = str(json.loads(request.data).get('appt_id'))
+        appt = self.sc.get_one_appointment(appointment_id)
+        # TODO MAYBE EMAIL ABOUT SUB
+        success = self.sc.request_substitute(appointment_id)
+        if success:
+            self.wcc.set_alert('success', 'Successfully requested a substitute!')
+            return render_template('schedules/appointment_information.html', **locals(),
+                                   id_to_user=self.sc.get_user_by_id)
+        else:
+            self.wcc.set_alert('danger', 'Error! Substitute not requested.')
