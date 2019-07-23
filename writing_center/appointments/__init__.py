@@ -66,8 +66,8 @@ class AppointmentsView(FlaskView):
     def load_appointment_table(self):
         appointment_id = str(json.loads(request.data).get('id'))
         schedule_appt = json.loads(request.data).get('scheduleAppt')
+        add_cancel = json.loads(request.data).get('add-cancel')
         appt = self.ac.get_one_appointment(appointment_id)
-
         return render_template('appointments/appointment_information.html', **locals(),
                                id_to_user=self.ac.get_user_by_id)
 
@@ -181,6 +181,16 @@ class AppointmentsView(FlaskView):
             self.wcc.set_alert('danger', 'You are banned from making appointments! If you have any questions email a'
                                          ' Writing Center Administrator.')
 
+        return appt_id
+
+    @route('cancel-appointment', methods=['POST'])
+    def cancel_appointment(self):
+        appt_id = str(json.loads(request.data).get('appt_id'))
+        cancelled = self.ac.cancel_appointment(appt_id)
+        if cancelled:
+            self.wcc.set_alert('success', 'Successfully cancelled appointment')
+        else:
+            self.wcc.set_alert('danger', 'Failed to cancel appointment.')
         return appt_id
 
     @route('/begin-appointment', methods=['POST'])
