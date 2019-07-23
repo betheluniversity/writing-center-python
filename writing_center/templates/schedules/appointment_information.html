@@ -46,7 +46,7 @@
                                 <td id="pickup" colspan="10">
                                     <button class="btn btn-primary darkblue" onclick="subAppointment({{ appt.id }})">Pick Up Shift</button>
                                     {% if 'Administrator' in session['USER-ROLES'] %}
-                                        <button style="margin-left: 10px" class="btn btn-primary btn-danger" onclick="deleteAppointment({{ appt.id }})">Delete Appointment</button>
+                                        <button style="margin-left: 10px" class="btn btn-primary btn-danger" onclick="deleteAppointment({{ appt.id }}, 'pickup')">Delete Appointment</button>
                                     {% endif %}
                                 </td>
                             </tr>
@@ -55,7 +55,7 @@
                                 <td id="request" colspan="10">
                                     <button class="btn btn-primary darkblue" onclick="requestSub({{ appt.id }})">Request Substitute</button>
                                     {% if 'Administrator' in session['USER-ROLES'] %}
-                                        <button style="margin-left: 10px" class="btn btn-primary btn-danger" onclick="deleteAppointment({{ appt.id }})">Delete Appointment</button>
+                                        <button style="margin-left: 10px" class="btn btn-primary btn-danger" onclick="deleteAppointment({{ appt.id }}, 'request')">Delete Appointment</button>
                                     {% endif %}
                                 </td>
                             </tr>
@@ -76,7 +76,7 @@
         });
     });
 
-    function deleteAppointment(appt_id) {
+    function deleteAppointment(appt_id, type) {
         $.ajax({
             type: "POST",
             url: "{{ url_for('SchedulesView:delete_appointment') }}",
@@ -85,9 +85,18 @@
             }),
             contentType: 'application/json;charset=UTF-8',
             success: function (response) {
-                let event = calendar.getEventById(response);
-                event.remove()
-                $('#results').html('')
+
+                if (response === 'sub') {
+                    if (type === 'request') {
+                        $('#request').html("<h3><b>Error cannot delete appointment since it is already scheduled. Instead request a tutor by clicking on the button.</b></h3><button style=\"margin-left: 10px\" class=\"btn btn-primary darkblue\" onclick=\"requestSub({{ appt.id }})\">Request Substitute</button>")
+                    } else if (type === 'pickup') {
+                        $('#pickup').html("<h3><b>Error cannot delete appointment since it is already scheduled. Instead request a tutor by clicking on the button.</b></h3><button style=\"margin-left: 10px\" class=\"btn btn-primary darkblue\" onclick=\"requestSub({{ appt.id }})\">Request Substitute</button>")
+                    }
+                } else {
+                    let event = calendar.getEventById(response);
+                    event.remove();
+                    $('#results').html("")
+                }
             },
             error: function (error) {
             }
