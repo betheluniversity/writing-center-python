@@ -30,12 +30,12 @@ class ProfileView(FlaskView):
             last_name = form.get('last-name')
             username = form.get('username')
 
-            if isinstance(form.get('shift'), str):  # if shift is there the box is checked and should be set to true
+            if isinstance(form.get('shift'), str):  # if shift is there, the box is checked and should be set to true
                 self.mcc.toggle_shift(1)
             else:  # otherwise, it should be set to false
                 self.mcc.toggle_shift(0)
 
-            if isinstance(form.get('substitute'), str):  # if sub is there the box is checked and should ebe set to true
+            if isinstance(form.get('substitute'), str):  # if sub is there, the box is checked and should be set to true
                 self.mcc.toggle_substitute(1)
             else:  # otherwise, it should be set to false
                 self.mcc.toggle_substitute(0)

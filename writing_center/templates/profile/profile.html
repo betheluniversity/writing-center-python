@@ -30,11 +30,11 @@
                 </div>
             </div>
             <div class="form-row">
-                <input type="checkbox" name="substitute" id="substitute">
+                <input type="checkbox" name="substitute" id="substitute" {% if(preferences.subRequestEmail == 1) %} checked {% endif %}>
                 <label for="substitute" id="substitue-text">Receive an email when a tutor requests a substitute</label>
             </div>
             <div class="form-row">
-                <input type="checkbox" name="shift" id="shift">
+                <input type="checkbox" name="shift" id="shift" {% if(preferences.studentSignUpEmail == 1) %} checked {% endif %}>
                 <label for="shift" id="shift-text">Receive an email when a student signs up for one of your shifts</label>
             </div>
             <div class="form-row">
@@ -44,17 +44,4 @@
             </div>
         </form>
     </div>
-{% endblock %}
-
-{% block scripts %}
-    <script type="javascript/text">
-        document.onLoad = function() {
-            if(preferences.subRequestEmail == 1){
-                $('#substitute').prop('checked', true);
-            }
-            if(preferences.studentSignUpEmail == 1){
-                $('#shift').prop('checked', true);
-            }
-        };
-    </script>
 {% endblock %}

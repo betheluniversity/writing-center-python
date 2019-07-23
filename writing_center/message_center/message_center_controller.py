@@ -95,20 +95,14 @@ class MessageCenterController:
     #     recipients.append(db_session.query())
 
     def toggle_substitute(self, substitute):
-        user = (db_session.query(UserTable)
-                .filter(UserTable.username == session['USERNAME'])
-                .one())
         toggle = self.get_email_preferences()
-        toggle.SubRequestEmail = substitute
+        toggle.subRequestEmail = substitute
         db_session.commit()
         return 'success'
 
     def toggle_shift(self, shift):
-        user = (db_session.query(UserTable)
-                .filter(UserTable.username == session['USERNAME'])
-                .one())
         toggle = self.get_email_preferences()
-        toggle.StudentSignUpEmail = shift
+        toggle.studentSignUpEmail = shift
         db_session.commit()
         return 'success'
 
