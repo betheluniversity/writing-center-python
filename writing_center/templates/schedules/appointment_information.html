@@ -43,11 +43,11 @@
                     {% if appt.scheduledStart > now %}
                         {% if appt.sub == 1 %}
                             <tr>
-                                <td colspan="10"><button class="btn btn-primary darkblue" onclick="subAppointment({{ appt.id }})">Request Substitue</button></td>
+                                <td id="pickup" colspan="10"><button class="btn btn-primary darkblue" onclick="subAppointment({{ appt.id }})">Pick Up Shift</button></td>
                             </tr>
                         {% else %}
                             <tr>
-                                <td colspan="10"><button class="btn btn-primary darkblue" onclick="requestSub({{ appt.id }})">Request Substitue</button></td>
+                                <td id="request" colspan="10"><button class="btn btn-primary darkblue" onclick="requestSub({{ appt.id }})">Request Substitute</button></td>
                             </tr>
                         {% endif %}
                     {% endif %}
@@ -67,10 +67,34 @@
     });
 
     function subAppointment(appt_id) {
-
+        $.ajax({
+            type: "POST",
+            url: "{{ url_for('SchedulesView:pickup_shift') }}",
+            data: JSON.stringify({
+                'appt_id': appt_id,
+            }),
+            contentType: 'application/json;charset=UTF-8',
+            success: function (response) {
+                $('#results').html(response)
+            },
+            error: function (error) {
+            }
+        });
     }
 
     function requestSub(appt_id) {
-        
+        $.ajax({
+            type: "POST",
+            url: "{{ url_for('SchedulesView:request_substitute') }}",
+            data: JSON.stringify({
+                'appt_id': appt_id
+            }),
+            contentType: 'application/json;charset=UTF-8',
+            success: function (response) {
+                $('#results').html(response)
+            },
+            error: function (error) {
+            }
+        });
     }
 </script>
