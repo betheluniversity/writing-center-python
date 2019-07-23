@@ -175,6 +175,18 @@ class SchedulesController:
 
         return sub_list
 
+    def pickup_shift(self, appt_id, username):
+        try:
+            appointment = db_session.query(AppointmentsTable) \
+                .filter(AppointmentsTable.id == appt_id) \
+                .one_or_none()
+            appointment.sub = 0
+            appointment.tutor_id = self.get_user_by_username(username).id
+            db_session.commit()
+            return True
+        except Exception as e:
+            return False
+
     def request_substitute(self, appt_id):
         # Requests a substitute for a specific appointment
         try:
@@ -204,6 +216,12 @@ class SchedulesController:
         user = self.get_user_by_username(username)
         return db_session.query(AppointmentsTable)\
             .filter(AppointmentsTable.tutor_id == user.id)\
+            .all()
+
+    def get_sub_appointments(self):
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.sub == 1)\
+            .filter(AppointmentsTable.scheduledStart > datetime.now())\
             .all()
 
     def get_one_appointment(self, appt_id):
