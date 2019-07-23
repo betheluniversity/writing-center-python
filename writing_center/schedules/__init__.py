@@ -28,6 +28,7 @@ class SchedulesView(FlaskView):
         tutors = self.sc.get_tutors()
         return render_template('schedules/manage_tutor_schedules.html', **locals())
 
+    @route('view-tutor-schedules')
     def view_tutor_schedules(self):
         schedules = self.sc.get_schedules()
         tutors = self.sc.get_tutors()
