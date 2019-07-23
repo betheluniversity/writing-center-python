@@ -19,6 +19,10 @@ class MessageCenterController:
         return (db_session.query(UserTable)
                 .all())
 
+    def get_roles(self):
+        return (db_session.query(RoleTable)
+                .all())
+
     def get_email_preferences(self):
         user = self.get_user(session['USERNAME'])
         return (db_session.query(EmailPreferencesTable)
@@ -85,21 +89,20 @@ class MessageCenterController:
 
         return recipients
 
+    # def get_group_emails(self, groups):
+    #     recipients = []
+
+    #     recipients.append(db_session.query())
+
     def toggle_substitute(self, substitute):
-        user = (db_session.query(UserTable)
-                .filter(UserTable.username == session['USERNAME'])
-                .one())
         toggle = self.get_email_preferences()
-        toggle.SubRequestEmail = substitute
+        toggle.subRequestEmail = substitute
         db_session.commit()
         return 'success'
 
     def toggle_shift(self, shift):
-        user = (db_session.query(UserTable)
-                .filter(UserTable.username == session['USERNAME'])
-                .one())
         toggle = self.get_email_preferences()
-        toggle.StudentSignUpEmail = shift
+        toggle.studentSignUpEmail = shift
         db_session.commit()
         return 'success'
 
@@ -118,10 +121,10 @@ class MessageCenterController:
 
         self.send_message(subject, render_template('sessions/email.html', **locals()), recipients, None, True)
 
-    def send_message(self, subject, body, recipients, bcc, html=False):
+    def send_message(self, subject, body, recipients, cc, bcc, html=False):
         if app.config['ENVIRON'] != 'prod':
-            print('Would have sent email to: {0} {1}'.format(str(recipients), str(bcc)))
-            subject = '{0} {1} {2}'.format(subject, str(recipients), str(bcc))
+            print('Would have sent email to: {0} cc: {1}, bcc: {2}'.format(str(recipients), str(cc), str(bcc)))
+            subject = '{0}'.format(subject)
             recipients = app.config['TEST_EMAILS']
             bcc = []
 
@@ -130,11 +133,14 @@ class MessageCenterController:
             recipients = [recipients]
         if isinstance(bcc, str):
             bcc = [bcc]
+        if isinstance(cc, str):
+            cc = [cc]
 
         mail = Mail(app)
         msg = Message(subject=subject,
                       sender='noreply@bethel.edu',
                       recipients=recipients,
+                      cc=cc,
                       bcc=bcc)
         if html:
             msg.html = body
@@ -167,7 +173,7 @@ class MessageCenterController:
                       sender='',
                       recipients=recipients)
 
-        msg.html = 'sub_request_body.html'
+        msg.html = 'sub_request.html'
 
         if app.config['ENVIRON'] != 'prod':
             print('Would have sent email to: {}'.format(str(recipients)))

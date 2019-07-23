@@ -1,0 +1,11 @@
+{% extends 'email_base.html' %}
+{% block email_content %}
+    <h3>{{ appt_info['student']}} has signed up for an appointment:</h3>
+        <br/>
+        <p>{{ appt_info['date'] }}</p>
+        <p>{{ appt_info['start'] }}</p>
+        <p>{{ appt_info['assignment'] }}</p>
+        <br/>
+        <p>If you have any questions, comments or concerns, contact <a href="#">SOMEONE</a></p>
+        <p>Request a substitute <a href="#">here</a></p>
+{% endblock %}

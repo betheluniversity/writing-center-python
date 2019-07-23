@@ -10,7 +10,7 @@ class ProfileController:
             .filter(UserTable.username == username)\
             .one_or_none()
 
-    def edit_user(self, first_name,last_name, username):
+    def edit_user(self, first_name, last_name, username):
         user_to_edit = self.get_user_by_username(username)
         user_to_edit.firstName = first_name
         user_to_edit.lastName = last_name

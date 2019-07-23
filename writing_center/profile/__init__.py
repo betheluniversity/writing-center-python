@@ -5,6 +5,7 @@ import json
 
 from writing_center.profile.profile_controller import ProfileController
 from writing_center.writing_center_controller import WritingCenterController
+from writing_center.message_center.message_center_controller import MessageCenterController
 
 
 class ProfileView(FlaskView):
@@ -13,10 +14,12 @@ class ProfileView(FlaskView):
     def __init__(self):
         self.pc = ProfileController()
         self.wcc = WritingCenterController()
+        self.mcc = MessageCenterController()
 
     @route('/edit')
     def index(self):
         user = self.pc.get_user_by_username(flask_session['USERNAME'])
+        preferences = self.mcc.get_email_preferences()
         return render_template('profile/profile.html', **locals())
 
     @route('/save-edits', methods=['post'])
@@ -26,6 +29,17 @@ class ProfileView(FlaskView):
             first_name = form.get('first-name')
             last_name = form.get('last-name')
             username = form.get('username')
+
+            if isinstance(form.get('shift'), str):  # if shift is there, the box is checked and should be set to true
+                self.mcc.toggle_shift(1)
+            else:  # otherwise, it should be set to false
+                self.mcc.toggle_shift(0)
+
+            if isinstance(form.get('substitute'), str):  # if sub is there, the box is checked and should be set to true
+                self.mcc.toggle_substitute(1)
+            else:  # otherwise, it should be set to false
+                self.mcc.toggle_substitute(0)
+
             self.pc.edit_user(first_name,last_name, username)
             # Need to reset the users name, which appears in the upper right corner
             flask_session['NAME'] = '{0} {1}'.format(first_name, last_name)
@@ -54,3 +68,13 @@ class ProfileView(FlaskView):
             flask_session['NAME'] = ""
             flask_session['USER-ROLES'] = role
         return redirect(url_for('ProfileView:role_viewer'))
+
+    @route('/toggle-substitute', methods=['POST'])
+    def toggle_substitute(self):
+        data = request.form
+        return self.mcc.toggle_substitute(int(data['substitute']))
+
+    @route('/toggle-shift', methods=['POST'])
+    def toggle_shift(self):
+        data = request.form
+        return self.mcc.toggle_shift(data['shift'])
