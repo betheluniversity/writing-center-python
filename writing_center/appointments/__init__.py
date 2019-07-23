@@ -66,8 +66,8 @@ class AppointmentsView(FlaskView):
     def load_appointment_table(self):
         appointment_id = str(json.loads(request.data).get('id'))
         schedule_appt = json.loads(request.data).get('scheduleAppt')
+        add_cancel = json.loads(request.data).get('add-cancel')
         appt = self.ac.get_one_appointment(appointment_id)
-
         return render_template('appointments/appointment_information.html', **locals(),
                                id_to_user=self.ac.get_user_by_id)
 
@@ -94,7 +94,7 @@ class AppointmentsView(FlaskView):
     def student_view_appointments(self):
         return render_template('appointments/student_view_appointments.html', **locals())
 
-    @route('get_appointments', methods=['GET'])
+    @route('get-appointments', methods=['GET'])
     def get_users_appointments(self):
         appts = self.ac.get_all_user_appointments(flask_session['USERNAME'])
         appointments = []
@@ -155,15 +155,14 @@ class AppointmentsView(FlaskView):
                     appt = self.ac.get_appointment_by_id(appt_id)
                     already_scheduled = False
                     for appointment in user_appointments:
-                        if appointment.scheduledStart <= appt.scheduledStart <= appointment.scheduledEnd or \
-                                appointment.scheduledStart <= appt.scheduledEnd <= appointment.scheduledEnd:
+                        if appointment.scheduledStart < appt.scheduledStart < appointment.scheduledEnd or \
+                                appointment.scheduledStart < appt.scheduledEnd < appointment.scheduledEnd:
                             already_scheduled = True
                     if already_scheduled:
                         self.wcc.set_alert('danger', 'Failed to schedule appointment! You already have an appointment '
                                                      'that overlaps with the one you are trying to schedule.')
                     else:
-                        # pass
-                        appt = self.ac.create_appointment(appt_id)
+                        appt = self.ac.schedule_appointment(appt_id)
                         if appt:
                             self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your '
                                                           'Appointments, Go To The "View Your Appointments" Page!')
@@ -182,6 +181,16 @@ class AppointmentsView(FlaskView):
             self.wcc.set_alert('danger', 'You are banned from making appointments! If you have any questions email a'
                                          ' Writing Center Administrator.')
 
+        return appt_id
+
+    @route('cancel-appointment', methods=['POST'])
+    def cancel_appointment(self):
+        appt_id = str(json.loads(request.data).get('appt_id'))
+        cancelled = self.ac.cancel_appointment(appt_id)
+        if cancelled:
+            self.wcc.set_alert('success', 'Successfully cancelled appointment')
+        else:
+            self.wcc.set_alert('danger', 'Failed to cancel appointment.')
         return appt_id
 
     @route('/begin-appointment', methods=['POST'])

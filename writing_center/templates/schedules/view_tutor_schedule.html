@@ -5,17 +5,20 @@
         <h1><b>View Tutor Schedule</b></h1>
         <p>Displays the appointments a tutor is assigned to.</p>
     </div>
+    <div id="results"></div>
+    <hr>
     <div class="row">
         <div class="col-md-3">
-            <h3>Tutors</h3>
-            <select id="tutors-schedule" class="chosen-container" size="7" multiple="multiple" onchange="tutorsChanged()">
-                <option id="view-all" class="select-hr" value="View All">View All Schedules</option>
-                {% for tutor in tutors %}
-                    <option id="{{ tutor.id }}" value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
-                {% endfor %}
-            </select>
-            <hr>
-            <br/>
+            <div id="tutors">
+                <h3>Tutors</h3>
+                <select id="tutors-schedule" class="chosen-container" size="7" multiple="multiple" onchange="tutorsChanged()">
+                    <option id="view-all" class="select-hr" value="View All">View All Schedules</option>
+                    {% for tutor in tutors %}
+                        <option id="{{ tutor.id }}" value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
+                    {% endfor %}
+                </select>
+                <hr>
+            </div>
             <h3>Calendar Key</h3>
             <table class="table">
                 <thead>
@@ -39,6 +42,8 @@
                     </tr>
                 </tbody>
             </table>
+            <hr>
+            <button id="view-type" value="view-sub" class="btn btn-primary darkblue" onclick="viewEvents()">View Open Appointments</button>
         </div>
         {# spinner placeholder #}
         <div id="spinner" class="spinner" style="display: none;margin-top: -300px;">
@@ -85,6 +90,27 @@
     <div id="sub-list-results" class="form-row"></div>
     <script>
         $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "{{ url_for('SchedulesView:get_users_appointments') }}",
+                success: function (response) {
+                    if (response != null) {
+                        calendar.batchRendering(function() {
+                            for (let i = 0; i < response.length; i++) {
+                                calendar.addEvent({
+                                    id: response[i].id,
+                                    title: response[i].tutorUsername,
+                                    start: response[i].startTime,
+                                    end: response[i].endTime
+                                });
+                            }
+                        });
+                    }
+                },
+                error: function (error) {
+                }
+            });
+
             $('.datepicker').each(function () {
                 let current_element = $(this);
                 let maxDate = new Date();
@@ -127,6 +153,7 @@
                 let picker = new Pikaday(starting_values);
             });
         });
+
         let calendarEl = document.getElementById('calendar');
 
         let calendar = new FullCalendar.Calendar(calendarEl, {
@@ -139,6 +166,22 @@
             slotEventOverlap: false,
             nowIndicator: true,
             displayEventEnd: true,
+            timeZone: 'UTC',
+            eventClick: function(info) {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url_for('SchedulesView:load_appointment_table') }}",
+                    data: JSON.stringify({
+                        'id': info.event.id,
+                    }),
+                    contentType: 'application/json;charset=UTF-8',
+                    success: function (response) {
+                        $('#results').html(response)
+                    },
+                    error: function (error) {
+                    }
+                });
+            }
         });
 
         calendar.render();
@@ -158,14 +201,16 @@
                 contentType: 'application/json;charset=UTF-8',
                 success: function (response) {
                     calendar.removeAllEvents();
-                    let i = 0;
-                    for (i; i < response.length; i ++) {
-                        calendar.addEvent({
-                            title: response[i].tutor_id,
-                            start: response[i].startTime,
-                            end: response[i].endTime
-                        });
-                    }
+                    calendar.batchRendering(function() {
+                        for (let i = 0; i < response.length; i++) {
+                            calendar.addEvent({
+                                id: response[i].id,
+                                title: response[i].tutor_id,
+                                start: response[i].startTime,
+                                end: response[i].endTime
+                            });
+                        }
+                    });
                     $('#spinner').hide();
                 },
                 error: function (error) {
@@ -197,6 +242,59 @@
 
                 }
             });
+        }
+
+        function viewEvents() {
+            let button = $('#view-type');
+            if (button.val() === 'view-sub') {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ url_for('SchedulesView:get_sub_appointments') }}",
+                    success: function (response) {
+                        calendar.removeAllEvents();
+                        if (response != null) {
+                            calendar.batchRendering(function() {
+                                for (let i = 0; i < response.length; i++) {
+                                    calendar.addEvent({
+                                        id: response[i].id,
+                                        title: response[i].tutorUsername,
+                                        start: response[i].startTime,
+                                        end: response[i].endTime
+                                    });
+                                }
+                            });
+                        }
+                    },
+                    error: function (error) {
+                    }
+                });
+                button.text('View Your Appointments');
+                button.val('view-your');
+            } else if (button.val() === 'view-your') {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ url_for('SchedulesView:get_users_appointments') }}",
+                    success: function (response) {
+                        calendar.removeAllEvents();
+                        if (response != null) {
+                            calendar.batchRendering(function() {
+                                for (let i = 0; i < response.length; i++) {
+                                    calendar.addEvent({
+                                        id: response[i].id,
+                                        title: response[i].tutorUsername,
+                                        start: response[i].startTime,
+                                        end: response[i].endTime
+                                    });
+                                }
+                            });
+                        }
+                    },
+                    error: function (error) {
+                    }
+                });
+                button.text('View Open Appointments');
+                button.val('view-sub');
+            }
         }
 
         function confirmedNo() {

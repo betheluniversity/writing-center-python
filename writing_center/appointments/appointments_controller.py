@@ -40,18 +40,29 @@ class AppointmentsController:
             year += 1
         return years
 
-    def create_appointment(self, appt_id):
-        appointment = db_session.query(AppointmentsTable)\
-            .filter(AppointmentsTable.id == appt_id)\
-            .one_or_none()
-        # Updates the student username
-        user = self.get_user_by_username(flask_session['USERNAME'])
-        appointment.student_id = user.id
-        # Commits to DB
-        db_session.commit()
-        if appointment:
+    def schedule_appointment(self, appt_id):
+        try:
+            appointment = db_session.query(AppointmentsTable)\
+                .filter(AppointmentsTable.id == appt_id)\
+                .one_or_none()
+            # Updates the student username
+            user = self.get_user_by_username(flask_session['USERNAME'])
+            appointment.student_id = user.id
+            # Commits to DB
+            db_session.commit()
             return True
-        else:
+        except Exception as e:
+            return False
+
+    def cancel_appointment(self, appt_id):
+        try:
+            appointment = db_session.query(AppointmentsTable)\
+                .filter(AppointmentsTable.id == appt_id)\
+                .one_or_none()
+            appointment.student_id = None
+            db_session.commit()
+            return True
+        except Exception as e:
             return False
 
     def begin_appointment(self, username):

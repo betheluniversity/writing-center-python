@@ -73,6 +73,13 @@
                         {% endif %}
                         <td>{{ appt.courseCode }}</td>
                     </tr>
+                    {% if add_cancel %}
+                        <tr>
+                            <td colspan="10">
+                                <button class="btn btn-primary btn-danger" onclick="cancelAppointment({{ appt.id }})">Cancel Appointment</button>
+                            </td>
+                        </tr>
+                    {% endif %}
                 {% endif %}
             </tbody>
         </table>
@@ -93,6 +100,22 @@
         $.ajax({
             type: "POST",
             url: "{{ url_for('AppointmentsView:schedule_appointment') }}",
+            data: JSON.stringify({
+                'appt_id': appt_id
+            }),
+            contentType: 'application/json;charset=UTF-8',
+            success: function (response) {
+                window.location.reload();
+                },
+            error: function (error) {
+            }
+        });
+    }
+
+    function cancelAppointment(appt_id) {
+        $.ajax({
+            type: "POST",
+            url: "{{ url_for('AppointmentsView:cancel_appointment') }}",
             data: JSON.stringify({
                 'appt_id': appt_id
             }),

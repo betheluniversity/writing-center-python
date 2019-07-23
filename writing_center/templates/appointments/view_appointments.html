@@ -30,7 +30,6 @@
                     url: "{{ url_for('AppointmentsView:load_appointments') }}",
                     data: JSON.stringify({
                         'dates': dates,
-                        'scheduleAppt': false
                     }),
                     contentType: 'application/json;charset=UTF-8',
                     success: function (response) {
@@ -38,7 +37,7 @@
                             for (let i = 0; i < response.length; i ++) {
                                 calendar.addEvent({
                                     id: response[i].id,
-                                    title: response[i].tutor_id,
+                                    title: response[i].tutorId,
                                     start: response[i].startTime,
                                     end: response[i].endTime
                                 });
@@ -74,7 +73,6 @@
                         url: "{{ url_for('AppointmentsView:load_appointment_table') }}",
                         data: JSON.stringify({
                             'id': info.event.id,
-                            'scheduleAppt': false
                         }),
                         contentType: 'application/json;charset=UTF-8',
                         success: function (response) {

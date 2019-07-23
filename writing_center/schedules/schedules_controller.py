@@ -46,9 +46,9 @@ class SchedulesController:
             .filter(UserTable.username == username)\
             .one_or_none()
 
-    def get_user_by_id(self, id):
+    def get_user_by_id(self, user_id):
         return db_session.query(UserTable)\
-            .filter(UserTable.id == id)\
+            .filter(UserTable.id == user_id)\
             .one_or_none()
 
     def get_tutors(self):
@@ -175,6 +175,32 @@ class SchedulesController:
 
         return sub_list
 
+    def delete_appointment(self, appt_id):
+        try:
+            appointment = db_session.query(AppointmentsTable)\
+                .filter(AppointmentsTable.id == appt_id)\
+                .one_or_none()
+            if appointment.student_id:
+                return 'sub'
+            else:
+                db_session.delete(appointment)
+                db_session.commit()
+                return True
+        except Exception as e:
+            return False
+
+    def pickup_shift(self, appt_id, username):
+        try:
+            appointment = db_session.query(AppointmentsTable) \
+                .filter(AppointmentsTable.id == appt_id) \
+                .one_or_none()
+            appointment.sub = 0
+            appointment.tutor_id = self.get_user_by_username(username).id
+            db_session.commit()
+            return True
+        except Exception as e:
+            return False
+
     def request_substitute(self, appt_id):
         # Requests a substitute for a specific appointment
         try:
@@ -200,3 +226,19 @@ class SchedulesController:
         except Exception as e:
             return False
 
+    def get_all_user_appointments(self, username):
+        user = self.get_user_by_username(username)
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.tutor_id == user.id)\
+            .all()
+
+    def get_sub_appointments(self):
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.sub == 1)\
+            .filter(AppointmentsTable.scheduledStart > datetime.now())\
+            .all()
+
+    def get_one_appointment(self, appt_id):
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.id == appt_id)\
+            .one_or_none()
