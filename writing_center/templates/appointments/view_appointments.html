@@ -30,7 +30,6 @@
                     url: "{{ url_for('AppointmentsView:load_appointments') }}",
                     data: JSON.stringify({
                         'dates': dates,
-                        'scheduleAppt': false
                     }),
                     contentType: 'application/json;charset=UTF-8',
                     success: function (response) {
@@ -74,7 +73,6 @@
                         url: "{{ url_for('AppointmentsView:load_appointment_table') }}",
                         data: JSON.stringify({
                             'id': info.event.id,
-                            'scheduleAppt': false
                         }),
                         contentType: 'application/json;charset=UTF-8',
                         success: function (response) {
