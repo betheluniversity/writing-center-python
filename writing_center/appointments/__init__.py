@@ -84,6 +84,20 @@ class AppointmentsView(FlaskView):
             users.update({appt.student_id: name})
         return render_template('appointments/appointments_and_walk_ins.html', **locals())
 
+    @route('/begin-appointment', methods=['POST'])
+    def begin_walk_in_checks(self):
+        username = str(json.loads(request.data).get('username'))
+        # TODO CHECK FOR VALID USER/USER EXISTS. IF INVALID USERNAME, TELL USER, IF USER DOESN'T EXIST, CREATE USER IN WC DB
+        # user = self.ac.get_user_by_username(username)
+        # if user:
+        #     self.ac.begin_appointment(username)
+        #     self.wcc.set_alert('success', 'Appointment for ' + user.firstName + ' ' + user.lastName + ' started')
+        # else:
+        #     self.wcc.set_alert('danger', 'Username ' + username + ' doesn\'t exist in Writing Center')
+        courses = self.wsapi.get_student_courses(username)
+        print(courses)
+        return render_template('appointments/appointment_sign_in.html', **locals())
+
     def search_appointments(self):
         return render_template('appointments/search_appointments.html', **locals())
 
@@ -192,18 +206,6 @@ class AppointmentsView(FlaskView):
         else:
             self.wcc.set_alert('danger', 'Failed to cancel appointment.')
         return appt_id
-
-    @route('/begin-appointment', methods=['POST'])
-    def begin_walk_in_appt(self):
-        form = request.form
-        username = form.get('username')
-        user = self.ac.get_user_by_username(username)
-        if user:
-            self.ac.begin_appointment(username)
-            self.wcc.set_alert('success', 'Appointment for ' + user.firstName + ' ' + user.lastName + ' started')
-        else:
-            self.wcc.set_alert('danger', 'Username ' + username + ' doesn\'t exist in Writing Center')
-        return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))
 
     @route('/handle-scheduled-appointments', methods=['POST'])
     def handle_scheduled_appointments(self):

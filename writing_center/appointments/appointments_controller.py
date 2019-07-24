@@ -15,9 +15,12 @@ class AppointmentsController:
             .one_or_none()
 
     def get_user_by_id(self, student_id):
-        return db_session.query(UserTable)\
-            .filter(UserTable.id == student_id)\
-            .one_or_none()
+        try:
+            return db_session.query(UserTable)\
+                .filter(UserTable.id == student_id)\
+                .one_or_none()
+        except:
+            return None
 
     def get_user_by_appt(self, appt_id):
         return db_session.query(AppointmentsTable)\

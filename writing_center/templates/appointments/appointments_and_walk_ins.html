@@ -10,16 +10,17 @@
             <h3>Enter Student Username To Begin a Walk In Appointment:</h3>
         </div>
     </div>
-    <form action="{{ url_for('AppointmentsView:begin_walk_in_appt') }}" method="POST">
+    <form>
         <div class="col-md-4">
             <div class="input-group mb-3">
-                <input type="text" name="username" class="form-control" placeholder="Enter Username" aria-describedby="walk-in-begin">
+                <input id="username" type="text" name="username" class="form-control" placeholder="Enter Username" aria-describedby="walk-in-begin">
                 <div class="input-group-append">
-                    <button class="btn btn-primary" type="submit" id="walk-in-begin">Begin</button>
+                    <button class="btn btn-primary darkblue" type="button" id="walk-in-begin =" onclick="beginAppointment()">Begin</button>
                 </div>
             </div>
         </div>
     </form>
+    <div id="results"></div>
     <br/>
     <div class="form-row">
         <div class="form-group col-md-12">
@@ -80,21 +81,41 @@
         $("button").click(function() {
             let id = this.id;
             let value = this.value;
+            if (id === 'start' || id === 'continue' || id === 'end') {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url_for('AppointmentsView:handle_scheduled_appointments') }}",
+                    data: JSON.stringify({
+                        'id': id,
+                        'value': value
+                    }),
+                    contentType: 'application/json;charset=UTF-8',
+                    success: function (response) {
+                        window.location.reload(true)
+                    },
+                    error: function (error) {
+
+                    }
+                });
+            }
+        });
+
+        function beginAppointment() {
+            let username = $('#username').val();
             $.ajax({
                 type: "POST",
-                url: "{{ url_for('AppointmentsView:handle_scheduled_appointments') }}",
+                url: "{{ url_for('AppointmentsView:begin_walk_in_checks') }}",
                 data: JSON.stringify({
-                    'id': id,
-                    'value': value
+                    'username': username
                 }),
                 contentType: 'application/json;charset=UTF-8',
                 success: function (response) {
-                    window.location.reload(true)
+                    $('#results').html(response);
                 },
                 error: function (error) {
 
                 }
             });
-        });
+        }
     </script>
 {% endblock %}

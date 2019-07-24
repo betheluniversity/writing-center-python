@@ -1,0 +1,37 @@
+<div class="form-row">
+    <h3><b>Please enter the reason for your appointment.</b></h3>
+</div>
+<div class="form-row">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="course">Course/Reason:</label>
+            <select class="form-control" id="courses" multiple="multiple">
+                <option id="no-course" class="select-hr">No Specific Course</option>
+                {% for course in courses %}
+                    <option>{{ course }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label for="assignment">Assignment:</label>
+            <textarea id="assignment" name="assignment" class="form-control" style="padding-bottom: 10px" rows="3"></textarea>
+        </div>
+    </div>
+</div>
+<div class="form-row">
+    <div class="col-md-3">
+        <button id="start-walk-in" value="" type="button" class="btn btn-primary btn-success" onclick="startWalkIn({{ username }})">Start Appointment</button>
+    </div>
+</div>
+<script>
+    function startWalkIn(username) {
+        let courses = [];
+        $('#courses option:selected').each(function() {
+            courses.push(this.id);
+        });
+        let assigment = $('#assignment').val();
+        alert(courses);
+    }
+</script>
