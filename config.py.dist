@@ -9,3 +9,5 @@ SENTRY_URL = ""
 ENVIRON = ""
 
 DATABASE_KEY = ""
+
+WSAPI_SECRET = ""
