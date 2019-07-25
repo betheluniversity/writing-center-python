@@ -191,6 +191,14 @@ ul.list-group{
     background: yellow !important;
 }
 
+.form-check-input {
+    margin-left: 0px !important;
+}
+
+.form-check-label {
+    margin-left: 20px;
+}
+
 .nav.margins {
     padding: 0 40px;
 }
