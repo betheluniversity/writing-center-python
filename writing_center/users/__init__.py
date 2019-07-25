@@ -155,7 +155,7 @@ class UsersView(FlaskView):
     def save_user_ban(self):
         form = request.form
         username = form.get('username')
-        user = self.uc.get_user(username)
+        user = self.uc.get_user_by_username(username)
         appointments = self.uc.get_future_user_appointments(user.id)
         for appt in appointments:
             self.uc.cancel_appointment(appt.id)
