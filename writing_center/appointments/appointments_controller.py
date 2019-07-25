@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from flask import session as flask_session
 
 from writing_center.db_repository import db_session
-from writing_center.db_repository.tables import UserTable, AppointmentsTable, SettingsTable
+from writing_center.db_repository.tables import UserTable, AppointmentsTable, SettingsTable, UserRoleTable, RoleTable
 
 
 class AppointmentsController:
@@ -155,3 +155,33 @@ class AppointmentsController:
         return db_session.query(SettingsTable.value)\
             .filter(SettingsTable.id == 2)\
             .one_or_none()
+
+    def get_users_by_role(self, role_name):
+        return db_session.query(UserTable)\
+            .filter(UserTable.id == UserRoleTable.user_id)\
+            .filter(UserRoleTable.role_id == RoleTable.id)\
+            .filter(RoleTable.name == role_name)\
+            .order_by(UserTable.lastName).all()
+
+    def get_profs(self):
+        profs = db_session.query(AppointmentsTable.profName)\
+            .filter(AppointmentsTable.profName != None)\
+            .order_by(AppointmentsTable.profName)\
+            .distinct()
+        prof_list = []
+        for prof in profs:
+            prof_name = str(prof).split('\'')
+            prof_list.append(prof_name[1])
+        return prof_list
+
+
+    def get_courses(self):
+        courses = db_session.query(AppointmentsTable.courseCode)\
+            .filter(AppointmentsTable.courseCode != None)\
+            .order_by(AppointmentsTable.courseCode)\
+            .distinct()
+        course_list = []
+        for course in courses:
+            course_code = str(course).split('\'')
+            course_list.append(course_code[1])
+        return course_list

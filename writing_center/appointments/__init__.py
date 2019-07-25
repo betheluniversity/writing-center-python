@@ -85,6 +85,10 @@ class AppointmentsView(FlaskView):
         return render_template('appointments/appointments_and_walk_ins.html', **locals())
 
     def search_appointments(self):
+        students = self.ac.get_users_by_role("Student")
+        tutors = self.ac.get_users_by_role("Tutor")
+        profs = self.ac.get_profs()
+        courses = self.ac.get_courses()
         return render_template('appointments/search_appointments.html', **locals())
 
     def create_appointment(self):
