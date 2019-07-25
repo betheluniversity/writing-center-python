@@ -65,7 +65,7 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if appointment.noShow == 0 %}
+                                    {% if appointment.noShow == 0 or not appointment.noShow %}
                                         <button id="no-show" value="{{ appointment.id }}" type="button" class="btn btn-primary btn-danger">Mark as No Show</button>
                                     {% elif appointment.noShow == 1 %}
                                         <button id="revert-no-show" value="{{ appointment.id }}" type="button" class="btn btn-primary btn-danger">Revert No Show</button>
