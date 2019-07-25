@@ -76,6 +76,7 @@ class AppointmentsView(FlaskView):
         appointments = self.ac.get_scheduled_appointments(tutor)
         users = {}
         for appt in appointments:
+            now_today = datetime.combine(appt.scheduledStart, datetime.min.time())
             user = self.ac.get_user_by_id(appt.student_id)
             if user != None:
                 name = '{0} {1}'.format(user.firstName, user.lastName)
@@ -84,19 +85,47 @@ class AppointmentsView(FlaskView):
             users.update({appt.student_id: name})
         return render_template('appointments/appointments_and_walk_ins.html', **locals())
 
-    @route('/begin-appointment', methods=['POST'])
+    @route('/begin-checks', methods=['POST'])
     def begin_walk_in_checks(self):
         username = str(json.loads(request.data).get('username'))
-        # TODO CHECK FOR VALID USER/USER EXISTS. IF INVALID USERNAME, TELL USER, IF USER DOESN'T EXIST, CREATE USER IN WC DB
-        # user = self.ac.get_user_by_username(username)
-        # if user:
-        #     self.ac.begin_appointment(username)
-        #     self.wcc.set_alert('success', 'Appointment for ' + user.firstName + ' ' + user.lastName + ' started')
-        # else:
-        #     self.wcc.set_alert('danger', 'Username ' + username + ' doesn\'t exist in Writing Center')
+        if not self.wsapi.get_names_from_username(username):
+            self.wcc.set_alert('danger', 'Username ' + username + ' is not valid. Please try again with a valid username.')
+            return 'invalid username'
+        exists = self.ac.check_for_existing_user(username)
+        if exists:
+            self.ac.reactivate_user(exists.id)
+        else:
+            name = self.wsapi.get_names_from_username(username)
+            self.ac.create_user(username, name)
+
         courses = self.wsapi.get_student_courses(username)
-        print(courses)
         return render_template('appointments/appointment_sign_in.html', **locals())
+
+    @route('begin-walk-in', methods=['POST'])
+    def begin_walk_in(self):
+        username = str(json.loads(request.data).get('username'))
+        course = json.loads(request.data).get('course')
+        assignment = str(json.loads(request.data).get('username'))
+        if 'no-course' == course:
+            course = None
+        else:
+            student_courses = self.wsapi.get_student_courses(username)
+            for key in student_courses:
+                if student_courses[key]['crn'] == course:
+                    course_code = '{0}{1}'.format(student_courses[key]['subject'], student_courses[key]['cNumber'])
+                    instructor_email = '{0}@bethel.edu'.format(student_courses[key]['instructorUsername'])
+                    course = {
+                        'course_code': course_code,
+                        'section': student_courses[key]['section'],
+                        'instructor': student_courses[key]['instructor'],
+                        'instructor_email': instructor_email
+                    }
+                    break
+        user = self.ac.get_user_by_username(username)
+        tutor = self.ac.get_user_by_username(flask_session['USERNAME'])
+        self.ac.begin_walk_in_appointment(user, tutor, course, assignment)
+        self.wcc.set_alert('success', 'Appointment for ' + user.firstName + ' ' + user.lastName + ' started')
+        return 'success'
 
     def search_appointments(self):
         return render_template('appointments/search_appointments.html', **locals())
@@ -238,4 +267,13 @@ class AppointmentsView(FlaskView):
                 self.wcc.set_alert('success', message)
             else:
                 self.wcc.set_alert('danger', 'Failed To Set As No Show')
+        elif btn_id == 'revert-no-show':
+            appt = self.ac.revert_no_show(appt_id)
+            if appt:
+                appointment = self.ac.get_user_by_appt(appt_id)
+                user = self.ac.get_user_by_id(appointment.student_id)
+                message = '{0} {1} No Longer No Show'.format(user.firstName, user.lastName)
+                self.wcc.set_alert('success', message)
+            else:
+                self.wcc.set_alert('danger', 'Failed To Revert No Show')
         return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))

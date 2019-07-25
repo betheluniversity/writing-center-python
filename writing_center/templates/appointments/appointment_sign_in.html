@@ -1,37 +1,56 @@
-<div class="form-row">
-    <h3><b>Please enter the reason for your appointment.</b></h3>
-</div>
-<div class="form-row">
-    <div class="col-md-4">
-        <div class="form-group">
-            <label for="course">Course/Reason:</label>
-            <select class="form-control" id="courses" multiple="multiple">
-                <option id="no-course" class="select-hr">No Specific Course</option>
-                {% for course in courses %}
-                    <option>{{ course }}</option>
-                {% endfor %}
-            </select>
+{% if invalid_username %}
+{% else %}
+    <div class="form-row">
+        <h3><b>Please enter the reason for your appointment.</b></h3>
+    </div>
+    <div class="form-row">
+        <div class="col-md-5">
+            <div class="form-group">
+                <input id="username" value="{{ username }}" style="display: none;">
+                <label for="course">Course/Reason:</label>
+                <select class="form-control" id="courses">
+                    <option id="no-course" class="select-hr" selected="selected">No Specific Course</option>
+                    {% for course in courses %}
+                        <option id="{{ courses[course]['crn'] }}">{{ courses[course]['subject'] }}{{ courses[course]['cNumber'] }} {{ courses[course]['title'] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="form-group">
+                <label for="assignment">Assignment:</label>
+                <textarea id="assignment" name="assignment" class="form-control"></textarea>
+            </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="form-group">
-            <label for="assignment">Assignment:</label>
-            <textarea id="assignment" name="assignment" class="form-control" style="padding-bottom: 10px" rows="3"></textarea>
+    <div class="form-row">
+        <div class="col-md-3">
+            <button id="start-walk-in" value="" type="button" class="btn btn-primary btn-success" onclick="startWalkIn()">Start Appointment</button>
         </div>
     </div>
-</div>
-<div class="form-row">
-    <div class="col-md-3">
-        <button id="start-walk-in" value="" type="button" class="btn btn-primary btn-success" onclick="startWalkIn({{ username }})">Start Appointment</button>
-    </div>
-</div>
-<script>
-    function startWalkIn(username) {
-        let courses = [];
-        $('#courses option:selected').each(function() {
-            courses.push(this.id);
-        });
-        let assigment = $('#assignment').val();
-        alert(courses);
-    }
-</script>
+    <script>
+        function startWalkIn() {
+            let username = $('#username').val();
+            let course = '';
+            $('#courses option:selected').each(function () {
+                course = this.id;
+            });
+            let assignment = $('#assignment').val();
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('AppointmentsView:begin_walk_in') }}",
+                data: JSON.stringify({
+                    'username': username,
+                    'course': course,
+                    'assignment': assignment
+                }),
+                contentType: 'application/json;charset=UTF-8',
+                success: function (response) {
+                    window.location.reload();
+                },
+                error: function (error) {
+                }
+            });
+        }
+    </script>
+{% endif %}
