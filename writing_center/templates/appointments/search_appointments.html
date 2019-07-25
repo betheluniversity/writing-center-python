@@ -79,6 +79,12 @@
         </div>
         <hr>
         <h3>Search Results:</h3>
+
+        {# spinner placeholder #}
+        <div id="spinner" class="spinner" style="display: none;">
+            <img id="img-spinner" class="spinner-img" src="https://cdn1.bethel.edu/images/load.gif" alt="Loading"/>
+        </div>
+
         <div id="results">
             Please enter parameters to search by.
         </div>
@@ -126,10 +132,31 @@
             course.set([]);
             $('#startdate').val("");
             $('#enddate').val("");
+            // Need a timeout to account for the post request that will run when the fields change
+            setTimeout(function(){
+                loadSearchResults("Please enter parameters to search by.");
+            }, 100);
+        }
+
+        function loadSearchResults(data){
+            $('#results').html(data);
         }
 
         $('.search').change(function(){
-           alert("Change Detected");
+            $('#spinner').show();
+            var search_data = {
+                'students': student.selected(),
+                'tutors': tutor.selected(),
+                'profs': prof.selected(),
+                'courses': course.selected(),
+                'start': $('#startdate').val(),
+                'end': $('#enddate').val()
+            };
+            var url = "{{ url_for('AppointmentsView:search') }}";
+            $.post(url, search_data, function(data){
+                loadSearchResults(data);
+                $('#spinner').hide();
+            });
         });
     </script>
 {% endblock %}

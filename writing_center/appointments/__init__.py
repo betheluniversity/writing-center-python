@@ -232,3 +232,14 @@ class AppointmentsView(FlaskView):
             else:
                 self.wcc.set_alert('danger', 'Failed To Set As No Show')
         return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))
+
+    @route('/search', methods=['POST'])
+    def search(self):
+        form = request.form
+        students = form.getlist('students[]')
+        tutors = form.getlist('tutors[]')
+        profs = form.getlist('profs[]')
+        courses = form.getlist('courses[]')
+        start = form.get('start')
+        end = form.get('end')
+        return '{0}\n{1}\n{2}\n{3}\n{4}\n{5}'.format(students, tutors, profs, courses, start, end)
