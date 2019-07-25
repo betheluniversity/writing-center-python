@@ -109,7 +109,7 @@ class UsersView(FlaskView):
 
     @route("/edit/<int:user_id>")
     def edit_user(self, user_id):
-        user = self.uc.get_user(user_id)
+        user = self.uc.get_user_by_id(user_id)
         roles = self.uc.get_all_roles()
         user_role_ids = self.uc.get_user_role_ids(user_id)
 
@@ -155,7 +155,7 @@ class UsersView(FlaskView):
     def save_user_ban(self):
         form = request.form
         username = form.get('username')
-        user = self.uc.get_user(username)
+        user = self.uc.get_user_by_username(username)
         appointments = self.uc.get_future_user_appointments(user.id)
         for appt in appointments:
             self.uc.cancel_appointment(appt.id)
@@ -167,7 +167,7 @@ class UsersView(FlaskView):
 
     def act_as_user(self, user_id):
         if not flask_session['ADMIN-VIEWER']:
-            user_info = self.uc.get_user(user_id)
+            user_info = self.uc.get_user_by_id(user_id)
             flask_session['ADMIN-VIEWER'] = True
             # Saving old info to return to
             flask_session['ADMIN-USERNAME'] = flask_session['USERNAME']
