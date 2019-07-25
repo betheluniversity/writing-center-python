@@ -70,6 +70,7 @@ class AppointmentsView(FlaskView):
         appt = self.ac.get_one_appointment(appointment_id)
         if appt.scheduledStart < datetime.now():
             add_cancel = False
+        courses = self.wsapi.get_student_courses(flask_session['USERNAME'])
         return render_template('appointments/appointment_information.html', **locals(),
                                id_to_user=self.ac.get_user_by_id)
 
@@ -144,7 +145,7 @@ class AppointmentsView(FlaskView):
         appts = self.ac.get_all_user_appointments(flask_session['USERNAME'])
         appointments = []
         for appointment in appts:
-            if appointment.actualStart:
+            if appointment.actualStart and appointment.actualEnd:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
                                                               appointment.actualStart.strftime('%m'),
                                                               appointment.actualStart.strftime('%d'),
@@ -157,7 +158,7 @@ class AppointmentsView(FlaskView):
                                                             appointment.actualEnd.strftime('%I'),
                                                             appointment.actualEnd.strftime('%M'),
                                                             appointment.actualEnd.strftime('%S'))
-            else:
+            elif appointment.scheduledStart and appointment.scheduledEnd:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
                                                               appointment.scheduledStart.strftime('%m'),
                                                               appointment.scheduledStart.strftime('%d'),
@@ -185,6 +186,8 @@ class AppointmentsView(FlaskView):
     @route('schedule-appointment', methods=['POST'])
     def schedule_appointment(self):
         appt_id = str(json.loads(request.data).get('appt_id'))
+        course = str(json.loads(request.data).get('course'))
+        assignment = str(json.loads(request.data).get('assignment'))
         username = flask_session['USERNAME']
         user = self.ac.get_user_by_username(username)
         if not user.bannedDate:
@@ -207,7 +210,23 @@ class AppointmentsView(FlaskView):
                         self.wcc.set_alert('danger', 'Failed to schedule appointment! You already have an appointment '
                                                      'that overlaps with the one you are trying to schedule.')
                     else:
-                        appt = self.ac.schedule_appointment(appt_id)
+                        if 'no-course' == course:
+                            course = None
+                        else:
+                            student_courses = self.wsapi.get_student_courses(username)
+                            for key in student_courses:
+                                if student_courses[key]['crn'] == course:
+                                    course_code = '{0}{1}'.format(student_courses[key]['subject'],
+                                                                  student_courses[key]['cNumber'])
+                                    instructor_email = '{0}@bethel.edu'.format(student_courses[key]['instructorUsername'])
+                                    course = {
+                                        'course_code': course_code,
+                                        'section': student_courses[key]['section'],
+                                        'instructor': student_courses[key]['instructor'],
+                                        'instructor_email': instructor_email
+                                    }
+                                    break
+                        appt = self.ac.schedule_appointment(appt_id, course, assignment)
                         if appt:
                             self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your '
                                                           'Appointments, Go To The "View Your Appointments" Page!')
