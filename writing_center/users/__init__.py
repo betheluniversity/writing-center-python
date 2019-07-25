@@ -155,6 +155,10 @@ class UsersView(FlaskView):
     def save_user_ban(self):
         form = request.form
         username = form.get('username')
+        user = self.uc.get_user(username)
+        appointments = self.uc.get_future_user_appointments(user.id)
+        for appt in appointments:
+            self.uc.cancel_appointment(appt.id)
         if flask_session['USERNAME'] == username:
             self.wcc.set_alert('danger', 'Error! You Can\'t Ban Yourself!')
         else:
