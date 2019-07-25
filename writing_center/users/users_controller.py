@@ -62,7 +62,7 @@ class UsersController:
             db_session.add(user_role)
         db_session.commit()
 
-    def get_user(self, user_id):
+    def get_user_by_id(self, user_id):
         return db_session.query(UserTable)\
             .filter(UserTable.id == user_id)\
             .one_or_none()
@@ -153,6 +153,6 @@ class UsersController:
         db_session.commit()
 
     def deactivate_user(self, user_id):
-        user = self.get_user(user_id)
+        user = self.get_user_by_id(user_id)
         user.deletedAt = datetime.now()
         db_session.commit()
