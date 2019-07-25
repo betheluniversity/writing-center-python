@@ -70,19 +70,23 @@ class AppointmentsController:
             year += 1
         return years
 
-    def schedule_appointment(self, appt_id):
-        try:
+    def schedule_appointment(self, appt_id, course, assignment):
+            print(course)
             appointment = db_session.query(AppointmentsTable)\
                 .filter(AppointmentsTable.id == appt_id)\
                 .one_or_none()
             # Updates the student username
             user = self.get_user_by_username(flask_session['USERNAME'])
             appointment.student_id = user.id
+            if course:
+                appointment.courseCode = course['course_code']
+                appointment.courseSection = course['section']
+                appointment.profName = course['instructor']
+                appointment.profEmail = course['instructor_email']
             # Commits to DB
             db_session.commit()
             return True
-        except Exception as e:
-            return False
+
 
     def cancel_appointment(self, appt_id):
         try:
