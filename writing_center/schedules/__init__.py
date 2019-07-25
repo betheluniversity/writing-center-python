@@ -86,7 +86,7 @@ class SchedulesView(FlaskView):
     @route('/show-schedule', methods=['POST'])
     def show_tutor_schedule(self):
         names = json.loads(request.data).get('tutors')
-        if names[0] == 'view-all':
+        if 'view-all' in names:
             tutors = self.sc.get_tutors()
             names = []
             for tutor in tutors:
@@ -131,7 +131,7 @@ class SchedulesView(FlaskView):
         names = []
         if start_date > end_date:
             invalid_date = True
-        if tutor_ids[0] == 'view-all':
+        if 'view-all' in tutor_ids:
             tutors = self.sc.get_tutors()
             for tutor in tutors:
                 user = self.sc.get_user_by_id(tutor.id)
@@ -175,7 +175,7 @@ class SchedulesView(FlaskView):
 
         # If we get past that check, then we delete the appointment(s) and show the substitution table
         tutor_ids = json.loads(request.data).get('tutors')
-        if tutor_ids[0] == 'view-all':
+        if 'view-all' in tutor_ids:
             tutors = self.sc.get_tutors()
             tutor_ids = []
             for ids in tutors:
