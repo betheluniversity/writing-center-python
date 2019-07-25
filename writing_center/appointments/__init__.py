@@ -189,6 +189,12 @@ class AppointmentsView(FlaskView):
         course = str(json.loads(request.data).get('course'))
         assignment = str(json.loads(request.data).get('assignment'))
         username = flask_session['USERNAME']
+        exists = self.ac.check_for_existing_user(username)
+        if exists:
+            self.ac.reactivate_user(exists.id)
+        else:
+            name = self.wsapi.get_names_from_username(username)
+            self.ac.create_user(username, name)
         user = self.ac.get_user_by_username(username)
         if not user.bannedDate:
             appt_limit = int(self.ac.get_appointment_limit()[0])
