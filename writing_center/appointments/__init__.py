@@ -68,6 +68,8 @@ class AppointmentsView(FlaskView):
         schedule_appt = json.loads(request.data).get('scheduleAppt')
         add_cancel = json.loads(request.data).get('add-cancel')
         appt = self.ac.get_one_appointment(appointment_id)
+        if appt.scheduledStart < datetime.now():
+            add_cancel = False
         return render_template('appointments/appointment_information.html', **locals(),
                                id_to_user=self.ac.get_user_by_id)
 
