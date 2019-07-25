@@ -94,6 +94,11 @@ class AppointmentsController:
                 .filter(AppointmentsTable.id == appt_id)\
                 .one_or_none()
             appointment.student_id = None
+            appointment.profName = None
+            appointment.profEmail = None
+            appointment.assignment = None
+            appointment.courseCode = None
+            appointment.courseSection = None
             db_session.commit()
             return True
         except Exception as e:
