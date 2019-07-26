@@ -27,5 +27,5 @@ class SettingsController:
                 student.deletedAt = datetime.now()
         banned = db_session.query(UserTable).filter(UserTable.bannedDate != None).all()
         for ban in banned:
-            ban.deletedAt = None
+            ban.bannedDate = None
         db_session.commit()
