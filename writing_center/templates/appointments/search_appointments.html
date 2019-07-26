@@ -13,7 +13,8 @@
         <div class="form-row">
             <div class="form-group col-md-4">
                 <label for="student-select">Select a Student:</label>
-                <select id="student-select" class="search" multiple>
+                <select id="student-select" class="search">
+                    <option value="None">Select a Student...</option>
                     {% for student in students %}
                         <option value="{{ student.id }}">{{ student.firstName }} {{ student.lastName }} | {{ student.username }}</option>
                     {% endfor %}
@@ -21,7 +22,8 @@
             </div>
             <div class="form-group col-md-4">
                 <label for="tutor-select">Select a Tutor:</label>
-                <select id="tutor-select" class="search" multiple>
+                <select id="tutor-select" class="search">
+                    <option value="None">Select a Tutor...</option>
                     {% for tutor in tutors %}
                         <option value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }} | {{ tutor.username }}</option>
                     {% endfor %}
@@ -29,7 +31,8 @@
             </div>
             <div class="form-group col-md-4">
                 <label for="prof-select">Select a Professor:</label>
-                <select id="prof-select" class="search" multiple>
+                <select id="prof-select" class="search">
+                    <option value="None">Select a Professor...</option>
                     {% for prof in profs %}
                         <option value="{{ prof }}">{{ prof }}</option>
                     {% endfor %}
@@ -38,18 +41,19 @@
         </div>
         <div class="form-row">
             <div class="form-group col-md-4">
-                <label for="startdate">Click Start Date:</label>
+                <label for="startdate">Date Range Start:</label>
                 <input type="datetime" id="startdate" class="search date hasDatepicker chosen-container"
-                       placeholder="Choose a Starting Date..." readonly>
+                       placeholder="Click here to choose a starting date..." readonly>
             </div>
             <div class="form-group col-md-4">
-                <label for="enddate">Click End Date:</label>
+                <label for="enddate">Date Range End:</label>
                 <input type="datetime" id="enddate" class="search date hasDatepicker chosen-container"
-                       placeholder="Choose an Ending Date..." readonly>
+                       placeholder="Click here to choose an ending date..." readonly>
             </div>
             <div class="form-group col-md-4">
                 <label for="courses">Select a Course or Tag:</label>
-                <select id="courses" class="search" multiple>
+                <select id="courses" class="search">
+                    <option value="None">Select a Course or Tag...</option>
                     <optgroup label="Tags"></optgroup>
                     <option value="A">A</option>
                     <option value="D">D</option>
@@ -103,39 +107,31 @@
 
         var student = new SlimSelect({
             select: "#student-select",
-            placeholder: "Select a Student",
-            closeOnSelect: false,
+            placeholder: "Select a Student"
         });
 
         var tutor = new SlimSelect({
             select: "#tutor-select",
-            placeholder: "Select a Tutor",
-            closeOnSelect: false,
+            placeholder: "Select a Tutor"
         });
 
         var prof = new SlimSelect({
             select: "#prof-select",
-            placeholder: "Select a Professor",
-            closeOnSelect: false,
+            placeholder: "Select a Professor"
         });
 
         var course = new SlimSelect({
             select: "#courses",
-            placeholder: "Select a Course or Tag",
-            closeOnSelect: false,
+            placeholder: "Select a Course or Tag"
         });
 
         function clearSearch(){
-            student.set([]);
-            tutor.set([]);
-            prof.set([]);
-            course.set([]);
+            student.set("None");
+            tutor.set("None");
+            prof.set("None");
+            course.set("None");
             $('#startdate').val("");
             $('#enddate').val("");
-            // Need a timeout to account for the post request that will run when the fields change
-            setTimeout(function(){
-                loadSearchResults("Please enter parameters to search by.");
-            }, 100);
         }
 
         function loadSearchResults(data){
@@ -145,10 +141,10 @@
         $('.search').change(function(){
             $('#spinner').show();
             var search_data = {
-                'students': student.selected(),
-                'tutors': tutor.selected(),
-                'profs': prof.selected(),
-                'courses': course.selected(),
+                'student': student.selected(),
+                'tutor': tutor.selected(),
+                'prof': prof.selected(),
+                'course': course.selected(),
                 'start': $('#startdate').val(),
                 'end': $('#enddate').val()
             };

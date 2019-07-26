@@ -236,10 +236,13 @@ class AppointmentsView(FlaskView):
     @route('/search', methods=['POST'])
     def search(self):
         form = request.form
-        students = form.getlist('students[]')
-        tutors = form.getlist('tutors[]')
-        profs = form.getlist('profs[]')
-        courses = form.getlist('courses[]')
-        start = form.get('start')
-        end = form.get('end')
-        return '{0}\n{1}\n{2}\n{3}\n{4}\n{5}'.format(students, tutors, profs, courses, start, end)
+        student = None if form.get('student') == 'None' else int(form.get('student'))
+        tutor = None if form.get('tutor') == 'None' else int(form.get('tutor'))
+        prof = None if form.get('prof') == 'None' else form.get('prof')
+        course = None if form.get('course') == 'None' else form.get('course')
+        start = None if form.get('start') == '' else form.get('start')
+        end = None if form.get('end') == '' else form.get('end')
+        if student is None and tutor is None and prof is None and course is None and start is None and end is None:
+            return 'Please enter parameters to search by.'
+        appointments = self.ac.search_appointments(student, tutor, prof, course, start, end)
+        return render_template('appointments/appointment_search_table.html', **locals())

@@ -185,3 +185,15 @@ class AppointmentsController:
             course_code = str(course).split('\'')
             course_list.append(course_code[1])
         return course_list
+
+    def search_appointments(self, student, tutor, prof, course, start, end):
+        appts = db_session.query(AppointmentsTable)
+        if student:
+             appts = appts.filter(AppointmentsTable.student_id == student)
+        if tutor:
+            appts = appts.filter(AppointmentsTable.tutor_id == tutor)
+        if prof:
+            appts = appts.filter(AppointmentsTable.profName == prof)
+        if course:
+            appts = appts.filter(AppointmentsTable.courseCode == course)
+        return appts.all()
