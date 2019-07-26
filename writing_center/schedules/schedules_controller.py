@@ -59,15 +59,6 @@ class SchedulesController:
             .all()
 
     def create_tutor_shifts(self, start_date, end_date, multilingual, drop_in, tutor_ids, days_of_week, time_slots):
-        if multilingual == "Yes":
-            multilingual = 1
-        else:
-            multilingual = 0
-
-        if drop_in == "Yes":
-            drop_in = 1
-        else:
-            drop_in = 0
         # I honestly hate this but since we have 3 different selects which all can be multiple I think this is the only
         # way we can achieve the desired effect.
         for day in days_of_week:
