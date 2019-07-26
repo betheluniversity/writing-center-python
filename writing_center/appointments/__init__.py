@@ -240,9 +240,17 @@ class AppointmentsView(FlaskView):
         tutor = None if form.get('tutor') == 'None' else int(form.get('tutor'))
         prof = None if form.get('prof') == 'None' else form.get('prof')
         course = None if form.get('course') == 'None' else form.get('course')
-        start = None if form.get('start') == '' else form.get('start')
-        end = None if form.get('end') == '' else form.get('end')
-        if student is None and tutor is None and prof is None and course is None and start is None and end is None:
+        start = form.get('start')
+        start_date = None if start == '' else datetime.strptime(start, "%a %b %d %Y")
+        end = form.get('end')
+        end_date = None if end == '' else datetime.strptime(end, "%a %b %d %Y")
+        if student is None and tutor is None and prof is None and course is None and start_date is None and end_date is None:
             return 'Please enter parameters to search by.'
-        appointments = self.ac.search_appointments(student, tutor, prof, course, start, end)
+        appointments = self.ac.search_appointments(student, tutor, prof, course, start_date, end_date)
+        appts_and_info = {}
+        for appt in appointments:
+            appts_and_info[appt] = {
+                'student': self.ac.get_user_by_id(appt.student_id),
+                'tutor': self.ac.get_user_by_id(appt.tutor_id)
+            }
         return render_template('appointments/appointment_search_table.html', **locals())

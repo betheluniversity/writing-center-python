@@ -230,6 +230,10 @@ ul.list-group{
     text-decoration: none !important;
 }
 
+.one-line {
+    white-space: nowrap;
+}
+
 .pref-button {
     font-size: .8em;
 }

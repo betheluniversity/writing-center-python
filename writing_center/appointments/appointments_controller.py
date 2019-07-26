@@ -14,9 +14,9 @@ class AppointmentsController:
             .filter(UserTable.username == username)\
             .one_or_none()
 
-    def get_user_by_id(self, student_id):
+    def get_user_by_id(self, user_id):
         return db_session.query(UserTable)\
-            .filter(UserTable.id == student_id)\
+            .filter(UserTable.id == user_id)\
             .one_or_none()
 
     def get_user_by_appt(self, appt_id):
@@ -196,4 +196,8 @@ class AppointmentsController:
             appts = appts.filter(AppointmentsTable.profName == prof)
         if course:
             appts = appts.filter(AppointmentsTable.courseCode == course)
-        return appts.all()
+        if start:
+            appts = appts.filter(AppointmentsTable.scheduledStart > start)
+        if end:
+            appts = appts.filter(AppointmentsTable.scheduledEnd < end)
+        return appts.order_by(AppointmentsTable.scheduledStart.desc()).all()

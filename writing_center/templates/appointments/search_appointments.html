@@ -126,12 +126,7 @@
         });
 
         function clearSearch(){
-            student.set("None");
-            tutor.set("None");
-            prof.set("None");
-            course.set("None");
-            $('#startdate').val("");
-            $('#enddate').val("");
+            window.location.reload();
         }
 
         function loadSearchResults(data){
@@ -149,7 +144,7 @@
                 'end': $('#enddate').val()
             };
             var url = "{{ url_for('AppointmentsView:search') }}";
-            $.post(url, search_data, function(data){
+            $.post(url, search_data, function (data) {
                 loadSearchResults(data);
                 $('#spinner').hide();
             });
