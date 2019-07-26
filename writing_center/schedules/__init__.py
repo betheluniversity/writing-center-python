@@ -296,7 +296,7 @@ class SchedulesView(FlaskView):
     def pickup_shift(self):
         appointment_id = str(json.loads(request.data).get('appt_id'))
         appt = self.sc.get_one_appointment(appointment_id)
-        # TODO SET SUB TO 0, SET TUTOR_ID AND MAYBE EMAIL STUDENT ABOUT TUTOR CHANGE IF APPLICABLE?
+        # TODO MAYBE EMAIL STUDENT ABOUT TUTOR CHANGE IF APPLICABLE?
         picked_up = self.sc.pickup_shift(appointment_id, flask_session['USERNAME'])
         if picked_up:
             self.wcc.set_alert('success', 'Successfully picked up the shift!')
