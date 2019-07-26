@@ -67,9 +67,9 @@ class SchedulesView(FlaskView):
         # Formats the date strings into date objects
         start_date = datetime.strptime(start_date, '%a %b %d %Y').date()
         end_date = datetime.strptime(end_date, '%a %b %d %Y').date()
-        # TODO IF START_DATE AND END_DATE ARE EQUAL SET DANGER MESSAGE AND RETURN TO PAGE
         if start_date == end_date:
             self.wcc.set_alert('danger', 'No Appointments Made! Start Date and End Date must be different days!')
+            return redirect(url_for('SchedulesView:create_schedule'))
         multilingual = str(json.loads(request.data).get('multilingual'))
         drop_in = str(json.loads(request.data).get('dropIn'))
         tutors = json.loads(request.data).get('tutors')

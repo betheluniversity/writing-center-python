@@ -156,3 +156,13 @@ class UsersController:
         user = self.get_user_by_id(user_id)
         user.deletedAt = datetime.now()
         db_session.commit()
+
+    def activate_existing_user(self, user_id):
+        try:
+            user = self.get_user_by_id(user_id)
+            user.deletedAt = None
+            db_session.commit()
+            return True
+        except Exception as e:
+            print(e)
+            return False
