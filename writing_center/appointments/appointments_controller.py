@@ -194,7 +194,7 @@ class AppointmentsController:
             appts = appts.filter(AppointmentsTable.tutor_id == tutor)
         if prof:
             appts = appts.filter(AppointmentsTable.profName == prof)
-        if course:
+        if course:  # This can be a courseCode or a tag so handle both here
             if len(course) > 1:
                 appts = appts.filter(AppointmentsTable.courseCode == course)
             else:

@@ -244,6 +244,7 @@ class AppointmentsView(FlaskView):
         start_date = None if start == '' else datetime.strptime(start, "%a %b %d %Y")
         end = form.get('end')
         end_date = None if end == '' else datetime.strptime(end, "%a %b %d %Y")
+        # If no parameters sent in return the following message
         if student is None and tutor is None and prof is None and course is None and start_date is None and end_date is None:
             return 'Please enter parameters to search by.'
         appointments = self.ac.search_appointments(student, tutor, prof, course, start_date, end_date)
