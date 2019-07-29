@@ -2,82 +2,78 @@
 
 {% block body_content %}
     <div class="jumbotron">
-        <h1><b>View Reports</b></h1>
-        <p>Search for various completed appointments. You can also search appointments where the student did not show up.</p>
-        <p>First and last name searches allow for finding usernames.</p>
-        <p>Clicking on the appointments expands them.</p>
+        <h1><b>Search Appointments</b></h1>
+        <p>Search for various completed appointments. You can also search appointments where the student did not show
+            up.</p>
+        <p>You can search by student name or username, tutor name or username, professor name, course, tag, or date
+            range.</p>
+        <p>Clicking on the "Info" button for each appointment will show more info about it.</p>
     </div>
 
-    <form>
-        <h3>Search Appointments</h3>
+    <form id="search-form">
         <div class="form-row">
             <div class="form-group col-md-4">
-                <label for="studentfirstname">Student First:</label>
-                <input type="text" id="studentfirstname" class="chosen-container" style="width: 90%" name="studentfirstname" placeholder="Student First Name">
+                <label for="student-select">Select a Student:</label>
+                <select id="student-select" class="search">
+                    <option value="None">Select a Student...</option>
+                    {% for student in students %}
+                        <option value="{{ student.id }}">{{ student.firstName }} {{ student.lastName }} | {{ student.username }}</option>
+                    {% endfor %}
+                </select>
             </div>
             <div class="form-group col-md-4">
-                <label for="studentlastname">Student Last:</label>
-                <input type="text" id="studentlastname" class="chosen-container" style="width: 90%" name="studentlastname" placeholder="Student Last Name">
+                <label for="tutor-select">Select a Tutor:</label>
+                <select id="tutor-select" class="search">
+                    <option value="None">Select a Tutor...</option>
+                    {% for tutor in tutors %}
+                        <option value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }} | {{ tutor.username }}</option>
+                    {% endfor %}
+                </select>
             </div>
             <div class="form-group col-md-4">
-                <label for="studentusername">Student Username:</label>
-                <input type="text" id="studentusername" class="chosen-container" style="width: 90%" name="studentusername" placeholder="Student Username">
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-12">
-                <label for="display-student">Select a Student</label>
-                <select id="select-a-username" class="chosen-container" size="5" style="width: 90%" multiple="multiple"></select>
-            </div>
-        </div>
-        <hr>
-        <div class="form-row">
-            <div class="form-group col-md-4">
-                <label for="tutorfirstname">Tutor First:</label>
-                <input type="text" id="tutorfirstname" class="chosen-container" style="width: 90%" name="tutorfirstname" placeholder="Tutor First Name">
-            </div>
-            <div class="form-group col-md-4">
-                <label for="tutorlastname">Tutor Last:</label>
-                <input type="text" id="tutorlastname" class="chosen-container" style="width: 90%" name="tutorlastname" placeholder="Tutor Last Name">
-            </div>
-            <div class="form-group col-md-4">
-                <label for="tutorusername">Tutor Username:</label>
-                <input type="text" id="tutorusername" class="chosen-container" style="width: 90%" name="tutorusername" placeholder="Tutor Username">
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-12">
-                <label for="display-tutor">Select a Tutor</label>
-                <select id="select-tutor-username" class="chosen-container" size="5" style="width: 90%" multiple="multiple"></select>
-            </div>
-        </div>
-        <hr>
-        <div class="form-row">
-            <div class="form-group col-md-12">
-                <label for="profusername">Instructor Name:</label>
-                <input type="text" id="profusername" class="chosen-container" style="width: 90%" name="profusername" placeholder="Instructor Name">
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-group col-md-12">
-                <label for="display-prof">Select a Instructor</label>
-                <select id="select-prof-username" class="chosen-container" size="5" style="width: 90%">
-                    <option value="No instructor">No instructor</option>
+                <label for="prof-select">Select a Professor:</label>
+                <select id="prof-select" class="search">
+                    <option value="None">Select a Professor...</option>
+                    {% for prof in profs %}
+                        <option value="{{ prof }}">{{ prof }}</option>
+                    {% endfor %}
                 </select>
             </div>
         </div>
         <div class="form-row">
             <div class="form-group col-md-4">
-                <label for="startdate">Click Start Date:</label>
-                <input type="datetime" id="startdate" class="date hasDatepicker chosen-container" style="width: 90%" placeholder="Choose a Starting Date..." readonly>
+                <label for="startdate">Date Range Start:</label>
+                <input type="datetime" id="startdate" class="search date hasDatepicker chosen-container"
+                       placeholder="Click here to choose a starting date..." readonly>
             </div>
             <div class="form-group col-md-4">
-                <label for="enddate">Click End Date:</label>
-                <input type="datetime" id="enddate" class="date hasDatepicker chosen-container" style="width: 90%" placeholder="Choose an Ending Date..." readonly>
+                <label for="enddate">Date Range End:</label>
+                <input type="datetime" id="enddate" class="search date hasDatepicker chosen-container"
+                       placeholder="Click here to choose an ending date..." readonly>
             </div>
             <div class="form-group col-md-4">
-                <label for="courses">Course or Tag:</label>
-                <select id="select-courses" class="chosen-container" style="width: 90%"></select>
+                <label for="courses">Select a Course or Tag:</label>
+                <select id="courses" class="search">
+                    <option value="None">Select a Course or Tag...</option>
+                    <optgroup label="Tags"></optgroup>
+                    <option value="A">A</option>
+                    <option value="D">D</option>
+                    <option value="G">G</option>
+                    <option value="J">J</option>
+                    <option value="K">K</option>
+                    <option value="L">L</option>
+                    <option value="M">M</option>
+                    <option value="N">N</option>
+                    <option value="P">P</option>
+                    <option value="Q">Q</option>
+                    <option value="S">S</option>
+                    <option value="U">U</option>
+                    <option value="Z">Z</option>
+                    <optgroup label="Courses"></optgroup>
+                    {% for course in courses %}
+                        <option value="{{ course }}">{{ course }}</option>
+                    {% endfor %}
+                </select>
             </div>
         </div>
         <hr>
@@ -88,39 +84,71 @@
         </div>
         <hr>
         <h3>Search Results:</h3>
+
+        {# spinner placeholder #}
+        <div id="spinner" class="spinner" style="display: none;">
+            <img id="img-spinner" class="spinner-img" src="https://cdn1.bethel.edu/images/load.gif" alt="Loading"/>
+        </div>
+
         <div id="results">
             Please enter parameters to search by.
         </div>
     </form>
 
     <script>
+        var start = new Pikaday({
+            field: document.getElementById('startdate'),
+            format: 'MM/DD/YYYY'
+        });
 
-        function clearSearch()//Clears parameter values
-        {
-            document.getElementById('startdate').value="";
-            document.getElementById('enddate').value="";
-            document.getElementById('studentusername').value="";
-            document.getElementById('studentfirstname').value="";
-            document.getElementById('studentlastname').value="";
-            document.getElementById('tutorusername').value="";
-            document.getElementById('tutorfirstname').value="";
-            document.getElementById('tutorlastname').value="";
-            document.getElementById('profusername').value="";
-            var select = document.getElementById('select-student-username');
-            for(var option in select)
-            {
-                select.remove(option);
-            }
-            select = document.getElementById('select-tutor-username');
-            for(var option in select)
-            {
-                select.remove(option);
-            }
-            select = document.getElementById('select-prof-username');
-            for(var option in select)
-            {
-                select.remove(option);
-            }
+        var end = new Pikaday({
+            field: document.getElementById('enddate'),
+            format: 'MM/DD/YYYY'
+        });
+
+        var student = new SlimSelect({
+            select: "#student-select",
+            placeholder: "Select a Student"
+        });
+
+        var tutor = new SlimSelect({
+            select: "#tutor-select",
+            placeholder: "Select a Tutor"
+        });
+
+        var prof = new SlimSelect({
+            select: "#prof-select",
+            placeholder: "Select a Professor"
+        });
+
+        var course = new SlimSelect({
+            select: "#courses",
+            placeholder: "Select a Course or Tag"
+        });
+
+        function clearSearch(){
+            window.location.reload();
         }
+
+        function loadSearchResults(data){
+            $('#results').html(data);
+        }
+
+        $('.search').change(function(){
+            $('#spinner').show();
+            var search_data = {
+                'student': student.selected(),
+                'tutor': tutor.selected(),
+                'prof': prof.selected(),
+                'course': course.selected(),
+                'start': $('#startdate').val(),
+                'end': $('#enddate').val()
+            };
+            var url = "{{ url_for('AppointmentsView:search') }}";
+            $.post(url, search_data, function (data) {
+                loadSearchResults(data);
+                $('#spinner').hide();
+            });
+        });
     </script>
 {% endblock %}

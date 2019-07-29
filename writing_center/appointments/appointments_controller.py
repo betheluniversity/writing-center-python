@@ -2,7 +2,8 @@ from datetime import datetime, timedelta
 from flask import session as flask_session
 
 from writing_center.db_repository import db_session
-from writing_center.db_repository.tables import UserTable, AppointmentsTable, SettingsTable, UserRoleTable
+from writing_center.db_repository.tables import UserTable, AppointmentsTable, SettingsTable, UserRoleTable, RoleTable
+
 
 
 class AppointmentsController:
@@ -41,13 +42,10 @@ class AppointmentsController:
             .filter(UserTable.username == username)\
             .one_or_none()
 
-    def get_user_by_id(self, student_id):
-        try:
-            return db_session.query(UserTable)\
-                .filter(UserTable.id == student_id)\
-                .one_or_none()
-        except:
-            return None
+    def get_user_by_id(self, user_id):
+        return db_session.query(UserTable)\
+            .filter(UserTable.id == user_id)\
+            .one_or_none()
 
     def get_user_by_appt(self, appt_id):
         return db_session.query(AppointmentsTable)\
@@ -228,3 +226,52 @@ class AppointmentsController:
         return db_session.query(SettingsTable.value)\
             .filter(SettingsTable.id == 2)\
             .one_or_none()
+
+    def get_users_by_role(self, role_name):
+        return db_session.query(UserTable)\
+            .filter(UserTable.id == UserRoleTable.user_id)\
+            .filter(UserRoleTable.role_id == RoleTable.id)\
+            .filter(RoleTable.name == role_name)\
+            .order_by(UserTable.lastName).all()
+
+    def get_profs(self):
+        profs = db_session.query(AppointmentsTable.profName)\
+            .filter(AppointmentsTable.profName != None)\
+            .order_by(AppointmentsTable.profName)\
+            .distinct()
+        prof_list = []
+        for prof in profs:
+            prof_name = str(prof).split('\'')
+            prof_list.append(prof_name[1])
+        return prof_list
+
+
+    def get_courses(self):
+        courses = db_session.query(AppointmentsTable.courseCode)\
+            .filter(AppointmentsTable.courseCode != None)\
+            .order_by(AppointmentsTable.courseCode)\
+            .distinct()
+        course_list = []
+        for course in courses:
+            course_code = str(course).split('\'')
+            course_list.append(course_code[1])
+        return course_list
+
+    def search_appointments(self, student, tutor, prof, course, start, end):
+        appts = db_session.query(AppointmentsTable)
+        if student:
+             appts = appts.filter(AppointmentsTable.student_id == student)
+        if tutor:
+            appts = appts.filter(AppointmentsTable.tutor_id == tutor)
+        if prof:
+            appts = appts.filter(AppointmentsTable.profName == prof)
+        if course:  # This can be a courseCode or a tag so handle both here
+            if len(course) > 1:
+                appts = appts.filter(AppointmentsTable.courseCode == course)
+            else:
+                appts = appts.filter(AppointmentsTable.courseCode.like("____%{0}%".format(course)))
+        if start:
+            appts = appts.filter(AppointmentsTable.scheduledStart > start)
+        if end:
+            appts = appts.filter(AppointmentsTable.scheduledEnd < end)
+        return appts.order_by(AppointmentsTable.scheduledStart.desc()).all()

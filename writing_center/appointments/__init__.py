@@ -131,6 +131,10 @@ class AppointmentsView(FlaskView):
         return 'success'
 
     def search_appointments(self):
+        students = self.ac.get_users_by_role("Student")
+        tutors = self.ac.get_users_by_role("Tutor")
+        profs = self.ac.get_profs()
+        courses = self.ac.get_courses()
         return render_template('appointments/search_appointments.html', **locals())
 
     def create_appointment(self):
@@ -304,3 +308,26 @@ class AppointmentsView(FlaskView):
             else:
                 self.wcc.set_alert('danger', 'Failed To Revert No Show')
         return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))
+
+    @route('/search', methods=['POST'])
+    def search(self):
+        form = request.form
+        student = None if form.get('student') == 'None' else int(form.get('student'))
+        tutor = None if form.get('tutor') == 'None' else int(form.get('tutor'))
+        prof = None if form.get('prof') == 'None' else form.get('prof')
+        course = None if form.get('course') == 'None' else form.get('course')
+        start = form.get('start')
+        start_date = None if start == '' else datetime.strptime(start, "%a %b %d %Y")
+        end = form.get('end')
+        end_date = None if end == '' else datetime.strptime(end, "%a %b %d %Y")
+        # If no parameters sent in return the following message
+        if student is None and tutor is None and prof is None and course is None and start_date is None and end_date is None:
+            return 'Please enter parameters to search by.'
+        appointments = self.ac.search_appointments(student, tutor, prof, course, start_date, end_date)
+        appts_and_info = {}
+        for appt in appointments:
+            appts_and_info[appt] = {
+                'student': self.ac.get_user_by_id(appt.student_id),
+                'tutor': self.ac.get_user_by_id(appt.tutor_id)
+            }
+        return render_template('appointments/appointment_search_table.html', **locals())
