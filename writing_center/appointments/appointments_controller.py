@@ -195,7 +195,10 @@ class AppointmentsController:
         if prof:
             appts = appts.filter(AppointmentsTable.profName == prof)
         if course:
-            appts = appts.filter(AppointmentsTable.courseCode == course)
+            if len(course) > 1:
+                appts = appts.filter(AppointmentsTable.courseCode == course)
+            else:
+                appts = appts.filter(AppointmentsTable.courseCode.like("____%{0}%".format(course)))
         if start:
             appts = appts.filter(AppointmentsTable.scheduledStart > start)
         if end:
