@@ -1,5 +1,6 @@
 from flask_classy import FlaskView, route, request
 from flask import render_template, redirect, url_for, jsonify
+from flask import session as flask_session
 from datetime import datetime, date
 
 import json
@@ -27,6 +28,7 @@ class SchedulesView(FlaskView):
         tutors = self.sc.get_tutors()
         return render_template('schedules/manage_tutor_schedules.html', **locals())
 
+    @route('view-tutor-schedules')
     def view_tutor_schedules(self):
         schedules = self.sc.get_schedules()
         tutors = self.sc.get_tutors()
@@ -65,9 +67,9 @@ class SchedulesView(FlaskView):
         # Formats the date strings into date objects
         start_date = datetime.strptime(start_date, '%a %b %d %Y').date()
         end_date = datetime.strptime(end_date, '%a %b %d %Y').date()
-        # TODO IF START_DATE AND END_DATE ARE EQUAL SET DANGER MESSAGE AND RETURN TO PAGE
         if start_date == end_date:
             self.wcc.set_alert('danger', 'No Appointments Made! Start Date and End Date must be different days!')
+            return redirect(url_for('SchedulesView:create_schedule'))
         multilingual = str(json.loads(request.data).get('multilingual'))
         drop_in = str(json.loads(request.data).get('dropIn'))
         tutors = json.loads(request.data).get('tutors')
@@ -84,7 +86,7 @@ class SchedulesView(FlaskView):
     @route('/show-schedule', methods=['POST'])
     def show_tutor_schedule(self):
         names = json.loads(request.data).get('tutors')
-        if names[0] == 'view-all':
+        if 'view-all' in names:
             tutors = self.sc.get_tutors()
             names = []
             for tutor in tutors:
@@ -129,7 +131,7 @@ class SchedulesView(FlaskView):
         names = []
         if start_date > end_date:
             invalid_date = True
-        if tutor_ids[0] == 'view-all':
+        if 'view-all' in tutor_ids:
             tutors = self.sc.get_tutors()
             for tutor in tutors:
                 user = self.sc.get_user_by_id(tutor.id)
@@ -143,6 +145,19 @@ class SchedulesView(FlaskView):
                     names.append(name)
 
         return render_template('schedules/delete_confirmation.html', **locals())
+
+    @route('delete-appointment', methods=['POST'])
+    def delete_appointment(self):
+        appt_id = str(json.loads(request.data).get('appt_id'))
+        deleted = self.sc.delete_appointment(appt_id)
+        if deleted:
+            if deleted == 'sub':
+                return deleted
+            else:
+                return appt_id
+        else:
+            self.wcc.set_alert('danger', 'Failed to delete appointment!')
+            return redirect(url_for('SchedulesView:view_tutor_schedules'))
 
     @route('delete-tutor-shifts', methods=['POST'])
     def delete_tutors_from_shifts(self):
@@ -160,7 +175,7 @@ class SchedulesView(FlaskView):
 
         # If we get past that check, then we delete the appointment(s) and show the substitution table
         tutor_ids = json.loads(request.data).get('tutors')
-        if tutor_ids[0] == 'view-all':
+        if 'view-all' in tutor_ids:
             tutors = self.sc.get_tutors()
             tutor_ids = []
             for ids in tutors:
@@ -184,3 +199,121 @@ class SchedulesView(FlaskView):
             if not worked:
                 self.wcc.set_alert('danger', 'Failed to request a substitute for appointment id {0}'.format(appt_id))
         return 'Substitute Requested Successfully'
+
+    @route('get-appointments', methods=['GET'])
+    def get_users_appointments(self):
+        appts = self.sc.get_all_user_appointments(flask_session['USERNAME'])
+        appointments = []
+        for appointment in appts:
+            if appointment.actualStart and appointment.actualEnd:
+                start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
+                                                              appointment.actualStart.strftime('%m'),
+                                                              appointment.actualStart.strftime('%d'),
+                                                              appointment.actualStart.strftime('%I'),
+                                                              appointment.actualStart.strftime('%M'),
+                                                              appointment.actualStart.strftime('%S'))
+                end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualEnd.year,
+                                                            appointment.actualEnd.strftime('%m'),
+                                                            appointment.actualEnd.strftime('%d'),
+                                                            appointment.actualEnd.strftime('%I'),
+                                                            appointment.actualEnd.strftime('%M'),
+                                                            appointment.actualEnd.strftime('%S'))
+            else:
+                start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
+                                                              appointment.scheduledStart.strftime('%m'),
+                                                              appointment.scheduledStart.strftime('%d'),
+                                                              appointment.scheduledStart.strftime('%I'),
+                                                              appointment.scheduledStart.strftime('%M'),
+                                                              appointment.scheduledStart.strftime('%S'))
+                end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledEnd.year,
+                                                            appointment.scheduledEnd.strftime('%m'),
+                                                            appointment.scheduledEnd.strftime('%d'),
+                                                            appointment.scheduledEnd.strftime('%I'),
+                                                            appointment.scheduledEnd.strftime('%M'),
+                                                            appointment.scheduledEnd.strftime('%S'))
+            appointments.append({
+                'id': appointment.id,
+                'studentId': appointment.student_id,
+                'tutorUsername': self.sc.get_user_by_id(appointment.tutor_id).username,
+                'startTime': start_time,
+                'endTime': end_time,
+                'multilingual': appointment.multilingual,
+                'dropIn': appointment.dropIn
+            })
+
+        return jsonify(appointments)
+
+    def get_sub_appointments(self):
+        appts = self.sc.get_sub_appointments()
+        appointments = []
+        for appointment in appts:
+            if appointment.actualStart and appointment.actualEnd:
+                start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
+                                                              appointment.actualStart.strftime('%m'),
+                                                              appointment.actualStart.strftime('%d'),
+                                                              appointment.actualStart.strftime('%I'),
+                                                              appointment.actualStart.strftime('%M'),
+                                                              appointment.actualStart.strftime('%S'))
+                end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualEnd.year,
+                                                            appointment.actualEnd.strftime('%m'),
+                                                            appointment.actualEnd.strftime('%d'),
+                                                            appointment.actualEnd.strftime('%I'),
+                                                            appointment.actualEnd.strftime('%M'),
+                                                            appointment.actualEnd.strftime('%S'))
+            else:
+                start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
+                                                              appointment.scheduledStart.strftime('%m'),
+                                                              appointment.scheduledStart.strftime('%d'),
+                                                              appointment.scheduledStart.strftime('%I'),
+                                                              appointment.scheduledStart.strftime('%M'),
+                                                              appointment.scheduledStart.strftime('%S'))
+                end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledEnd.year,
+                                                            appointment.scheduledEnd.strftime('%m'),
+                                                            appointment.scheduledEnd.strftime('%d'),
+                                                            appointment.scheduledEnd.strftime('%I'),
+                                                            appointment.scheduledEnd.strftime('%M'),
+                                                            appointment.scheduledEnd.strftime('%S'))
+            appointments.append({
+                'id': appointment.id,
+                'studentId': appointment.student_id,
+                'tutorUsername': self.sc.get_user_by_id(appointment.tutor_id).username,
+                'startTime': start_time,
+                'endTime': end_time,
+                'multilingual': appointment.multilingual,
+                'dropIn': appointment.dropIn
+            })
+
+        return jsonify(appointments)
+
+    @route('load-appointment', methods=['POST'])
+    def load_appointment_table(self):
+        appointment_id = str(json.loads(request.data).get('id'))
+        appt = self.sc.get_one_appointment(appointment_id)
+        return render_template('schedules/appointment_information.html', **locals(),
+                               id_to_user=self.sc.get_user_by_id)
+
+    @route('pickup-shift', methods=['POST'])
+    def pickup_shift(self):
+        appointment_id = str(json.loads(request.data).get('appt_id'))
+        appt = self.sc.get_one_appointment(appointment_id)
+        # TODO MAYBE EMAIL STUDENT ABOUT TUTOR CHANGE IF APPLICABLE?
+        picked_up = self.sc.pickup_shift(appointment_id, flask_session['USERNAME'])
+        if picked_up:
+            self.wcc.set_alert('success', 'Successfully picked up the shift!')
+            return render_template('schedules/appointment_information.html', **locals(),
+                                   id_to_user=self.sc.get_user_by_id)
+        else:
+            self.wcc.set_alert('danger', 'Failed to pick up the shift.')
+
+    @route('request-subtitute', methods=['POST'])
+    def request_substitute(self):
+        appointment_id = str(json.loads(request.data).get('appt_id'))
+        appt = self.sc.get_one_appointment(appointment_id)
+        # TODO MAYBE EMAIL ABOUT SUB
+        success = self.sc.request_substitute(appointment_id)
+        if success:
+            self.wcc.set_alert('success', 'Successfully requested a substitute!')
+            return render_template('schedules/appointment_information.html', **locals(),
+                                   id_to_user=self.sc.get_user_by_id)
+        else:
+            self.wcc.set_alert('danger', 'Error! Substitute not requested.')

@@ -5,9 +5,8 @@
         <h1>System Settings</h1>
         <p>You can adjust the system settings here.</p>
     </div>
-
-    <a class="btn btn-primary" href="{{ url_for('SettingsView:cleanse') }}">Cleanse System</a>
     <p>At the end of the semester you can click this button to do the following:</p>
+    <a class="btn btn-primary" href="{{ url_for('SettingsView:cleanse') }}">Cleanse System</a>
     <ul>
         <li>Deactivate all current student users (this will not deactivate users with multiple roles)</li>
         <li>Unban all currently banned users</li>

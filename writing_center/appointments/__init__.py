@@ -54,7 +54,7 @@ class AppointmentsView(FlaskView):
                 appointments.append({
                     'id': appointment.id,
                     'studentId': appointment.student_id,
-                    'tutorId': appointment.tutor_id,
+                    'tutorId': self.ac.get_user_by_id(appointment.tutor_id).username,
                     'startTime': start_time,
                     'endTime': end_time,
                     'multilingual': appointment.multilingual,
@@ -66,8 +66,11 @@ class AppointmentsView(FlaskView):
     def load_appointment_table(self):
         appointment_id = str(json.loads(request.data).get('id'))
         schedule_appt = json.loads(request.data).get('scheduleAppt')
+        add_cancel = json.loads(request.data).get('add-cancel')
         appt = self.ac.get_one_appointment(appointment_id)
-
+        if appt.scheduledStart < datetime.now():
+            add_cancel = False
+        courses = self.wsapi.get_student_courses(flask_session['USERNAME'])
         return render_template('appointments/appointment_information.html', **locals(),
                                id_to_user=self.ac.get_user_by_id)
 
@@ -76,6 +79,7 @@ class AppointmentsView(FlaskView):
         appointments = self.ac.get_scheduled_appointments(tutor)
         users = {}
         for appt in appointments:
+            now_today = datetime.combine(appt.scheduledStart, datetime.min.time())
             user = self.ac.get_user_by_id(appt.student_id)
             if user != None:
                 name = '{0} {1}'.format(user.firstName, user.lastName)
@@ -83,6 +87,48 @@ class AppointmentsView(FlaskView):
                 name = ""
             users.update({appt.student_id: name})
         return render_template('appointments/appointments_and_walk_ins.html', **locals())
+
+    @route('/begin-checks', methods=['POST'])
+    def begin_walk_in_checks(self):
+        username = str(json.loads(request.data).get('username'))
+        if not self.wsapi.get_names_from_username(username):
+            self.wcc.set_alert('danger', 'Username ' + username + ' is not valid. Please try again with a valid username.')
+            return 'invalid username'
+        exists = self.ac.check_for_existing_user(username)
+        if exists:
+            self.ac.reactivate_user(exists.id)
+        else:
+            name = self.wsapi.get_names_from_username(username)
+            self.ac.create_user(username, name)
+
+        courses = self.wsapi.get_student_courses(username)
+        return render_template('appointments/appointment_sign_in.html', **locals())
+
+    @route('begin-walk-in', methods=['POST'])
+    def begin_walk_in(self):
+        username = str(json.loads(request.data).get('username'))
+        course = json.loads(request.data).get('course')
+        assignment = str(json.loads(request.data).get('username'))
+        if 'no-course' == course:
+            course = None
+        else:
+            student_courses = self.wsapi.get_student_courses(username)
+            for key in student_courses:
+                if student_courses[key]['crn'] == course:
+                    course_code = '{0}{1}'.format(student_courses[key]['subject'], student_courses[key]['cNumber'])
+                    instructor_email = '{0}@bethel.edu'.format(student_courses[key]['instructorUsername'])
+                    course = {
+                        'course_code': course_code,
+                        'section': student_courses[key]['section'],
+                        'instructor': student_courses[key]['instructor'],
+                        'instructor_email': instructor_email
+                    }
+                    break
+        user = self.ac.get_user_by_username(username)
+        tutor = self.ac.get_user_by_username(flask_session['USERNAME'])
+        self.ac.begin_walk_in_appointment(user, tutor, course, assignment)
+        self.wcc.set_alert('success', 'Appointment for ' + user.firstName + ' ' + user.lastName + ' started')
+        return 'success'
 
     def search_appointments(self):
         students = self.ac.get_users_by_role("Student")
@@ -98,12 +144,12 @@ class AppointmentsView(FlaskView):
     def student_view_appointments(self):
         return render_template('appointments/student_view_appointments.html', **locals())
 
-    @route('get_appointments', methods=['GET'])
+    @route('get-appointments', methods=['GET'])
     def get_users_appointments(self):
         appts = self.ac.get_all_user_appointments(flask_session['USERNAME'])
         appointments = []
         for appointment in appts:
-            if appointment.actualStart:
+            if appointment.actualStart and appointment.actualEnd:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
                                                               appointment.actualStart.strftime('%m'),
                                                               appointment.actualStart.strftime('%d'),
@@ -116,7 +162,7 @@ class AppointmentsView(FlaskView):
                                                             appointment.actualEnd.strftime('%I'),
                                                             appointment.actualEnd.strftime('%M'),
                                                             appointment.actualEnd.strftime('%S'))
-            else:
+            elif appointment.scheduledStart and appointment.scheduledEnd:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
                                                               appointment.scheduledStart.strftime('%m'),
                                                               appointment.scheduledStart.strftime('%d'),
@@ -132,7 +178,7 @@ class AppointmentsView(FlaskView):
             appointments.append({
                 'id': appointment.id,
                 'studentId': appointment.student_id,
-                'tutorId': appointment.tutor_id,
+                'tutorId': appointment.self.ac.get_user_by_id(appointment.tutor_id).username,
                 'startTime': start_time,
                 'endTime': end_time,
                 'multilingual': appointment.multilingual,
@@ -144,7 +190,15 @@ class AppointmentsView(FlaskView):
     @route('schedule-appointment', methods=['POST'])
     def schedule_appointment(self):
         appt_id = str(json.loads(request.data).get('appt_id'))
+        course = str(json.loads(request.data).get('course'))
+        assignment = str(json.loads(request.data).get('assignment'))
         username = flask_session['USERNAME']
+        exists = self.ac.check_for_existing_user(username)
+        if exists:
+            self.ac.reactivate_user(exists.id)
+        else:
+            name = self.wsapi.get_names_from_username(username)
+            self.ac.create_user(username, name)
         user = self.ac.get_user_by_username(username)
         if not user.bannedDate:
             appt_limit = int(self.ac.get_appointment_limit()[0])
@@ -159,15 +213,30 @@ class AppointmentsView(FlaskView):
                     appt = self.ac.get_appointment_by_id(appt_id)
                     already_scheduled = False
                     for appointment in user_appointments:
-                        if appointment.scheduledStart <= appt.scheduledStart <= appointment.scheduledEnd or \
-                                appointment.scheduledStart <= appt.scheduledEnd <= appointment.scheduledEnd:
+                        if appointment.scheduledStart < appt.scheduledStart < appointment.scheduledEnd or \
+                                appointment.scheduledStart < appt.scheduledEnd < appointment.scheduledEnd:
                             already_scheduled = True
                     if already_scheduled:
                         self.wcc.set_alert('danger', 'Failed to schedule appointment! You already have an appointment '
                                                      'that overlaps with the one you are trying to schedule.')
                     else:
-                        # pass
-                        appt = self.ac.create_appointment(appt_id)
+                        if 'no-course' == course:
+                            course = None
+                        else:
+                            student_courses = self.wsapi.get_student_courses(username)
+                            for key in student_courses:
+                                if student_courses[key]['crn'] == course:
+                                    course_code = '{0}{1}'.format(student_courses[key]['subject'],
+                                                                  student_courses[key]['cNumber'])
+                                    instructor_email = '{0}@bethel.edu'.format(student_courses[key]['instructorUsername'])
+                                    course = {
+                                        'course_code': course_code,
+                                        'section': student_courses[key]['section'],
+                                        'instructor': student_courses[key]['instructor'],
+                                        'instructor_email': instructor_email
+                                    }
+                                    break
+                        appt = self.ac.schedule_appointment(appt_id, course, assignment)
                         if appt:
                             self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your '
                                                           'Appointments, Go To The "View Your Appointments" Page!')
@@ -188,17 +257,15 @@ class AppointmentsView(FlaskView):
 
         return appt_id
 
-    @route('/begin-appointment', methods=['POST'])
-    def begin_walk_in_appt(self):
-        form = request.form
-        username = form.get('username')
-        user = self.ac.get_user_by_username(username)
-        if user:
-            self.ac.begin_appointment(username)
-            self.wcc.set_alert('success', 'Appointment for ' + user.firstName + ' ' + user.lastName + ' started')
+    @route('cancel-appointment', methods=['POST'])
+    def cancel_appointment(self):
+        appt_id = str(json.loads(request.data).get('appt_id'))
+        cancelled = self.ac.cancel_appointment(appt_id)
+        if cancelled:
+            self.wcc.set_alert('success', 'Successfully cancelled appointment')
         else:
-            self.wcc.set_alert('danger', 'Username ' + username + ' doesn\'t exist in Writing Center')
-        return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))
+            self.wcc.set_alert('danger', 'Failed to cancel appointment.')
+        return appt_id
 
     @route('/handle-scheduled-appointments', methods=['POST'])
     def handle_scheduled_appointments(self):
@@ -231,6 +298,15 @@ class AppointmentsView(FlaskView):
                 self.wcc.set_alert('success', message)
             else:
                 self.wcc.set_alert('danger', 'Failed To Set As No Show')
+        elif btn_id == 'revert-no-show':
+            appt = self.ac.revert_no_show(appt_id)
+            if appt:
+                appointment = self.ac.get_user_by_appt(appt_id)
+                user = self.ac.get_user_by_id(appointment.student_id)
+                message = '{0} {1} No Longer No Show'.format(user.firstName, user.lastName)
+                self.wcc.set_alert('success', message)
+            else:
+                self.wcc.set_alert('danger', 'Failed To Revert No Show')
         return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))
 
     @route('/search', methods=['POST'])

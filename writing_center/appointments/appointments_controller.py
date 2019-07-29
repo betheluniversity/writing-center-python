@@ -5,9 +5,37 @@ from writing_center.db_repository import db_session
 from writing_center.db_repository.tables import UserTable, AppointmentsTable, SettingsTable, UserRoleTable, RoleTable
 
 
+
 class AppointmentsController:
     def __init__(self):
         pass
+
+    def check_for_existing_user(self, username):
+        try:
+            user = db_session.query(UserTable)\
+                .filter(UserTable.username == username)\
+                .one_or_none()
+            return user
+        except Exception as e:
+            return False
+
+    def reactivate_user(self, user_id):
+        user = db_session.query(UserTable)\
+            .filter(UserTable.id == user_id)\
+            .one_or_none()
+        user.deletedAt = None
+        db_session.commit()
+
+    def create_user(self, username, name):
+        first_name = name['0']['firstName']
+        last_name = name['0']['lastName']
+        email = '{0}@bethel.edu'.format(username)
+        user = UserTable(username=username, email=email, firstName=first_name, lastName=last_name,)
+        db_session.add(user)
+        db_session.commit()
+        user_role = UserRoleTable(user_id=user.id, role_id=4)
+        db_session.add(user_role)
+        db_session.commit()
 
     def get_user_by_username(self, username):
         return db_session.query(UserTable)\
@@ -40,23 +68,53 @@ class AppointmentsController:
             year += 1
         return years
 
-    def create_appointment(self, appt_id):
-        appointment = db_session.query(AppointmentsTable)\
-            .filter(AppointmentsTable.id == appt_id)\
-            .one_or_none()
-        # Updates the student username
-        user = self.get_user_by_username(flask_session['USERNAME'])
-        appointment.student_id = user.id
-        # Commits to DB
-        db_session.commit()
-        if appointment:
+    def schedule_appointment(self, appt_id, course, assignment):
+            print(course)
+            appointment = db_session.query(AppointmentsTable)\
+                .filter(AppointmentsTable.id == appt_id)\
+                .one_or_none()
+            # Updates the student username
+            user = self.get_user_by_username(flask_session['USERNAME'])
+            appointment.student_id = user.id
+            if course:
+                appointment.courseCode = course['course_code']
+                appointment.courseSection = course['section']
+                appointment.profName = course['instructor']
+                appointment.profEmail = course['instructor_email']
+            # Commits to DB
+            db_session.commit()
             return True
-        else:
+
+
+    def cancel_appointment(self, appt_id):
+        try:
+            appointment = db_session.query(AppointmentsTable)\
+                .filter(AppointmentsTable.id == appt_id)\
+                .one_or_none()
+            appointment.student_id = None
+            appointment.profName = None
+            appointment.profEmail = None
+            appointment.assignment = None
+            appointment.courseCode = None
+            appointment.courseSection = None
+            db_session.commit()
+            return True
+        except Exception as e:
             return False
 
-    def begin_appointment(self, username):
-        user = self.get_user_by_username(username)
-        begin_appt = AppointmentsTable(student_id=user.id, actualStart=datetime.now(), inProgress=1)
+    def begin_walk_in_appointment(self, user, tutor, course, assignment):
+        if course:
+            course_code = course['course_code']
+            course_section = course['section']
+            prof_name = course['instructor']
+            prof_email = course['instructor_email']
+            begin_appt = AppointmentsTable(student_id=user.id, tutor_id=tutor.id, scheduledStart=datetime.now(),
+                                           actualStart=datetime.now(), profName=prof_name, profEmail=prof_email,
+                                           assignment=assignment, courseCode=course_code, courseSection=course_section,
+                                           inProgress=1)
+        else:
+            begin_appt = AppointmentsTable(student_id=user.id, tutor_id=tutor.id, scheduledStart=datetime.now(),
+                                           actualStart=datetime.now(), assignment=assignment, inProgress=1)
         db_session.add(begin_appt)
         db_session.commit()
 
@@ -72,6 +130,17 @@ class AppointmentsController:
                 .filter(AppointmentsTable.id == appt_id)\
                 .one_or_none()
             appointment.noShow = 1
+            db_session.commit()
+            return True
+        except Exception as e:
+            return False
+
+    def revert_no_show(self, appt_id):
+        try:
+            appointment = db_session.query(AppointmentsTable)\
+                .filter(AppointmentsTable.id == appt_id)\
+                .one_or_none()
+            appointment.noShow = 0
             db_session.commit()
             return True
         except Exception as e:
@@ -108,6 +177,8 @@ class AppointmentsController:
                 .one_or_none()
             appointment.inProgress = 0
             appointment.actualEnd = datetime.now()
+            if not appointment.scheduledEnd:
+                appointment.scheduledEnd = datetime.now()
             db_session.commit()
             return True
         except Exception as e:

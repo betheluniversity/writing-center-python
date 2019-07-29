@@ -183,8 +183,20 @@ ul.list-group{
     color: black;
 }
 
+.fc .fc-row .fc-content-skeleton table, .fc .fc-row .fc-content-skeleton td, .fc .fc-row .fc-mirror-skeleton td {
+    border-color: #ddd !important;
+}
+
 .fc-unthemed td.fc-today {
     background: yellow !important;
+}
+
+.form-check-input {
+    margin-left: 0px !important;
+}
+
+.form-check-label {
+    margin-left: 20px;
 }
 
 .nav.margins {

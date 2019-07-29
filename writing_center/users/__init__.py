@@ -73,14 +73,13 @@ class UsersView(FlaskView):
         roles = self.uc.get_all_roles()
         existing_user = self.uc.get_user_by_username(username)
         if existing_user:  # User exists in system
-            if 1 == 0:
-                pass
-            # TODO ADD IN deletedAt attribute in DB
-            # if existing_user.deletedAt:  # Has been deactivated in the past
-        #         self.user.activate_existing_user(username)
-        #         message = "This user has been deactivated in the past, but now they are reactivated with their same roles."
-            else:  # Currently active
-                message = "This user already exists in the system and is activated."
+            if existing_user.deletedAt:  # Has been deactivated in the past
+                success = self.uc.activate_existing_user(existing_user.id)
+                if success:
+                    message = 'This user has been deactivated in the past, but now they are reactivated with their '\
+                              'same roles.'
+                else:
+                    message = 'Failed to reactivate the user.'
         return render_template('users/select_user_roles.html', **locals())
 
     @route('/create-user', methods=['POST'])
@@ -109,7 +108,7 @@ class UsersView(FlaskView):
 
     @route("/edit/<int:user_id>")
     def edit_user(self, user_id):
-        user = self.uc.get_user(user_id)
+        user = self.uc.get_user_by_id(user_id)
         roles = self.uc.get_all_roles()
         user_role_ids = self.uc.get_user_role_ids(user_id)
 
@@ -155,6 +154,10 @@ class UsersView(FlaskView):
     def save_user_ban(self):
         form = request.form
         username = form.get('username')
+        user = self.uc.get_user_by_username(username)
+        appointments = self.uc.get_future_user_appointments(user.id)
+        for appt in appointments:
+            self.uc.cancel_appointment(appt.id)
         if flask_session['USERNAME'] == username:
             self.wcc.set_alert('danger', 'Error! You Can\'t Ban Yourself!')
         else:
@@ -163,7 +166,7 @@ class UsersView(FlaskView):
 
     def act_as_user(self, user_id):
         if not flask_session['ADMIN-VIEWER']:
-            user_info = self.uc.get_user(user_id)
+            user_info = self.uc.get_user_by_id(user_id)
             flask_session['ADMIN-VIEWER'] = True
             # Saving old info to return to
             flask_session['ADMIN-USERNAME'] = flask_session['USERNAME']
