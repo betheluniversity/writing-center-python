@@ -30,8 +30,24 @@
                     <td>{{ 'Yes' if appt.multilingual else 'No' }}</td>
                     <td>{{ appt.courseCode }}</td>
                     <td>{{ 'Yes' if appt.noShow else 'No' }}</td>
-                    <td><input id="{{ appt.id }}" type="button" class="btn btn-primary" value="Info" data-toggle="modal"
-                               data-target="#info-modal" data-prof="{{ appt.profName }}"></td>
+                    <td><input id="{{ appt.id }}" type="button" class="more-info btn btn-primary" value="Info"
+                               data-toggle="modal" data-target="#info-modal"
+                               data-student="{{ '{0} {1}'.format(info['student'].firstName, info['student'].lastName) if info['student'] else 'None' }}"
+                               data-tutor="{{ '{0} {1}'.format(info['tutor'].firstName, info['tutor'].lastName) if info['tutor'] else 'None' }}"
+                               data-sched-start="{{ appt.scheduledStart.strftime("%m/%d/%y %I:%M %p") }}"
+                               data-sched-end="{{ appt.scheduledEnd.strftime("%m/%d/%y %I:%M %p") }}"
+                               data-actual-start="{{ appt.actualStart.strftime("%m/%d/%y %I:%M %p") if appt.actualStart else 'None' }}"
+                               data-actual-end="{{ appt.actualEnd.strftime("%m/%d/%y %I:%M %p") if appt.actualEnd else 'None' }}"
+                               data-drop-in="{{ 'Yes' if appt.dropIn else 'No' }}"
+                               data-multilingual="{{ 'Yes' if appt.multilingual else 'No' }}"
+                               data-no-show="{{ 'Yes' if appt.noShow else 'No' }}"
+                               data-prof="{{ appt.profName }}"
+                               data-prof-email="{{ appt.profEmail }}"
+                               data-course="{{ appt.courseCode }}"
+                               data-section="{{ appt.courseSection }}"
+                               data-assignment="{{ appt.assignment }}"
+                               data-notes="{{ appt.notes }}"
+                               data-suggestions="{{ appt.suggestions }}"></td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -46,10 +62,6 @@
                 searching: false,
                 paging: false,
                 pageLength: false,
-            });
-
-            $(".appt-btn").click(function(){
-               alert("Clicked");
             });
 
         });
@@ -76,35 +88,35 @@
                     </tr>
                     <tr>
                         <th>Tutor</th>
-                        <td>data</td>
+                        <td id="tutor"></td>
                     </tr>
                     <tr>
                         <th>Scheduled Start</th>
-                        <td>data</td>
+                        <td id="sched-start"></td>
                     </tr>
                     <tr>
                         <th>Scheduled End</th>
-                        <td>data</td>
+                        <td id="sched-end"></td>
                     </tr>
                     <tr>
                         <th>Actual Start</th>
-                        <td>data</td>
+                        <td id="actual-start"></td>
                     </tr>
                     <tr>
                         <th>Actual End</th>
-                        <td>data</td>
+                        <td id="actual-end"></td>
                     </tr>
                     <tr>
                         <th>Drop In</th>
-                        <td>data</td>
+                        <td id="drop-in"></td>
                     </tr>
                     <tr>
                         <th>Multilingual</th>
-                        <td>data</td>
+                        <td id="multilingual"></td>
                     </tr>
                     <tr>
                         <th>No Show</th>
-                        <td>data</td>
+                        <td id="no-show"></td>
                     </tr>
                     <tr>
                         <th>Professor</th>
@@ -112,27 +124,27 @@
                     </tr>
                     <tr>
                         <th>Professor Email</th>
-                        <td>data</td>
+                        <td id="prof-email"></td>
                     </tr>
                     <tr>
                         <th>Course Code</th>
-                        <td>data</td>
+                        <td id="course"></td>
                     </tr>
                     <tr>
                         <th>Course Section</th>
-                        <td>data</td>
+                        <td id="section"></td>
                     </tr>
                     <tr>
                         <th>Assignment</th>
-                        <td>data</td>
+                        <td id="assignment"></td>
                     </tr>
                     <tr>
                         <th>Notes</th>
-                        <td>data</td>
+                        <td id="notes"></td>
                     </tr>
                     <tr>
                         <th>Suggestions</th>
-                        <td>data</td>
+                        <td id="suggestions"></td>
                     </tr>
                 </table>
             </div>
@@ -143,19 +155,23 @@
     </div>
 </div>
 <script type="text/javascript">
-    var modelTable = $('#modal-table').DataTable({
-        "aaSorting": [],
-        "aoColumns": [
-        ],
-        searching: false,
-        paging: false,
-        pageLength: false,
-    });
-
     $('#info-modal').on('show.bs.modal', function(event){
         var button = $(event.relatedTarget);
-        var prof = button.data('prof');
-        var modal = $(this);
-        modal.find('#prof').html(prof);
+        $(this).find('#student').text(button.data('student'));
+        $(this).find('#tutor').text(button.data('tutor'));
+        $(this).find('#sched-start').text(button.data('sched-start'));
+        $(this).find('#sched-end').text(button.data('sched-end'));
+        $(this).find('#actual-start').text(button.data('actual-start'));
+        $(this).find('#actual-end').text(button.data('actual-end'));
+        $(this).find('#drop-in').text(button.data('drop-in'));
+        $(this).find('#multilingual').text(button.data('multilingual'));
+        $(this).find('#no-show').text(button.data('no-show'));
+        $(this).find('#prof').text(button.data('prof'));
+        $(this).find('#prof-email').text(button.data('prof-email'));
+        $(this).find('#course').text(button.data('course'));
+        $(this).find('#section').text(button.data('section'));
+        $(this).find('#assignment').text(button.data('assignment'));
+        $(this).find('#notes').text(button.data('notes'));
+        $(this).find('#suggestions').text(button.data('suggestions'));
     });
 </script>
