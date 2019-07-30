@@ -83,19 +83,22 @@ class MessageCenterController:
     def close_session_student(self, appointment_id):
         appointment = self.get_appointment_info(appointment_id)
         student = self.get_user_by_id(appointment.student_id)
+        tutor = self.get_user_by_id(appointment.tutor_id)
 
-        appt_info = {'tutor': self.get_user_by_id(appointment.tutor_id),
+        appt_info = {'tutor': tutor.firstName + tutor.lastName,
                      'actual_start': appointment.actualStart,
                      'actual_end': appointment.actualEnd,
                      'assignment': appointment.assignment,
                      'notes': appointment.notes,
                      'suggestions': appointment.suggestions}
 
-        # data for tmeplate (tutor, actual start, actual end, assignment, notes, suggestions
-        # data for send message function (subject, body, recipients, cc, bcc)
+        subject = 'Appointment with {0} {1}'.format(tutor.firstName, tutor.lastName)
+
+        recipients = student.email
+        # TODO: Send this to send message function
 
     @route('/close-tutor', methods=['POST'])
-    def close_session_tutor(self, appointment_id):
+    def close_session_tutor(self, appointment_id, to_prof):
         appointment = self.get_appointment_info(appointment_id)
         student = self.get_user_by_id(appointment.student_id)
 
@@ -117,10 +120,12 @@ class MessageCenterController:
                      'actual_end': appointment.actualEnd,
                      'assignment': appointment.assignment}
 
-        subject = '{{{0}}} {1} ({2})'.format(student.FirstName, student.LastName,
-                                             appointment.date.strftime('%m/%d/%Y'))  # TODO figure out separating date from appoitnment time
+        subject = 'Appointment with {0} {1}'.format(student.firstName, student.lastName)
 
         recipients = tutor.email
+
+        if to_prof:
+            cc = appointment.profEmail
         # todo: get the data over to the send message function (subject, body, recipients, cc, bcc)
         # This email template should have logic to not include professor if empty
 
