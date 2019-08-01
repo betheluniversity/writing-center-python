@@ -3,7 +3,6 @@ from flask import render_template, request, redirect, url_for
 from flask_classy import FlaskView, route
 
 # Local
-from writing_center import app
 from writing_center.message_center.message_center_controller import MessageCenterController
 
 
@@ -29,3 +28,13 @@ class MessageCenterView(FlaskView):
         # recipients = self.base.get_group_emails(groups)
         # need to check that all the stuff is actually filled in, if its not, we need to fill it with an empty value
         return self.base.send_message(data['subject'], data['message'], data['recipients'], data['cc'], data['bcc'])
+
+    @route('/close-student', methods=['POST'])
+    def close_session_student(self):
+        data = request.form
+        return self.base.close_session_student(data['appointment_id'])
+
+    @route('/close-tutor', methods=['POST'])
+    def close_session_tutor(self):
+        data = request.form
+        return self.base.close_session_tutor(data['appointment_id'], data['to_prof'])

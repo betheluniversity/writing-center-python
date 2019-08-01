@@ -79,7 +79,6 @@ class MessageCenterController:
 
         return recipients
 
-    @route('/close-student', methods=['POST'])
     def close_session_student(self, appointment_id):
         appointment = self.get_appointment_info(appointment_id)
         student = self.get_user_by_id(appointment.student_id)
@@ -98,7 +97,6 @@ class MessageCenterController:
 
         self.send_message(subject, render_template('emails/session_email_student.html', **locals()), recipients, cc='', bcc='')
 
-    @route('/close-tutor', methods=['POST'])
     def close_session_tutor(self, appointment_id, to_prof):
         appointment = self.get_appointment_info(appointment_id)
         student = self.get_user_by_id(appointment.student_id)
