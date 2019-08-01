@@ -95,7 +95,8 @@ class MessageCenterController:
         subject = 'Appointment with {0} {1}'.format(tutor.firstName, tutor.lastName)
 
         recipients = student.email
-        # TODO: Send this to send message function
+
+        self.send_message(subject, render_template('emails/session_email_student.html', **locals()), recipients, cc='', bcc='')
 
     @route('/close-tutor', methods=['POST'])
     def close_session_tutor(self, appointment_id, to_prof):
@@ -126,8 +127,9 @@ class MessageCenterController:
 
         if to_prof:
             cc = appointment.profEmail
-        # todo: get the data over to the send message function (subject, body, recipients, cc, bcc)
-        # This email template should have logic to not include professor if empty
+            self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, cc, bcc='')
+        else:
+            self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, cc='', bcc='')
 
     @route('/shift-student', methods=['POST'])
     def shift_signup_student(self):
