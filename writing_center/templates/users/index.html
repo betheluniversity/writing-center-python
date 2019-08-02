@@ -1,9 +1,23 @@
 {% extends 'users/base.html' %}
 
 {% block body_content %}
-    <div class="col-md-12">
+    <div class="row">
+        <div class="col-md-6">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">On the <strong>Add a User</strong> page you can add a new user to the
+                    system and choose their roles as long as they exist in Banner.</li>
+                <li class="list-group-item">On the <strong>Manage Student Bans</strong> page you can ban or unban
+                    students.</li>
+                <li class="list-group-item">On the <strong>View All Users</strong> page you can see a list of all
+                    currently active users in the system, edit their names and roles, and act as them to see what they
+                    see on the site.</li>
+                <li class="list-group-item">You can also use the navigation at the top of the page, just below the blue
+                    banner. Those links will highlight when you are on the associated page.</li>
+            </ul>
+        </div>
+        <div class="col-md-6">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <a class="dashboard-link" href="{{ url_for('UsersView:add_user') }}">
                         <div class="card dashboard-card text-center">
                             <div class="card-body">
@@ -12,7 +26,9 @@
                         </div>
                     </a>
                 </div>
-                <div class="col-md-6">
+            </div>
+            <div class="row">
+                <div class="col-md-12">
                     <a class="dashboard-link" href="{{ url_for('UsersView:manage_bans') }}">
                         <div class="card dashboard-card text-center">
                             <div class="card-body">
@@ -34,4 +50,5 @@
                 </div>
             </div>
         </div>
+    </div>
 {% endblock %}
