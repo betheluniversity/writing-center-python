@@ -10,9 +10,6 @@ class StatisticsView(FlaskView):
     def __init__(self):
         self.sc = StatisticsController()
 
-    def index(self):
-        return render_template('statistics/index.html', **locals())
-
     @route('/center-manager/statistics/')
     def stats(self):
         # Use the default start and end dates to get the first tables of data

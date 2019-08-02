@@ -1,8 +1,12 @@
 {% extends 'writing_center_base.html' %}
 
 {% block subnav %}
-    <a id="stats" class="nav-link {{ 'active' if 'center-manager/statistics' in request.path else 'disabled'}}"
-       href="{{ url_for('StatisticsView:stats') }}">Statistics</a>
-    <a id="hours-worked" class="nav-link {{ 'active' if 'hours' in request.path else 'disabled'}}"
-       href="{{ url_for('StatisticsView:hours_worked') }}">View Hours Worked</a>
+    {% if 'Administrator' in session['USER-ROLES'] or 'Observer' in session['USER-ROLES'] %}
+        <a id="stats" class="nav-link {{ 'active' if 'center-manager/statistics' in request.path else 'disabled'}}"
+           href="{{ url_for('StatisticsView:stats') }}">Statistics</a>
+    {% endif %}
+    {% if 'Administrator' in session['USER-ROLES'] or 'Tutor' in session['USER-ROLES'] %}
+        <a id="hours-worked" class="nav-link {{ 'active' if 'hours' in request.path else 'disabled'}}"
+           href="{{ url_for('StatisticsView:hours_worked') }}">View Hours Worked</a>
+    {% endif %}
 {% endblock %}

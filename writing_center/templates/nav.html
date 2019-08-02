@@ -49,7 +49,11 @@
 
             {% if 'Administrator' in session['USER-ROLES'] or 'Observer' in session['USER-ROLES'] %}
                 <li class="nav-item">
-                    <a id="stats" class="nav-link button {{ 'nav-bar-active' if 'StatisticsView' in request.url_rule.endpoint }}" href="{{ url_for('StatisticsView:index') }}">Statistics</a>
+                    <a id="stats" class="nav-link button {{ 'nav-bar-active' if 'StatisticsView' in request.url_rule.endpoint }}" href="{{ url_for('StatisticsView:stats') }}">Statistics</a>
+                </li>
+            {% elif 'Tutor' in session['USER-ROLES'] %}
+                <li class="nav-item">
+                    <a id="hours" class="nav-link button {{ 'nav-bar-active' if 'StatisticsView' in request.url_rule.endpoint }}" href="{{ url_for('StatisticsView:hours_worked') }}">Hours</a>
                 </li>
             {% endif %}
 
