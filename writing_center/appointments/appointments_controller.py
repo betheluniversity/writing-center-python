@@ -59,7 +59,6 @@ class AppointmentsController:
             .all()
 
     def schedule_appointment(self, appt_id, course, assignment):
-            print(course)
             appointment = db_session.query(AppointmentsTable)\
                 .filter(AppointmentsTable.id == appt_id)\
                 .one_or_none()
@@ -235,7 +234,6 @@ class AppointmentsController:
             prof_name = str(prof).split('\'')
             prof_list.append(prof_name[1])
         return prof_list
-
 
     def get_courses(self):
         courses = db_session.query(AppointmentsTable.courseCode)\
