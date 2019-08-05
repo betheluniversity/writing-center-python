@@ -123,12 +123,14 @@
         $('#courses option:selected').each(function () {
             course = this.id;
         });
+        let assignment = $('#assignment').val();
         $.ajax({
             type: "POST",
             url: "{{ url_for('AppointmentsView:schedule_appointment') }}",
             data: JSON.stringify({
                 'appt_id': appt_id,
-                'course': course
+                'course': course,
+                'assignment': assignment
             }),
             contentType: 'application/json;charset=UTF-8',
             success: function (response) {

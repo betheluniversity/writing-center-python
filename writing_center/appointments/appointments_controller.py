@@ -58,24 +58,14 @@ class AppointmentsController:
             .filter(AppointmentsTable.student_id == user.id)\
             .all()
 
-    def get_years(self):
-        years = [2014]
-        year = 2015
-        current_year = datetime.now()
-        current_year = int(current_year.strftime('%Y'))
-        while year <= current_year:
-            years.append(year)
-            year += 1
-        return years
-
     def schedule_appointment(self, appt_id, course, assignment):
-            print(course)
             appointment = db_session.query(AppointmentsTable)\
                 .filter(AppointmentsTable.id == appt_id)\
                 .one_or_none()
             # Updates the student username
             user = self.get_user_by_username(flask_session['USERNAME'])
             appointment.student_id = user.id
+            appointment.assignment = assignment
             if course:
                 appointment.courseCode = course['course_code']
                 appointment.courseSection = course['section']
@@ -244,7 +234,6 @@ class AppointmentsController:
             prof_name = str(prof).split('\'')
             prof_list.append(prof_name[1])
         return prof_list
-
 
     def get_courses(self):
         courses = db_session.query(AppointmentsTable.courseCode)\
