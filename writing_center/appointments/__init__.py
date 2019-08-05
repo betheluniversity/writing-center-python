@@ -178,7 +178,7 @@ class AppointmentsView(FlaskView):
             appointments.append({
                 'id': appointment.id,
                 'studentId': appointment.student_id,
-                'tutorId': appointment.self.ac.get_user_by_id(appointment.tutor_id).username,
+                'tutorUsername': self.ac.get_user_by_id(appointment.tutor_id).username,
                 'startTime': start_time,
                 'endTime': end_time,
                 'multilingual': appointment.multilingual,
