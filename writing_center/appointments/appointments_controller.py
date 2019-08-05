@@ -66,6 +66,7 @@ class AppointmentsController:
             # Updates the student username
             user = self.get_user_by_username(flask_session['USERNAME'])
             appointment.student_id = user.id
+            appointment.assignment = assignment
             if course:
                 appointment.courseCode = course['course_code']
                 appointment.courseSection = course['section']
