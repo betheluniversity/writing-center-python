@@ -58,16 +58,6 @@ class AppointmentsController:
             .filter(AppointmentsTable.student_id == user.id)\
             .all()
 
-    def get_years(self):
-        years = [2014]
-        year = 2015
-        current_year = datetime.now()
-        current_year = int(current_year.strftime('%Y'))
-        while year <= current_year:
-            years.append(year)
-            year += 1
-        return years
-
     def schedule_appointment(self, appt_id, course, assignment):
             print(course)
             appointment = db_session.query(AppointmentsTable)\
