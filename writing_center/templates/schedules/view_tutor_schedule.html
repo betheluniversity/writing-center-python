@@ -9,16 +9,18 @@
     <hr>
     <div class="row">
         <div class="col-md-3">
-            <div id="tutors">
-                <h3>Tutors</h3>
-                <select id="tutors-schedule" class="chosen-container" size="7" multiple="multiple" onchange="tutorsChanged()">
-                    <option id="view-all" class="select-hr" value="View All">View All Schedules</option>
-                    {% for tutor in tutors %}
-                        <option id="{{ tutor.id }}" value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
-                    {% endfor %}
-                </select>
-                <hr>
-            </div>
+            {% if 'Administrator' in session['USER-ROLES'] %}
+                <div id="tutors">
+                    <h3>Tutors</h3>
+                    <select id="tutors-schedule" class="chosen-container" size="7" multiple="multiple" onchange="tutorsChanged()">
+                        <option id="view-all" class="select-hr" value="View All">View All Schedules</option>
+                        {% for tutor in tutors %}
+                            <option id="{{ tutor.id }}" value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
+                        {% endfor %}
+                    </select>
+                    <hr>
+                </div>
+            {% endif %}
             <h3>Calendar Key</h3>
             <table class="table">
                 <thead>
@@ -53,41 +55,43 @@
             <div id="calendar"></div>
         </div>
     </div>
-    <hr>
-    <div class="jumbotron">
-        <h1><b>Delete Tutor Shifts</b></h1>
-        <p>Delete all appointments for the selected tutor in the given date range.</p>
-    </div>
-    <div class="form-row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="start-date">Start Date</label>
-                <input class="form-control datepicker" id="start-date" type="text" readonly/>
-                <div id="start-container"></div>
+    {% if 'Administrator' in session['USER-ROLES'] %}
+        <hr>
+        <div class="jumbotron">
+            <h1><b>Delete Tutor Shifts</b></h1>
+            <p>Delete all appointments for the selected tutor in the given date range.</p>
+        </div>
+        <div class="form-row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="start-date">Start Date</label>
+                    <input class="form-control datepicker" id="start-date" type="text" readonly/>
+                    <div id="start-container"></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="end-date">End Date</label>
+                    <input class="form-control datepicker" id="end-date" type="text" readonly/>
+                    <div id="end-container"></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <select id="tutors-shifts" class="chosen-container" size="7" multiple="multiple">
+                        <option id="view-all" class="select-hr" value="View All" selected="selected">Select All Tutors</option>
+                        {% for tutor in tutors %}
+                            <option id="{{ tutor.id }}" value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="end-date">End Date</label>
-                <input class="form-control datepicker" id="end-date" type="text" readonly/>
-                <div id="end-container"></div>
-            </div>
+        <div id="delete-confirm" class="form-row">
+            <input type="button" id="delete-shifts" class="btn btn-primary btn-danger" value="Delete Shifts" onclick="confirmDelete()">
         </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <select id="tutors-shifts" class="chosen-container" size="7" multiple="multiple">
-                    <option id="view-all" class="select-hr" value="View All" selected="selected">Select All Tutors</option>
-                    {% for tutor in tutors %}
-                        <option id="{{ tutor.id }}" value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-    </div>
-    <div id="delete-confirm" class="form-row">
-        <input type="button" id="delete-shifts" class="btn btn-primary btn-danger" value="Delete Shifts" onclick="confirmDelete()">
-    </div>
-    <div id="sub-list-results" class="form-row"></div>
+        <div id="sub-list-results" class="form-row"></div>
+    {% endif %}
     <script>
         $(document).ready(function () {
             $.ajax({
