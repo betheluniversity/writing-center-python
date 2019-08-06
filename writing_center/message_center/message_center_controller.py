@@ -121,6 +121,18 @@ class MessageCenterController:
 
         self.send_message(subject, render_template('sessions/email.html', **locals()), recipients, None, True)
 
+    def appointment_signup_student(self, appointment_id):
+        # get the appointment via the appointment id
+        # use the appointment to get the date and start time
+        # student specific information: tutor name
+        pass
+
+    def appointment_signup_tutor(self, appointment_id):
+        # get appoitnment via appointment id
+        # use the appointment to get the date and start time
+        # tutor specific information: student name, assignment
+        pass
+
     def send_message(self, subject, body, recipients, cc, bcc, html=False):
         if app.config['ENVIRON'] != 'prod':
             print('Would have sent email to: {0} cc: {1}, bcc: {2}'.format(str(recipients), str(cc), str(bcc)))
