@@ -30,11 +30,11 @@ class MessageCenterView(FlaskView):
         return self.base.send_message(data['subject'], data['message'], data['recipients'], data['cc'], data['bcc'])
 
     @route('/close-student', methods=['POST'])
-    def close_session_student(self):
+    def close_session_student(self):  # this needs to be connected to the appointment end page
         data = request.form
         return self.base.close_session_student(data['appointment_id'])
 
     @route('/close-tutor', methods=['POST'])
-    def close_session_tutor(self):
+    def close_session_tutor(self):  # this needs to be connected to the appointment end page
         data = request.form
         return self.base.close_session_tutor(data['appointment_id'], data['to_prof'])
