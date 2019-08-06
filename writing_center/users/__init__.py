@@ -144,7 +144,7 @@ class UsersView(FlaskView):
         form = request.form
         first_name = form.get('firstName')
         last_name = form.get('lastName')
-        user = self.uc.get_user_by_name(first_name, last_name)
+        users = self.uc.get_users_by_name(first_name, last_name)
         return render_template('users/user_ban_search_results.html', **locals())
 
     @route('/ban/user/', methods=['POST'])

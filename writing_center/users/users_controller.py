@@ -23,11 +23,11 @@ class UsersController:
             .filter(UserTable.username == username)\
             .one_or_none()
 
-    def get_user_by_name(self, firstName, lastName):
+    def get_users_by_name(self, firstName, lastName):
         return db_session.query(UserTable)\
-            .filter(UserTable.firstName == firstName)\
-            .filter(UserTable.lastName == lastName)\
-            .one_or_none()
+            .filter(UserTable.firstName.like('%{0}%'.format(firstName)))\
+            .filter(UserTable.lastName.like('%{0}%'.format(lastName)))\
+            .all()
 
     def create_user(self, first_name, last_name, username, sub_email_pref, stu_email_pref):
         new_user = UserTable(username=username, firstName=first_name, lastName=last_name,
