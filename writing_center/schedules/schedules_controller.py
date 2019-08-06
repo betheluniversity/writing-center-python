@@ -76,9 +76,9 @@ class SchedulesController:
                         start_ts = start_ts.strip()
                         # Formats the string into a datetime object
                         try:
-                            start_ts = datetime.strptime(start_ts, '%H %p')
+                            start_ts = datetime.strptime(start_ts, '%I %p')
                         except:
-                            start_ts = datetime.strptime(start_ts, '%H:%M %p')
+                            start_ts = datetime.strptime(start_ts, '%I:%M %p')
                         end_ts = time_slot[1]
                         # Formats the meridiems to work with datetime
                         end_ts = end_ts.replace('a.m.', "AM")
@@ -87,9 +87,9 @@ class SchedulesController:
                         end_ts = end_ts.strip()
                         # Formats the string into a datetime object
                         try:
-                            end_ts = datetime.strptime(end_ts, '%H %p')
+                            end_ts = datetime.strptime(end_ts, '%I %p')
                         except:
-                            end_ts = datetime.strptime(end_ts, '%H:%M %p')
+                            end_ts = datetime.strptime(end_ts, '%I:%M %p')
                         appt_date = self.get_first_appointment_date(day, start_date)
                         while appt_date <= end_date:  # Loop through until our session date is after the end date of the term
                             # print('ot')
