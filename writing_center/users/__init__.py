@@ -17,9 +17,6 @@ class UsersView(FlaskView):
         self.wsapi = WSAPIController()
         self.wcc = WritingCenterController()
 
-    def index(self):
-        return render_template('users/index.html', **locals())
-
     @route('/center-manager/manage-bans/')
     def manage_bans(self):
         users = self.uc.get_banned_users()

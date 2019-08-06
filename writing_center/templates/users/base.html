@@ -1,10 +1,10 @@
 {% extends 'writing_center_base.html' %}
 
 {% block subnav %}
-            <a id="stats" class="nav-link {{ 'active' if 'add-user' in request.path else 'disabled'}}"
-               href="{{ url_for('UsersView:add_user') }}">Add a User</a>
-            <a id="stats-observer" class="nav-link {{ 'active' if 'manage-bans' in request.path else 'disabled'}}"
-               href="{{ url_for('UsersView:manage_bans') }}">Manage Student Bans</a>
-            <a id="view-reports" class="nav-link {{ 'active' if 'view-users' in request.path else 'disabled'}}"
-               href="{{ url_for('UsersView:view_all_users') }}">View All Users</a>
+    <a id="view-reports" class="nav-link {{ 'active' if 'view-users' in request.path else 'disabled'}}"
+       href="{{ url_for('UsersView:view_all_users') }}">Users</a>
+    <a id="stats" class="nav-link {{ 'active' if 'add-user' in request.path else 'disabled'}}"
+       href="{{ url_for('UsersView:add_user') }}">Add User</a>
+    <a id="stats-observer" class="nav-link {{ 'active' if 'manage-bans' in request.path else 'disabled'}}"
+       href="{{ url_for('UsersView:manage_bans') }}">Bans</a>
 {% endblock %}
