@@ -108,7 +108,7 @@ class SchedulesView(FlaskView):
                 appointments.append({
                     'id': appointment.id,
                     'studentId': appointment.student_id,
-                    'tutorId': appointment.tutor_id,
+                    'tutorUsername': self.sc.get_user_by_id(appointment.tutor_id).username,
                     'startTime': start_time,
                     'endTime': end_time,
                     'multilingual': appointment.multilingual,
@@ -200,6 +200,7 @@ class SchedulesView(FlaskView):
 
     @route('get-appointments', methods=['GET'])
     def get_users_appointments(self):
+        print('got')
         appts = self.sc.get_all_user_appointments(flask_session['USERNAME'])
         appointments = []
         for appointment in appts:
