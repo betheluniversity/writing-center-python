@@ -67,9 +67,6 @@ class SchedulesView(FlaskView):
         # Formats the date strings into date objects
         start_date = datetime.strptime(start_date, '%a %b %d %Y').date()
         end_date = datetime.strptime(end_date, '%a %b %d %Y').date()
-        if start_date == end_date:
-            self.wcc.set_alert('danger', 'No Appointments Made! Start Date and End Date must be different days!')
-            return redirect(url_for('SchedulesView:create_schedule'))
         multilingual = str(json.loads(request.data).get('multilingual'))
         drop_in = str(json.loads(request.data).get('dropIn'))
         tutors = json.loads(request.data).get('tutors')
@@ -81,7 +78,8 @@ class SchedulesView(FlaskView):
             for tutor in self.sc.get_tutors():
                 tutors.append(tutor.id)
         self.sc.create_tutor_shifts(start_date, end_date, multilingual, drop_in, tutors, days, time_slots)
-        return redirect(url_for('SchedulesView:create_schedule'))
+        self.wcc.set_alert('success', 'Successfully added the tutor(s) to the time slot(s).')
+        return 'success'
 
     @route('/show-schedule', methods=['POST'])
     def show_tutor_schedule(self):
