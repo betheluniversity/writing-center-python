@@ -74,6 +74,9 @@ class SchedulesView(FlaskView):
         start_date = str(json.loads(request.data).get('startDate'))
         end_date = str(json.loads(request.data).get('endDate'))
         # Formats the date strings into date objects
+        if not start_date or not end_date:
+            self.wcc.set_alert('danger', 'You must set a start date and an end date!')
+            return 'danger'
         start_date = datetime.strptime(start_date, '%a %b %d %Y').date()
         end_date = datetime.strptime(end_date, '%a %b %d %Y').date()
         multilingual = str(json.loads(request.data).get('multilingual'))
