@@ -59,7 +59,7 @@
 
             {% if 'Administrator' in session['USER-ROLES'] %}
                 <li class="nav-item">
-                    <a id="users" class="nav-link button {{ 'nav-bar-active' if 'UsersView' in request.url_rule.endpoint }}" href="{{ url_for('UsersView:index') }}">Users</a>
+                    <a id="users" class="nav-link button {{ 'nav-bar-active' if 'UsersView' in request.url_rule.endpoint }}" href="{{ url_for('UsersView:view_all_users') }}">Users</a>
                 </li>
 
                 <li class="nav-item">
