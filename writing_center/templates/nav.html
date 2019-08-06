@@ -33,7 +33,7 @@
                 <a class="nav-link dropdown-toggle {{ 'nav-bar-active' if 'SchedulesView' in request.url_rule.endpoint }}" id="navbarDropdown" role="button" data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false">Schedules</a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="{{ url_for('SchedulesView:create_schedule') }}">Create Schedule</a>
+                    <a class="dropdown-item" href="{{ url_for('SchedulesView:create_time_slot') }}">Create Time Slot</a>
                     <a class="dropdown-item" href="{{ url_for('SchedulesView:manage_tutor_schedules') }}">Manage Tutor Schedules</a>
                     <a class="dropdown-item" href="{{ url_for('SchedulesView:view_tutor_schedules') }}">View Schedules</a>
                 </div>
