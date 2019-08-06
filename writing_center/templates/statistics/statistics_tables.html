@@ -168,16 +168,8 @@
                 "bInfo": false
             });
 
-            let table2 = $('#no-shows').DataTable( {
-                "ordering": false,
-                "bPaginate": false,
-                "bLengthChange": false,
-                "bFilter": false,
-                "bInfo": false
-            });
-
             let table3 = $('#busiest-day').DataTable( {
-                "order": [],
+                "aaSorting": [[1, 'desc']],
                 "bPaginate": false,
                 "bLengthChange": false,
                 "bFilter": false,
@@ -185,7 +177,7 @@
             });
 
             let table4 = $('#busiest-tod').DataTable( {
-                "order": [],
+                "aaSorting": [[1, 'desc']],
                 "bPaginate": false,
                 "bLengthChange": false,
                 "bFilter": false,
@@ -193,7 +185,7 @@
             });
 
             let table5 = $('#busiest-week').DataTable( {
-                "order": [],
+                "aaSorting": [[1, 'desc']],
                 "bPaginate": false,
                 "bLengthChange": false,
                 "bFilter": false,
@@ -201,6 +193,7 @@
             });
 
             let table6 = $('#busiest-tutor').DataTable( {
+                "aaSorting": [[1, 'desc']],
                 "aoColumns": [
                     { "orderSequence": [ "asc", "desc" ] },
                     { "orderSequence": [ "asc", "desc" ] },
@@ -212,6 +205,7 @@
             });
 
             let table7 = $('#courses').DataTable( {
+                "aaSorting": [[4, 'desc']],
                 "aoColumns": [
                     { "orderSequence": [ "asc", "desc" ] },
                     { "orderSequence": [ "asc", "desc" ] },
