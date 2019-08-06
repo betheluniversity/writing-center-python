@@ -17,10 +17,10 @@ class SchedulesView(FlaskView):
         self.wcc = WritingCenterController()
 
     @route("/create-schedule")
-    def create_schedule(self):
+    def create_time_slot(self):
         schedules = self.sc.get_schedules()
         tutors = self.sc.get_tutors()
-        return render_template("schedules/create_schedule.html", **locals())
+        return render_template("schedules/create_time_slot.html", **locals())
 
     @route('/manage-tutor-schedules')
     def manage_tutor_schedules(self):
@@ -36,7 +36,7 @@ class SchedulesView(FlaskView):
         return render_template('schedules/view_tutor_schedule.html', **locals())
 
     @route('/create', methods=['POST'])
-    def create_new_schedule(self):
+    def create_new_time_slot(self):
         now = (datetime.now())
 
         start_time = str(json.loads(request.data).get('startTime'))
@@ -48,17 +48,26 @@ class SchedulesView(FlaskView):
         end_time = end_time.replace(year=int(now.strftime('%Y')), month=int(now.strftime('%m')), day=int(now.strftime('%d')))
 
         is_active = str(json.loads(request.data).get('isActive'))
-        if is_active == 'Active':
-            is_active = 'Yes'
-        else:
-            is_active = 'No'
-        created = self.sc.create_schedule(start_time, end_time, is_active)
+        created = self.sc.create_time_slot(start_time, end_time, is_active)
 
         if created:
             self.wcc.set_alert('success', 'Schedule Created Successfully!')
         else:
             self.wcc.set_alert('danger', 'Schedule already exists!')
         return self.sc.get_schedules()
+
+    @route('deactivate-time-slots', methods=['POST'])
+    def deactivate_time_slots(self):
+        form = request.form
+        json_schedule_ids = form.get('jsonScheduleIds')
+        schedule_ids = json.loads(json_schedule_ids)
+        try:
+            for schedule_id in schedule_ids:
+                self.sc.deactivate_time_slot(schedule_id)
+            self.wcc.set_alert('success', 'Time slot(s) deactivated successfully!')
+        except Exception as error:
+            self.wcc.set_alert('danger', 'Failed to deactivate time slot(s)')
+        return 'done'  # Return doesn't matter: success or failure take you to the same page. Only the alert changes.
 
     @route('/add-tutors-to-shifts', methods=['POST'])
     def add_tutors_to_shifts(self):
