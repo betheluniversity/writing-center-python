@@ -1,3 +1,7 @@
+a.btn-danger{
+    color: white !important;
+}
+
 a.dashboard-link{
     color: black;
     text-decoration: none;
@@ -36,6 +40,10 @@ body {
     line-height: 1.5;
     position: relative;
     cursor: auto;
+}
+
+button.cleanse{
+    margin-bottom: 10px;
 }
 
 div.centered {
