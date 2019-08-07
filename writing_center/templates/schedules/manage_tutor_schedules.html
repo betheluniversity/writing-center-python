@@ -14,14 +14,14 @@
             <div class="col-md-3">
                 <div class="form-group">
                     <label for="start-date">Start Date</label>
-                    <input class="form-control datepicker" id="start-date" type="text" readonly/>
+                    <input class="form-control datepicker" id="start-date-shifts" type="text" readonly/>
                     <div id="start-container"></div>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="form-group">
                     <label for="end-date">End Date</label>
-                    <input class="form-control datepicker" id="end-date" type="text" readonly/>
+                    <input class="form-control datepicker" id="end-date-shifts" type="text" readonly/>
                     <div id="end-container"></div>
                 </div>
             </div>
@@ -47,8 +47,8 @@
         <div class="form-row">
             <div class="col-md-4">
                 <div class="form-group">
-                    <label for="tutors">Select Tutors</label>
-                    <select class="form-control" id="tutors" multiple="multiple" required="required">
+                    <label for="tutors-shifts">Select Tutors</label>
+                    <select class="form-control" id="tutors-shifts" multiple="multiple" required="required">
                         <option id="select-all" class="select-hr" value="Select All Tutors">Select All Tutors</option>
                         {% for tutor in tutors %}
                             <option id="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
@@ -96,7 +96,7 @@
     </div>
     <div id="results"></div>
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-lg-4">
             <div id="tutors">
                 <h3>Tutors</h3>
                 <select id="tutors-schedule" class="chosen-container" size="7" multiple="multiple" onchange="tutorsChanged()">
@@ -107,6 +107,57 @@
                 </select>
                 <hr>
             </div>
+
+
+
+            <p>
+                <button class="btn btn-primary darkblue collapsible" type="button" data-toggle="collapse" data-target="#collapsible-delete" aria-expanded="false" aria-controls="collapsible-delete">
+                    Delete Appointments
+                </button>
+            </p>
+            <div class="collapse" id="collapsible-delete">
+                <div class="delete-card card card-body">
+
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="start-date">Start Date</label>
+                                <input class="form-control datepicker" id="start-date-delete" type="text" readonly/>
+                                <div id="start-container"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="end-date">End Date</label>
+                                <input class="form-control datepicker" id="end-date-delete" type="text" readonly/>
+                                <div id="end-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <select id="tutors-delete" class="chosen-container" size="7" multiple="multiple">
+                                    <option id="view-all" class="select-hr" value="View All" selected="selected">Select All Tutors</option>
+                                    {% for tutor in tutors %}
+                                        <option id="{{ tutor.id }}" value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div id="delete-confirm" class="form-row">
+                            <input type="button" id="delete-shifts" class="btn btn-primary btn-danger" value="Delete Shifts" onclick="confirmDelete()">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+
+
+            <hr>
             <h3>Calendar Key</h3>
             <table class="table">
                 <thead>
@@ -137,7 +188,9 @@
         <div id="spinner" class="spinner" style="display: none;margin-top: -300px;">
             <img id="img-spinner" class="spinner-img" src="https://cdn1.bethel.edu/images/load.gif" alt="Loading"/>
         </div>
-        <div class="col-md-9">
+        <div class="col-lg-8">
+            <br>
+            <div id="sub-list-results"></div>
             <div id="calendar"></div>
         </div>
     </div>
@@ -145,7 +198,7 @@
     <script>
         $(document).ready(function () {
             $('.datepicker').each(function () {
-                var current_element = $(this);
+                let current_element = $(this);
                 let maxDate = new Date();
                 let dd = maxDate.getDate();
                 let mm = maxDate.getMonth() + 1;
@@ -158,30 +211,59 @@
                   mm = '0' + mm;
                 }
                 maxDate = yyyy + '-' + mm + '-' + dd;
-                var starting_values = {
-                    field: this,
-                    format: 'MM DD YYYY',
-                    minDate: new Date('2010-01-01'),
-                    maxDate: new Date(maxDate),
-                    yearRange: [2010, yyyy],
-                    disableDayFn: function (date) {
-                        var start_populated = $("#start-date").val();
-                        var end_populated = $("#end-date").val();
-                        if (start_populated == "" && end_populated == "") {
-                            return null;
-                        } else if (start_populated != "" && current_element.attr('id') == 'end-date') {
-                            if (new Date(start_populated) >= date) {
-                                return date;
-                            }
-                        } else if (end_populated != "" && current_element.attr('id') == 'start-date') {
-                            if (new Date(end_populated) <= date) {
-                                return date;
+                let starting_values = {}
+                if (this.id === "start-date-shifts" || this.id === "end-date-shifts") {
+                    starting_values = {
+                        field: this,
+                        format: 'MM DD YYYY',
+                        minDate: new Date('2010-01-01'),
+                        maxDate: new Date(maxDate),
+
+                        yearRange: [2010, yyyy],
+                        disableDayFn: function (date) {
+                            let start_populated = $("#start-date-shifts").val();
+                            let end_populated = $("#end-date-shifts").val();
+                            if (start_populated == "" && end_populated == "") {
+                                return null;
+                            } else if (start_populated != "" && current_element.attr('id') == 'end-date-shifts') {
+                                if (new Date(start_populated) >= date) {
+                                    return date;
+                                }
+                            } else if (end_populated != "" && current_element.attr('id') == 'start-date-shifts') {
+                                if (new Date(end_populated) <= date) {
+                                    return date;
+                                }
                             }
                         }
-                    }
-                };
-
-                var picker = new Pikaday(starting_values);
+                    };
+                } else {
+                    starting_values = {
+                        field: this,
+                        format: 'MM DD YYYY',
+                        minDate: new Date('2010-01-01'),
+                        maxDate: new Date(maxDate),
+                        yearRange: [2010, yyyy],
+                        disableDayFn: function (date) {
+                            let start_populated = $("#start-date-delete").val();
+                            let end_populated = $("#end-date-delete").val();
+                            if (start_populated == "") {
+                                return null;
+                            } else if (current_element.attr('id') == 'start-date-delete') {
+                                if (new Date(end_populated) > date) {
+                                    return date;
+                                }
+                            } else if (current_element.attr('id') == 'end-date-delete') {
+                                if (new Date(end_populated) > date) {
+                                    return date;
+                                }
+                            }
+                        }
+                    };
+                    let timeSetting = ({{ time_setting }});
+                    starting_values['defaultDate'] = new Date(new Date().getTime() + timeSetting * 60 * 60 * 1000);
+                    starting_values['setDefaultDate'] = true;
+                }
+                let picker = new Pikaday(starting_values);
             });
         });
 
@@ -218,12 +300,12 @@
         calendar.render();
 
         $('#add-shifts').click(function () {
-            let startDate = $('#start-date').val();
-            let endDate = $('#end-date').val();
+            let startDate = $('#start-date-shifts').val();
+            let endDate = $('#end-date-shifts').val();
             let multilingual = $('#multilingual option:selected').val();
             let dropIn = $('#drop-in option:selected').val();
             let tutors = [];
-            $("#tutors option:selected").each(function() {
+            $("#tutors-shifts option:selected").each(function() {
                 tutors.push(this.id);
             });
             let days = [];
@@ -399,6 +481,62 @@
                 button.text('View Open Appointments');
                 button.val('view-sub');
             }
+        }
+
+        function confirmDelete() {
+            let startDate = $('#start-date-delete').val();
+            let endDate = $('#end-date-delete').val();
+            let tutors = [];
+            $("#tutors-delete option:selected").each(function() {
+                tutors.push(this.id);
+            });
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('SchedulesView:confirm_delete') }}",
+                data: JSON.stringify({
+                    'tutors': tutors,
+                    'startDate': startDate,
+                    'endDate': endDate
+                }),
+                contentType: 'application/json;charset=UTF-8',
+                success: function (data) {
+                    $('#delete-confirm').html(data)
+                },
+                error: function (error) {
+
+                }
+            });
+        }
+
+        function confirmedNo() {
+            $('#delete-confirm').html("<input type=\"button\" id=\"delete-shifts\" class=\"btn btn-primary btn-danger\" value=\"Delete Shifts\" onclick=\"confirmDelete()\">")
+            $('#sub-list-results').html("")
+        }
+
+        function deleteShifts() {
+            let startDate = $('#start-date-delete').val();
+            let endDate = $('#end-date-delete').val();
+            let tutors = [];
+            $("#tutors-delete option:selected").each(function() {
+                tutors.push(this.id);
+            });
+             $.ajax({
+                type: "POST",
+                url: "{{ url_for('SchedulesView:delete_tutors_from_shifts') }}",
+                data: JSON.stringify({
+                    'tutors': tutors,
+                    'startDate': startDate,
+                    'endDate': endDate
+                }),
+                contentType: 'application/json;charset=UTF-8',
+                success: function (data) {
+                    {# TODO RE-DISPLAY CALENDAR EVENTS #}
+                    $('#delete-confirm').html("<input type=\"button\" id=\"delete-shifts\" class=\"btn btn-primary btn-danger\" value=\"Delete Shifts\" onclick=\"confirmDelete()\">")
+                    $('#sub-list-results').html(data)
+                },
+                error: function (error) {
+                }
+            });
         }
     </script>
 {% endblock %}
