@@ -212,7 +212,7 @@ class SchedulesView(FlaskView):
 
     @route('get-appointments', methods=['GET'])
     def get_users_appointments(self):
-        print('got')
+        print('got')  # TODO: remove
         appts = self.sc.get_all_user_appointments(flask_session['USERNAME'])
         appointments = []
         for appointment in appts:

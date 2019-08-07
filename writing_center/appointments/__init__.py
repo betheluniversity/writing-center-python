@@ -331,3 +331,12 @@ class AppointmentsView(FlaskView):
                 'tutor': self.ac.get_user_by_id(appt.tutor_id)
             }
         return render_template('appointments/appointment_search_table.html', **locals())
+
+    @route('/edit/<int:appt_id>', methods=['get', 'post'])
+    def edit(self, appt_id):
+        appt = self.ac.get_appointment_by_id(appt_id)
+        return render_template('appointments/edit_appointment.html', **locals())
+
+    # def submit_edits(self):
+    #     self.ac.edit_appt()
+    #     return redirect(url_for('AppointmentsView:edit', appt_id=))

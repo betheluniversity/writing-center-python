@@ -32,15 +32,18 @@
                     <td>{{ 'Yes' if appt.noShow else 'No' }}</td>
                     <td><input id="{{ appt.id }}" type="button" class="more-info btn btn-primary" value="Info"
                                data-toggle="modal" data-target="#info-modal"
+                               data-id="{{ appt.id }}"
                                data-student="{{ '{0} {1}'.format(info['student'].firstName, info['student'].lastName) if info['student'] else 'None' }}"
                                data-tutor="{{ '{0} {1}'.format(info['tutor'].firstName, info['tutor'].lastName) if info['tutor'] else 'None' }}"
                                data-sched-start="{{ appt.scheduledStart.strftime("%m/%d/%y %I:%M %p") }}"
                                data-sched-end="{{ appt.scheduledEnd.strftime("%m/%d/%y %I:%M %p") }}"
                                data-actual-start="{{ appt.actualStart.strftime("%m/%d/%y %I:%M %p") if appt.actualStart else 'None' }}"
                                data-actual-end="{{ appt.actualEnd.strftime("%m/%d/%y %I:%M %p") if appt.actualEnd else 'None' }}"
+                               data-sub="{{ 'Yes' if appt.sub else 'No' }}"
                                data-drop-in="{{ 'Yes' if appt.dropIn else 'No' }}"
                                data-multilingual="{{ 'Yes' if appt.multilingual else 'No' }}"
                                data-no-show="{{ 'Yes' if appt.noShow else 'No' }}"
+                               data-in-progress="{{ 'Yes' if appt.inProgress else 'No' }}"
                                data-prof="{{ appt.profName }}"
                                data-prof-email="{{ appt.profEmail }}"
                                data-course="{{ appt.courseCode }}"
@@ -107,6 +110,10 @@
                         <td id="actual-end"></td>
                     </tr>
                     <tr>
+                        <th>Sub Requested</th>
+                        <td id="sub"></td>
+                    </tr>
+                    <tr>
                         <th>Drop In</th>
                         <td id="drop-in"></td>
                     </tr>
@@ -117,6 +124,10 @@
                     <tr>
                         <th>No Show</th>
                         <td id="no-show"></td>
+                    </tr>
+                    <tr>
+                        <th>In Progress</th>
+                        <td id="in-progress"></td>
                     </tr>
                     <tr>
                         <th>Professor</th>
@@ -150,6 +161,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                <a class="btn btn-secondary" id="edit" href="#">Edit</a>
             </div>
         </div>
     </div>
@@ -157,15 +169,18 @@
 <script type="text/javascript">
     $('#info-modal').on('show.bs.modal', function(event){
         var button = $(event.relatedTarget);
+
         $(this).find('#student').text(button.data('student'));
         $(this).find('#tutor').text(button.data('tutor'));
         $(this).find('#sched-start').text(button.data('sched-start'));
         $(this).find('#sched-end').text(button.data('sched-end'));
         $(this).find('#actual-start').text(button.data('actual-start'));
         $(this).find('#actual-end').text(button.data('actual-end'));
+        $(this).find('#sub').text(button.data('sub'));
         $(this).find('#drop-in').text(button.data('drop-in'));
         $(this).find('#multilingual').text(button.data('multilingual'));
         $(this).find('#no-show').text(button.data('no-show'));
+        $(this).find('#in-progress').text(button.data('in-progress'));
         $(this).find('#prof').text(button.data('prof'));
         $(this).find('#prof-email').text(button.data('prof-email'));
         $(this).find('#course').text(button.data('course'));
@@ -173,5 +188,7 @@
         $(this).find('#assignment').text(button.data('assignment'));
         $(this).find('#notes').text(button.data('notes'));
         $(this).find('#suggestions').text(button.data('suggestions'));
+
+        $(this).find('#edit').prop('href', 'http://localhost:5000/appointments/edit/' + button.data('id'));
     });
 </script>
