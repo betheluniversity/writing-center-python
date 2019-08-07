@@ -531,7 +531,8 @@
                 }),
                 contentType: 'application/json;charset=UTF-8',
                 success: function (data) {
-                    {# TODO RE-DISPLAY CALENDAR EVENTS #}
+                    calendar.removeAllEvents();
+                    $('#tutors-schedule option:selected').prop("selected", false);
                     $('#delete-confirm').html("<input type=\"button\" id=\"delete-shifts\" class=\"btn btn-primary btn-danger\" value=\"Delete Shifts\" onclick=\"confirmDelete()\">")
                     $('#sub-list-results').html(data)
                 },
