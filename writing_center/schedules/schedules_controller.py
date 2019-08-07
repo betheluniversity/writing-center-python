@@ -144,6 +144,7 @@ class SchedulesController:
     def delete_tutor_shifts(self, tutors, start_date, end_date):
         delete_list = []
         sub_list = []
+        end_date = end_date.replace(day=end_date.day + 1)
         for tutor_id in tutors:
             tutor = self.get_user_by_id(tutor_id)
             if tutor:
