@@ -30,7 +30,7 @@
                     <td>{{ 'Yes' if appt.multilingual else 'No' }}</td>
                     <td>{{ appt.courseCode }}</td>
                     <td>{{ 'Yes' if appt.noShow else 'No' }}</td>
-                    <td><input id="{{ appt.id }}" type="button" class="more-info btn btn-primary" value="Info"
+                    <td><input id="{{ appt.id }}" type="button" class="more-info btn btn-primary darkblue" value="Info"
                                data-toggle="modal" data-target="#info-modal"
                                data-student="{{ '{0} {1}'.format(info['student'].firstName, info['student'].lastName) if info['student'] else 'None' }}"
                                data-tutor="{{ '{0} {1}'.format(info['tutor'].firstName, info['tutor'].lastName) if info['tutor'] else 'None' }}"
@@ -149,7 +149,7 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary darkblue" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
