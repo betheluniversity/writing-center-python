@@ -20,6 +20,49 @@ class AppointmentsView(FlaskView):
     def view_appointments(self):
         return render_template('appointments/view_appointments.html', **locals())
 
+    @route('load-appointment-data', methods=['POST'])
+    def load_appointment_data(self):
+        appt_id = json.loads(request.data).get('id')
+        schedule = json.loads(request.data).get('schedule')
+        appointment = self.ac.get_appointment_by_id(appt_id)
+        student = self.ac.get_user_by_id(appointment.student_id)
+        student_name = 'None'
+        if student:
+            student_name = '{0} {1}'.format(student.firstName, student.lastName)
+        tutor = self.ac.get_user_by_id(appointment.tutor_id)
+        tutor_name = 'None'
+        if tutor:
+            tutor_name = '{0} {1}'.format(tutor.firstName, tutor.lastName)
+        courses = self.wsapi.get_student_courses(flask_session['USERNAME'])
+        appt = {
+            'id': appointment.id,
+            'student_id': appointment.student_id,
+            'studentName': student_name,
+            'tutor_id': appointment.tutor_id,
+            'tutorName': tutor_name,
+            'scheduledStart': appointment.scheduledStart.strftime('%a %b %d %Y %I:%M %p'),
+            'scheduledEnd': appointment.scheduledEnd.strftime('%a %b %d %Y %I:%M %p'),
+            'actualStart': appointment.actualStart.strftime('%a %b %d %Y %I:%M %p') if appointment.actualStart else None,
+            'actualEnd': appointment.actualEnd.strftime('%a %b %d %Y %I:%M %p') if appointment.actualEnd else None,
+            'profName': appointment.profName,
+            'profEmail': appointment.profEmail,
+            'dropIn': "Yes" if appointment.dropIn == 1 else "No",
+            'sub': appointment.sub,
+            'assignment': appointment.assignment,
+            'notes': appointment.notes,
+            'suggestions': appointment.suggestions,
+            'multilingual': "Yes" if appointment.multilingual == 1 else "No",
+            'courseCode': appointment.courseCode,
+            'courseSection': appointment.courseSection,
+            'noShow': "Yes" if appointment.noShow == 1 else "No",
+            'courses': courses,
+            'coursesLength': len(courses),
+            'future': True if appointment.scheduledStart > datetime.now() else False
+        }
+        print(appt['future'])
+
+        return jsonify(appt)
+
     @route('load-appointments', methods=['POST'])
     def load_appointments(self):
         dates = json.loads(request.data).get('dates')
