@@ -23,7 +23,6 @@ class AppointmentsView(FlaskView):
     @route('load-appointment-data', methods=['POST'])
     def load_appointment_data(self):
         appt_id = json.loads(request.data).get('id')
-        schedule = json.loads(request.data).get('schedule')
         appointment = self.ac.get_appointment_by_id(appt_id)
         student = self.ac.get_user_by_id(appointment.student_id)
         student_name = 'None'
@@ -59,7 +58,6 @@ class AppointmentsView(FlaskView):
             'coursesLength': len(courses),
             'future': True if appointment.scheduledStart > datetime.now() else False
         }
-        print(appt['future'])
 
         return jsonify(appt)
 
