@@ -45,21 +45,8 @@
                 displayEventEnd: true,
                 timeZone: 'UTC',
                 eventClick: function(info) {
-                    $.ajax({
-                        type: "POST",
-                        url: "{{ url_for('AppointmentsView:load_appointment_table') }}",
-                        data: JSON.stringify({
-                            'id': info.event.id,
-                            'add-cancel': true
-                        }),
-                        contentType: 'application/json;charset=UTF-8',
-                        success: function (response) {
-                            $('#results').html(response)
-                        },
-                        error: function (error) {
-                        }
-                    });
-            }
+                    getAppointmentData(info.event.id, false, true);
+                }
             });
 
             calendar.render();

@@ -88,6 +88,8 @@
         <input type="button" id="delete-shifts" class="btn btn-primary btn-danger" value="Delete Shifts" onclick="confirmDelete()">
     </div>
     <div id="sub-list-results" class="form-row"></div>
+
+    {% include 'macros/appointment_modal.html' %}
     <script>
         $(document).ready(function () {
             $.ajax({
@@ -187,19 +189,7 @@
             displayEventEnd: true,
             timeZone: 'UTC',
             eventClick: function(info) {
-                $.ajax({
-                    type: "POST",
-                    url: "{{ url_for('SchedulesView:load_appointment_table') }}",
-                    data: JSON.stringify({
-                        'id': info.event.id,
-                    }),
-                    contentType: 'application/json;charset=UTF-8',
-                    success: function (response) {
-                        $('#results').html(response)
-                    },
-                    error: function (error) {
-                    }
-                });
+                getAppointmentData(info.event.id, false, false, true);
             }
         });
 
