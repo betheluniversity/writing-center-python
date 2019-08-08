@@ -41,6 +41,8 @@
             <div id="calendar"></div>
         </div>
     </div>
+    {% include 'macros/modal_template.html' %}
+
     <script type="text/javascript">
         $(document).ready(function() {
             function GetCalendarDateRange(cal) {
@@ -113,20 +115,7 @@
                 displayEventEnd: true,
                 timeZone: 'UTC',
                 eventClick: function(info) {
-                    $.ajax({
-                        type: "POST",
-                        url: "{{ url_for('AppointmentsView:load_appointment_table') }}",
-                        data: JSON.stringify({
-                            'id': info.event.id,
-                            'scheduleAppt': true
-                        }),
-                        contentType: 'application/json;charset=UTF-8',
-                        success: function (response) {
-                            $('#results').html(response)
-                        },
-                        error: function (error) {
-                        }
-                    });
+                    getAppointmentData(info.event.id, true);
                 }
             });
 
