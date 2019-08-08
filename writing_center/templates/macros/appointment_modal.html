@@ -95,6 +95,22 @@
                     <tr id="cancel-container">
                         <th colspan="2"><button class="btn btn-primary btn-danger" onclick="cancelAppointment()">Cancel Appointment</button></th>
                     </tr>
+                    <tr id="request-container">
+                        <th id="request-sub-container" colspan="2">
+                            <button class="btn btn-primary darkblue" onclick="requestSub()">Request Substitute</button>
+                            {% if 'Administrator' in session['USER-ROLES'] %}
+                                <button style="margin-left: 10px" class="btn btn-primary btn-danger" onclick="deleteAppointment('request')">Delete Appointment</button>
+                            {% endif %}
+                        </th>
+                    </tr>
+                    <tr id="pickup-container">
+                        <th id="pickup-sub-container" colspan="2">
+                            <button class="btn btn-primary darkblue" onclick="subAppointment()">Pick Up Shift</button>
+                            {% if 'Administrator' in session['USER-ROLES'] %}
+                                <button style="margin-left: 10px" class="btn btn-primary btn-danger" onclick="deleteAppointment('pickup')">Delete Appointment</button>
+                            {% endif %}
+                        </th>
+                    </tr>
                 </table>
             </div>
             <div class="modal-footer">
@@ -105,7 +121,7 @@
 </div>
 <script>
     let first = true;
-    function getAppointmentData(apptID, schedule=false, cancel=false) {
+    function getAppointmentData(apptID, schedule=false, cancel=false, subDelete=false) {
         $.ajax({
             type: "POST",
             url: "{{ url_for('AppointmentsView:load_appointment_data') }}",
@@ -145,7 +161,9 @@
                     $('#assignment-container').hide();
                     $('#notes-container').hide();
                     $('#suggestions-container').hide();
-                    $('#cancel-container').hide()
+                    $('#cancel-container').hide();
+                    $('#request-container').hide();
+                    $('#pickup-container').hide();
                 } else if (cancel === true) {
                     $('#student-container').hide();
                     $('#actual-start-container').hide();
@@ -156,6 +174,31 @@
                     $('#select-course-container').hide();
                     $('#assignment-description-container').hide();
                     $('#schedule-container').hide();
+                    $('#request-container').hide();
+                    $('#pickup-container').hide();
+                } else if (subDelete === true) {
+                    $('#student-data').html(appt['studentName']);
+                    $('#actual-start-data').html(appt['actualStart']);
+                    $('#actual-end-data').html(appt['actualEnd']);
+                    $('#no-show-data').html(appt['noShow']);
+                    $('#notes-data').html(appt['notes']);
+                    $('#suggestions-data').html(appt['suggestions']);
+                    $('#select-course-container').hide();
+                    $('#assignment-description-container').hide();
+                    $('#schedule-container').hide();
+                    $('#cancel-container').hide();
+                    $('#request-container').show();
+                    $('#pickup-container').show();
+                    if (appt['future'] === true) {
+                        if (appt['sub'] === 1) {
+                            $('#request-container').hide()
+                        } else {
+                            $('#pickup-container').hide()
+                        }
+                    } else {
+                        $('#request-container').hide();
+                        $('#pickup-container').hide();
+                    }
                 } else {
                     $('#student-data').html(appt['studentName']);
                     $('#actual-start-data').html(appt['actualStart']);
@@ -167,6 +210,8 @@
                     $('#assignment-description-container').hide();
                     $('#schedule-container').hide();
                     $('#cancel-container').hide();
+                    $('#request-container').hide();
+                    $('#pickup-container').hide();
                 }
             },
             error: function (error) {
@@ -193,7 +238,7 @@
             contentType: 'application/json;charset=UTF-8',
             success: function (response) {
                 window.location.reload();
-                },
+            },
             error: function (error) {
             }
         });
@@ -210,7 +255,68 @@
             contentType: 'application/json;charset=UTF-8',
             success: function (response) {
                 window.location.reload();
-                },
+            },
+            error: function (error) {
+            }
+        });
+    }
+
+    function deleteAppointment(type) {
+        let appt_id = $('#appt-id').val();
+        $.ajax({
+            type: "POST",
+            url: "{{ url_for('SchedulesView:delete_appointment') }}",
+            data: JSON.stringify({
+                'appt_id': appt_id,
+            }),
+            contentType: 'application/json;charset=UTF-8',
+            success: function (response) {
+                if (response === 'sub') {
+                    if (type === 'request') {
+                        $('#request-sub-container').html("<h6><b>Error!</b> You cannot delete the appointment since it is already scheduled. Instead request a substitute by clicking on the button.</h6><button style=\"margin-left: 10px\" class=\"btn btn-primary darkblue\" onclick=\"requestSub()\">Request Substitute</button>")
+                    } else if (type === 'pickup') {
+                        $('#pickup-sub-container').html("<h6><b>Error!</b> You cannot delete the appointment since it is already scheduled. Instead request a substitute by clicking on the button.</h6><button style=\"margin-left: 10px\" class=\"btn btn-primary darkblue\" onclick=\"requestSub()\">Request Substitute</button>")
+                    }
+                } else {
+                    let event = calendar.getEventById(response);
+                    event.remove();
+                    window.location.reload();
+                }
+            },
+            error: function (error) {
+            }
+        });
+    }
+
+    function subAppointment() {
+        let appt_id = $('#appt-id').val();
+        $.ajax({
+            type: "POST",
+            url: "{{ url_for('SchedulesView:pickup_shift') }}",
+            data: JSON.stringify({
+                'appt_id': appt_id,
+            }),
+            contentType: 'application/json;charset=UTF-8',
+            success: function (response) {
+                window.location.reload();
+            },
+            error: function (error) {
+            }
+        });
+    }
+
+    function requestSub() {
+        let appt_id = $('#appt-id').val();
+        $.ajax({
+            type: "POST",
+            url: "{{ url_for('SchedulesView:request_substitute') }}",
+            data: JSON.stringify({
+                'appt_id': appt_id
+            }),
+            contentType: 'application/json;charset=UTF-8',
+            success: function (response) {
+                window.location.reload();
+            },
             error: function (error) {
             }
         });
