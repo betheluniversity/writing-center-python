@@ -63,18 +63,6 @@ class AppointmentsView(FlaskView):
                 })
         return jsonify(appointments)
 
-    @route('load-appointment', methods=['POST'])
-    def load_appointment_table(self):
-        appointment_id = str(json.loads(request.data).get('id'))
-        schedule_appt = json.loads(request.data).get('scheduleAppt')
-        add_cancel = json.loads(request.data).get('add-cancel')
-        appt = self.ac.get_one_appointment(appointment_id)
-        if appt.scheduledStart < datetime.now():
-            add_cancel = False
-        courses = self.wsapi.get_student_courses(flask_session['USERNAME'])
-        return render_template('appointments/appointment_information.html', **locals(),
-                               id_to_user=self.ac.get_user_by_id)
-
     def appointments_and_walk_ins(self):
         tutor = flask_session['USERNAME']
         appointments = self.ac.get_scheduled_appointments(tutor)
