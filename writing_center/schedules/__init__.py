@@ -151,6 +151,7 @@ class SchedulesView(FlaskView):
         appt_id = str(json.loads(request.data).get('appt_id'))
         deleted = self.sc.delete_appointment(appt_id)
         if deleted:
+            self.wcc.set_alert('success', 'Successfully deleted the appointment.')
             if deleted == 'sub':
                 return deleted
             else:
