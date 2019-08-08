@@ -294,10 +294,9 @@ class SchedulesView(FlaskView):
         picked_up = self.sc.pickup_shift(appointment_id, flask_session['USERNAME'])
         if picked_up:
             self.wcc.set_alert('success', 'Successfully picked up the shift!')
-            return render_template('schedules/appointment_information.html', **locals(),
-                                   id_to_user=self.sc.get_user_by_id)
         else:
             self.wcc.set_alert('danger', 'Failed to pick up the shift.')
+        return 'finished'
 
     @route('request-subtitute', methods=['POST'])
     def request_substitute(self):
@@ -307,7 +306,6 @@ class SchedulesView(FlaskView):
         success = self.sc.request_substitute(appointment_id)
         if success:
             self.wcc.set_alert('success', 'Successfully requested a substitute!')
-            return render_template('schedules/appointment_information.html', **locals(),
-                                   id_to_user=self.sc.get_user_by_id)
         else:
             self.wcc.set_alert('danger', 'Error! Substitute not requested.')
+        return 'finished'
