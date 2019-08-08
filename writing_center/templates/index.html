@@ -33,7 +33,7 @@
             {% if 'Student' in session['USER-ROLES'] or 'Administrator' in session['USER-ROLES'] %}
                 <div class="row">
                     <div class="col-md-6">
-                        <a class="dashboard-link" href="{{ url_for('AppointmentsView:create_appointment') }}">
+                        <a class="dashboard-link" href="{{ url_for('AppointmentsView:schedule_appointment_landing') }}">
                             <div class="card dashboard-card text-center">
                                 <div class="card-body">
                                     <h4>Schedule an Appointment</h4>

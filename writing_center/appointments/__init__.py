@@ -16,6 +16,7 @@ class AppointmentsView(FlaskView):
         self.wcc = WritingCenterController()
         self.wsapi = WSAPIController()
 
+    @route('view-all-appointments')
     def view_appointments(self):
         return render_template('appointments/view_appointments.html', **locals())
 
@@ -137,8 +138,9 @@ class AppointmentsView(FlaskView):
         courses = self.ac.get_courses()
         return render_template('appointments/search_appointments.html', **locals())
 
-    def create_appointment(self):
-        return render_template('appointments/create_appointment.html', **locals())
+    @route('schedule')
+    def schedule_appointment_landing(self):
+        return render_template('appointments/schedule_appointment.html', **locals())
 
     @route('view-appointments')
     def student_view_appointments(self):
