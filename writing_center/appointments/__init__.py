@@ -35,9 +35,7 @@ class AppointmentsView(FlaskView):
         courses = self.wsapi.get_student_courses(flask_session['USERNAME'])
         appt = {
             'id': appointment.id,
-            'student_id': appointment.student_id,
             'studentName': student_name,
-            'tutor_id': appointment.tutor_id,
             'tutorName': tutor_name,
             'scheduledStart': appointment.scheduledStart.strftime('%a %b %d %Y %I:%M %p'),
             'scheduledEnd': appointment.scheduledEnd.strftime('%a %b %d %Y %I:%M %p'),
