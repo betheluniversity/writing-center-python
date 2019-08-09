@@ -243,11 +243,11 @@
                             if (start_populated == "") {
                                 return null;
                             } else if (current_element.attr('id') == 'start-date-delete') {
-                                if (new Date(end_populated) > date) {
+                                if (new Date() > date) {
                                     return date;
                                 }
                             } else if (current_element.attr('id') == 'end-date-delete') {
-                                if (new Date(end_populated) > date) {
+                                if (new Date() > date) {
                                     return date;
                                 }
                             }
