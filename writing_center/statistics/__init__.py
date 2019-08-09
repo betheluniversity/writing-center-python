@@ -35,7 +35,7 @@ class StatisticsView(FlaskView):
         time = 0
 
         for appointment in appointments:
-            start_time = str(appointment.actualStart).split(' ')[1].split(':')
+            start_time = str(appointment.scheduledStart).split(' ')[1].split(':')
             start_min = int(start_time[1])
             start_hour = int(start_time[0])
             if 0 < start_min < 15:
@@ -48,7 +48,7 @@ class StatisticsView(FlaskView):
                 start_min = 0
                 if start_hour < 24:
                     start_hour += 1
-            end_time = str(appointment.actualEnd).split(' ')[1].split(':')
+            end_time = str(appointment.scheduledEnd).split(' ')[1].split(':')
             end_min = int(end_time[1])
             end_hour = int(end_time[0])
             if 0 < end_min < 15:
@@ -61,7 +61,7 @@ class StatisticsView(FlaskView):
                 end_min = 0
                 if end_hour < 24:
                     end_hour += 1
-            time += end_hour - start_hour + ((end_min - start_min) / 60)
+            time += end_hour - start_hour + (end_min - start_min) / 60
 
         user = self.sc.get_user_by_username(flask_session['USERNAME'])
         start = start.strftime('%B %d %Y')

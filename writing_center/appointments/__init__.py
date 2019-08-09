@@ -277,7 +277,7 @@ class AppointmentsView(FlaskView):
                                                  ' appointments here. If you wish to schedule an appointment email a'
                                                  ' Writing Center Administrator.')
             else:
-                self.wcc.set_alert('danger', 'Failed to schedule appointment. You already have ' + appt_limit +
+                self.wcc.set_alert('danger', 'Failed to schedule appointment. You already have ' + str(appt_limit) +
                                    ' appointments scheduled and can\'t schedule any more.')
         else:
             # TODO MAYBE GIVE THEM A SPECIFIC EMAIL TO EMAIL?

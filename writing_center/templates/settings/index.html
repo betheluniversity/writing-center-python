@@ -1,14 +1,17 @@
 {% extends 'writing_center_base.html' %}
 
+{% block page_title %}Settings{% endblock %}
+
 {% block body_content %}
     <div class="jumbotron">
         <h1>System Settings</h1>
         <p>You can adjust the system settings here.</p>
     </div>
+    <button class="btn btn-danger cleanse" data-toggle="modal" data-target="#cleanseConfirm">Cleanse System</button>
     <p>At the end of the semester you can click this button to do the following:</p>
-    <a class="btn btn-primary" href="{{ url_for('SettingsView:cleanse') }}">Cleanse System</a>
     <ul>
-        <li>Deactivate all current student users (this will not deactivate users with multiple roles)</li>
+        <li>All current student users will be deactivated (meaning they will not show up in the User list, but their
+            data will still be taken into account for statistics)</li>
         <li>Unban all currently banned users</li>
     </ul>
 
@@ -82,6 +85,28 @@
             {% endif %}
         {% endfor %}
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="cleanseConfirm" tabindex="-1" role="dialog" aria-labelledby=cleanseConfirmLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cleanseConfirmLabel">Confirm Cleanse</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to cleanse the system?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-danger" href="{{ url_for('SettingsView:cleanse') }}">Confirm Cleanse</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script type="text/javascript">
         $(document).ready(function(){
 

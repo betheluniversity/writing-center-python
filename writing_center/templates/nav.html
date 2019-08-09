@@ -33,7 +33,7 @@
                 <a class="nav-link dropdown-toggle {{ 'nav-bar-active' if 'SchedulesView' in request.url_rule.endpoint }}" id="navbarDropdown" role="button" data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false">Schedules</a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="{{ url_for('SchedulesView:create_schedule') }}">Create Schedule</a>
+                    <a class="dropdown-item" href="{{ url_for('SchedulesView:create_time_slot') }}">Create Time Slot</a>
                     <a class="dropdown-item" href="{{ url_for('SchedulesView:manage_tutor_schedules') }}">Manage Tutor Schedules</a>
                     <a class="dropdown-item" href="{{ url_for('SchedulesView:view_tutor_schedules') }}">View Schedules</a>
                 </div>
@@ -43,7 +43,7 @@
         <ul class="navbar-nav mr-auto">
             {% if 'Tutor' in session['USER-ROLES'] and 'Administrator' not in session['USER-ROLES'] %}
                 <li class="nav-item">
-                    <a id="schedule" class="nav-link button {{ 'nav-bar-active' if 'StatisticsView' in request.url_rule.endpoint }}" href="{{ url_for('SchedulesView:view_tutor_schedules') }}">Schedule</a>
+                    <a id="schedule" class="nav-link button {{ 'nav-bar-active' if 'SchedulesView' in request.url_rule.endpoint }}" href="{{ url_for('SchedulesView:view_tutor_schedules') }}">Schedule</a>
                 </li>
             {% endif %}
 
@@ -59,7 +59,7 @@
 
             {% if 'Administrator' in session['USER-ROLES'] %}
                 <li class="nav-item">
-                    <a id="users" class="nav-link button {{ 'nav-bar-active' if 'UsersView' in request.url_rule.endpoint }}" href="{{ url_for('UsersView:index') }}">Users</a>
+                    <a id="users" class="nav-link button {{ 'nav-bar-active' if 'UsersView' in request.url_rule.endpoint }}" href="{{ url_for('UsersView:view_all_users') }}">Users</a>
                 </li>
 
                 <li class="nav-item">

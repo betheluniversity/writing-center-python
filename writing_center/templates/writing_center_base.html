@@ -9,7 +9,7 @@
         {% block head %}
             <meta charset="UTF-8">
             <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-            <title>Writing Center</title>
+            <title>Writing Center | {% block page_title %}Welcome{% endblock %}</title>
             <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport'/>
             <meta name="viewport" content="width=device-width"/>
 
@@ -55,6 +55,9 @@
                 <link rel="stylesheet" href="{{ url_for('static', filename='core-main.min.css') }}">
                 <link rel="stylesheet" href="{{ url_for('static', filename='daygrid-main.min.css') }}">
                 <link rel="stylesheet" href="{{ url_for('static', filename='timegrid-main.min.css') }}">
+
+                <!-- FontAwesome CSS -->
+                <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
 
                 <!-- Pikaday CSS -->
                 <link href="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.5.1/css/pikaday.min.css" rel="stylesheet"/>

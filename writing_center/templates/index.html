@@ -11,26 +11,26 @@
     <div class="row">
         <div class="col-md-4 info-list">
             <ul class="list-group list-group-flush">
-                {% if 'Student' in session['USER-ROLES'] or 'Administrator' in session['USER-ROLES'] %}
+                {% if 'Student' in session['USER-ROLES'] %}
                     <li class="list-group-item"><strong>Students</strong> can schedule new appointments and view the
                         appointments they have already scheduled.</li>
                 {% endif %}
-                {% if 'Tutor' in session['USER-ROLES'] or 'Administrator' in session['USER-ROLES'] %}
+                {% if 'Tutor' in session['USER-ROLES'] %}
                     <li class="list-group-item"><strong>Tutors</strong> can start their shifts and view their schedule
                         for the semester.</li>
                 {% endif %}
-                {% if 'Observer' in session['USER-ROLES'] or 'Administrator' in session['USER-ROLES'] %}
+                {% if 'Observer' in session['USER-ROLES'] %}
                     <li class="list-group-item"><strong>Observers</strong> can view appointments and statistics.</li>
                 {% endif %}
                 {% if 'Administrator' in session['USER-ROLES'] %}
-                    <li class="list-group-item"><strong>Administrators</strong> can view all of the above, and can also
-                    search appointments and manage tutor schedules.</li>
+                    <li class="list-group-item"><strong>Administrators</strong> can view appointments and statistics, as
+                        well as search appointments and manage tutor schedules.</li>
                 {% endif %}
                 <li class="list-group-item">You can find more options in the navigation at the top of the page.</li>
             </ul>
         </div>
         <div class="col-md-8">
-            {% if 'Student' in session['USER-ROLES'] or 'Administrator' in session['USER-ROLES'] %}
+            {% if 'Student' in session['USER-ROLES'] %}
                 <div class="row">
                     <div class="col-md-6">
                         <a class="dashboard-link" href="{{ url_for('AppointmentsView:schedule_appointment_landing') }}">
@@ -52,7 +52,7 @@
                     </div>
                 </div>
             {% endif %}
-            {% if 'Tutor' in session['USER-ROLES'] or 'Administrator' in session['USER-ROLES'] %}
+            {% if 'Tutor' in session['USER-ROLES'] %}
                 <div class="row">
                     <div class="col-md-6">
                         <a class="dashboard-link" href="{{ url_for('AppointmentsView:appointments_and_walk_ins') }}">

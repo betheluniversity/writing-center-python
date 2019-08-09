@@ -1,5 +1,7 @@
 {% extends 'schedules/base.html' %}
 
+{% block page_title %}View Schedule{% endblock %}
+
 {% block body_content %}
     <div class="jumbotron">
         <h1><b>View Tutor Schedule</b></h1>
@@ -9,16 +11,18 @@
     <hr>
     <div class="row">
         <div class="col-md-3">
-            <div id="tutors">
-                <h3>Tutors</h3>
-                <select id="tutors-schedule" class="chosen-container" size="7" multiple="multiple" onchange="tutorsChanged()">
-                    <option id="view-all" class="select-hr" value="View All">View All Schedules</option>
-                    {% for tutor in tutors %}
-                        <option id="{{ tutor.id }}" value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
-                    {% endfor %}
-                </select>
-                <hr>
-            </div>
+            {% if 'Administrator' in session['USER-ROLES'] %}
+                <div id="tutors">
+                    <h3>Tutors</h3>
+                    <select id="tutors-schedule" class="chosen-container" size="7" multiple="multiple" onchange="tutorsChanged()">
+                        <option id="view-all" class="select-hr" value="View All">View All Schedules</option>
+                        {% for tutor in tutors %}
+                            <option id="{{ tutor.id }}" value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
+                        {% endfor %}
+                    </select>
+                    <hr>
+                </div>
+            {% endif %}
             <h3>Calendar Key</h3>
             <table class="table">
                 <thead>
@@ -53,8 +57,8 @@
             <div id="calendar"></div>
         </div>
     </div>
-
     {% include 'macros/appointment_modal.html' %}
+    
     <script>
         $(document).ready(function () {
             $.ajax({
@@ -97,47 +101,6 @@
                 }
             });
 
-            $('.datepicker').each(function () {
-                let current_element = $(this);
-                let maxDate = new Date();
-                let dd = maxDate.getDate();
-                let mm = maxDate.getMonth() + 1;
-                let yyyy = maxDate.getFullYear() + 2;
-                if (dd < 10) {
-                  dd = '0' + dd;
-                }
-
-                if (mm < 10) {
-                  mm = '0' + mm;
-                }
-                maxDate = yyyy + '-' + mm + '-' + dd;
-                let starting_values = {
-                    field: this,
-                    format: 'MM DD YYYY',
-                    minDate: new Date('2010-01-01'),
-                    maxDate: new Date(maxDate),
-                    yearRange: [2010, yyyy],
-                    disableDayFn: function (date) {
-                        let start_populated = $("#start-date").val();
-                        let end_populated = $("#end-date").val();
-                        if (start_populated == "") {
-                            return null;
-                        } else if (current_element.attr('id') == 'start-date') {
-                            if (new Date(end_populated) > date) {
-                                return date;
-                            }
-                        } else if (current_element.attr('id') == 'end-date') {
-                            if (new Date(end_populated) > date) {
-                                return date;
-                            }
-                        }
-                    }
-                };
-                let timeSetting = ({{ time_setting }});
-                starting_values['defaultDate'] = new Date(new Date().getTime() + timeSetting * 60 * 60 * 1000);
-                starting_values['setDefaultDate'] = true;
-                let picker = new Pikaday(starting_values);
-            });
         });
 
         let calendarEl = document.getElementById('calendar');

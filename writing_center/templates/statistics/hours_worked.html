@@ -1,5 +1,7 @@
 {% extends 'statistics/base.html' %}
 
+{% block page_title %}Hours{% endblock %}
+
 {% block body_content %}
     <div class="jumbotron">
         <h1><b>View Hours Worked</b></h1>
@@ -24,7 +26,7 @@
             </div>
         </div>
         <div class="form-row">
-            <input type="button" id="search" class="btn btn-primary" value="Search" onclick="searchHours()">
+            <input type="button" id="search" class="btn btn-primary darkblue" value="Search" onclick="searchHours()">
         </div>
     </form>
     <hr>

@@ -17,15 +17,16 @@ class SchedulesView(FlaskView):
         self.wcc = WritingCenterController()
 
     @route("/create-schedule")
-    def create_schedule(self):
+    def create_time_slot(self):
         schedules = self.sc.get_schedules()
         tutors = self.sc.get_tutors()
-        return render_template("schedules/create_schedule.html", **locals())
+        return render_template("schedules/create_time_slot.html", **locals())
 
     @route('/manage-tutor-schedules')
     def manage_tutor_schedules(self):
         schedules = self.sc.get_schedules()
         tutors = self.sc.get_tutors()
+        time_setting = self.sc.get_time_setting()[0]
         return render_template('schedules/manage_tutor_schedules.html', **locals())
 
     @route('view-tutor-schedules')
@@ -36,7 +37,7 @@ class SchedulesView(FlaskView):
         return render_template('schedules/view_tutor_schedule.html', **locals())
 
     @route('/create', methods=['POST'])
-    def create_new_schedule(self):
+    def create_new_time_slot(self):
         now = (datetime.now())
 
         start_time = str(json.loads(request.data).get('startTime'))
@@ -48,11 +49,7 @@ class SchedulesView(FlaskView):
         end_time = end_time.replace(year=int(now.strftime('%Y')), month=int(now.strftime('%m')), day=int(now.strftime('%d')))
 
         is_active = str(json.loads(request.data).get('isActive'))
-        if is_active == 'Active':
-            is_active = 'Yes'
-        else:
-            is_active = 'No'
-        created = self.sc.create_schedule(start_time, end_time, is_active)
+        created = self.sc.create_time_slot(start_time, end_time, is_active)
 
         if created:
             self.wcc.set_alert('success', 'Schedule Created Successfully!')
@@ -60,16 +57,29 @@ class SchedulesView(FlaskView):
             self.wcc.set_alert('danger', 'Schedule already exists!')
         return self.sc.get_schedules()
 
+    @route('deactivate-time-slots', methods=['POST'])
+    def deactivate_time_slots(self):
+        form = request.form
+        json_schedule_ids = form.get('jsonScheduleIds')
+        schedule_ids = json.loads(json_schedule_ids)
+        try:
+            for schedule_id in schedule_ids:
+                self.sc.deactivate_time_slot(schedule_id)
+            self.wcc.set_alert('success', 'Time slot(s) deactivated successfully!')
+        except Exception as error:
+            self.wcc.set_alert('danger', 'Failed to deactivate time slot(s)')
+        return 'done'  # Return doesn't matter: success or failure take you to the same page. Only the alert changes.
+
     @route('/add-tutors-to-shifts', methods=['POST'])
     def add_tutors_to_shifts(self):
         start_date = str(json.loads(request.data).get('startDate'))
         end_date = str(json.loads(request.data).get('endDate'))
         # Formats the date strings into date objects
+        if not start_date or not end_date:
+            self.wcc.set_alert('danger', 'You must set a start date and an end date!')
+            return 'danger'
         start_date = datetime.strptime(start_date, '%a %b %d %Y').date()
         end_date = datetime.strptime(end_date, '%a %b %d %Y').date()
-        if start_date == end_date:
-            self.wcc.set_alert('danger', 'No Appointments Made! Start Date and End Date must be different days!')
-            return redirect(url_for('SchedulesView:create_schedule'))
         multilingual = str(json.loads(request.data).get('multilingual'))
         drop_in = str(json.loads(request.data).get('dropIn'))
         tutors = json.loads(request.data).get('tutors')
@@ -81,7 +91,8 @@ class SchedulesView(FlaskView):
             for tutor in self.sc.get_tutors():
                 tutors.append(tutor.id)
         self.sc.create_tutor_shifts(start_date, end_date, multilingual, drop_in, tutors, days, time_slots)
-        return redirect(url_for('SchedulesView:create_schedule'))
+        self.wcc.set_alert('success', 'Successfully added the tutor(s) to the time slot(s).')
+        return 'success'
 
     @route('/show-schedule', methods=['POST'])
     def show_tutor_schedule(self):
@@ -110,7 +121,7 @@ class SchedulesView(FlaskView):
                 appointments.append({
                     'id': appointment.id,
                     'studentId': appointment.student_id,
-                    'tutorId': appointment.tutor_id,
+                    'tutorUsername': self.sc.get_user_by_id(appointment.tutor_id).username,
                     'startTime': start_time,
                     'endTime': end_time,
                     'multilingual': appointment.multilingual,
@@ -129,7 +140,7 @@ class SchedulesView(FlaskView):
         end = datetime.strptime(end_date, '%a %b %d %Y').date()
         tutor_ids = json.loads(request.data).get('tutors')
         names = []
-        if start_date > end_date:
+        if start_date < end_date:
             invalid_date = True
         if 'view-all' in tutor_ids:
             tutors = self.sc.get_tutors()
@@ -203,6 +214,7 @@ class SchedulesView(FlaskView):
 
     @route('get-appointments', methods=['GET'])
     def get_users_appointments(self):
+        print('got')
         appts = self.sc.get_all_user_appointments(flask_session['USERNAME'])
         appointments = []
         for appointment in appts:

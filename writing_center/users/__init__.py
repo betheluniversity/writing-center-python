@@ -17,9 +17,6 @@ class UsersView(FlaskView):
         self.wsapi = WSAPIController()
         self.wcc = WritingCenterController()
 
-    def index(self):
-        return render_template('users/index.html', **locals())
-
     @route('/center-manager/manage-bans/')
     def manage_bans(self):
         users = self.uc.get_banned_users()
@@ -147,7 +144,7 @@ class UsersView(FlaskView):
         form = request.form
         first_name = form.get('firstName')
         last_name = form.get('lastName')
-        user = self.uc.get_user_by_name(first_name, last_name)
+        users = self.uc.get_users_by_name(first_name, last_name)
         return render_template('users/user_ban_search_results.html', **locals())
 
     @route('/ban/user/', methods=['POST'])
