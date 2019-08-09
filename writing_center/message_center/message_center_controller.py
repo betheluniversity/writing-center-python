@@ -129,22 +129,6 @@ class MessageCenterController:
         else:
             self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, cc='', bcc='')
 
-    @route('/sub-request-email', methods=['POST'])
-    def sub_request_email(self, appointment_id):
-        # TODO: rework this to gather data and pass over to send message function
-        recipients = self.get_substitute_email_recipients()
-        appointment = self.get_appointment_info(appointment_id)
-        appt_info = {'appointment': appointment.scheduledStart,
-                     'student': self.get_user_by_id(appointment.student_id),
-                     'assignment': appointment.assignment}
-
-        # TODO: send information to send message function
-
-    @route('/sub-confirm-email', methods=['POST'])
-    def sub_confirm_email(self, appointment_id):
-        # TODO: Email for when a sub request is fulfilled
-        pass
-
     def send_message(self, subject, body, recipients, cc, bcc, html=False):
         # data will be compiled in the above functions and sent here
         if app.config['ENVIRON'] != 'prod':
