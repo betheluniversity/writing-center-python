@@ -129,20 +129,6 @@ class MessageCenterController:
         else:
             self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, cc='', bcc='')
 
-    @route('/shift-student', methods=['POST'])
-    def shift_signup_student(self):
-        # TODO write the function to send an email when a student signs up for a shift
-        # Gather appointment data matching the template (Date, tutor, assignment, etc)
-        # Gather all data for send message function (subject, body, recipients, cc, bcc)
-        pass
-
-    @route('/shift-tutor', methods=['POST'])
-    def shift_signup_tutor(self, appointment_id):
-        # TODO write the function to send an email when a student signs up for a shift
-        # Gather appointment data matching the template (Date, student, assignment, etc)
-        # Gather all data for send message function (subject, body, recipients, cc, bcc)
-        pass
-
     @route('/sub-request-email', methods=['POST'])
     def sub_request_email(self, appointment_id):
         # TODO: rework this to gather data and pass over to send message function
