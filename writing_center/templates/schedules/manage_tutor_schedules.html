@@ -238,15 +238,17 @@
                         maxDate: new Date(maxDate),
                         yearRange: [2010, yyyy],
                         disableDayFn: function (date) {
+                            let yesterday = new Date();
+                            yesterday.setDate(yesterday.getDate() - 1);
                             let start_populated = $("#start-date-delete").val();
                             if (start_populated == "") {
                                 return null;
                             } else if (current_element.attr('id') == 'start-date-delete') {
-                                if (new Date() > date) {
+                                if (yesterday > date) {
                                     return date;
                                 }
                             } else if (current_element.attr('id') == 'end-date-delete') {
-                                if (new Date() > date) {
+                                if (yesterday > date) {
                                     return date;
                                 }
                             }
