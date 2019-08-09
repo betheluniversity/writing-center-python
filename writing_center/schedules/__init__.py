@@ -140,7 +140,7 @@ class SchedulesView(FlaskView):
         end = datetime.strptime(end_date, '%a %b %d %Y').date()
         tutor_ids = json.loads(request.data).get('tutors')
         names = []
-        if start_date < end_date:
+        if start_date > end_date:
             invalid_date = True
         if 'view-all' in tutor_ids:
             tutors = self.sc.get_tutors()
@@ -162,7 +162,6 @@ class SchedulesView(FlaskView):
         appt_id = str(json.loads(request.data).get('appt_id'))
         deleted = self.sc.delete_appointment(appt_id)
         if deleted:
-            self.wcc.set_alert('success', 'Successfully deleted the appointment.')
             if deleted == 'sub':
                 return deleted
             else:
