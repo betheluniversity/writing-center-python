@@ -95,22 +95,24 @@
                     <tr id="cancel-container">
                         <th colspan="2"><button class="btn btn-primary btn-danger" onclick="cancelAppointment()">Cancel Appointment</button></th>
                     </tr>
-                    <tr id="request-container">
-                        <th id="request-sub-container" colspan="2">
-                            <button class="btn btn-primary darkblue" onclick="requestSub()">Request Substitute</button>
-                            {% if 'Administrator' in session['USER-ROLES'] %}
-                                <button style="margin-left: 10px" class="btn btn-primary btn-danger" onclick="deleteAppointment('request')">Delete Appointment</button>
-                            {% endif %}
-                        </th>
-                    </tr>
-                    <tr id="pickup-container">
-                        <th id="pickup-sub-container" colspan="2">
-                            <button class="btn btn-primary darkblue" onclick="subAppointment()">Pick Up Shift</button>
-                            {% if 'Administrator' in session['USER-ROLES'] %}
-                                <button style="margin-left: 10px" class="btn btn-primary btn-danger" onclick="deleteAppointment('pickup')">Delete Appointment</button>
-                            {% endif %}
-                        </th>
-                    </tr>
+                    {% if 'Administrator' in session['USER-ROLES'] or 'tutor' in session['USER-ROLES'] %}
+                        <tr id="request-container">
+                            <th id="request-sub-container" colspan="2">
+                                <button class="btn btn-primary darkblue" onclick="requestSub()">Request Substitute</button>
+                                {% if 'Administrator' in session['USER-ROLES'] %}
+                                    <button style="margin-left: 10px" class="btn btn-primary btn-danger" onclick="deleteAppointment('request')">Delete Appointment</button>
+                                {% endif %}
+                            </th>
+                        </tr>
+                        <tr id="pickup-container">
+                            <th id="pickup-sub-container" colspan="2">
+                                <button class="btn btn-primary darkblue" onclick="subAppointment()">Pick Up Shift</button>
+                                {% if 'Administrator' in session['USER-ROLES'] %}
+                                    <button style="margin-left: 10px" class="btn btn-primary btn-danger" onclick="deleteAppointment('pickup')">Delete Appointment</button>
+                                {% endif %}
+                            </th>
+                        </tr>
+                    {% endif %}
                 </table>
             </div>
             <div class="modal-footer">
