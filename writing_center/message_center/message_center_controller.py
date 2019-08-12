@@ -79,7 +79,7 @@ class MessageCenterController:
 
         return recipients
 
-    def close_session_student(self, appointment_id):
+    def close_session_student(self, appointment_id):  # todo needs to be connected
         appointment = self.get_appointment_info(appointment_id)
         student = self.get_user_by_id(appointment.student_id)
         tutor = self.get_user_by_id(appointment.tutor_id)
@@ -97,7 +97,7 @@ class MessageCenterController:
 
         self.send_message(subject, render_template('emails/session_email_student.html', **locals()), recipients, cc='', bcc='')
 
-    def close_session_tutor(self, appointment_id, to_prof):
+    def close_session_tutor(self, appointment_id, to_prof):  # Todo needs to be connected
         appointment = self.get_appointment_info(appointment_id)
         student = self.get_user_by_id(appointment.student_id)
 
