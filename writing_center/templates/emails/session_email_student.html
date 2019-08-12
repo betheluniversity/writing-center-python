@@ -15,8 +15,9 @@
         <br/>
         <p>Suggestions: {{ appt_info['suggetions'] }}</p>
         <br/>
-        <p>Schedule another appointment <a href="#">here</a></p>
-        <p>If you have any questions, comments or concerns, contact <a href="#">SOMEONE</a></p>
+        <p>Schedule another appointment <a href="{{ url_for(AppointmentsView:schedule_appointment_landing) }}">here</a></p>
+        <p>Go to the <a href="https://www.bethel.edu/undergrad/academics/support/writing">Writing Support for CAS</a> page to find out more about the Writing Center's services and resources</p>
+
 {% endblock %}
 
 {% block footer %}
