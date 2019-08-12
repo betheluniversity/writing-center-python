@@ -10,3 +10,7 @@
         <p>{{ appt_info['tutor'] }} has filled your tutor request</p>
         <p>If you have any questions, comments or concerns, contact <a href="#">SOMEONE</a></p>
 {% endblock %}
+
+{% block footer %}
+<p class="card-text">&copy; 2013-{{ now.strftime('%Y') }} Bethel University</p>
+{% endblock %}
