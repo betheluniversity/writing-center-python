@@ -123,12 +123,29 @@ class MessageCenterController:
 
     def appointment_signup_student(self, appointment_id):
         # get the appointment via the appointment id
-        # use the appointment to get the date and start time
-        # student specific information: tutor name
-        pass
+        appointment = self.get_appointment_info(appointment_id)
+        student = self.get_user_by_id(appointment.student_id)
+        tutor = self.get_user_by_id(appointment.tutor_id)
+        appt_info = {'date': appointment.scheduledStart.date(),
+                     'time': appointment.scheduledStart.time(),
+                     'tutor': tutor.firstName + ' ' + tutor.lastName}
+        # other email information: recipient, subject, body
+        subject = 'Appointment on {0}'.format(appointment.scheduledStart.date())
+
+        recipient = student.email
+
+        self.send_message(subject, render_template('appointment_signup_student.html', **locals()), recipient, cc='', bcc='')
+
 
     def appointment_signup_tutor(self, appointment_id):
         # get appoitnment via appointment id
+        appointment = self.get_appointment_info(appointment_id)
+        student = self.get_user_by_id(appointment.student_id)
+        tutor = self.get_user_by_id(appointment.tutor_id)
+        appt_info = {'date': appointment.scheduledStart.date(),
+                     'time': appointment.scheduledStart.time(),
+                     'student': student.firstName + ' ' + student.lastName,
+                     'assignment': appointment.assignment}
         # use the appointment to get the date and start time
         # tutor specific information: student name, assignment
         pass
