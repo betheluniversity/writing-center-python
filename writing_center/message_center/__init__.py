@@ -14,7 +14,7 @@ class MessageCenterView(FlaskView):
 
     @route('/')
     def index(self):
-        users = self.base.get_all_users()
+        users = self.base.get_active_users()
         users = sorted(users, key=lambda i: i.lastName)
         roles = self.base.get_roles()
         roles = sorted(roles, key=lambda i: i.id)
@@ -22,10 +22,9 @@ class MessageCenterView(FlaskView):
     
     @route('/send', methods=['POST'])
     def send(self):
-        data = request.form  # The recipient is changing to croups, so some logic to get the right recipients is nececssary
+        data = request.form
         # grab the group(s) from the form, use the group id to get the emails of all the people in the group(s)
         groups = data['recipients']
-        # recipients = self.base.get_group_emails(groups)
         # need to check that all the stuff is actually filled in, if its not, we need to fill it with an empty value
         return self.base.send_message(data['subject'], data['message'], data['recipients'], data['cc'], data['bcc'])
 

@@ -27,8 +27,9 @@ class MessageCenterController:
         db_session.commit()
         return 'success'
 
-    def get_all_users(self):
+    def get_active_users(self):
         return (db_session.query(UserTable)
+                .filter(UserTable.deletedAt == None)
                 .all())
 
     def get_roles(self):
