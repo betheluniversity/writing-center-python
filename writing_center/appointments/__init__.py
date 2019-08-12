@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 
 from writing_center.appointments.appointments_controller import AppointmentsController
 from writing_center.writing_center_controller import WritingCenterController
+from writing_center.message_center import MessageCenterController
 from writing_center.wsapi.wsapi_controller import WSAPIController
 
 
@@ -14,6 +15,7 @@ class AppointmentsView(FlaskView):
     def __init__(self):
         self.ac = AppointmentsController()
         self.wcc = WritingCenterController()
+        self.mcc = MessageCenterController()
         self.wsapi = WSAPIController()
 
     @route('view-all-appointments')
@@ -284,6 +286,9 @@ class AppointmentsView(FlaskView):
             self.wcc.set_alert('danger', 'You are banned from making appointments! If you have any questions email a'
                                          ' Writing Center Administrator.')
 
+        self.mcc.appointment_signup_student(appt_id)
+        self.mcc.appointment_signup_tutor(appt_id)
+        
         return appt_id
 
     @route('cancel-appointment', methods=['POST'])
