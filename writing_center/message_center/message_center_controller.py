@@ -36,7 +36,7 @@ class MessageCenterController:
 
     def get_appointment_info(self, appointment_id):
         return (db_session.query(AppointmentsTable)
-                .filter(AppointmentsTable.ID == appointment_id)
+                .filter(AppointmentsTable.id == appointment_id)
                 .one())
 
     def get_user(self, username):
@@ -131,7 +131,7 @@ class MessageCenterController:
 
         recipient = student.email
 
-        if self.send_message(subject, render_template('appointment_signup_student.html', **locals()), recipient, cc='', bcc=''):
+        if self.send_message(subject, render_template('emails/appointment_signup_student.html', **locals()), recipient, cc='', bcc=''):
             return True
         else:
             return False
@@ -140,7 +140,7 @@ class MessageCenterController:
             appointment = self.get_appointment_info(appointment_id)
             student = self.get_user_by_id(appointment.student_id)
             tutor = self.get_user_by_id(appointment.tutor_id)
-            if self.get_email_preferences_by_id(tutor.id).studentSignupEmail == 1:
+            if self.get_email_preferences_by_id(tutor.id).studentSignUpEmail == 1:
                 appt_info = {'date': appointment.scheduledStart.date(),
                              'time': appointment.scheduledStart.time(),
                              'student': student.firstName + ' ' + student.lastName,
@@ -151,7 +151,7 @@ class MessageCenterController:
 
                 recipient = tutor.email
 
-                if self.send_message(subject, render_template('appointment_signup_tutor.html', **locals()), recipient, cc='', bcc=''):
+                if self.send_message(subject, render_template('emails/appointment_signup_tutor.html', **locals()), recipient, cc='', bcc=''):
                     return True
                 else:
                     return False
@@ -162,8 +162,6 @@ class MessageCenterController:
         if app.config['ENVIRON'] != 'prod':
             print('Would have sent email to: {0} cc: {1}, bcc: {2}'.format(str(recipients), str(cc), str(bcc)))
             subject = '{0}'.format(subject)
-            recipients = app.config['TEST_EMAILS']
-            bcc = []
 
         # if we are sending a message to a single user, go ahead and convert the string into a list
         if isinstance(recipients, str):
