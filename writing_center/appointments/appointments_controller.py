@@ -109,6 +109,7 @@ class AppointmentsController:
     def get_scheduled_appointments(self, username):
         tutor = self.get_user_by_username(username)
         return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.scheduledStart >= datetime.now())\
             .filter(AppointmentsTable.tutor_id == tutor.id)\
             .all()
 
