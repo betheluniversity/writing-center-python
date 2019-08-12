@@ -242,6 +242,11 @@ class AppointmentsController:
             .filter(SettingsTable.id == 3)\
             .one_or_none()
 
+    def get_survey_link(self):
+        return db_session.query(SettingsTable.value)\
+            .filter(SettingsTable.id == 4)\
+            .one_or_none()
+
     def get_users_by_role(self, role_name):
         return db_session.query(UserTable)\
             .filter(UserTable.id == UserRoleTable.user_id)\

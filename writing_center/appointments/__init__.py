@@ -341,7 +341,8 @@ class AppointmentsView(FlaskView):
                 self.wcc.set_alert('success', message)
             else:
                 self.wcc.set_alert('danger', 'Failed To Revert No Show')
-        return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))
+        qualtrics_link = self.ac.get_survey_link()[0]
+        return render_template('appointments/end_appointment.html', **locals())
 
     @route('/search', methods=['POST'])
     def search(self):
