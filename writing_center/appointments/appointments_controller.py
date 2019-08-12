@@ -5,7 +5,6 @@ from writing_center.db_repository import db_session
 from writing_center.db_repository.tables import UserTable, AppointmentsTable, SettingsTable, UserRoleTable, RoleTable
 
 
-
 class AppointmentsController:
     def __init__(self):
         pass
@@ -74,7 +73,6 @@ class AppointmentsController:
             # Commits to DB
             db_session.commit()
             return True
-
 
     def cancel_appointment(self, appt_id):
         try:
