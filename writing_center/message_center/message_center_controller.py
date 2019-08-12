@@ -146,9 +146,13 @@ class MessageCenterController:
                      'time': appointment.scheduledStart.time(),
                      'student': student.firstName + ' ' + student.lastName,
                      'assignment': appointment.assignment}
-        # use the appointment to get the date and start time
-        # tutor specific information: student name, assignment
-        pass
+
+        # other email information: recipient, body, subject
+        subject = 'Appointment Scheduled'
+
+        recipient = tutor.email
+
+        self.send_message(subject, render_template('appointment_signup_tutor.html', **locals()), recipient, cc='', bcc='')
 
     def send_message(self, subject, body, recipients, cc, bcc, html=False):
         if app.config['ENVIRON'] != 'prod':
