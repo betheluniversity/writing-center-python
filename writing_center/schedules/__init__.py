@@ -212,6 +212,7 @@ class SchedulesView(FlaskView):
             worked = self.sc.request_substitute(appt_id)
             if not worked:
                 self.wcc.set_alert('danger', 'Failed to request a substitute for appointment id {0}'.format(appt_id))
+        # sub request email
         return 'Substitute Requested Successfully'
 
     @route('get-appointments', methods=['GET'])
@@ -310,6 +311,8 @@ class SchedulesView(FlaskView):
             self.wcc.set_alert('success', 'Successfully picked up the shift!')
         else:
             self.wcc.set_alert('danger', 'Failed to pick up the shift.')
+
+        # request fulfilled email
         return 'finished'
 
     @route('request-subtitute', methods=['POST'])

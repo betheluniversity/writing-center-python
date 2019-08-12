@@ -27,8 +27,9 @@ class MessageCenterController:
         db_session.commit()
         return 'success'
 
-    def get_all_users(self):
+    def get_active_users(self):
         return (db_session.query(UserTable)
+                .filter(UserTable.deletedAt == None)
                 .all())
 
     def get_roles(self):
@@ -80,7 +81,8 @@ class MessageCenterController:
         users = list(dict.fromkeys(users))
         recipients = []
         for user in users:
-            recipients.append(self.get_user_by_id(user).email)
+            if user.username != session['USERNAME']:
+                recipients.append(self.get_user_by_id(user).email)
 
         return recipients
 
