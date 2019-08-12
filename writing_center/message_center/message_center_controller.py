@@ -80,7 +80,8 @@ class MessageCenterController:
         users = list(dict.fromkeys(users))
         recipients = []
         for user in users:
-            recipients.append(self.get_user_by_id(user).email)
+            if user.username != session['USERNAME']:
+                recipients.append(self.get_user_by_id(user).email)
 
         return recipients
 
