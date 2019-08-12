@@ -269,6 +269,8 @@ class AppointmentsView(FlaskView):
                                     break
                         appt = self.ac.schedule_appointment(appt_id, course, assignment)
                         if appt:
+                            self.mcc.appointment_signup_student(appt_id)
+                            self.mcc.appointment_signup_tutor(appt_id)
                             self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your '
                                                           'Appointments, Go To The "View Your Appointments" Page!')
                         else:
@@ -285,9 +287,6 @@ class AppointmentsView(FlaskView):
             # TODO MAYBE GIVE THEM A SPECIFIC EMAIL TO EMAIL?
             self.wcc.set_alert('danger', 'You are banned from making appointments! If you have any questions email a'
                                          ' Writing Center Administrator.')
-
-        self.mcc.appointment_signup_student(appt_id)
-        self.mcc.appointment_signup_tutor(appt_id)
         
         return appt_id
 
