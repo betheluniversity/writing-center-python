@@ -78,6 +78,9 @@ class SchedulesView(FlaskView):
         if not start_date or not end_date:
             self.wcc.set_alert('danger', 'You must set a start date AND an end date!')
             return 'danger'
+        if start_date > end_date:
+            self.wcc.set_alert('danger', 'Start date cannot be further in the future than the end date!')
+            return 'danger'
         start_date = datetime.strptime(start_date, '%a %b %d %Y').date()
         end_date = datetime.strptime(end_date, '%a %b %d %Y').date()
         multilingual = str(json.loads(request.data).get('multilingual'))
