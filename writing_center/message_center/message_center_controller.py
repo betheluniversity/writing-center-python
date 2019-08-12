@@ -15,6 +15,18 @@ class MessageCenterController:
     def __init__(self):
         pass
 
+    def toggle_substitute(self, substitute):
+        toggle = self.get_email_preferences()
+        toggle.subRequestEmail = substitute
+        db_session.commit()
+        return 'success'
+
+    def toggle_shift(self, shift):
+        toggle = self.get_email_preferences()
+        toggle.studentSignUpEmail = shift
+        db_session.commit()
+        return 'success'
+
     def get_all_users(self):
         return (db_session.query(UserTable)
                 .all())
@@ -55,6 +67,8 @@ class MessageCenterController:
                 .one())
 
     def get_substitute_email_recipients(self):
+        # TODO: Logic to ensure we dont send this email to the tutor requesting a sub
+        # Should just be matching the user id to the session user id
         users = (db_session.query(EmailPreferencesTable.user_id)
                  .filter(EmailPreferencesTable.SubRequestEmail == 1)
                  .all())
@@ -70,53 +84,55 @@ class MessageCenterController:
 
         return recipients
 
-    def get_shift_email_recipients(self, appointment_id):
-        users = []
-
-        users.append(self.get_appointment_info(appointment_id).tutor_id)
-
-        users.append(db_session.query(UserRoleTable.user_id)
-                     .filter(UserRoleTable.role_id == 1 or UserRoleTable.role_id == 2)
-                     .all())
-
-        users = list(dict.fromkeys(users))
-        recipients = []
-        for user in users:
-            recipients.append(self.get_user_by_id(user).email)
-
-        return recipients
-
-    # def get_group_emails(self, groups):
-    #     recipients = []
-
-    #     recipients.append(db_session.query())
-
-    def toggle_substitute(self, substitute):
-        toggle = self.get_email_preferences()
-        toggle.subRequestEmail = substitute
-        db_session.commit()
-        return 'success'
-
-    def toggle_shift(self, shift):
-        toggle = self.get_email_preferences()
-        toggle.studentSignUpEmail = shift
-        db_session.commit()
-        return 'success'
-
-    def close_session_email(self, appointment_id):
+    def close_session_student(self, appointment_id):  # todo needs to be connected
         appointment = self.get_appointment_info(appointment_id)
-        student = self.get_user(appointment.StudUsername)
+        student = self.get_user_by_id(appointment.student_id)
+        tutor = self.get_user_by_id(appointment.tutor_id)
+
+        appt_info = {'tutor': tutor.firstName + tutor.lastName,
+                     'actual_start': appointment.actualStart,
+                     'actual_end': appointment.actualEnd,
+                     'assignment': appointment.assignment,
+                     'notes': appointment.notes,
+                     'suggestions': appointment.suggestions}
+
+        subject = 'Appointment with {0} {1}'.format(tutor.firstName, tutor.lastName)
+
+        recipients = student.email
+
+        self.send_message(subject, render_template('emails/session_email_student.html', **locals()), recipients, cc='', bcc='')
+
+    def close_session_tutor(self, appointment_id, to_prof):  # Todo needs to be connected
+        appointment = self.get_appointment_info(appointment_id)
+        student = self.get_user_by_id(appointment.student_id)
 
         if appointment.ProfUsername != '':
-            professor = self.get_user(appointment.ProfUsername)
+            professor = appointment.profName
+        else:
+            professor = 'n/a'
 
-        tutor = self.get_user(appointment.TutorUsername)
-        subject = '{{{0}}} {1} ({2})'.format(appointment.StudUsername, appointment.StudentUsername,
-                                             appointment.date.strftime('%m/%d/%Y'))  # TODO work this out
-        tutor = appointment.TutorUsername
-        recipients = self.get_end_of_session_recipients(appointment_id)
+        if appointment.dropIn == 0:
+            appt_type = 'Scheduled'
+        else:
+            appt_type = 'Drop In'
 
-        self.send_message(subject, render_template('sessions/email.html', **locals()), recipients, None, True)
+        tutor = self.get_user_by_id(appointment.tutor_id)
+
+        appt_info = {'student': student.FirstName + student.LastName,
+                     'type': appt_type,
+                     'actual_start': appointment.actualStart,
+                     'actual_end': appointment.actualEnd,
+                     'assignment': appointment.assignment}
+
+        subject = 'Appointment with {0} {1}'.format(student.firstName, student.lastName)
+
+        recipients = tutor.email
+
+        if to_prof:
+            cc = appointment.profEmail
+            self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, cc, bcc='')
+        else:
+            self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, cc='', bcc='')
 
     def appointment_signup_student(self, appointment_id):
         # get the appointment via the appointment id
@@ -159,6 +175,7 @@ class MessageCenterController:
                 return False
 
     def send_message(self, subject, body, recipients, cc, bcc, html=False):
+        # data will be compiled in the above functions and sent here
         if app.config['ENVIRON'] != 'prod':
             print('Would have sent email to: {0} cc: {1}, bcc: {2}'.format(str(recipients), str(cc), str(bcc)))
             subject = '{0}'.format(subject)
@@ -187,38 +204,3 @@ class MessageCenterController:
             print("Failed to send message: {}".format(body))
             return False
         return True
-
-    def send_shift_message(self):
-        # TODO write the function to send an email when a student signs up for a shift
-        pass
-
-    @route('/sub-email')
-    def send_substitute_email(self, appointment_id):
-        recipients = self.get_substitute_email_recipients()
-        appointment = self.get_appointment_info(appointment_id)
-        email_info = {'student': self.get_user_by_id(appointment.student_id).firstName + ' ' + self.get_user_by_id(
-            appointment.student_id).lastName,
-                      'tutor': self.get_user_by_id(appointment.tutor_id).firstName + ' ' + self.get_user_by_id(
-                          appointment.tutor_id).lastName,
-                      'start': appointment.scheduledStart, 'end': appointment.scheduledEnd,
-                      'assignment': appointment.assignment, 'date': 'NEED THIS'}
-
-        mail = Mail(app)
-        msg = Message(subject='Substitute Tutor needed',
-                      sender='',
-                      recipients=recipients)
-
-        msg.html = 'sub_request.html'
-
-        if app.config['ENVIRON'] != 'prod':
-            print('Would have sent email to: {}'.format(str(recipients)))
-            print('Subject: {}'.format(msg.subject))
-            print('Body: {}'.format(msg.html))
-            return True
-        else:
-            try:
-                mail.send(msg)
-            except socket.error:
-                print("Failed to send message: {}".format(msg.html))
-                return False
-            return True
