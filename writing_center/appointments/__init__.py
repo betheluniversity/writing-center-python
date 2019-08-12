@@ -327,6 +327,7 @@ class AppointmentsView(FlaskView):
             if appt:
                 appointment = self.ac.get_user_by_appt(appt_id)
                 user = self.ac.get_user_by_id(appointment.student_id)
+                self.ac.ban_if_no_show_check(user.id)
                 message = '{0} {1} Marked As No Show'.format(user.firstName, user.lastName)
                 self.wcc.set_alert('success', message)
             else:

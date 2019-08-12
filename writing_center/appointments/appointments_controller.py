@@ -134,6 +134,28 @@ class AppointmentsController:
         except Exception as e:
             return False
 
+    def ban_if_no_show_check(self, user_id):
+        try:
+            no_show_count = db_session.query(AppointmentsTable)\
+                .filter(AppointmentsTable.student_id == user_id)\
+                .filter(AppointmentsTable.noShow == 1)\
+                .count()
+            if no_show_count > int(self.get_ban_limit()[0]):
+                banned = self.ban_user(user_id)
+                return banned
+            return False
+        except Exception as e:
+            return False
+
+    def ban_user(self, user_id):
+        try:
+            user = self.get_user_by_id(user_id)
+            user.bannedDate = datetime.now()
+            db_session.commit()
+            return True
+        except Exception as e:
+            return False
+
     def continue_appointment(self, appt_id):
         try:
             appointment = db_session.query(AppointmentsTable)\
@@ -213,6 +235,11 @@ class AppointmentsController:
     def get_time_limit(self):
         return db_session.query(SettingsTable.value)\
             .filter(SettingsTable.id == 2)\
+            .one_or_none()
+
+    def get_ban_limit(self):
+        return db_session.query(SettingsTable.value)\
+            .filter(SettingsTable.id == 3)\
             .one_or_none()
 
     def get_users_by_role(self, role_name):
