@@ -155,26 +155,32 @@ class MessageCenterController:
             return False
 
     def appointment_signup_tutor(self, appointment_id):
-            appointment = self.get_appointment_info(appointment_id)
-            student = self.get_user_by_id(appointment.student_id)
-            tutor = self.get_user_by_id(appointment.tutor_id)
-            if self.get_email_preferences_by_id(tutor.id).studentSignUpEmail == 1:
-                appt_info = {'date': appointment.scheduledStart.date(),
-                             'time': appointment.scheduledStart.time(),
-                             'student': student.firstName + ' ' + student.lastName,
-                             'assignment': appointment.assignment}
+        appointment = self.get_appointment_info(appointment_id)
+        student = self.get_user_by_id(appointment.student_id)
+        tutor = self.get_user_by_id(appointment.tutor_id)
+        if self.get_email_preferences_by_id(tutor.id).studentSignUpEmail == 1:
+            appt_info = {'date': appointment.scheduledStart.date(),
+                         'time': appointment.scheduledStart.time(),
+                         'student': student.firstName + ' ' + student.lastName,
+                         'assignment': appointment.assignment}
 
-                # other email information: recipient, body, subject
-                subject = 'Appointment Scheduled'
+            # other email information: recipient, body, subject
+            subject = 'Appointment Scheduled'
 
-                recipient = tutor.email
+            recipient = tutor.email
 
-                if self.send_message(subject, render_template('emails/appointment_signup_tutor.html', **locals()), recipient, cc='', bcc=''):
-                    return True
-                else:
-                    return False
+            if self.send_message(subject, render_template('emails/appointment_signup_tutor.html', **locals()), recipient, cc='', bcc=''):
+                return True
             else:
                 return False
+        else:
+            return False
+
+    def request_substitute(self, appointment_id):
+        pass
+
+    def substitute_request_filled(self, appointment_id):
+        pass
 
     def send_message(self, subject, body, recipients, cc, bcc, html=False):
         # data will be compiled in the above functions and sent here
