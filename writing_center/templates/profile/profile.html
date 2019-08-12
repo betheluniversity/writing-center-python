@@ -1,5 +1,7 @@
 {% extends 'profile/base.html' %}
 
+{% block page_title %}Profile{% endblock %}
+
 {% block body_content %}
     <div class="jumbotron">
         <h1>Edit Your Profile</h1>
@@ -30,12 +32,16 @@
                 </div>
             </div>
             <div class="form-row">
-                <input type="checkbox" name="substitute" id="substitute" {% if(preferences.subRequestEmail == 1) %} checked {% endif %}>
-                <label for="substitute" id="substitue-text">Receive an email when a tutor requests a substitute</label>
+                <div class="form-group col-md-4">
+                    <input type="checkbox" class="form-check-input" name="substitute" id="substitute" {% if(preferences.subRequestEmail == 1) %} checked {% endif %}>
+                    <label for="substitute" class="form-check-label" id="substitue-text">Receive an email when a tutor requests a substitute</label>
+                </div>
             </div>
             <div class="form-row">
-                <input type="checkbox" name="shift" id="shift" {% if(preferences.studentSignUpEmail == 1) %} checked {% endif %}>
-                <label for="shift" id="shift-text">Receive an email when a student signs up for one of your shifts</label>
+                <div class="form-group col-md-4">
+                    <input type="checkbox" class="form-check-input" name="shift" id="shift" {% if(preferences.studentSignUpEmail == 1) %} checked {% endif %}>
+                    <label for="shift" class="form-check-label" id="shift-text">Receive an email when a student signs up for one of your shifts</label>
+                </div>
             </div>
             <div class="form-row">
                 <div class="form-group col-md-12">

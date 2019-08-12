@@ -1,4 +1,6 @@
-{% extends 'users/index.html' %}
+{% extends 'users/base.html' %}
+
+{% block page_title %}Bans{% endblock %}
 
 {% block body_content %}
     <div class="jumbotron">
@@ -25,9 +27,6 @@
             <div class="form-group col-md-1">
                 <button type="button" class="btn btn-primary darkblue" id="search-users">Search</button>
             </div>
-            <div class="form-group col-md-1">
-                <button class="btn btn-small btn-primary darkblue" onclick="clearSearch()" id="clear-params">Clear Search</button>
-            </div>
         </div>
         {# spinner placeholder #}
         <div id="spinner" class="spinner" style="display: none;">
@@ -36,6 +35,9 @@
     </form>
     <div id="search-results"></div>
     <hr>
+    <div id="results" style="display: none">
+        {% include 'users/ban_all_confirmation.html' %}
+    </div>
     <div class="form-row">
         <div class="form-group">
             <h1><b>Banned Students</b></h1>
@@ -66,13 +68,6 @@
            });
 
         });
-
-        function clearSearch()//Clears parameter values
-        {
-            document.getElementById('username').value = "";
-            document.getElementById('firstName').value = "";
-            document.getElementById('lastName').value = "";
-        }
     </script>
 
 {% endblock %}

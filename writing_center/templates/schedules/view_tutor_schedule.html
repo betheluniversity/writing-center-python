@@ -1,5 +1,7 @@
 {% extends 'schedules/base.html' %}
 
+{% block page_title %}View Schedule{% endblock %}
+
 {% block body_content %}
     <div class="jumbotron">
         <h1><b>View Tutor Schedule</b></h1>
@@ -9,16 +11,18 @@
     <hr>
     <div class="row">
         <div class="col-md-3">
-            <div id="tutors">
-                <h3>Tutors</h3>
-                <select id="tutors-schedule" class="chosen-container" size="7" multiple="multiple" onchange="tutorsChanged()">
-                    <option id="view-all" class="select-hr" value="View All">View All Schedules</option>
-                    {% for tutor in tutors %}
-                        <option id="{{ tutor.id }}" value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
-                    {% endfor %}
-                </select>
-                <hr>
-            </div>
+            {% if 'Administrator' in session['USER-ROLES'] %}
+                <div id="tutors">
+                    <h3>Tutors</h3>
+                    <select id="tutors-schedule" class="chosen-container" size="7" multiple="multiple" onchange="tutorsChanged()">
+                        <option id="view-all" class="select-hr" value="View All">View All Schedules</option>
+                        {% for tutor in tutors %}
+                            <option id="{{ tutor.id }}" value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
+                        {% endfor %}
+                    </select>
+                    <hr>
+                </div>
+            {% endif %}
             <h3>Calendar Key</h3>
             <table class="table">
                 <thead>
@@ -53,41 +57,8 @@
             <div id="calendar"></div>
         </div>
     </div>
-    <hr>
-    <div class="jumbotron">
-        <h1><b>Delete Tutor Shifts</b></h1>
-        <p>Delete all appointments for the selected tutor in the given date range.</p>
-    </div>
-    <div class="form-row">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="start-date">Start Date</label>
-                <input class="form-control datepicker" id="start-date" type="text" readonly/>
-                <div id="start-container"></div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="end-date">End Date</label>
-                <input class="form-control datepicker" id="end-date" type="text" readonly/>
-                <div id="end-container"></div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <select id="tutors-shifts" class="chosen-container" size="7" multiple="multiple">
-                    <option id="view-all" class="select-hr" value="View All" selected="selected">Select All Tutors</option>
-                    {% for tutor in tutors %}
-                        <option id="{{ tutor.id }}" value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-    </div>
-    <div id="delete-confirm" class="form-row">
-        <input type="button" id="delete-shifts" class="btn btn-primary btn-danger" value="Delete Shifts" onclick="confirmDelete()">
-    </div>
-    <div id="sub-list-results" class="form-row"></div>
+    {% include 'macros/appointment_modal.html' %}
+
     <script>
         $(document).ready(function () {
             $.ajax({
@@ -96,13 +67,32 @@
                 success: function (response) {
                     if (response != null) {
                         calendar.batchRendering(function() {
-                            for (let i = 0; i < response.length; i++) {
-                                calendar.addEvent({
-                                    id: response[i].id,
-                                    title: response[i].tutorUsername,
-                                    start: response[i].startTime,
-                                    end: response[i].endTime
-                                });
+                            for (let i = 0; i < response.length; i ++) {
+                                if (response[i].multilingual === 1) {
+                                    calendar.addEvent({
+                                        id: response[i].id,
+                                        title: response[i].tutorUsername,
+                                        start: response[i].startTime,
+                                        end: response[i].endTime,
+                                        color: 'orange'
+                                    });
+                                } else if (response[i].dropIn === 1) {
+                                    calendar.addEvent({
+                                        id: response[i].id,
+                                        title: response[i].tutorUsername,
+                                        start: response[i].startTime,
+                                        end: response[i].endTime,
+                                        color: 'green'
+                                    });
+                                } else {
+                                    calendar.addEvent({
+                                        id: response[i].id,
+                                        title: response[i].tutorUsername,
+                                        start: response[i].startTime,
+                                        end: response[i].endTime,
+                                        color: '#4169E1'
+                                    });
+                                }
                             }
                         });
                     }
@@ -111,47 +101,6 @@
                 }
             });
 
-            $('.datepicker').each(function () {
-                let current_element = $(this);
-                let maxDate = new Date();
-                let dd = maxDate.getDate();
-                let mm = maxDate.getMonth() + 1;
-                let yyyy = maxDate.getFullYear() + 2;
-                if (dd < 10) {
-                  dd = '0' + dd;
-                }
-
-                if (mm < 10) {
-                  mm = '0' + mm;
-                }
-                maxDate = yyyy + '-' + mm + '-' + dd;
-                let starting_values = {
-                    field: this,
-                    format: 'MM DD YYYY',
-                    minDate: new Date('2010-01-01'),
-                    maxDate: new Date(maxDate),
-                    yearRange: [2010, yyyy],
-                    disableDayFn: function (date) {
-                        let start_populated = $("#start-date").val();
-                        let end_populated = $("#end-date").val();
-                        if (start_populated == "") {
-                            return null;
-                        } else if (current_element.attr('id') == 'start-date') {
-                            if (new Date(end_populated) > date) {
-                                return date;
-                            }
-                        } else if (current_element.attr('id') == 'end-date') {
-                            if (new Date(end_populated) > date) {
-                                return date;
-                            }
-                        }
-                    }
-                };
-                let timeSetting = ({{ time_setting }});
-                starting_values['defaultDate'] = new Date(new Date().getTime() + timeSetting * 60 * 60 * 1000);
-                starting_values['setDefaultDate'] = true;
-                let picker = new Pikaday(starting_values);
-            });
         });
 
         let calendarEl = document.getElementById('calendar');
@@ -168,19 +117,7 @@
             displayEventEnd: true,
             timeZone: 'UTC',
             eventClick: function(info) {
-                $.ajax({
-                    type: "POST",
-                    url: "{{ url_for('SchedulesView:load_appointment_table') }}",
-                    data: JSON.stringify({
-                        'id': info.event.id,
-                    }),
-                    contentType: 'application/json;charset=UTF-8',
-                    success: function (response) {
-                        $('#results').html(response)
-                    },
-                    error: function (error) {
-                    }
-                });
+                getAppointmentData(info.event.id, false, false, true);
             }
         });
 
@@ -202,41 +139,35 @@
                 success: function (response) {
                     calendar.removeAllEvents();
                     calendar.batchRendering(function() {
-                        for (let i = 0; i < response.length; i++) {
-                            calendar.addEvent({
-                                id: response[i].id,
-                                title: response[i].tutor_id,
-                                start: response[i].startTime,
-                                end: response[i].endTime
-                            });
+                        for (let i = 0; i < response.length; i ++) {
+                            if (response[i].multilingual === 1) {
+                                calendar.addEvent({
+                                    id: response[i].id,
+                                    title: response[i].tutorUsername,
+                                    start: response[i].startTime,
+                                    end: response[i].endTime,
+                                    color: 'orange'
+                                });
+                            } else if (response[i].dropIn === 1) {
+                                calendar.addEvent({
+                                    id: response[i].id,
+                                    title: response[i].tutorUsername,
+                                    start: response[i].startTime,
+                                    end: response[i].endTime,
+                                    color: 'green'
+                                });
+                            } else {
+                                calendar.addEvent({
+                                    id: response[i].id,
+                                    title: response[i].tutorUsername,
+                                    start: response[i].startTime,
+                                    end: response[i].endTime,
+                                    color: '#4169E1'
+                                });
+                            }
                         }
                     });
                     $('#spinner').hide();
-                },
-                error: function (error) {
-
-                }
-            });
-        }
-
-        function confirmDelete() {
-            let startDate = $('#start-date').val();
-            let endDate = $('#end-date').val();
-            let tutors = [];
-            $("#tutors-shifts option:selected").each(function() {
-                tutors.push(this.id);
-            });
-            $.ajax({
-                type: "POST",
-                url: "{{ url_for('SchedulesView:confirm_delete') }}",
-                data: JSON.stringify({
-                    'tutors': tutors,
-                    'startDate': startDate,
-                    'endDate': endDate
-                }),
-                contentType: 'application/json;charset=UTF-8',
-                success: function (data) {
-                    $('#delete-confirm').html(data)
                 },
                 error: function (error) {
 
@@ -254,13 +185,32 @@
                         calendar.removeAllEvents();
                         if (response != null) {
                             calendar.batchRendering(function() {
-                                for (let i = 0; i < response.length; i++) {
-                                    calendar.addEvent({
-                                        id: response[i].id,
-                                        title: response[i].tutorUsername,
-                                        start: response[i].startTime,
-                                        end: response[i].endTime
-                                    });
+                                for (let i = 0; i < response.length; i ++) {
+                                    if (response[i].multilingual === 1) {
+                                        calendar.addEvent({
+                                            id: response[i].id,
+                                            title: response[i].tutorUsername,
+                                            start: response[i].startTime,
+                                            end: response[i].endTime,
+                                            color: 'orange'
+                                        });
+                                    } else if (response[i].dropIn === 1) {
+                                        calendar.addEvent({
+                                            id: response[i].id,
+                                            title: response[i].tutorUsername,
+                                            start: response[i].startTime,
+                                            end: response[i].endTime,
+                                            color: 'green'
+                                        });
+                                    } else {
+                                        calendar.addEvent({
+                                            id: response[i].id,
+                                            title: response[i].tutorUsername,
+                                            start: response[i].startTime,
+                                            end: response[i].endTime,
+                                            color: '#4169E1'
+                                        });
+                                    }
                                 }
                             });
                         }
@@ -278,13 +228,32 @@
                         calendar.removeAllEvents();
                         if (response != null) {
                             calendar.batchRendering(function() {
-                                for (let i = 0; i < response.length; i++) {
-                                    calendar.addEvent({
-                                        id: response[i].id,
-                                        title: response[i].tutorUsername,
-                                        start: response[i].startTime,
-                                        end: response[i].endTime
-                                    });
+                                for (let i = 0; i < response.length; i ++) {
+                                    if (response[i].multilingual === 1) {
+                                        calendar.addEvent({
+                                            id: response[i].id,
+                                            title: response[i].tutorUsername,
+                                            start: response[i].startTime,
+                                            end: response[i].endTime,
+                                            color: 'orange'
+                                        });
+                                    } else if (response[i].dropIn === 1) {
+                                        calendar.addEvent({
+                                            id: response[i].id,
+                                            title: response[i].tutorUsername,
+                                            start: response[i].startTime,
+                                            end: response[i].endTime,
+                                            color: 'green'
+                                        });
+                                    } else {
+                                        calendar.addEvent({
+                                            id: response[i].id,
+                                            title: response[i].tutorUsername,
+                                            start: response[i].startTime,
+                                            end: response[i].endTime,
+                                            color: '#4169E1'
+                                        });
+                                    }
                                 }
                             });
                         }
@@ -295,37 +264,6 @@
                 button.text('View Open Appointments');
                 button.val('view-sub');
             }
-        }
-
-        function confirmedNo() {
-            $('#delete-confirm').html("<input type=\"button\" id=\"delete-shifts\" class=\"btn btn-primary btn-danger\" value=\"Delete Shifts\" onclick=\"confirmDelete()\">")
-            $('#sub-list-results').html("")
-        }
-
-        function deleteShifts() {
-            let startDate = $('#start-date').val();
-            let endDate = $('#end-date').val();
-            let tutors = [];
-            $("#tutors-shifts option:selected").each(function() {
-                tutors.push(this.id);
-            });
-             $.ajax({
-                type: "POST",
-                url: "{{ url_for('SchedulesView:delete_tutors_from_shifts') }}",
-                data: JSON.stringify({
-                    'tutors': tutors,
-                    'startDate': startDate,
-                    'endDate': endDate
-                }),
-                contentType: 'application/json;charset=UTF-8',
-                success: function (data) {
-                    $('#delete-confirm').html("<input type=\"button\" id=\"delete-shifts\" class=\"btn btn-primary btn-danger\" value=\"Delete Shifts\" onclick=\"confirmDelete()\">")
-                    $('#sub-list-results').html(data)
-                },
-                error: function (error) {
-
-                }
-            });
         }
     </script>
 {% endblock %}

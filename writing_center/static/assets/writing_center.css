@@ -1,3 +1,7 @@
+a.btn-danger{
+    color: white !important;
+}
+
 a.dashboard-link{
     color: black;
     text-decoration: none;
@@ -36,6 +40,10 @@ body {
     line-height: 1.5;
     position: relative;
     cursor: auto;
+}
+
+button.cleanse{
+    margin-bottom: 10px;
 }
 
 div.centered {
@@ -151,6 +159,16 @@ ul.list-group{
     font-size: .875rem !important;
 }
 
+.collapsible::after {
+	content: "\f107";
+	color: white;
+    font-family: "FontAwesome";
+}
+
+.collapsible[aria-expanded="true"]::after {
+	content: "\f106";
+}
+
 .custom-user-div {
     color: white;
     display: inline-block !important;
@@ -183,8 +201,20 @@ ul.list-group{
     color: black;
 }
 
+.fc .fc-row .fc-content-skeleton table, .fc .fc-row .fc-content-skeleton td, .fc .fc-row .fc-mirror-skeleton td {
+    border-color: #ddd !important;
+}
+
 .fc-unthemed td.fc-today {
     background: yellow !important;
+}
+
+.form-check-input {
+    margin-left: 0px !important;
+}
+
+.form-check-label {
+    margin-left: 20px;
 }
 
 .nav.margins {
@@ -228,6 +258,10 @@ ul.list-group{
 
 .no-decoration {
     text-decoration: none !important;
+}
+
+.one-line {
+    white-space: nowrap;
 }
 
 .pref-button {

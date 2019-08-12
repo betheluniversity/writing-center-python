@@ -20,7 +20,7 @@
                 <tbody>
                     {% if appointments|length + walk_in_appts|length != 0 %}
                         <tr>
-                            <td>Appointments</td>
+                            <td>Scheduled Appointments</td>
                             <td>{{ appointments|length }}</td>
                         </tr>
                         <tr>
@@ -44,7 +44,8 @@
     {% if busiest_tod is defined %}
         <div class="form-row">
             {% if busiest_tod is defined %}
-            <div class="form-group col-md-6">
+            <div class="form-group col-lg-6">
+                <h6><b>Busiest Time Of Day</b></h6>
                 <table id="busiest-tod"  class="table table-striped table-bordered">
                     <thead>
                         <tr>
@@ -63,7 +64,8 @@
                 </table>
             </div>
             {% endif %}
-            <div class="form-group col-md-6">
+            <div class="form-group col-lg-6">
+                <h6><b>Busiest Tutor</b></h6>
                 <table id="busiest-tutor"  class="table table-striped table-bordered">
                     <thead>
                         <tr>
@@ -83,8 +85,8 @@
             </div>
         </div>
         <div class="form-row">
-            <div class="form-group col-md-6">
-
+            <div class="form-group col-lg-6">
+                <h6><b>Busiest Day</b></h6>
                 <table id="busiest-day"  class="table table-striped table-bordered">
                     <thead>
                         <tr>
@@ -103,7 +105,8 @@
                 </table>
 
             </div>
-            <div class="form-group col-md-6">
+            <div class="form-group col-lg-6">
+                <h6><b>Busiest Week</b></h6>
                 <table id="busiest-week"  class="table table-striped table-bordered">
                     <thead>
                         <tr>
@@ -129,21 +132,21 @@
                 <table id="courses"  class="table table-striped table-bordered">
                     <thead>
                         <tr>
+                            <th>Number of Appointments</th>
                             <th>Course</th>
                             <th>Tag</th>
                             <th>Section</th>
                             <th>Prof Name</th>
-                            <th>Number of Appointments</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for course in courses %}
                             <tr>
+                                <td>{{ courses[course]['count'] }}</td>
                                 <td>{{ courses[course]['courseCode'] }}</td>
                                 <td>{{ courses[course]['tag'] }}</td>
                                 <td>{{ courses[course]['section'] }}</td>
                                 <td>{{ courses[course]['profName'] }}</td>
-                                <td>{{ courses[course]['count'] }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -168,16 +171,8 @@
                 "bInfo": false
             });
 
-            let table2 = $('#no-shows').DataTable( {
-                "ordering": false,
-                "bPaginate": false,
-                "bLengthChange": false,
-                "bFilter": false,
-                "bInfo": false
-            });
-
             let table3 = $('#busiest-day').DataTable( {
-                "order": [],
+                "aaSorting": [[1, 'desc']],
                 "bPaginate": false,
                 "bLengthChange": false,
                 "bFilter": false,
@@ -185,7 +180,7 @@
             });
 
             let table4 = $('#busiest-tod').DataTable( {
-                "order": [],
+                "aaSorting": [[1, 'desc']],
                 "bPaginate": false,
                 "bLengthChange": false,
                 "bFilter": false,
@@ -193,7 +188,7 @@
             });
 
             let table5 = $('#busiest-week').DataTable( {
-                "order": [],
+                "aaSorting": [[1, 'desc']],
                 "bPaginate": false,
                 "bLengthChange": false,
                 "bFilter": false,
@@ -201,6 +196,7 @@
             });
 
             let table6 = $('#busiest-tutor').DataTable( {
+                "aaSorting": [[1, 'desc']],
                 "aoColumns": [
                     { "orderSequence": [ "asc", "desc" ] },
                     { "orderSequence": [ "asc", "desc" ] },
@@ -212,6 +208,7 @@
             });
 
             let table7 = $('#courses').DataTable( {
+                "aaSorting": [[0, 'desc']],
                 "aoColumns": [
                     { "orderSequence": [ "asc", "desc" ] },
                     { "orderSequence": [ "asc", "desc" ] },

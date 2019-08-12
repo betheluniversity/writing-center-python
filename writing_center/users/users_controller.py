@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from writing_center.db_repository import db_session
-from writing_center.db_repository.tables import UserTable, UserRoleTable, RoleTable, EmailPreferencesTable
+from writing_center.db_repository.tables import UserTable, UserRoleTable, RoleTable, EmailPreferencesTable, AppointmentsTable
 
 
 class UsersController:
@@ -23,11 +23,11 @@ class UsersController:
             .filter(UserTable.username == username)\
             .one_or_none()
 
-    def get_user_by_name(self, firstName, lastName):
+    def get_users_by_name(self, firstName, lastName):
         return db_session.query(UserTable)\
-            .filter(UserTable.firstName == firstName)\
-            .filter(UserTable.lastName == lastName)\
-            .one_or_none()
+            .filter(UserTable.firstName.like('%{0}%'.format(firstName)))\
+            .filter(UserTable.lastName.like('%{0}%'.format(lastName)))\
+            .all()
 
     def create_user(self, first_name, last_name, username, sub_email_pref, stu_email_pref):
         new_user = UserTable(username=username, firstName=first_name, lastName=last_name,
@@ -62,7 +62,7 @@ class UsersController:
             db_session.add(user_role)
         db_session.commit()
 
-    def get_user(self, user_id):
+    def get_user_by_id(self, user_id):
         return db_session.query(UserTable)\
             .filter(UserTable.id == user_id)\
             .one_or_none()
@@ -77,6 +77,28 @@ class UsersController:
         for role in user_roles:
             user_role_ids.append(role.id)
         return user_role_ids
+
+    def get_future_user_appointments(self, user_id):
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.student_id == user_id)\
+            .filter(AppointmentsTable.scheduledStart > datetime.now())\
+            .all()
+
+    def cancel_appointment(self, appt_id):
+        try:
+            appt = db_session.query(AppointmentsTable)\
+                .filter(AppointmentsTable.id == appt_id)\
+                .one_or_none()
+            appt.student_id = None
+            appt.profName = None
+            appt.profEmail = None
+            appt.assignment = None
+            appt.courseCode = None
+            appt.courseSection = None
+            db_session.commit()
+            return True
+        except Exception as e:
+            return False
 
     def get_user_roles(self, user_id):
         user_roles = db_session.query(RoleTable)\
@@ -131,6 +153,16 @@ class UsersController:
         db_session.commit()
 
     def deactivate_user(self, user_id):
-        user = self.get_user(user_id)
+        user = self.get_user_by_id(user_id)
         user.deletedAt = datetime.now()
         db_session.commit()
+
+    def activate_existing_user(self, user_id):
+        try:
+            user = self.get_user_by_id(user_id)
+            user.deletedAt = None
+            db_session.commit()
+            return True
+        except Exception as e:
+            print(e)
+            return False

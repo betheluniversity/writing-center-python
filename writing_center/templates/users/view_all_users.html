@@ -1,4 +1,6 @@
-{% extends 'users/index.html' %}
+{% extends 'users/base.html' %}
+
+{% block page_title %}Users{% endblock %}
 
 {% block body_content %}
     <div class="jumbotron">
@@ -29,10 +31,10 @@
                         {% for user in users %}
                             <tr>
                                 <td>
-                                    {{ users[user]['firstName'] }}
+                                    {{ users[user]['lastName'] }}
                                 </td>
                                 <td>
-                                    {{ users[user]['lastName'] }}
+                                    {{ users[user]['firstName'] }}
                                 </td>
                                 <td>
                                     {{ users[user]['email'] }}

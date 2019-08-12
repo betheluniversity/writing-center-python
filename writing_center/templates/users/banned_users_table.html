@@ -12,8 +12,7 @@
             <tr>
                 <th colspan="5"></th>
                 <th colspan="1">
-                    {# TODO ADD SOME SORT OF CONFIRMATION SO THAT YOU CAN'T REMOVE ALL BANS WITH ONE CLICK#}
-                    <button id="remove-all" type="submit" class="btn btn-primary btn-danger hover-bright">Remove All Bans</button>
+                    <button id="remove-all" type="submit" onclick="banAllConfirmation()" class="btn btn-primary btn-danger hover-bright">Remove All Bans</button>
                 </th>
             </tr>
         </thead>
@@ -61,19 +60,24 @@
         });
     }
 
-    $(document).ready(function () {
-        $('#remove-all').click(function (){
-           $.ajax({
-               type: "POST",
-               url: "{{ url_for('UsersView:remove_all_bans') }}",
-               contentType: 'application/json;charset=UTF-8',
-               success: function (response) {
-                   window.location.reload()
-               },
-               error: function (error) {
+    function banAllConfirmation() {
+        $('#results').show()
+    }
 
-               }
-           });
-       });
-    });
+    function removeAllBans() {
+        $.ajax({
+            type: "POST",
+            url: "{{ url_for('UsersView:remove_all_bans') }}",
+            contentType: 'application/json;charset=UTF-8',
+            success: function (response) {
+                window.location.reload()
+            },
+            error: function (error) {
+            }
+        });
+    }
+
+    function confirmedNo() {
+        $('#results').hide()
+    }
 </script>

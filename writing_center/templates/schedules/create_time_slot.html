@@ -1,0 +1,150 @@
+{% extends 'writing_center_base.html' %}
+
+{% block page_title %}Create Time Slot{% endblock %}
+
+{% block body_content %}
+    <div class="jumbotron">
+        <h1>Create Time Slot</h1>
+        <p>This is where you create an available time slot for an appointment.</p>
+    </div>
+    <br/>
+    <h3>Add Schedule Time Slot</h3>
+    <form>
+        <div class="form-row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <input class="form-control" id="start-time" type="time" placeholder="Start Time"/>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <input class="form-control" id="end-time" type="time" placeholder="End Time"/>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <select class="form-control" id="isActive">
+                        <option id="active" value="1">Active</option>
+                        <option id="inactive" value="0">Inactive</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button id="add-schedule-ts" name="add-schedule" class="btn btn-primary darkblue" type="submit">Submit</button>
+            </div>
+        </div>
+    </form>
+    <br/>
+    <h3>Existing Schedules</h3>
+    <table id="table" class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Active</th>
+                <th>✓</th>
+            </tr>
+            <tr>
+                <th colspan="3"></th>
+                <th colspan="1">
+                    <button id="deactivate-time-slots" type="button" class="btn btn-primary btn-danger">Deactivate</button>
+                </th>
+            </tr>
+        </thead>
+        <tbody id="t-body">
+        {% for schedule in schedules %}
+            <tr>
+                <td>{{ schedule.startTime|datetimeformat }}</td>
+                <td>{{ schedule.endTime|datetimeformat }}</td>
+                <td>{{ "Yes" if schedule.active == 1 else "No" }}</td>
+                <td class="text-center">
+                    <input type="checkbox" value="{{ schedule.id }}" class="deactivate-checkbox">
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <br/>
+
+    <script>
+        $(document).ready(function () {
+            $('.datepicker').each(function () {
+                var current_element = $(this);
+                let maxDate = new Date();
+                let dd = maxDate.getDate();
+                let mm = maxDate.getMonth() + 1;
+                let yyyy = maxDate.getFullYear() + 2;
+                if (dd < 10) {
+                  dd = '0' + dd;
+                }
+
+                if (mm < 10) {
+                  mm = '0' + mm;
+                }
+                maxDate = yyyy + '-' + mm + '-' + dd;
+                var starting_values = {
+                    field: this,
+                    format: 'MM DD YYYY',
+                    minDate: new Date('2010-01-01'),
+                    maxDate: new Date(maxDate),
+                    yearRange: [2010, yyyy],
+                    disableDayFn: function (date) {
+                        var start_populated = $("#start-date").val();
+                        var end_populated = $("#end-date").val();
+                        if (start_populated == "" && end_populated == "") {
+                            return null;
+                        } else if (start_populated != "" && current_element.attr('id') == 'end-date') {
+                            if (new Date(start_populated) >= date) {
+                                return date;
+                            }
+                        } else if (end_populated != "" && current_element.attr('id') == 'start-date') {
+                            if (new Date(end_populated) <= date) {
+                                return date;
+                            }
+                        }
+                    }
+                };
+                starting_values['defaultDate'] = new Date();
+                starting_values['setDefaultDate'] = true;
+
+                var picker = new Pikaday(starting_values);
+            });
+        });
+
+        $('#add-schedule-ts').click(function () {
+            let startTime = $('#start-time').val();
+            let endTime = $('#end-time').val();
+            let isActive = $('#isActive option:selected').val();
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('SchedulesView:create_new_time_slot') }}",
+                async: false,
+                data: JSON.stringify({
+                    'startTime': startTime,
+                    'endTime': endTime,
+                    'isActive': isActive
+                }),
+                contentType: 'application/json;charset=UTF-8',
+                success: function (response) {
+                },
+                error: function (error) {
+                }
+            });
+        });
+
+        $('#deactivate-time-slots').click(function(){
+                var scheduleIds = [];
+                $(".deactivate-checkbox:checked").each(function(){
+                    scheduleIds.push($(this).val());
+                });
+                var jsonScheduleIds = JSON.stringify(scheduleIds);
+                var schedules = {
+                    'jsonScheduleIds': jsonScheduleIds
+                };
+                var url = '{{ url_for('SchedulesView:deactivate_time_slots') }}';
+                $.post(url, schedules, function(){
+                    window.location.replace('{{ url_for('SchedulesView:create_time_slot') }}');
+                });
+            });
+    </script>
+{% endblock %}

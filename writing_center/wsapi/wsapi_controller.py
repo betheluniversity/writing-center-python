@@ -47,7 +47,3 @@ class WSAPIController:
     def get_names_from_username(self, username):
         path = '/username/{0}/names'.format(username)
         return self.get_hmac_request(path)
-
-    def get_user_from_prox(self, card_id):
-        path = '/card_id/{0}'.format(card_id)
-        return self.get_hmac_request(path)
