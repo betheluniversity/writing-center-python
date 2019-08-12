@@ -14,7 +14,7 @@
             <div class="col-md-3">
                 <div class="form-group">
                     <label for="start-date">Start Date</label>
-                    <input class="form-control datepicker" id="start-date-shifts" type="text" readonly/>
+                    <input class="form-control datepicker" id="start-date-shifts" value="{{ now }}" type="text" readonly/>
                     <div id="start-container"></div>
                 </div>
             </div>
@@ -187,6 +187,7 @@
             <div id="sub-list-results"></div>
         </div>
     </div>
+    {% include 'macros/appointment_modal.html' %}
 
     <script>
         $(document).ready(function () {
@@ -204,7 +205,7 @@
                   mm = '0' + mm;
                 }
                 maxDate = yyyy + '-' + mm + '-' + dd;
-                let starting_values = {}
+                let starting_values = {};
                 if (this.id === "start-date-shifts" || this.id === "end-date-shifts") {
                     starting_values = {
                         field: this,
@@ -214,16 +215,24 @@
 
                         yearRange: [2010, yyyy],
                         disableDayFn: function (date) {
+                            let yesterday = new Date();
+                            yesterday.setDate(yesterday.getDate() - 1);
                             let start_populated = $("#start-date-shifts").val();
                             let end_populated = $("#end-date-shifts").val();
-                            if (start_populated == "" && end_populated == "") {
-                                return null;
-                            } else if (start_populated != "" && current_element.attr('id') == 'end-date-shifts') {
+                            if (start_populated != "" && current_element.attr('id') == 'end-date-shifts') {
                                 if (new Date(start_populated) >= date) {
                                     return date;
                                 }
                             } else if (end_populated != "" && current_element.attr('id') == 'start-date-shifts') {
-                                if (new Date(end_populated) <= date) {
+                                if (yesterday > date) {
+                                    return date;
+                                }
+                            } else if (current_element.attr('id') == 'start-date-shifts') {
+                                if (yesterday > date) {
+                                    return date;
+                                }
+                            } else if (current_element.attr('id') == 'end-date-shifts') {
+                                if (yesterday > date) {
                                     return date;
                                 }
                             }
@@ -237,16 +246,17 @@
                         maxDate: new Date(maxDate),
                         yearRange: [2010, yyyy],
                         disableDayFn: function (date) {
+                            let yesterday = new Date();
+                            yesterday.setDate(yesterday.getDate() - 1);
                             let start_populated = $("#start-date-delete").val();
-                            let end_populated = $("#end-date-delete").val();
                             if (start_populated == "") {
                                 return null;
                             } else if (current_element.attr('id') == 'start-date-delete') {
-                                if (new Date(end_populated) > date) {
+                                if (yesterday > date) {
                                     return date;
                                 }
                             } else if (current_element.attr('id') == 'end-date-delete') {
-                                if (new Date(end_populated) > date) {
+                                if (yesterday > date) {
                                     return date;
                                 }
                             }
@@ -274,19 +284,7 @@
             displayEventEnd: true,
             timeZone: 'UTC',
             eventClick: function(info) {
-                $.ajax({
-                    type: "POST",
-                    url: "{{ url_for('SchedulesView:load_appointment_table') }}",
-                    data: JSON.stringify({
-                        'id': info.event.id
-                    }),
-                    contentType: 'application/json;charset=UTF-8',
-                    success: function (response) {
-                        $('#results').html(response)
-                    },
-                    error: function (error) {
-                    }
-                });
+                getAppointmentData(info.event.id, false, false, true);
             }
         });
 

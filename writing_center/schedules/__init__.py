@@ -76,7 +76,10 @@ class SchedulesView(FlaskView):
         end_date = str(json.loads(request.data).get('endDate'))
         # Formats the date strings into date objects
         if not start_date or not end_date:
-            self.wcc.set_alert('danger', 'You must set a start date and an end date!')
+            self.wcc.set_alert('danger', 'You must set a start date AND an end date!')
+            return 'danger'
+        if start_date > end_date:
+            self.wcc.set_alert('danger', 'Start date cannot be further in the future than the end date!')
             return 'danger'
         start_date = datetime.strptime(start_date, '%a %b %d %Y').date()
         end_date = datetime.strptime(end_date, '%a %b %d %Y').date()
@@ -140,7 +143,7 @@ class SchedulesView(FlaskView):
         end = datetime.strptime(end_date, '%a %b %d %Y').date()
         tutor_ids = json.loads(request.data).get('tutors')
         names = []
-        if start_date < end_date:
+        if start_date > end_date:
             invalid_date = True
         if 'view-all' in tutor_ids:
             tutors = self.sc.get_tutors()
@@ -297,13 +300,6 @@ class SchedulesView(FlaskView):
 
         return jsonify(appointments)
 
-    @route('load-appointment', methods=['POST'])
-    def load_appointment_table(self):
-        appointment_id = str(json.loads(request.data).get('id'))
-        appt = self.sc.get_one_appointment(appointment_id)
-        return render_template('schedules/appointment_information.html', **locals(),
-                               id_to_user=self.sc.get_user_by_id)
-
     @route('pickup-shift', methods=['POST'])
     def pickup_shift(self):
         appointment_id = str(json.loads(request.data).get('appt_id'))
@@ -312,10 +308,9 @@ class SchedulesView(FlaskView):
         picked_up = self.sc.pickup_shift(appointment_id, flask_session['USERNAME'])
         if picked_up:
             self.wcc.set_alert('success', 'Successfully picked up the shift!')
-            return render_template('schedules/appointment_information.html', **locals(),
-                                   id_to_user=self.sc.get_user_by_id)
         else:
             self.wcc.set_alert('danger', 'Failed to pick up the shift.')
+        return 'finished'
 
     @route('request-subtitute', methods=['POST'])
     def request_substitute(self):
@@ -325,7 +320,6 @@ class SchedulesView(FlaskView):
         success = self.sc.request_substitute(appointment_id)
         if success:
             self.wcc.set_alert('success', 'Successfully requested a substitute!')
-            return render_template('schedules/appointment_information.html', **locals(),
-                                   id_to_user=self.sc.get_user_by_id)
         else:
             self.wcc.set_alert('danger', 'Error! Substitute not requested.')
+        return 'finished'
