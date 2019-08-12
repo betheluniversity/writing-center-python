@@ -29,6 +29,11 @@ class MessageCenterController:
                 .filter(EmailPreferencesTable.user_id == user.id)
                 .one())
 
+    def get_email_preferences_by_id(self, user_id):
+        return (db_session.query(EmailPreferencesTable)
+                .filter(EmailPreferencesTable.user_id == user_id)
+                .one())
+
     def get_appointment_info(self, appointment_id):
         return (db_session.query(AppointmentsTable)
                 .filter(AppointmentsTable.ID == appointment_id)
@@ -48,14 +53,6 @@ class MessageCenterController:
         return (db_session.query(UserRoleTable)
                 .filter(UserRoleTable.user_id == user_id)
                 .one())
-
-    def get_end_of_session_recipients(self, appointment_id):
-        appointment = (db_session.query(AppointmentsTable)
-                       .filter(AppointmentsTable.ID == appointment_id)
-                       .all())
-
-        recipients = [appointment.profEmail, self.get_user(appointment.student_id).email]
-        return recipients
 
     def get_substitute_email_recipients(self):
         users = (db_session.query(EmailPreferencesTable.user_id)
@@ -134,25 +131,32 @@ class MessageCenterController:
 
         recipient = student.email
 
-        self.send_message(subject, render_template('appointment_signup_student.html', **locals()), recipient, cc='', bcc='')
-
+        if self.send_message(subject, render_template('appointment_signup_student.html', **locals()), recipient, cc='', bcc=''):
+            return True
+        else:
+            return False
 
     def appointment_signup_tutor(self, appointment_id):
-        # get appoitnment via appointment id
-        appointment = self.get_appointment_info(appointment_id)
-        student = self.get_user_by_id(appointment.student_id)
-        tutor = self.get_user_by_id(appointment.tutor_id)
-        appt_info = {'date': appointment.scheduledStart.date(),
-                     'time': appointment.scheduledStart.time(),
-                     'student': student.firstName + ' ' + student.lastName,
-                     'assignment': appointment.assignment}
+            appointment = self.get_appointment_info(appointment_id)
+            student = self.get_user_by_id(appointment.student_id)
+            tutor = self.get_user_by_id(appointment.tutor_id)
+            if self.get_email_preferences_by_id(tutor.id).studentSignupEmail == 1:
+                appt_info = {'date': appointment.scheduledStart.date(),
+                             'time': appointment.scheduledStart.time(),
+                             'student': student.firstName + ' ' + student.lastName,
+                             'assignment': appointment.assignment}
 
-        # other email information: recipient, body, subject
-        subject = 'Appointment Scheduled'
+                # other email information: recipient, body, subject
+                subject = 'Appointment Scheduled'
 
-        recipient = tutor.email
+                recipient = tutor.email
 
-        self.send_message(subject, render_template('appointment_signup_tutor.html', **locals()), recipient, cc='', bcc='')
+                if self.send_message(subject, render_template('appointment_signup_tutor.html', **locals()), recipient, cc='', bcc=''):
+                    return True
+                else:
+                    return False
+            else:
+                return False
 
     def send_message(self, subject, body, recipients, cc, bcc, html=False):
         if app.config['ENVIRON'] != 'prod':
