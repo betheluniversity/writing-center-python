@@ -25,6 +25,9 @@ class AppointmentsView(FlaskView):
     @route('load-appointment-data', methods=['POST'])
     def load_appointment_data(self):
         appt_id = json.loads(request.data).get('id')
+        schedule = json.loads(request.data).get('schedule')
+        cancel = json.loads(request.data).get('cancel')
+        subDelete = json.loads(request.data).get('subDelete')
         appointment = self.ac.get_appointment_by_id(appt_id)
         student = self.ac.get_user_by_id(appointment.student_id)
         student_name = 'None'
@@ -35,31 +38,8 @@ class AppointmentsView(FlaskView):
         if tutor:
             tutor_name = '{0} {1}'.format(tutor.firstName, tutor.lastName)
         courses = self.wsapi.get_student_courses(flask_session['USERNAME'])
-        appt = {
-            'id': appointment.id,
-            'studentName': student_name,
-            'tutorName': tutor_name,
-            'scheduledStart': appointment.scheduledStart.strftime('%a %b %d %Y %I:%M %p'),
-            'scheduledEnd': appointment.scheduledEnd.strftime('%a %b %d %Y %I:%M %p'),
-            'actualStart': appointment.actualStart.strftime('%a %b %d %Y %I:%M %p') if appointment.actualStart else None,
-            'actualEnd': appointment.actualEnd.strftime('%a %b %d %Y %I:%M %p') if appointment.actualEnd else None,
-            'profName': appointment.profName,
-            'profEmail': appointment.profEmail,
-            'dropIn': "Yes" if appointment.dropIn == 1 else "No",
-            'sub': appointment.sub,
-            'assignment': appointment.assignment,
-            'notes': appointment.notes,
-            'suggestions': appointment.suggestions,
-            'multilingual': "Yes" if appointment.multilingual == 1 else "No",
-            'courseCode': appointment.courseCode,
-            'courseSection': appointment.courseSection,
-            'noShow': "Yes" if appointment.noShow == 1 else "No",
-            'courses': courses,
-            'coursesLength': len(courses),
-            'future': True if appointment.scheduledStart > datetime.now() else False
-        }
 
-        return jsonify(appt)
+        return render_template('macros/appointment_modal.html', **locals())
 
     @route('load-appointments', methods=['POST'])
     def load_appointments(self):

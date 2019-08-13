@@ -118,7 +118,7 @@
             eventClick: function(info) {
                 $.ajax({
                         type: "POST",
-                        url: "{{ url_for('AppointmentsView:test_load_appt_data') }}",
+                        url: "{{ url_for('AppointmentsView:load_appointment_data') }}",
                         data: JSON.stringify({
                             'id': info.event.id,
                             'subDelete': true
