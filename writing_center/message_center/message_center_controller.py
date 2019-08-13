@@ -172,7 +172,6 @@ class MessageCenterController:
         return False
 
     def request_substitute(self, appointment_id):
-        # necessary info: Date, Time, Student, Tutor Requesting, Student, Assignment
         appointment = self.get_appointment_info(appointment_id)
         student = self.get_user_by_id(appointment.student_id)
         tutor = self.get_user_by_id(appointment.tutor_id)
@@ -183,7 +182,6 @@ class MessageCenterController:
                      'assignment': appointment.assignment,
                      'tutor': tutor.firstName + ' ' + tutor.lastName}
 
-        # email info: Subject, Recipients (get sub req recipients), body template (emails/sub_request.html)
         subject = '{0} is requesting a substitute on {1}'.format(appt_info['tutor'], appt_info['date'])
 
         recipients = self.get_substitute_email_recipients()
@@ -193,9 +191,17 @@ class MessageCenterController:
         return False
 
     def substitute_request_filled(self, appointment_id):
-        # necessary info: tutor filling request
-        # email info: Subject, Recipient (old tutor), body template (emails/sub_request_fulfilled.html)
-        pass
+        appointment = self.get_appointment_info(appointment_id)
+        old_tutor = self.get_user_by_id(appointment.tutor_id)
+        sub_tutor = self.get_user(session['USERNAME'])
+
+        subject = 'Substitute Request Filled'
+
+        recipient = old_tutor.email
+
+        if self.send_message(subject, render_template('emails/sub_request_fulfilled.html', **locals()), recipient, cc='', bcc=''):
+            return True
+        return False
 
     def send_message(self, subject, body, recipients, cc, bcc, html=False):
         # data will be compiled in the above functions and sent here
