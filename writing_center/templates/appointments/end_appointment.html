@@ -1,0 +1,21 @@
+<div style="margin-bottom: 25px !important;" class="form-row">
+    <div class="col-md-12">
+        <h3><b>Appointment Complete!</b></h3>
+    </div>
+</div>
+<div style="margin-bottom: 25px !important;" class="form-row">
+    <div class="col-md-12">
+        <h5>Please <a target="_blank" href="{{ qualtrics_link }}">click here</a> to fill out a quick survey.</h5>
+    </div>
+</div>
+<div class="form-row">
+    <div class="col-md-12">
+        <button id="finish" class="btn btn-primary darkblue">Finish</button>
+    </div>
+</div>
+
+<script>
+    $('#finish').click(function () {
+       window.location.reload()
+    });
+</script>

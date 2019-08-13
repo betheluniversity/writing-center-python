@@ -184,26 +184,26 @@ class AppointmentsView(FlaskView):
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
                                                               appointment.actualStart.strftime('%m'),
                                                               appointment.actualStart.strftime('%d'),
-                                                              appointment.actualStart.strftime('%I'),
+                                                              appointment.actualStart.strftime('%H'),
                                                               appointment.actualStart.strftime('%M'),
                                                               appointment.actualStart.strftime('%S'))
                 end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualEnd.year,
                                                             appointment.actualEnd.strftime('%m'),
                                                             appointment.actualEnd.strftime('%d'),
-                                                            appointment.actualEnd.strftime('%I'),
+                                                            appointment.actualEnd.strftime('%H'),
                                                             appointment.actualEnd.strftime('%M'),
                                                             appointment.actualEnd.strftime('%S'))
             elif appointment.scheduledStart and appointment.scheduledEnd:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
                                                               appointment.scheduledStart.strftime('%m'),
                                                               appointment.scheduledStart.strftime('%d'),
-                                                              appointment.scheduledStart.strftime('%I'),
+                                                              appointment.scheduledStart.strftime('%H'),
                                                               appointment.scheduledStart.strftime('%M'),
                                                               appointment.scheduledStart.strftime('%S'))
                 end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledEnd.year,
                                                             appointment.scheduledEnd.strftime('%m'),
                                                             appointment.scheduledEnd.strftime('%d'),
-                                                            appointment.scheduledEnd.strftime('%I'),
+                                                            appointment.scheduledEnd.strftime('%H'),
                                                             appointment.scheduledEnd.strftime('%M'),
                                                             appointment.scheduledEnd.strftime('%S'))
             appointments.append({
@@ -269,6 +269,8 @@ class AppointmentsView(FlaskView):
                                     break
                         appt = self.ac.schedule_appointment(appt_id, course, assignment)
                         if appt:
+                            self.mcc.appointment_signup_student(appt_id)
+                            self.mcc.appointment_signup_tutor(appt_id)
                             self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your '
                                                           'Appointments, Go To The "View Your Appointments" Page!')
                         else:
@@ -285,9 +287,6 @@ class AppointmentsView(FlaskView):
             # TODO MAYBE GIVE THEM A SPECIFIC EMAIL TO EMAIL?
             self.wcc.set_alert('danger', 'You are banned from making appointments! If you have any questions email a'
                                          ' Writing Center Administrator.')
-
-        self.mcc.appointment_signup_student(appt_id)
-        self.mcc.appointment_signup_tutor(appt_id)
         
         return appt_id
 
@@ -328,6 +327,7 @@ class AppointmentsView(FlaskView):
             if appt:
                 appointment = self.ac.get_user_by_appt(appt_id)
                 user = self.ac.get_user_by_id(appointment.student_id)
+                self.ac.ban_if_no_show_check(user.id)
                 message = '{0} {1} Marked As No Show'.format(user.firstName, user.lastName)
                 self.wcc.set_alert('success', message)
             else:
@@ -341,7 +341,8 @@ class AppointmentsView(FlaskView):
                 self.wcc.set_alert('success', message)
             else:
                 self.wcc.set_alert('danger', 'Failed To Revert No Show')
-        return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))
+        qualtrics_link = self.ac.get_survey_link()[0]
+        return render_template('appointments/end_appointment.html', **locals())
 
     @route('/search', methods=['POST'])
     def search(self):
