@@ -235,6 +235,17 @@ class AppointmentsController:
             prof_list.append(prof_name[1])
         return prof_list
 
+    def get_profs_and_emails(self):
+        profs = db_session.query(AppointmentsTable.profName, AppointmentsTable.profEmail) \
+            .filter(AppointmentsTable.profName != None) \
+            .order_by(AppointmentsTable.profName) \
+            .distinct()
+        profs_and_emails = {}
+        for prof in profs:
+            # prof_name = str(prof.profName).split('\'')
+            profs_and_emails[prof.profName] = prof.profEmail
+        return profs_and_emails
+
     def get_courses(self):
         courses = db_session.query(AppointmentsTable.courseCode)\
             .filter(AppointmentsTable.courseCode != None)\
