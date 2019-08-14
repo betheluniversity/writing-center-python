@@ -140,6 +140,7 @@ class AppointmentsView(FlaskView):
         self.wcc.set_alert('success', 'Appointment for ' + user.firstName + ' ' + user.lastName + ' started')
         return 'success'
 
+    @route('search-appointments')
     def search_appointments(self):
         students = self.ac.get_users_by_role("Student")
         tutors = self.ac.get_users_by_role("Tutor")
