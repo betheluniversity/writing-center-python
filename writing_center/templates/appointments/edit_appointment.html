@@ -1,0 +1,223 @@
+{% extends 'writing_center_base.html' %}
+
+{% block page_title %}Edit Appointment{% endblock %}
+
+{% block body_content %}
+    <div class="jumbotron">
+        <h1><b>Edit Appointment</b></h1>
+        <p>Edit any information about the appointment.</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <form action="{{ url_for('AppointmentsView:submit_edits') }}" method="post">
+                <input id="id" name="id" type="text" value="{{ appt.id }}" hidden>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="tutor">Tutor</label>
+                            <select id="tutor" name="tutor">
+                                <option value="-1" {{ 'selected' if appt.tutor_id == None }}>None</option>
+                                {% for tutor in all_tutors %}
+                                <option value="{{ tutor.id }}" {{ 'selected' if appt.tutor_id == tutor.id }}>
+                                    {{ tutor.firstName }} {{ tutor.lastName }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="student">Student</label>
+                            <select id="student" name="student">
+                                <option value="-1" {{ 'selected' if appt.student_id == None }}>None</option>
+                                {% for student in all_students %}
+                                <option value="{{ student.id }}" {{ 'selected' if appt.student_id == student.id }}>
+                                    {{ student.firstName }} {{ student.lastName }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="date">Appointment Date</label>
+                        <input id="date" type="text" class="form-control" name="date"
+                                value="{{ appt.scheduledStart.strftime('%m/%d/%Y') }}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="sched-start">Scheduled Start Time</label>
+                        <input id="sched-start" type="time" class="form-control" name="sched-start" step="1"
+                               value="{{ appt.scheduledStart.strftime('%H:%M:%S') }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="sched-end">Scheduled End Time</label>
+                        <input id="sched-end" type="time" class="form-control" name="sched-end" step="1"
+                               value="{{ appt.scheduledEnd.strftime('%H:%M:%S') }}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="actual-start">Actual Start Time</label>
+                        <input id="actual-start" type="time" class="form-control" name="actual-start" step="1"
+                               value="{{ appt.actualStart.strftime('%H:%M:%S') if appt.actualStart else '' }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="actual-end">Actual End Time</label>
+                        <input id="actual-end" type="time" class="form-control" name="actual-end" step="1"
+                               value="{{ appt.actualEnd.strftime('%H:%M:%S') if appt.actualEnd else '' }}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="prof">Professor</label>
+                        <input id="prof" type="text" class="form-control" value="{{ appt.profName }}" name="prof">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="prof-email">Professor Email</label>
+                        <input id="prof-email" type="text" class="form-control" value="{{ appt.profEmail }}" name="email">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="course">Course</label>
+                        <input id="course" type="text" class="form-control" value="{{ appt.courseCode }}" name="course">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="section">Section</label>
+                        <input id="section" type="text" class="form-control" value="{{ appt.courseSection }}" name="section">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="assignment">Assignment</label>
+                        <textarea id="assignment" class="form-control" name="assignment">{{ appt.assignment }}</textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="notes">Notes</label>
+                        <textarea id="notes" class="form-control" name="notes">{{ appt.notes }}</textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="suggestions">Suggestions</label>
+                        <textarea id="suggestions" class="form-control" name="suggestions">{{ appt.suggestions }}</textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label for="sub">Sub Requested</label>
+                        <div id="sub">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="sub-radio-yes" name="sub-req"
+                                        {{ 'checked' if appt.sub }} value="1">
+                                <label class="form-check-label" for="sub-radio-yes">Yes</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="sub-radio-no" name="sub-req"
+                                        {{ 'checked' if not appt.sub }} value="0">
+                                <label class="form-check-label" for="sub-radio-no">No</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="drop-in">Drop In</label>
+                        <div id="drop-in">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="drop-yes" name="drop-in-check"
+                                        {{ 'checked' if appt.dropIn }} value="1">
+                                <label class="form-check-label" for="drop-yes">Yes</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="drop-no" name="drop-in-check"
+                                        {{ 'checked' if not appt.dropIn }} value="0">
+                                <label class="form-check-label" for="drop-no">No</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="multilingual">Multilingual</label>
+                        <div id="multilingual">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="multi-yes" name="multi-check"
+                                        {{ 'checked' if appt.multilingual }} value="1">
+                                <label class="form-check-label" for="multi-yes">Yes</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="multi-no" name="multi-check"
+                                        {{ 'checked' if not appt.multilingual }} value="0">
+                                <label class="form-check-label" for="multi-no">No</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="no-show">No Show</label>
+                        <div id="no-show">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="no-show-yes" name="no-show-check"
+                                        {{ 'checked' if appt.noShow }} value="1">
+                                <label class="form-check-label" for="no-show-yes">Yes</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="no-show-no" name="no-show-check"
+                                        {{ 'checked' if not appt.noShow }} value="0">
+                                <label class="form-check-label" for="no-show-no">No</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="in-progress">In Progress</label>
+                        <div id="in-progress">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="in-progress-yes"
+                                       name="in-progress-check" {{ 'checked' if appt.inProgress }} value="1">
+                                <label class="form-check-label" for="in-progress-yes">Yes</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="in-progress-no"
+                                       name="in-progress-check" {{ 'checked' if not appt.inProgress }} value="0">
+                                <label class="form-check-label" for="in-progress-no">No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <button type="submit" class="btn btn-primary">Submit Edits</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <div class="sub-info card info">
+                <div class="card-body">
+                    <p class="card-text">
+                        On this page you can edit any information about an appointment.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='pikaday.css') }}">
+    <script type="text/javascript" src="{{ url_for('static', filename='moment.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='pikaday.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='pikaday.jquery.js') }}"></script>
+
+    <script type="text/javascript">
+        var student = new SlimSelect({
+            select: "#student"
+        });
+
+        var tutor = new SlimSelect({
+            select: "#tutor"
+        });
+
+        var schedDate = new Pikaday({
+            field: document.getElementById('date'),
+            format: 'MM/DD/YYYY'
+        });
+    </script>
+{% endblock %}
+

@@ -266,6 +266,17 @@ class AppointmentsController:
             prof_list.append(prof_name[1])
         return prof_list
 
+    def get_profs_and_emails(self):
+        profs = db_session.query(AppointmentsTable.profName, AppointmentsTable.profEmail) \
+            .filter(AppointmentsTable.profName != None) \
+            .order_by(AppointmentsTable.profName) \
+            .distinct()
+        profs_and_emails = {}
+        for prof in profs:
+            # prof_name = str(prof.profName).split('\'')
+            profs_and_emails[prof.profName] = prof.profEmail
+        return profs_and_emails
+
     def get_courses(self):
         courses = db_session.query(AppointmentsTable.courseCode)\
             .filter(AppointmentsTable.courseCode != None)\
@@ -295,3 +306,27 @@ class AppointmentsController:
         if end:
             appts = appts.filter(AppointmentsTable.scheduledEnd < end)
         return appts.order_by(AppointmentsTable.scheduledStart.desc()).all()
+
+    def edit_appt(self, appt_id, student_id, tutor_id, sched_start, sched_end, actual_start, actual_end, prof_name,
+                  prof_email, drop_in, sub, assignment, notes, suggestions, multiligual, course, section, no_show,
+                  in_progress):
+        appt = db_session.query(AppointmentsTable).filter(AppointmentsTable.id == appt_id).one()
+        appt.student_id = student_id
+        appt.tutor_id = tutor_id
+        appt.scheduledStart = sched_start
+        appt.scheduledEnd = sched_end
+        appt.actualStart = actual_start
+        appt.actualEnd = actual_end
+        appt.profName = prof_name
+        appt.profEmail = prof_email
+        appt.dropIn = drop_in
+        appt.sub = sub
+        appt.assignment = assignment
+        appt.notes = notes
+        appt.suggestions = suggestions
+        appt.multilingual = multiligual
+        appt.courseCode = course
+        appt.courseSection = section
+        appt.noShow = no_show
+        appt.inProgress = in_progress
+        db_session.commit()

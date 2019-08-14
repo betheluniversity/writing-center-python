@@ -1,12 +1,16 @@
 from datetime import datetime
 
+from flask import abort
+
 from writing_center.db_repository import db_session
-from writing_center.db_repository.tables import UserTable, UserRoleTable, RoleTable, EmailPreferencesTable, AppointmentsTable
+from writing_center.db_repository.tables import UserTable, UserRoleTable, RoleTable, EmailPreferencesTable, \
+    AppointmentsTable
+from writing_center.wsapi.wsapi_controller import WSAPIController
 
 
 class UsersController:
     def __init__(self):
-        pass
+        self.wsapi = WSAPIController()
 
     def get_users(self):
         return db_session.query(UserTable, RoleTable)\
@@ -166,3 +170,16 @@ class UsersController:
         except Exception as e:
             print(e)
             return False
+
+    def create_user_at_sign_in(self, username):
+        wsapi_names = self.wsapi.get_names_from_username(username)
+        if not wsapi_names:
+            return abort(403)
+        names = wsapi_names['0']
+        first_name = names['firstName']
+        if names['prefFirstName']:
+            first_name = names['prefFirstName']
+        last_name = names['lastName']
+        student = self.create_user(first_name, last_name, username, 0, 0)
+        self.set_user_roles(username, ['Student'])
+        return student
