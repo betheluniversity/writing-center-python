@@ -74,11 +74,13 @@ class SchedulesView(FlaskView):
     def add_tutors_to_shifts(self):
         start_date = str(json.loads(request.data).get('startDate'))
         end_date = str(json.loads(request.data).get('endDate'))
+        start = datetime.strptime(start_date, '%a %b %d %Y').date()
+        end = datetime.strptime(end_date, '%a %b %d %Y').date()
         # Formats the date strings into date objects
         if not start_date or not end_date:
             self.wcc.set_alert('danger', 'You must set a start date AND an end date!')
             return 'danger'
-        if start_date > end_date:
+        if start > end:
             self.wcc.set_alert('danger', 'Start date cannot be further in the future than the end date!')
             return 'danger'
         start_date = datetime.strptime(start_date, '%a %b %d %Y').date()
@@ -143,7 +145,7 @@ class SchedulesView(FlaskView):
         end = datetime.strptime(end_date, '%a %b %d %Y').date()
         tutor_ids = json.loads(request.data).get('tutors')
         names = []
-        if start_date > end_date:
+        if start > end:
             invalid_date = True
         if 'view-all' in tutor_ids:
             tutors = self.sc.get_tutors()
