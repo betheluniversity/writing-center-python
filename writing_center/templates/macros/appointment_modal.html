@@ -207,7 +207,7 @@
                 } else {
                     let event = calendar.getEventById(response);
                     event.remove();
-                    window.location.reload();
+                    $('#info-modal').modal('hide');
                 }
             },
             error: function (error) {
