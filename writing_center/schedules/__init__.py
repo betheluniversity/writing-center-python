@@ -173,7 +173,7 @@ class SchedulesView(FlaskView):
                 return appt_id
         else:
             self.wcc.set_alert('danger', 'Failed to delete appointment!')
-            return redirect(url_for('SchedulesView:view_tutor_schedules'))
+            return redirect(url_for('SchedulesView:manage_tutor_schedules'))
 
     @route('delete-tutor-shifts', methods=['POST'])
     def delete_tutors_from_shifts(self):
