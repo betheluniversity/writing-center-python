@@ -98,7 +98,7 @@
                             <th>Assignment</th>
                             <td>{{ appointment.assignment if appointment.assignment else '' }}</td>
                         </tr>
-                        {% if past %}
+                        {% if appointment.scheduledStart < now %}
                             <tr>
                                 <th>Notes</th>
                                 <td>{{ appointment.notes if appointment.notes else '' }}</td>
