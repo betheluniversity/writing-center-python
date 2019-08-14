@@ -5,7 +5,6 @@ from writing_center.db_repository import db_session
 from writing_center.db_repository.tables import UserTable, AppointmentsTable, SettingsTable, UserRoleTable, RoleTable
 
 
-
 class AppointmentsController:
     def __init__(self):
         pass
@@ -75,7 +74,6 @@ class AppointmentsController:
             db_session.commit()
             return True
 
-
     def cancel_appointment(self, appt_id):
         try:
             appointment = db_session.query(AppointmentsTable)\
@@ -111,6 +109,7 @@ class AppointmentsController:
     def get_scheduled_appointments(self, username):
         tutor = self.get_user_by_username(username)
         return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.scheduledStart >= datetime.now())\
             .filter(AppointmentsTable.tutor_id == tutor.id)\
             .all()
 
@@ -131,6 +130,28 @@ class AppointmentsController:
                 .filter(AppointmentsTable.id == appt_id)\
                 .one_or_none()
             appointment.noShow = 0
+            db_session.commit()
+            return True
+        except Exception as e:
+            return False
+
+    def ban_if_no_show_check(self, user_id):
+        try:
+            no_show_count = db_session.query(AppointmentsTable)\
+                .filter(AppointmentsTable.student_id == user_id)\
+                .filter(AppointmentsTable.noShow == 1)\
+                .count()
+            if no_show_count > int(self.get_ban_limit()[0]):
+                banned = self.ban_user(user_id)
+                return banned
+            return False
+        except Exception as e:
+            return False
+
+    def ban_user(self, user_id):
+        try:
+            user = self.get_user_by_id(user_id)
+            user.bannedDate = datetime.now()
             db_session.commit()
             return True
         except Exception as e:
@@ -217,6 +238,16 @@ class AppointmentsController:
             .filter(SettingsTable.id == 2)\
             .one_or_none()
 
+    def get_ban_limit(self):
+        return db_session.query(SettingsTable.value)\
+            .filter(SettingsTable.id == 3)\
+            .one_or_none()
+
+    def get_survey_link(self):
+        return db_session.query(SettingsTable.value)\
+            .filter(SettingsTable.id == 4)\
+            .one_or_none()
+
     def get_users_by_role(self, role_name):
         return db_session.query(UserTable)\
             .filter(UserTable.id == UserRoleTable.user_id)\
@@ -234,6 +265,17 @@ class AppointmentsController:
             prof_name = str(prof).split('\'')
             prof_list.append(prof_name[1])
         return prof_list
+
+    def get_profs_and_emails(self):
+        profs = db_session.query(AppointmentsTable.profName, AppointmentsTable.profEmail) \
+            .filter(AppointmentsTable.profName != None) \
+            .order_by(AppointmentsTable.profName) \
+            .distinct()
+        profs_and_emails = {}
+        for prof in profs:
+            # prof_name = str(prof.profName).split('\'')
+            profs_and_emails[prof.profName] = prof.profEmail
+        return profs_and_emails
 
     def get_courses(self):
         courses = db_session.query(AppointmentsTable.courseCode)\
@@ -264,3 +306,27 @@ class AppointmentsController:
         if end:
             appts = appts.filter(AppointmentsTable.scheduledEnd < end)
         return appts.order_by(AppointmentsTable.scheduledStart.desc()).all()
+
+    def edit_appt(self, appt_id, student_id, tutor_id, sched_start, sched_end, actual_start, actual_end, prof_name,
+                  prof_email, drop_in, sub, assignment, notes, suggestions, multiligual, course, section, no_show,
+                  in_progress):
+        appt = db_session.query(AppointmentsTable).filter(AppointmentsTable.id == appt_id).one()
+        appt.student_id = student_id
+        appt.tutor_id = tutor_id
+        appt.scheduledStart = sched_start
+        appt.scheduledEnd = sched_end
+        appt.actualStart = actual_start
+        appt.actualEnd = actual_end
+        appt.profName = prof_name
+        appt.profEmail = prof_email
+        appt.dropIn = drop_in
+        appt.sub = sub
+        appt.assignment = assignment
+        appt.notes = notes
+        appt.suggestions = suggestions
+        appt.multilingual = multiligual
+        appt.courseCode = course
+        appt.courseSection = section
+        appt.noShow = no_show
+        appt.inProgress = in_progress
+        db_session.commit()

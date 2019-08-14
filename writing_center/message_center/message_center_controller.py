@@ -60,7 +60,7 @@ class MessageCenterController:
     def get_user_by_id(self, id):
         return (db_session.query(UserTable)
                 .filter(UserTable.id == id)
-                .one())
+                .one_or_none())
 
     def get_user_roles(self, user_id):
         return (db_session.query(UserRoleTable)

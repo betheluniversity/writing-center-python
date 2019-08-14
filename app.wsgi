@@ -11,4 +11,4 @@ exec(compile(open(activate_this).read(), activate_this, 'exec'), dict(__file__=a
 import logging
 logging.basicConfig(stream=sys.stderr)
 
-from writing-center import app as application
+from writing_center import app as application
