@@ -5,7 +5,6 @@ from writing_center.db_repository import db_session
 from writing_center.db_repository.tables import UserTable, AppointmentsTable, SettingsTable, UserRoleTable, RoleTable
 
 
-
 class AppointmentsController:
     def __init__(self):
         pass
@@ -75,7 +74,6 @@ class AppointmentsController:
             db_session.commit()
             return True
 
-
     def cancel_appointment(self, appt_id):
         try:
             appointment = db_session.query(AppointmentsTable)\
@@ -111,6 +109,7 @@ class AppointmentsController:
     def get_scheduled_appointments(self, username):
         tutor = self.get_user_by_username(username)
         return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.scheduledStart >= datetime.now())\
             .filter(AppointmentsTable.tutor_id == tutor.id)\
             .all()
 
@@ -131,6 +130,28 @@ class AppointmentsController:
                 .filter(AppointmentsTable.id == appt_id)\
                 .one_or_none()
             appointment.noShow = 0
+            db_session.commit()
+            return True
+        except Exception as e:
+            return False
+
+    def ban_if_no_show_check(self, user_id):
+        try:
+            no_show_count = db_session.query(AppointmentsTable)\
+                .filter(AppointmentsTable.student_id == user_id)\
+                .filter(AppointmentsTable.noShow == 1)\
+                .count()
+            if no_show_count > int(self.get_ban_limit()[0]):
+                banned = self.ban_user(user_id)
+                return banned
+            return False
+        except Exception as e:
+            return False
+
+    def ban_user(self, user_id):
+        try:
+            user = self.get_user_by_id(user_id)
+            user.bannedDate = datetime.now()
             db_session.commit()
             return True
         except Exception as e:
@@ -215,6 +236,16 @@ class AppointmentsController:
     def get_time_limit(self):
         return db_session.query(SettingsTable.value)\
             .filter(SettingsTable.id == 2)\
+            .one_or_none()
+
+    def get_ban_limit(self):
+        return db_session.query(SettingsTable.value)\
+            .filter(SettingsTable.id == 3)\
+            .one_or_none()
+
+    def get_survey_link(self):
+        return db_session.query(SettingsTable.value)\
+            .filter(SettingsTable.id == 4)\
             .one_or_none()
 
     def get_users_by_role(self, role_name):

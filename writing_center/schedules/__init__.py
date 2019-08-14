@@ -26,6 +26,7 @@ class SchedulesView(FlaskView):
     def manage_tutor_schedules(self):
         schedules = self.sc.get_schedules()
         tutors = self.sc.get_tutors()
+        time_setting = self.sc.get_time_setting()[0]
         return render_template('schedules/manage_tutor_schedules.html', **locals())
 
     @route('view-tutor-schedules')
@@ -75,7 +76,10 @@ class SchedulesView(FlaskView):
         end_date = str(json.loads(request.data).get('endDate'))
         # Formats the date strings into date objects
         if not start_date or not end_date:
-            self.wcc.set_alert('danger', 'You must set a start date and an end date!')
+            self.wcc.set_alert('danger', 'You must set a start date AND an end date!')
+            return 'danger'
+        if start_date > end_date:
+            self.wcc.set_alert('danger', 'Start date cannot be further in the future than the end date!')
             return 'danger'
         start_date = datetime.strptime(start_date, '%a %b %d %Y').date()
         end_date = datetime.strptime(end_date, '%a %b %d %Y').date()
@@ -208,11 +212,11 @@ class SchedulesView(FlaskView):
             worked = self.sc.request_substitute(appt_id)
             if not worked:
                 self.wcc.set_alert('danger', 'Failed to request a substitute for appointment id {0}'.format(appt_id))
+        # sub request email
         return 'Substitute Requested Successfully'
 
     @route('get-appointments', methods=['GET'])
     def get_users_appointments(self):
-        print('got')  # TODO: remove
         appts = self.sc.get_all_user_appointments(flask_session['USERNAME'])
         appointments = []
         for appointment in appts:
@@ -220,26 +224,26 @@ class SchedulesView(FlaskView):
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
                                                               appointment.actualStart.strftime('%m'),
                                                               appointment.actualStart.strftime('%d'),
-                                                              appointment.actualStart.strftime('%I'),
+                                                              appointment.actualStart.strftime('%H'),
                                                               appointment.actualStart.strftime('%M'),
                                                               appointment.actualStart.strftime('%S'))
                 end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualEnd.year,
                                                             appointment.actualEnd.strftime('%m'),
                                                             appointment.actualEnd.strftime('%d'),
-                                                            appointment.actualEnd.strftime('%I'),
+                                                            appointment.actualEnd.strftime('%H'),
                                                             appointment.actualEnd.strftime('%M'),
                                                             appointment.actualEnd.strftime('%S'))
             else:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
                                                               appointment.scheduledStart.strftime('%m'),
                                                               appointment.scheduledStart.strftime('%d'),
-                                                              appointment.scheduledStart.strftime('%I'),
+                                                              appointment.scheduledStart.strftime('%H'),
                                                               appointment.scheduledStart.strftime('%M'),
                                                               appointment.scheduledStart.strftime('%S'))
                 end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledEnd.year,
                                                             appointment.scheduledEnd.strftime('%m'),
                                                             appointment.scheduledEnd.strftime('%d'),
-                                                            appointment.scheduledEnd.strftime('%I'),
+                                                            appointment.scheduledEnd.strftime('%H'),
                                                             appointment.scheduledEnd.strftime('%M'),
                                                             appointment.scheduledEnd.strftime('%S'))
             appointments.append({
@@ -296,13 +300,6 @@ class SchedulesView(FlaskView):
 
         return jsonify(appointments)
 
-    @route('load-appointment', methods=['POST'])
-    def load_appointment_table(self):
-        appointment_id = str(json.loads(request.data).get('id'))
-        appt = self.sc.get_one_appointment(appointment_id)
-        return render_template('schedules/appointment_information.html', **locals(),
-                               id_to_user=self.sc.get_user_by_id)
-
     @route('pickup-shift', methods=['POST'])
     def pickup_shift(self):
         appointment_id = str(json.loads(request.data).get('appt_id'))
@@ -311,10 +308,11 @@ class SchedulesView(FlaskView):
         picked_up = self.sc.pickup_shift(appointment_id, flask_session['USERNAME'])
         if picked_up:
             self.wcc.set_alert('success', 'Successfully picked up the shift!')
-            return render_template('schedules/appointment_information.html', **locals(),
-                                   id_to_user=self.sc.get_user_by_id)
         else:
             self.wcc.set_alert('danger', 'Failed to pick up the shift.')
+
+        # request fulfilled email
+        return 'finished'
 
     @route('request-subtitute', methods=['POST'])
     def request_substitute(self):
@@ -324,7 +322,6 @@ class SchedulesView(FlaskView):
         success = self.sc.request_substitute(appointment_id)
         if success:
             self.wcc.set_alert('success', 'Successfully requested a substitute!')
-            return render_template('schedules/appointment_information.html', **locals(),
-                                   id_to_user=self.sc.get_user_by_id)
         else:
             self.wcc.set_alert('danger', 'Error! Substitute not requested.')
+        return 'finished'

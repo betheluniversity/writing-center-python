@@ -1,4 +1,9 @@
-{% extends 'email_base.html' %}
+{% block title %}
+<img height="48"
+    src="https://confluence.bethel.edu/download/attachments/327682/global.logo?version=4&amp;modificationDate=1462424762000&amp;api=v2">
+<span class="ml-2  h6 lab-title">Writing Center</span>
+{% endblock %}
+
 {% block email_content %}
     <h3>Substitute Request:</h3>
         <br/>
@@ -7,6 +12,10 @@
         <p>Student: {{ appt_info['student'] }}</p>
         <p>Assignment: {{ appt_info['assignment'] }}</p>
         <br/>
-        <p>Fill this substitute request <a href="#">here</a></p>
-        <p>If you have any questions, comments or concerns, contact <a href="#">SOMEONE</a></p>
+        <p>Fill this substitute request <a href="{{ url_for('SchedulesView:view_tutor_schedules') }}">here</a></p>
+        <p>Go to the <a href="https://www.bethel.edu/undergrad/academics/support/writing">Writing Support for CAS</a> page to find out more about the Writing Center's services and resources</p>
+{% endblock %}
+
+{% block footer %}
+<p class="card-text">&copy; 2013-{{ now.strftime('%Y') }} Bethel University</p>
 {% endblock %}

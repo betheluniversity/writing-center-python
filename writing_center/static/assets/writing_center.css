@@ -159,6 +159,16 @@ ul.list-group{
     font-size: .875rem !important;
 }
 
+.collapsible::after {
+	content: "\f107";
+	color: white;
+    font-family: "FontAwesome";
+}
+
+.collapsible[aria-expanded="true"]::after {
+	content: "\f106";
+}
+
 .custom-user-div {
     color: white;
     display: inline-block !important;

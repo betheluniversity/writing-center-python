@@ -15,7 +15,7 @@
                    aria-haspopup="true" aria-expanded="false">Appointments</a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                 {% if 'Student' in session['USER-ROLES'] or 'Administrator' in session['USER-ROLES'] %}
-                    <a class="dropdown-item" href="{{ url_for('AppointmentsView:create_appointment') }}">Schedule An Appointment</a>
+                    <a class="dropdown-item" href="{{ url_for('AppointmentsView:schedule_appointment_landing') }}">Schedule An Appointment</a>
                     <a class="dropdown-item" href="{{ url_for('AppointmentsView:student_view_appointments') }}">View Your Appointments</a>
                 {% endif %}
                 {% if 'Tutor' in session['USER-ROLES'] or 'Administrator' in session['USER-ROLES'] %}

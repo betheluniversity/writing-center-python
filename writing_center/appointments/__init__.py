@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 
 from writing_center.appointments.appointments_controller import AppointmentsController
 from writing_center.writing_center_controller import WritingCenterController
+from writing_center.message_center import MessageCenterController
 from writing_center.wsapi.wsapi_controller import WSAPIController
 
 
@@ -14,10 +15,51 @@ class AppointmentsView(FlaskView):
     def __init__(self):
         self.ac = AppointmentsController()
         self.wcc = WritingCenterController()
+        self.mcc = MessageCenterController()
         self.wsapi = WSAPIController()
 
+    @route('view-all-appointments')
     def view_appointments(self):
         return render_template('appointments/view_appointments.html', **locals())
+
+    @route('load-appointment-data', methods=['POST'])
+    def load_appointment_data(self):
+        appt_id = json.loads(request.data).get('id')
+        appointment = self.ac.get_appointment_by_id(appt_id)
+        student = self.ac.get_user_by_id(appointment.student_id)
+        student_name = 'None'
+        if student:
+            student_name = '{0} {1}'.format(student.firstName, student.lastName)
+        tutor = self.ac.get_user_by_id(appointment.tutor_id)
+        tutor_name = 'None'
+        if tutor:
+            tutor_name = '{0} {1}'.format(tutor.firstName, tutor.lastName)
+        courses = self.wsapi.get_student_courses(flask_session['USERNAME'])
+        appt = {
+            'id': appointment.id,
+            'studentName': student_name,
+            'tutorName': tutor_name,
+            'scheduledStart': appointment.scheduledStart.strftime('%a %b %d %Y %I:%M %p'),
+            'scheduledEnd': appointment.scheduledEnd.strftime('%a %b %d %Y %I:%M %p'),
+            'actualStart': appointment.actualStart.strftime('%a %b %d %Y %I:%M %p') if appointment.actualStart else None,
+            'actualEnd': appointment.actualEnd.strftime('%a %b %d %Y %I:%M %p') if appointment.actualEnd else None,
+            'profName': appointment.profName,
+            'profEmail': appointment.profEmail,
+            'dropIn': "Yes" if appointment.dropIn == 1 else "No",
+            'sub': appointment.sub,
+            'assignment': appointment.assignment,
+            'notes': appointment.notes,
+            'suggestions': appointment.suggestions,
+            'multilingual': "Yes" if appointment.multilingual == 1 else "No",
+            'courseCode': appointment.courseCode,
+            'courseSection': appointment.courseSection,
+            'noShow': "Yes" if appointment.noShow == 1 else "No",
+            'courses': courses,
+            'coursesLength': len(courses),
+            'future': True if appointment.scheduledStart > datetime.now() else False
+        }
+
+        return jsonify(appt)
 
     @route('load-appointments', methods=['POST'])
     def load_appointments(self):
@@ -61,18 +103,6 @@ class AppointmentsView(FlaskView):
                     'dropIn': appointment.dropIn
                 })
         return jsonify(appointments)
-
-    @route('load-appointment', methods=['POST'])
-    def load_appointment_table(self):
-        appointment_id = str(json.loads(request.data).get('id'))
-        schedule_appt = json.loads(request.data).get('scheduleAppt')
-        add_cancel = json.loads(request.data).get('add-cancel')
-        appt = self.ac.get_one_appointment(appointment_id)
-        if appt.scheduledStart < datetime.now():
-            add_cancel = False
-        courses = self.wsapi.get_student_courses(flask_session['USERNAME'])
-        return render_template('appointments/appointment_information.html', **locals(),
-                               id_to_user=self.ac.get_user_by_id)
 
     def appointments_and_walk_ins(self):
         tutor = flask_session['USERNAME']
@@ -137,8 +167,9 @@ class AppointmentsView(FlaskView):
         courses = self.ac.get_courses()
         return render_template('appointments/search_appointments.html', **locals())
 
-    def create_appointment(self):
-        return render_template('appointments/create_appointment.html', **locals())
+    @route('schedule')
+    def schedule_appointment_landing(self):
+        return render_template('appointments/schedule_appointment.html', **locals())
 
     @route('view-appointments')
     def student_view_appointments(self):
@@ -153,26 +184,26 @@ class AppointmentsView(FlaskView):
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
                                                               appointment.actualStart.strftime('%m'),
                                                               appointment.actualStart.strftime('%d'),
-                                                              appointment.actualStart.strftime('%I'),
+                                                              appointment.actualStart.strftime('%H'),
                                                               appointment.actualStart.strftime('%M'),
                                                               appointment.actualStart.strftime('%S'))
                 end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualEnd.year,
                                                             appointment.actualEnd.strftime('%m'),
                                                             appointment.actualEnd.strftime('%d'),
-                                                            appointment.actualEnd.strftime('%I'),
+                                                            appointment.actualEnd.strftime('%H'),
                                                             appointment.actualEnd.strftime('%M'),
                                                             appointment.actualEnd.strftime('%S'))
             elif appointment.scheduledStart and appointment.scheduledEnd:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
                                                               appointment.scheduledStart.strftime('%m'),
                                                               appointment.scheduledStart.strftime('%d'),
-                                                              appointment.scheduledStart.strftime('%I'),
+                                                              appointment.scheduledStart.strftime('%H'),
                                                               appointment.scheduledStart.strftime('%M'),
                                                               appointment.scheduledStart.strftime('%S'))
                 end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledEnd.year,
                                                             appointment.scheduledEnd.strftime('%m'),
                                                             appointment.scheduledEnd.strftime('%d'),
-                                                            appointment.scheduledEnd.strftime('%I'),
+                                                            appointment.scheduledEnd.strftime('%H'),
                                                             appointment.scheduledEnd.strftime('%M'),
                                                             appointment.scheduledEnd.strftime('%S'))
             appointments.append({
@@ -238,6 +269,8 @@ class AppointmentsView(FlaskView):
                                     break
                         appt = self.ac.schedule_appointment(appt_id, course, assignment)
                         if appt:
+                            self.mcc.appointment_signup_student(appt_id)
+                            self.mcc.appointment_signup_tutor(appt_id)
                             self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your '
                                                           'Appointments, Go To The "View Your Appointments" Page!')
                         else:
@@ -254,7 +287,7 @@ class AppointmentsView(FlaskView):
             # TODO MAYBE GIVE THEM A SPECIFIC EMAIL TO EMAIL?
             self.wcc.set_alert('danger', 'You are banned from making appointments! If you have any questions email a'
                                          ' Writing Center Administrator.')
-
+        
         return appt_id
 
     @route('cancel-appointment', methods=['POST'])
@@ -294,6 +327,7 @@ class AppointmentsView(FlaskView):
             if appt:
                 appointment = self.ac.get_user_by_appt(appt_id)
                 user = self.ac.get_user_by_id(appointment.student_id)
+                self.ac.ban_if_no_show_check(user.id)
                 message = '{0} {1} Marked As No Show'.format(user.firstName, user.lastName)
                 self.wcc.set_alert('success', message)
             else:
@@ -307,7 +341,8 @@ class AppointmentsView(FlaskView):
                 self.wcc.set_alert('success', message)
             else:
                 self.wcc.set_alert('danger', 'Failed To Revert No Show')
-        return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))
+        qualtrics_link = self.ac.get_survey_link()[0]
+        return render_template('appointments/end_appointment.html', **locals())
 
     @route('/search', methods=['POST'])
     def search(self):
