@@ -143,7 +143,9 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary darkblue" data-dismiss="modal">Close</button>
-                <a class="btn btn-secondary" id="edit" href="#">Edit</a>
+                {% if 'Administrator' in session['USER-ROLES'] %}
+                    <a class="btn btn-secondary" id="edit" href="{{ url_for('AppointmentsView:edit', appt_id=appointment.id) }}">Edit</a>
+                {% endif %}
             </div>
         </div>
     </div>
