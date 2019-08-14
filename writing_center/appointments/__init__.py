@@ -366,3 +366,56 @@ class AppointmentsView(FlaskView):
                 'tutor': self.ac.get_user_by_id(appt.tutor_id)
             }
         return render_template('appointments/appointment_search_table.html', **locals())
+
+    @route('/edit/<int:appt_id>', methods=['get', 'post'])
+    def edit(self, appt_id):
+        appt = self.ac.get_appointment_by_id(appt_id)
+        all_tutors = self.ac.get_users_by_role('Tutor')
+        all_students = self.ac.get_users_by_role('Student')
+        all_profs = self.ac.get_profs_and_emails()
+        all_courses = self.ac.get_courses()
+        return render_template('appointments/edit_appointment.html', **locals())
+
+    @route('/submit-edits', methods=['post'])
+    def submit_edits(self):
+        form = request.form
+
+        appt_id = int(form.get('id'))
+        tutor_id = None if form.get('tutor') == '-1' else int(form.get('tutor'))
+        student_id = None if form.get('student') == '-1' else int(form.get('student'))
+
+        date = None if form.get('date') == '' else form.get('date')
+        sched_start_time = None if form.get('sched-start') == '' else form.get('sched-start')
+        sched_end_time = None if form.get('sched-end') == '' else form.get('sched-end')
+        if not date or not sched_start_time or not sched_end_time:
+            self.wcc.set_alert('danger', 'You must select a date and a scheduled start and end time.')
+            return redirect(url_for('AppointmentsView:edit', appt_id=appt_id))
+        sched_start = "{0} {1}".format(datetime.strptime(date, "%m/%d/%Y").strftime("%Y-%m-%d"), sched_start_time)
+        sched_end = "{0} {1}".format(datetime.strptime(date, "%m/%d/%Y").strftime("%Y-%m-%d"), sched_end_time)
+
+        actual_start_time = None if form.get('actual-start') == '' else form.get('actual-start')
+        actual_end_time = None if form.get('actual-end') == '' else form.get('actual-end')
+        actual_start = None if not actual_start_time else "{0} {1}".format(datetime.strptime(date, "%m/%d/%Y").strftime("%Y-%m-%d"), actual_start_time)
+        actual_end = None if not actual_end_time else "{0} {1}".format(datetime.strptime(date, "%m/%d/%Y").strftime("%Y-%m-%d"), actual_end_time)
+
+        prof = None if form.get('prof') == 'None' else form.get('prof')
+        prof_email = None if form.get('email') == 'None' else form.get('email')
+        course = None if form.get('course') == 'None' else form.get('course')
+        section = None if form.get('section') == 'None' else int(form.get('section'))
+        assignment = None if form.get('assignment') == 'None' else form.get('assignment')
+        notes = None if form.get('notes') == 'None' else form.get('notes')
+        suggestions = None if form.get('suggestions') == 'None' else form.get('suggestions')
+        sub = int(form.get('sub-req'))
+        drop_in = int(form.get('drop-in-check'))
+        multilingual = int(form.get('multi-check'))
+        no_show = int(form.get('no-show-check'))
+        in_progress = int(form.get('in-progress-check'))
+
+        try:
+            self.ac.edit_appt(appt_id, student_id, tutor_id, sched_start, sched_end, actual_start, actual_end, prof,
+                              prof_email, drop_in, sub, assignment, notes, suggestions, multilingual, course, section,
+                              no_show, in_progress)
+            self.wcc.set_alert('success', 'Appointment edited successfully!')
+        except Exception as e:
+            self.wcc.set_alert('danger', 'Failed to edit appointment: ' + str(e))
+        return redirect(url_for('AppointmentsView:edit', appt_id=appt_id))
