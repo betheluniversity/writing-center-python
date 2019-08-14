@@ -1,5 +1,6 @@
 <div class="form-row">
     <div id="all-subbed" class="form-group col-md-12">
+        <h3>Failed to delete these events since they are already scheduled!</h3>
         <table id="table"  class="table table-striped table-bordered">
             <thead>
                 <tr>
@@ -21,36 +22,34 @@
             </thead>
             <tbody>
             {% set list = [] %}
-                {% for appts in sub_appts %}
-                    {% for appt in appts %}
-                        {% if list.append(appt.id) %}{% endif %}
-                        <tr>
-                            <td>
-                                {{ id_to_user(appt.student_id).username }}
-                            </td>
-                            <td>
-                                {{ id_to_user(appt.tutor_id).username }}
-                            </td>
-                            <td>
-                                {{ appt.scheduledStart|datetimeformat }}
-                            </td>
-                            <td>
-                                {{ appt.scheduledEnd|datetimeformat }}
-                            </td>
-                            <td>
-                                {% if appt.dropIn == 1 %}Yes{% else %}No{% endif %}
-                            </td>
-                            <td>
-                                {% if appt.multilingual == 1 %}Yes{% else %}No{% endif %}
-                            </td>
-                            <td>
-                                <a href="mailto:{{ id_to_user(appt.student_id).username }}@bethel.edu">Send Email to {{ id_to_user(appt.student_id).username }}</a>
-                            </td>
-                            <td id="{{ appt.id }}" class="test">
-                                <button type="button" class="btn btn-primary darkblue" onclick="subRequested({{ appt.id }})">Request A Substitute</button>
-                            </td>
-                        </tr>
-                    {% endfor %}
+                {% for appt in sub_appts %}
+                    {% if list.append(appt.id) %}{% endif %}
+                    <tr>
+                        <td>
+                            {{ id_to_user(appt.student_id).username }}
+                        </td>
+                        <td>
+                            {{ id_to_user(appt.tutor_id).username }}
+                        </td>
+                        <td>
+                            {{ appt.scheduledStart|datetimeformat }}
+                        </td>
+                        <td>
+                            {{ appt.scheduledEnd|datetimeformat }}
+                        </td>
+                        <td>
+                            {% if appt.dropIn == 1 %}Yes{% else %}No{% endif %}
+                        </td>
+                        <td>
+                            {% if appt.multilingual == 1 %}Yes{% else %}No{% endif %}
+                        </td>
+                        <td>
+                            <a href="mailto:{{ id_to_user(appt.student_id).username }}@bethel.edu">Send Email to {{ id_to_user(appt.student_id).username }}</a>
+                        </td>
+                        <td id="{{ appt.id }}" class="test">
+                            <button type="button" class="btn btn-primary darkblue" onclick="subRequested({{ appt.id }})">Request A Substitute</button>
+                        </td>
+                    </tr>
                 {% endfor %}
             </tbody>
         </table>
