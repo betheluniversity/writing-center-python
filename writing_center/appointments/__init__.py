@@ -27,7 +27,7 @@ class AppointmentsView(FlaskView):
         appt_id = json.loads(request.data).get('id')
         schedule = json.loads(request.data).get('schedule')
         cancel = json.loads(request.data).get('cancel')
-        subDelete = json.loads(request.data).get('subDelete')
+        pickup_sub_delete = json.loads(request.data).get('subDelete')
         appointment = self.ac.get_appointment_by_id(appt_id)
         student = self.ac.get_user_by_id(appointment.student_id)
         student_name = 'None'

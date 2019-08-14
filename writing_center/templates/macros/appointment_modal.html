@@ -119,7 +119,7 @@
                             <th colspan="2"><button class="btn btn-primary btn-danger" onclick="cancelAppointment({{ appt_id }})">Cancel Appointment</button></th>
                         </tr>
                     {% endif %}
-                    {% if subDelete and ('Administrator' in session['USER-ROLES'] or 'Tutor' in session['USER-ROLES']) %}
+                    {% if pickup_sub_delete and appointment.scheduledStart >= now and ('Administrator' in session['USER-ROLES'] or 'Tutor' in session['USER-ROLES']) %}
                         {% if appointment.sub == 0 %}
                             <tr>
                                 <th id="request-sub-container"  colspan="2">
