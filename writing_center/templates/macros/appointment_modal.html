@@ -117,6 +117,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary darkblue" data-dismiss="modal">Close</button>
+                <a class="btn btn-secondary" id="edit" href="#">Edit</a>
             </div>
         </div>
     </div>
@@ -145,6 +146,7 @@
                 $('#course-data').html(appt['courseCode']);
                 $('#section-data').html(appt['courseSection']);
                 $('#assignment-data').html(appt['assignment']);
+                $('#edit').prop('href', 'http://localhost:5000/appointments/edit/' + appt['id']);
                 if (schedule === true) {
                     if (first === true) {
                         for (let i = 0; i < appt['coursesLength']; i ++) {
