@@ -130,9 +130,13 @@ class MessageCenterController:
 
         if to_prof:
             cc = appointment.profEmail
-            self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, cc, bcc='')
+            if self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, cc, bcc=''):
+                return True
+            return False
         else:
-            self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, cc='', bcc='')
+            if self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, cc='', bcc=''):
+                return True
+            return False
 
     def appointment_signup_student(self, appointment_id):
         # get the appointment via the appointment id
