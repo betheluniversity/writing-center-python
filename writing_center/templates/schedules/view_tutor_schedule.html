@@ -57,7 +57,6 @@
             <div id="calendar"></div>
         </div>
     </div>
-    {% include 'macros/appointment_modal.html' %}
 
     <script>
         $(document).ready(function () {
@@ -117,7 +116,21 @@
             displayEventEnd: true,
             timeZone: 'UTC',
             eventClick: function(info) {
-                getAppointmentData(info.event.id, false, false, true);
+                $.ajax({
+                        type: "POST",
+                        url: "{{ url_for('AppointmentsView:load_appointment_data') }}",
+                        data: JSON.stringify({
+                            'id': info.event.id,
+                            'subDelete': true
+                        }),
+                        contentType: 'application/json;charset=UTF-8',
+                        success: function (response) {
+                            $('#results').html(response);
+                            $('#info-modal').modal('show');
+                        },
+                        error: function (error) {
+                        }
+                    });
             }
         });
 

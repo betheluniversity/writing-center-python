@@ -74,11 +74,13 @@ class SchedulesView(FlaskView):
     def add_tutors_to_shifts(self):
         start_date = str(json.loads(request.data).get('startDate'))
         end_date = str(json.loads(request.data).get('endDate'))
+        start = datetime.strptime(start_date, '%a %b %d %Y').date()
+        end = datetime.strptime(end_date, '%a %b %d %Y').date()
         # Formats the date strings into date objects
         if not start_date or not end_date:
             self.wcc.set_alert('danger', 'You must set a start date AND an end date!')
             return 'danger'
-        if start_date > end_date:
+        if start > end:
             self.wcc.set_alert('danger', 'Start date cannot be further in the future than the end date!')
             return 'danger'
         start_date = datetime.strptime(start_date, '%a %b %d %Y').date()
@@ -143,7 +145,7 @@ class SchedulesView(FlaskView):
         end = datetime.strptime(end_date, '%a %b %d %Y').date()
         tutor_ids = json.loads(request.data).get('tutors')
         names = []
-        if start_date > end_date:
+        if start > end:
             invalid_date = True
         if 'view-all' in tutor_ids:
             tutors = self.sc.get_tutors()
@@ -171,7 +173,7 @@ class SchedulesView(FlaskView):
                 return appt_id
         else:
             self.wcc.set_alert('danger', 'Failed to delete appointment!')
-            return redirect(url_for('SchedulesView:view_tutor_schedules'))
+            return redirect(url_for('SchedulesView:manage_tutor_schedules'))
 
     @route('delete-tutor-shifts', methods=['POST'])
     def delete_tutors_from_shifts(self):
@@ -195,9 +197,11 @@ class SchedulesView(FlaskView):
             for ids in tutors:
                 tutor_ids.append(str(ids.id))
         sub_appts = self.sc.delete_tutor_shifts(tutor_ids, start, end)
-        if not sub_appts:
-            self.wcc.set_alert('danger', 'Failed to Delete Appointments!')
-        return render_template('schedules/sub_table.html', **locals(), id_to_user=self.sc.get_user_by_id)
+        if sub_appts == 'none':
+            return '<h3>All appointments deleted successfully!</h3>'
+        if sub_appts:
+            return render_template('schedules/sub_table.html', **locals(), id_to_user=self.sc.get_user_by_id)
+        return '<h3>There wasn\t any appointments within the date range selected!</h3>'
 
     @route('request-sub', methods=['POST'])
     def request_sub(self):
@@ -266,26 +270,26 @@ class SchedulesView(FlaskView):
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
                                                               appointment.actualStart.strftime('%m'),
                                                               appointment.actualStart.strftime('%d'),
-                                                              appointment.actualStart.strftime('%I'),
+                                                              appointment.actualStart.strftime('%H'),
                                                               appointment.actualStart.strftime('%M'),
                                                               appointment.actualStart.strftime('%S'))
                 end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualEnd.year,
                                                             appointment.actualEnd.strftime('%m'),
                                                             appointment.actualEnd.strftime('%d'),
-                                                            appointment.actualEnd.strftime('%I'),
+                                                            appointment.actualEnd.strftime('%H'),
                                                             appointment.actualEnd.strftime('%M'),
                                                             appointment.actualEnd.strftime('%S'))
             else:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
                                                               appointment.scheduledStart.strftime('%m'),
                                                               appointment.scheduledStart.strftime('%d'),
-                                                              appointment.scheduledStart.strftime('%I'),
+                                                              appointment.scheduledStart.strftime('%H'),
                                                               appointment.scheduledStart.strftime('%M'),
                                                               appointment.scheduledStart.strftime('%S'))
                 end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledEnd.year,
                                                             appointment.scheduledEnd.strftime('%m'),
                                                             appointment.scheduledEnd.strftime('%d'),
-                                                            appointment.scheduledEnd.strftime('%I'),
+                                                            appointment.scheduledEnd.strftime('%H'),
                                                             appointment.scheduledEnd.strftime('%M'),
                                                             appointment.scheduledEnd.strftime('%S'))
             appointments.append({

@@ -1,4 +1,3 @@
-<!-- Info Modal -->
 <div class="modal fade" id="info-modal" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -8,110 +7,137 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <input style="display: none" id="appt-id">
             <div class="modal-body">
                 <table id="modal-table" class="table table-striped table-bordered">
-                    <tr id="student-container">
-                        <th>Student</th>
-                        <td id="student-data"></td>
-                    </tr>
-                    <tr id="tutor-container">
+                    {% if not schedule and not cancel %}
+                        <tr>
+                            <th>Student</th>
+                            <td>{{ student_name }}</td>
+                        </tr>
+                    {% endif %}
+                    <tr>
                         <th>Tutor</th>
-                        <td id="tutor-data"></td>
+                        <td>{{ tutor_name }}</td>
                     </tr>
-                    <tr id="sched-start-container">
+                    <tr>
                         <th>Scheduled Start</th>
-                        <td id="sched-start-data"></td>
+                        <td>{{ appointment.scheduledStart|datetimeformat('%a %b %d %Y %I:%M %p') }}</td>
                     </tr>
-                    <tr id="sched-end-container">
+                    <tr>
                         <th>Scheduled End</th>
-                        <td id="sched-end-data"></td>
+                        <td>{{ appointment.scheduledEnd|datetimeformat('%a %b %d %Y %I:%M %p') }}</td>
                     </tr>
-                    <tr id="actual-start-container">
-                        <th>Actual Start</th>
-                        <td id="actual-start-data"></td>
-                    </tr>
-                    <tr id="actual-end-container">
-                        <th>Actual End</th>
-                        <td id="actual-end-data"></td>
-                    </tr>
-                    <tr id="drop-in-container">
+                    {% if not schedule and not cancel %}
+                        <tr>
+                            <th>Actual Start</th>
+                            <td>{{ appointment.actualStart|datetimeformat('%a %b %d %Y %I:%M %p') if appointment.actualStart else '' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Actual End</th>
+                            <td>{{ appointment.actualEnd|datetimeformat('%a %b %d %Y %I:%M %p') if appointment.actualEnd else '' }}</td>
+                        </tr>
+                    {% endif %}
+                    <tr>
                         <th>Drop In</th>
-                        <td id="drop-in-data"></td>
+                        <td>{{ 'Yes' if appointment.dropIn == 1 else 'No' }}</td>
                     </tr>
-                    <tr id="multilingual-container">
+                    <tr>
                         <th>Multilingual</th>
-                        <td id="multilingual-data"></td>
+                        <td>{{ 'Yes' if appointment.multilingual == 1 else 'No' }}</td>
                     </tr>
-                    <tr id="no-show-container">
-                        <th>No Show</th>
-                        <td id="no-show-data"></td>
-                    </tr>
-                    <tr id="prof-container">
-                        <th>Professor</th>
-                        <td id="prof-data"></td>
-                    </tr>
-                    <tr id="prof-email-container">
-                        <th>Professor Email</th>
-                        <td id="prof-email-data"></td>
-                    </tr>
-                    <tr id="select-course-container">
-                        <th>Select a Course</th>
-                        <td id="select-course">
-                            <select class="form-control" id="courses">
-                                <option id="no-course" class="select-hr" selected="selected">No Specific Course</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr id="course-container">
-                        <th>Course Code</th>
-                        <td id="course-data"></td>
-                    </tr>
-                    <tr id="section-container">
-                        <th>Course Section</th>
-                        <td id="section-data"></td>
-                    </tr>
-                    <tr id="assignment-description-container">
-                        <th>Describe Your Assignment</th>
-                        <td id="assignment-description">
-                            <textarea id="assignment" name="assignment" class="form-control"></textarea>
-                        </td>
-                    </tr>
-                    <tr id="assignment-container">
-                        <th>Assignment</th>
-                        <td id="assignment-data"></td>
-                    </tr>
-                    <tr id="notes-container">
-                        <th>Notes</th>
-                        <td id="notes-data"></td>
-                    </tr>
-                    <tr id="suggestions-container">
-                        <th>Suggestions</th>
-                        <td id="suggestions-data"></td>
-                    </tr>
-                    <tr id="schedule-container">
-                        <th colspan="2"><button class="btn btn-primary darkblue" onclick="scheduleAppointment()">Schedule Appointment</button></th>
-                    </tr>
-                    <tr id="cancel-container">
-                        <th colspan="2"><button class="btn btn-primary btn-danger" onclick="cancelAppointment()">Cancel Appointment</button></th>
-                    </tr>
-                    {% if 'Administrator' in session['USER-ROLES'] or 'tutor' in session['USER-ROLES'] %}
-                        <tr id="request-container">
-                            <th id="request-sub-container" colspan="2">
-                                <button class="btn btn-primary darkblue" onclick="requestSub()">Request Substitute</button>
-                                {% if 'Administrator' in session['USER-ROLES'] %}
-                                    <button style="margin-left: 10px" class="btn btn-primary btn-danger" onclick="deleteAppointment('request')">Delete Appointment</button>
-                                {% endif %}
-                            </th>
+                    {% if not schedule and not cancel %}
+                        <tr>
+                            <th>No Show</th>
+                            <td>{{ 'Yes' if appointment.noShow == 1 else 'No' }}</td>
                         </tr>
-                        <tr id="pickup-container">
-                            <th id="pickup-sub-container" colspan="2">
-                                <button class="btn btn-primary darkblue" onclick="subAppointment()">Pick Up Shift</button>
-                                {% if 'Administrator' in session['USER-ROLES'] %}
-                                    <button style="margin-left: 10px" class="btn btn-primary btn-danger" onclick="deleteAppointment('pickup')">Delete Appointment</button>
-                                {% endif %}
-                            </th>
+                    {% endif %}
+                    {% if not schedule %}
+                        <tr>
+                            <th>Professor</th>
+                            <td>{{ appointment.profName if appointment.profName else '' }}</td>
                         </tr>
+                        <tr>
+                            <th>Professor Email</th>
+                            <td>{{ appointment.profEmail if appointment.profEmail else '' }}</td>
+                        </tr>
+                    {% endif %}
+                    {% if schedule %}
+                        <tr>
+                            <th>Select a Course</th>
+                            <td>
+                                <select class="form-control" id="courses">
+                                    <option id="no-course" class="select-hr" selected="selected">No Specific Course</option>
+                                    {% for course in courses %}
+                                        <option id="{{ courses[course]['crn'] }}">{{ courses[course]['subject'] }}{{ courses[course]['cNumber'] }} {{ courses[course]['title'] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if not schedule %}
+                        <tr>
+                            <th>Course Code</th>
+                            <td>{{ appointment.courseCode if appointment.courseCode else '' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Course Section</th>
+                            <td>{{ appointment.courseSection if appointment.courseSection else '' }}</td>
+                        </tr>
+                    {% endif %}
+                    {% if schedule %}
+                        <tr>
+                            <th>Describe Your Assignment</th>
+                            <td>
+                                <textarea id="assignment" name="assignment" class="form-control"></textarea>
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% if not schedule %}
+                        <tr>
+                            <th>Assignment</th>
+                            <td>{{ appointment.assignment if appointment.assignment else '' }}</td>
+                        </tr>
+                        {% if appointment.scheduledStart < now %}
+                            <tr>
+                                <th>Notes</th>
+                                <td>{{ appointment.notes if appointment.notes else '' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Suggestions</th>
+                                <td>{{ appointment.suggestions if appointment.suggestions else '' }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endif %}
+                    {% if schedule %}
+                        <tr>
+                            <th colspan="2"><button class="btn btn-primary darkblue" onclick="scheduleAppointment({{ appt_id }})">Schedule Appointment</button></th>
+                        </tr>
+                    {% endif %}
+                    {% if cancel %}
+                        <tr>
+                            <th colspan="2"><button class="btn btn-primary btn-danger" onclick="cancelAppointment({{ appt_id }})">Cancel Appointment</button></th>
+                        </tr>
+                    {% endif %}
+                    {% if pickup_sub_delete and appointment.scheduledStart >= now and ('Administrator' in session['USER-ROLES'] or 'Tutor' in session['USER-ROLES']) %}
+                        {% if appointment.sub == 0 %}
+                            <tr>
+                                <th id="request-sub-container"  colspan="2">
+                                    <button class="btn btn-primary darkblue" onclick="requestSub({{ appt_id }})">Request Substitute</button>
+                                    {% if 'Administrator' in session['USER-ROLES'] %}
+                                        <button style="margin-left: 10px" class="btn btn-primary btn-danger" onclick="deleteAppointment({{ appt_id }}, 'request')">Delete Appointment</button>
+                                    {% endif %}
+                                </th>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <th id="pickup-sub-container"  colspan="2">
+                                    <button class="btn btn-primary darkblue" onclick="subAppointment({{ appt_id }})">Pick Up Shift</button>
+                                    {% if 'Administrator' in session['USER-ROLES'] %}
+                                        <button style="margin-left: 10px" class="btn btn-primary btn-danger" onclick="deleteAppointment({{ appt_id }}, 'pickup')">Delete Appointment</button>
+                                    {% endif %}
+                                </th>
+                            </tr>
+                        {% endif %}
                     {% endif %}
                 </table>
             </div>
@@ -122,110 +148,9 @@
         </div>
     </div>
 </div>
-<script>
-    let first = true;
-    function getAppointmentData(apptID, schedule=false, cancel=false, subDelete=false) {
-        $.ajax({
-            type: "POST",
-            url: "{{ url_for('AppointmentsView:load_appointment_data') }}",
-            data: JSON.stringify({
-                'id': apptID,
-                'schedule': schedule,
-                'cancel': cancel
-            }),
-            contentType: 'application/json;charset=UTF-8',
-            success: function (appt) {
-                $('#appt-id').val(appt['id']);
-                $('#tutor-data').html(appt['tutorName']);
-                $('#sched-start-data').html(appt['scheduledStart']);
-                $('#sched-end-data').html(appt['scheduledEnd']);
-                $('#drop-in-data').html(appt['dropIn']);
-                $('#multilingual-data').html(appt['multilingual']);
-                $('#prof-data').html(appt['profName']);
-                $('#prof-email-data').html(appt['profEmail']);
-                $('#course-data').html(appt['courseCode']);
-                $('#section-data').html(appt['courseSection']);
-                $('#assignment-data').html(appt['assignment']);
-                $('#edit').prop('href', 'http://localhost:5000/appointments/edit/' + appt['id']);
-                if (schedule === true) {
-                    if (first === true) {
-                        for (let i = 0; i < appt['coursesLength']; i ++) {
-                            $('#courses').append('<option id="' + appt['courses'][i]['crn'] + '">' + appt['courses'][i]['subject'] + appt['courses'][i]['cNumber'] + ' ' + appt['courses'][i]['title'] + '</option')
-                        }
-                        first = false;
-                    }
-                    $('#student-container').hide();
-                    $('#actual-start-container').hide();
-                    $('#actual-end-container').hide();
-                    $('#no-show-container').hide();
-                    $('#prof-container').hide();
-                    $('#prof-email-container').hide();
-                    $('#course-container').hide();
-                    $('#section-container').hide();
-                    $('#assignment-container').hide();
-                    $('#notes-container').hide();
-                    $('#suggestions-container').hide();
-                    $('#cancel-container').hide();
-                    $('#request-container').hide();
-                    $('#pickup-container').hide();
-                } else if (cancel === true) {
-                    $('#student-container').hide();
-                    $('#actual-start-container').hide();
-                    $('#actual-end-container').hide();
-                    $('#no-show-container').hide();
-                    $('#notes-container').hide();
-                    $('#suggestions-container').hide();
-                    $('#select-course-container').hide();
-                    $('#assignment-description-container').hide();
-                    $('#schedule-container').hide();
-                    $('#request-container').hide();
-                    $('#pickup-container').hide();
-                } else if (subDelete === true) {
-                    $('#student-data').html(appt['studentName']);
-                    $('#actual-start-data').html(appt['actualStart']);
-                    $('#actual-end-data').html(appt['actualEnd']);
-                    $('#no-show-data').html(appt['noShow']);
-                    $('#notes-data').html(appt['notes']);
-                    $('#suggestions-data').html(appt['suggestions']);
-                    $('#select-course-container').hide();
-                    $('#assignment-description-container').hide();
-                    $('#schedule-container').hide();
-                    $('#cancel-container').hide();
-                    $('#request-container').show();
-                    $('#pickup-container').show();
-                    if (appt['future'] === true) {
-                        if (appt['sub'] === 1) {
-                            $('#request-container').hide()
-                        } else {
-                            $('#pickup-container').hide()
-                        }
-                    } else {
-                        $('#request-container').hide();
-                        $('#pickup-container').hide();
-                    }
-                } else {
-                    $('#student-data').html(appt['studentName']);
-                    $('#actual-start-data').html(appt['actualStart']);
-                    $('#actual-end-data').html(appt['actualEnd']);
-                    $('#no-show-data').html(appt['noShow']);
-                    $('#notes-data').html(appt['notes']);
-                    $('#suggestions-data').html(appt['suggestions']);
-                    $('#select-course-container').hide();
-                    $('#assignment-description-container').hide();
-                    $('#schedule-container').hide();
-                    $('#cancel-container').hide();
-                    $('#request-container').hide();
-                    $('#pickup-container').hide();
-                }
-            },
-            error: function (error) {
-            }
-        });
-        $('#info-modal').modal('show');
-    }
 
-    function scheduleAppointment() {
-        let appt_id = $('#appt-id').val();
+<script type="text/javascript">
+    function scheduleAppointment(appt_id) {
         let course = '';
         $('#courses option:selected').each(function () {
             course = this.id;
@@ -248,8 +173,7 @@
         });
     }
 
-    function cancelAppointment() {
-        let appt_id = $('#appt-id').val();
+    function cancelAppointment(appt_id) {
         $.ajax({
             type: "POST",
             url: "{{ url_for('AppointmentsView:cancel_appointment') }}",
@@ -265,8 +189,7 @@
         });
     }
 
-    function deleteAppointment(type) {
-        let appt_id = $('#appt-id').val();
+    function deleteAppointment(appt_id, type) {
         $.ajax({
             type: "POST",
             url: "{{ url_for('SchedulesView:delete_appointment') }}",
@@ -284,7 +207,7 @@
                 } else {
                     let event = calendar.getEventById(response);
                     event.remove();
-                    window.location.reload();
+                    $('#info-modal').modal('hide');
                 }
             },
             error: function (error) {
@@ -292,8 +215,7 @@
         });
     }
 
-    function subAppointment() {
-        let appt_id = $('#appt-id').val();
+    function subAppointment(appt_id) {
         $.ajax({
             type: "POST",
             url: "{{ url_for('SchedulesView:pickup_shift') }}",
@@ -309,8 +231,7 @@
         });
     }
 
-    function requestSub() {
-        let appt_id = $('#appt-id').val();
+    function requestSub(appt_id) {
         $.ajax({
             type: "POST",
             url: "{{ url_for('SchedulesView:request_substitute') }}",

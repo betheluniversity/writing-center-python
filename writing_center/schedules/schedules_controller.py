@@ -149,7 +149,7 @@ class SchedulesController:
             tutor = self.get_user_by_id(tutor_id)
             if tutor:
                 # Gets all of the appointments where no students are signed up for slots and 
-                delete_list.append(db_session.query(AppointmentsTable)
+                delete_list.extend(db_session.query(AppointmentsTable)
                                    .filter(AppointmentsTable.tutor_id == tutor.id)
                                    .filter(AppointmentsTable.scheduledStart >= start_date)
                                    .filter(AppointmentsTable.scheduledEnd <= end_date)
@@ -157,7 +157,7 @@ class SchedulesController:
                                    .all())
                 # Gets all the appointments where there is a student signed up for that we now potentially need
                 # subtitutes for
-                sub_list.append(db_session.query(AppointmentsTable)
+                sub_list.extend(db_session.query(AppointmentsTable)
                                 .filter(AppointmentsTable.tutor_id == tutor.id)
                                 .filter(AppointmentsTable.scheduledStart >= start_date)
                                 .filter(AppointmentsTable.scheduledEnd <= end_date)
@@ -165,13 +165,13 @@ class SchedulesController:
                                 .filter(AppointmentsTable.student_id != None)
                                 .all())
         try:
-            for tutor_appts in delete_list:
-                for appt in tutor_appts:
-                    db_session.delete(appt)
+            for appt in delete_list:
+                db_session.delete(appt)
             db_session.commit()
         except Exception:
             return False
-
+        if delete_list and not sub_list:
+            return 'none'
         return sub_list
 
     def delete_appointment(self, appt_id):
