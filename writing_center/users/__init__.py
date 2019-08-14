@@ -124,8 +124,10 @@ class UsersView(FlaskView):
             self.uc.update_user_info(user_id, first_name, last_name, email)
             self.uc.clear_current_roles(user_id)
             self.uc.set_user_roles(username, roles)
+            self.wcc.set_alert('success', '{0} {1} edited successfully!'.format(first_name, last_name))
             return redirect(url_for('UsersView:view_all_users'))
         except Exception as error:
+            self.wcc.set_alert('danger', 'Failed to edit user: ' + str(error))
             return redirect(url_for('UsersView:edit_user', user_id=user_id))
 
     @route("/remove-ban/", methods=['POST'])
