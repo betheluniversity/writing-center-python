@@ -71,8 +71,6 @@ class StatisticsView(FlaskView):
         user = self.sc.get_user_by_username(flask_session['USERNAME'])
         start = start.strftime('%B %d %Y')
         end = end.strftime('%B %d %Y')
-        # message = '<h5>{0} {1} has worked {2} hours worked between {3} and {4}</h5>'\
-        #     .format(user.firstName, user.lastName, time, start, end)
         return render_template('statistics/hours_worked_table.html', **locals(), id_to_user=self.sc.get_user_by_id)
 
     @route('/handle-stats-change', methods=['POST'])
