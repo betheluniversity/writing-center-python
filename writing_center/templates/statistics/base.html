@@ -2,7 +2,7 @@
 
 {% block subnav %}
     {% if 'Administrator' in session['USER-ROLES'] or 'Observer' in session['USER-ROLES'] %}
-        <a id="stats" class="nav-link {{ 'active' if 'center-manager/statistics' in request.path else 'disabled'}}"
+        <a id="stats" class="nav-link {{ 'active' if '/stats' in request.path else 'disabled'}}"
            href="{{ url_for('StatisticsView:stats') }}">Statistics</a>
     {% endif %}
     {% if 'Administrator' in session['USER-ROLES'] or 'Tutor' in session['USER-ROLES'] %}
