@@ -12,7 +12,7 @@ class StatisticsView(FlaskView):
         self.sc = StatisticsController()
         self.wcc = WritingCenterController()
 
-    @route('/center-manager/statistics/')
+    @route('/statistics/')
     def stats(self):
         self.wcc.check_roles_and_route(['Observer', 'Administrator'])
         # Use the default start and end dates to get the first tables of data
