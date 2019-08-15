@@ -24,9 +24,19 @@ class MessageCenterView(FlaskView):
     def send(self):
         data = request.form
         # grab the group(s) from the form, use the group id to get the emails of all the people in the group(s)
-        # make sure there are no duplicates in the email list
+        recipients = self.base.get_email_groups(data['groups'])
+        # need to make sure these are actually here before trying to use them (isinstance)
+        if isinstance(data['cc'], str):
+            cc = self.base.get_emails(data['cc'])
+        else:
+            cc = ''
+
+        if isinstance(data['bcc'], str):
+            bcc = self.base.get_emails(data['bcc'])
+        else:
+            bcc = ''
         # need to check that all the stuff is actually filled in, if its not, we need to fill it with an empty value
-        if self.base.send_message(data['subject'], data['message'], data['recipients'], data['cc'], data['bcc']):
+        if self.base.send_message(data['subject'], data['message'], recipients, data['cc'], data['bcc']):
             return 'Success'
         return 'Failed'
 
