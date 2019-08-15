@@ -44,38 +44,34 @@
                 <tbody>
                     {% if appointments|length > 0 %}
                         {% for appointment in appointments %}
-                            {% if appointment.student_id and appointment.scheduledStart >= now_today %}
-                                <tr>
-                                    <td>
-                                        {{ users[appointment.student_id] }}
-                                    </td>
-                                    <td>
-                                        {{ appointment.scheduledStart|datetimeformat('%m/%d/%y') }}
-                                    </td>
-                                    <td>
-                                        {{ appointment.actualStart|datetimeformat }}
-                                    </td>
-                                    <td>
-                                        {{ appointment.actualEnd|datetimeformat }}
-                                    </td>
-                                    <td>
-                                        {% if not appointment.actualStart %}
-                                            <button id="start" value="{{ appointment.id }}" type="button" class="btn btn-primary btn-success">Start Appointment</button>
-                                        {% elif appointment.actualStart and appointment.actualEnd and appointment.inProgress == 0 %}
-                                            <button id="continue" value="{{ appointment.id }}" type="button" class="btn btn-primary background-blue">Continue Appointment</button>
-                                        {% elif appointment.inProgress == 1 %}
-                                            <button id="end" value="{{ appointment.id }}" type="button" class="btn btn-primary btn-danger">End Appointment</button>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if appointment.noShow == 0 or not appointment.noShow %}
-                                            <button id="no-show" value="{{ appointment.id }}" type="button" class="btn btn-primary btn-danger">Mark as No Show</button>
-                                        {% elif appointment.noShow == 1 %}
-                                            <button id="revert-no-show" value="{{ appointment.id }}" type="button" class="btn btn-primary btn-danger">Revert No Show</button>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endif %}
+                            <tr>
+                                <td>
+                                    {{ users[appointment.student_id] }}
+                                </td>
+                                <td>
+                                    {{ appointment.scheduledStart|datetimeformat('%m/%d/%y') }}
+                                </td>
+                                <td>
+                                    {{ appointment.actualStart|datetimeformat }}
+                                </td>
+                                <td>
+                                    {{ appointment.actualEnd|datetimeformat }}
+                                </td>
+                                <td>
+                                    {% if not appointment.actualStart %}
+                                        <button id="start" value="{{ appointment.id }}" type="button" class="btn btn-primary btn-success">Start Appointment</button>
+                                    {% elif appointment.actualStart and appointment.actualEnd and appointment.inProgress == 0 %}
+                                        <button id="continue" value="{{ appointment.id }}" type="button" class="btn btn-primary background-blue">Continue Appointment</button>
+                                    {% elif appointment.inProgress == 1 %}
+                                        <button id="end" value="{{ appointment.id }}" type="button" class="btn btn-primary btn-danger">End Appointment</button>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if appointment.noShow == 0 or not appointment.noShow %}
+                                        <button id="no-show" value="{{ appointment.id }}" type="button" class="btn btn-primary btn-danger">Mark as No Show</button>
+                                    {% elif appointment.noShow == 1 %}
+                                        <button id="revert-no-show" value="{{ appointment.id }}" type="button" class="btn btn-primary btn-danger">Revert No Show</button>
+                                    {% endif %}
                         {% endfor %}
                     {% endif %}
                 </tbody>

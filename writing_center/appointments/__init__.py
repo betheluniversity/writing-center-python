@@ -98,7 +98,6 @@ class AppointmentsView(FlaskView):
         appointments = self.ac.get_scheduled_appointments(tutor)
         users = {}
         for appt in appointments:
-            now_today = datetime.combine(appt.scheduledStart, datetime.min.time())
             user = self.ac.get_user_by_id(appt.student_id)
             if user != None:
                 name = '{0} {1}'.format(user.firstName, user.lastName)

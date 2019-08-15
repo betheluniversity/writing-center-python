@@ -108,8 +108,12 @@ class AppointmentsController:
 
     def get_scheduled_appointments(self, username):
         tutor = self.get_user_by_username(username)
+        min_today = datetime.combine(datetime.now(), datetime.min.time())
+        max_today = datetime.combine(datetime.now(), datetime.max.time())
         return db_session.query(AppointmentsTable)\
-            .filter(AppointmentsTable.scheduledStart >= datetime.now())\
+            .filter(AppointmentsTable.scheduledStart >= min_today)\
+            .filter(AppointmentsTable.scheduledEnd <= max_today)\
+            .filter(AppointmentsTable.student_id != None)\
             .filter(AppointmentsTable.tutor_id == tutor.id)\
             .all()
 
