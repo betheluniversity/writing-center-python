@@ -4,14 +4,17 @@ from flask import session as flask_session
 from datetime import datetime, timedelta
 
 from writing_center.statistics.statistics_controller import StatisticsController
+from writing_center.writing_center_controller import WritingCenterController
 
 
 class StatisticsView(FlaskView):
     def __init__(self):
         self.sc = StatisticsController()
+        self.wcc = WritingCenterController()
 
     @route('/center-manager/statistics/')
     def stats(self):
+        self.wcc.check_roles_and_route(['Observer', 'Administrator'])
         # Use the default start and end dates to get the first tables of data
         start = flask_session['DATE-SELECTOR-START']
         end = flask_session['DATE-SELECTOR-END']
@@ -23,10 +26,12 @@ class StatisticsView(FlaskView):
 
     @route('/hours-worked')
     def hours_worked(self):
+        self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
         return render_template('statistics/hours_worked.html', **locals())
 
     @route('/get-hours', methods=['POST'])
     def get_hours_worked(self):
+        self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
         start = str(json.loads(request.data).get('start'))
         end = str(json.loads(request.data).get('end'))
         start = datetime.strptime(start, '%a %b %d %Y')
@@ -72,6 +77,7 @@ class StatisticsView(FlaskView):
 
     @route('/handle-stats-change', methods=['POST'])
     def handle_stats_change(self):
+        self.wcc.check_roles_and_route(['Observer', 'Administrator'])
         start = str(json.loads(request.data).get('startDate'))
         end = str(json.loads(request.data).get('endDate'))
         start = datetime.strptime(start, '%a %b %d %Y')
@@ -92,6 +98,7 @@ class StatisticsView(FlaskView):
         return render_template('statistics/statistics_tables.html', **locals())
 
     def get_statistics_data(self, start, end, value, stat_id=''):
+        self.wcc.check_roles_and_route(['Observer', 'Administrator'])
         # Set stored values
         flask_session['DATE-SELECTOR-START'] = start
         flask_session['DATE-SELECTOR-END'] = end

@@ -18,12 +18,14 @@ class ProfileView(FlaskView):
 
     @route('/edit')
     def index(self):
+        self.wcc.check_roles_and_route(['Student', 'Tutor', 'Observer', 'Administrator'])
         user = self.pc.get_user_by_username(flask_session['USERNAME'])
         preferences = self.mcc.get_email_preferences()
         return render_template('profile/profile.html', **locals())
 
     @route('/save-edits', methods=['post'])
     def save_edits(self):
+        self.wcc.check_roles_and_route(['Student', 'Tutor', 'Observer', 'Administrator'])
         try:
             form = request.form
             first_name = form.get('first-name')
@@ -51,11 +53,13 @@ class ProfileView(FlaskView):
 
     @route('/view-role')
     def role_viewer(self):
+        self.wcc.check_roles_and_route(['Administrator'])
         role_list = self.pc.get_all_roles()
         return render_template('profile/role_viewer.html', **locals())
 
     @route('/change-role', methods=['POST'])
     def change_role(self):
+        self.wcc.check_roles_and_route(['Administrator'])
         if not flask_session['ADMIN-VIEWER']:
             role = str(json.loads(request.data).get('chosen-role'))
             flask_session['ADMIN-VIEWER'] = True
@@ -71,10 +75,12 @@ class ProfileView(FlaskView):
 
     @route('/toggle-substitute', methods=['POST'])
     def toggle_substitute(self):
+        self.wcc.check_roles_and_route(['Tutor', 'Observer', 'Administrator'])
         data = request.form
         return self.mcc.toggle_substitute(int(data['substitute']))
 
     @route('/toggle-shift', methods=['POST'])
     def toggle_shift(self):
+        self.wcc.check_roles_and_route(['Tutor', 'Observer', 'Administrator'])
         data = request.form
         return self.mcc.toggle_shift(data['shift'])

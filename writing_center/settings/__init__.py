@@ -12,11 +12,13 @@ class SettingsView(FlaskView):
 
     @route('/')
     def index(self):
+        self.wcc.check_roles_and_route(['Administrator'])
         settings = self.sc.get_settings()
         return render_template('settings/index.html', **locals())
 
     @route('change-settings', methods=['post'])
     def change_settings(self):
+        self.wcc.check_roles_and_route(['Administrator'])
         form = request.form
         setting_name = form.get('setting_name')
         new_setting = form.get('new_setting')
@@ -30,6 +32,7 @@ class SettingsView(FlaskView):
 
     @route('cleanse', methods=['get'])
     def cleanse(self):
+        self.wcc.check_roles_and_route(['Administrator'])
         try:
             self.sc.cleanse()
             self.wcc.set_alert('success', 'System cleansed successfully!')

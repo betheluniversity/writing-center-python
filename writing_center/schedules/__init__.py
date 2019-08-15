@@ -18,12 +18,14 @@ class SchedulesView(FlaskView):
 
     @route("/create-schedule")
     def create_time_slot(self):
+        self.wcc.check_roles_and_route(['Administrator'])
         schedules = self.sc.get_schedules()
         tutors = self.sc.get_tutors()
         return render_template("schedules/create_time_slot.html", **locals())
 
     @route('/manage-tutor-schedules')
     def manage_tutor_schedules(self):
+        self.wcc.check_roles_and_route(['Administrator'])
         schedules = self.sc.get_schedules()
         tutors = self.sc.get_tutors()
         time_setting = self.sc.get_time_setting()[0]
@@ -31,6 +33,7 @@ class SchedulesView(FlaskView):
 
     @route('view-tutor-schedules')
     def view_tutor_schedules(self):
+        self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
         schedules = self.sc.get_schedules()
         tutors = self.sc.get_tutors()
         time_setting = self.sc.get_time_setting()[0]
@@ -38,6 +41,7 @@ class SchedulesView(FlaskView):
 
     @route('/create', methods=['POST'])
     def create_new_time_slot(self):
+        self.wcc.check_roles_and_route(['Administrator'])
         now = (datetime.now())
 
         start_time = str(json.loads(request.data).get('startTime'))
@@ -59,6 +63,7 @@ class SchedulesView(FlaskView):
 
     @route('deactivate-time-slots', methods=['POST'])
     def deactivate_time_slots(self):
+        self.wcc.check_roles_and_route(['Administrator'])
         form = request.form
         json_schedule_ids = form.get('jsonScheduleIds')
         schedule_ids = json.loads(json_schedule_ids)
@@ -72,6 +77,7 @@ class SchedulesView(FlaskView):
 
     @route('/add-tutors-to-shifts', methods=['POST'])
     def add_tutors_to_shifts(self):
+        self.wcc.check_roles_and_route(['Administrator'])
         start_date = str(json.loads(request.data).get('startDate'))
         end_date = str(json.loads(request.data).get('endDate'))
         start = datetime.strptime(start_date, '%a %b %d %Y').date()
@@ -101,6 +107,7 @@ class SchedulesView(FlaskView):
 
     @route('/show-schedule', methods=['POST'])
     def show_tutor_schedule(self):
+        self.wcc.check_roles_and_route(['Administrator'])
         names = json.loads(request.data).get('tutors')
         if 'view-all' in names:
             tutors = self.sc.get_tutors()
@@ -137,6 +144,7 @@ class SchedulesView(FlaskView):
 
     @route('delete-confirmation', methods=['POST'])
     def confirm_delete(self):
+        self.wcc.check_roles_and_route(['Administrator'])
         # Post method that displays a confirmation before appointments within a given range for selected tutors are
         # deleted to make sure the person knows what they are doing
         start_date = str(json.loads(request.data).get('startDate'))
@@ -164,6 +172,7 @@ class SchedulesView(FlaskView):
 
     @route('delete-appointment', methods=['POST'])
     def delete_appointment(self):
+        self.wcc.check_roles_and_route(['Administrator'])
         appt_id = str(json.loads(request.data).get('appt_id'))
         deleted = self.sc.delete_appointment(appt_id)
         if deleted:
@@ -177,6 +186,7 @@ class SchedulesView(FlaskView):
 
     @route('delete-tutor-shifts', methods=['POST'])
     def delete_tutors_from_shifts(self):
+        self.wcc.check_roles_and_route(['Administrator'])
         # Post method to delete appointments which selected tutors are running in a given date range
         start_date = str(json.loads(request.data).get('startDate'))
         end_date = str(json.loads(request.data).get('endDate'))
@@ -205,6 +215,7 @@ class SchedulesView(FlaskView):
 
     @route('request-sub', methods=['POST'])
     def request_sub(self):
+        self.wcc.check_roles_and_route(['Administrator'])
         # Post method to request a sub for a given appointment or subs for all given appointments
         appt_id = json.loads(request.data).get('apptID')
         appt_id_list = json.loads(request.data).get('apptIDList')
@@ -221,6 +232,7 @@ class SchedulesView(FlaskView):
 
     @route('get-appointments', methods=['GET'])
     def get_users_appointments(self):
+        self.wcc.check_roles_and_route(['Student', 'Tutor', 'Administrator'])
         appts = self.sc.get_all_user_appointments(flask_session['USERNAME'])
         appointments = []
         for appointment in appts:
@@ -263,6 +275,7 @@ class SchedulesView(FlaskView):
         return jsonify(appointments)
 
     def get_sub_appointments(self):
+        self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
         appts = self.sc.get_sub_appointments()
         appointments = []
         for appointment in appts:
@@ -306,6 +319,7 @@ class SchedulesView(FlaskView):
 
     @route('pickup-shift', methods=['POST'])
     def pickup_shift(self):
+        self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
         appointment_id = str(json.loads(request.data).get('appt_id'))
         appt = self.sc.get_one_appointment(appointment_id)
         # TODO MAYBE EMAIL STUDENT ABOUT TUTOR CHANGE IF APPLICABLE?
@@ -320,6 +334,7 @@ class SchedulesView(FlaskView):
 
     @route('request-subtitute', methods=['POST'])
     def request_substitute(self):
+        self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
         appointment_id = str(json.loads(request.data).get('appt_id'))
         appt = self.sc.get_one_appointment(appointment_id)
         # TODO MAYBE EMAIL ABOUT SUB
