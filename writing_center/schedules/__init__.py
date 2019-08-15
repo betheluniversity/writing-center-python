@@ -219,7 +219,6 @@ class SchedulesView(FlaskView):
             if not worked:
                 self.wcc.set_alert('danger', 'Failed to request a substitute for appointment id {0}'.format(appt_id))
 
-        self.mcc.request_substitute(appt_id)
         return 'Substitute Requested Successfully'
 
     @route('get-appointments', methods=['GET'])
@@ -325,7 +324,6 @@ class SchedulesView(FlaskView):
     def request_substitute(self):
         appointment_id = str(json.loads(request.data).get('appt_id'))
         appt = self.sc.get_one_appointment(appointment_id)
-        # TODO MAYBE EMAIL ABOUT SUB
         success = self.sc.request_substitute(appointment_id)
         if success:
             self.wcc.set_alert('success', 'Successfully requested a substitute!')
