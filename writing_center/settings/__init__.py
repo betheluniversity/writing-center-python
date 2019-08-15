@@ -16,7 +16,7 @@ class SettingsView(FlaskView):
         settings = self.sc.get_settings()
         return render_template('settings/index.html', **locals())
 
-    @route('change-settings', methods=['post'])
+    @route('change-settings', methods=['POST'])
     def change_settings(self):
         self.wcc.check_roles_and_route(['Administrator'])
         form = request.form

@@ -363,7 +363,7 @@ class AppointmentsView(FlaskView):
             }
         return render_template('appointments/appointment_search_table.html', **locals())
 
-    @route('/edit/<int:appt_id>', methods=['get', 'post'])
+    @route('/edit/<int:appt_id>', methods=['GET', 'POST'])
     def edit(self, appt_id):
         self.wcc.check_roles_and_route(['Administrator'])
         appt = self.ac.get_appointment_by_id(appt_id)
@@ -373,7 +373,7 @@ class AppointmentsView(FlaskView):
         all_courses = self.ac.get_courses()
         return render_template('appointments/edit_appointment.html', **locals())
 
-    @route('/submit-edits', methods=['post'])
+    @route('/submit-edits', methods=['POST'])
     def submit_edits(self):
         self.wcc.check_roles_and_route(['Administrator'])
         form = request.form

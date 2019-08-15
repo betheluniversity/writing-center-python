@@ -23,7 +23,7 @@ class ProfileView(FlaskView):
         preferences = self.mcc.get_email_preferences()
         return render_template('profile/profile.html', **locals())
 
-    @route('/save-edits', methods=['post'])
+    @route('/save-edits', methods=['POST'])
     def save_edits(self):
         self.wcc.check_roles_and_route(['Student', 'Tutor', 'Observer', 'Administrator'])
         try:
