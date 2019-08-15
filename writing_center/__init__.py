@@ -10,9 +10,9 @@ app.config.from_object('config')
 
 from writing_center.db_repository import db_session
 
-# sentry = Sentry(app, dsn=app.config['SENTRY_URL'], logging=True, level=logging.INFO)
-# if app.config['ENVIRON'] == 'prod':
-#     from writing_center import error
+sentry = Sentry(app, dsn=app.config['SENTRY_URL'], logging=True, level=logging.INFO)
+if app.config['ENVIRON'] == 'prod':
+    from writing_center import error
 
 # Declaring and registering the views
 from writing_center.views import View
