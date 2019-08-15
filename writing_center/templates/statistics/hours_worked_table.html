@@ -13,17 +13,19 @@
             </thead>
             <tbody>
                 {% for appt in appointments %}
-                <tr>
-                    {% set student = id_to_user(appt.student_id) %}
-                    <td>{{ appt.scheduledStart|datetimeformat('%m/%d/%y') }}</td>
-                    <td class="one-line">{{ appt.scheduledStart|datetimeformat }} - {{ appt.scheduledEnd|datetimeformat }}</td>
-                    <td>{{ student.firstName }} {{ student.lastName }}</td>
-                    <td>{{ student.username }}</td>
-                    <td>{{ appt.profName }}</td>
-                    <td>{{ appt.courseCode }}</td>
-
-                </tr>
+                    <tr>
+                        {% set student = id_to_user(appt.student_id) %}
+                        <td>{{ appt.scheduledStart|datetimeformat('%m/%d/%y') }}</td>
+                        <td class="one-line">{{ appt.scheduledStart|datetimeformat }} - {{ appt.scheduledEnd|datetimeformat }}</td>
+                        <td>{{ student.firstName }} {{ student.lastName }}</td>
+                        <td>{{ student.username }}</td>
+                        <td>{{ appt.profName }}</td>
+                        <td>{{ appt.courseCode }}</td>
+                    </tr>
                 {% endfor %}
+                <tr>
+                    <td colspan="10"><b>{{ user.firstName }} {{ user.lastName }} has worked {{ time }} hours worked between {{ start }} and {{ end }}</b></td>
+                </tr>
             </tbody>
         </table>
     </div>
