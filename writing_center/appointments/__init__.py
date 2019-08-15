@@ -18,7 +18,11 @@ class AppointmentsView(FlaskView):
         self.mcc = MessageCenterController()
         self.wsapi = WSAPIController()
 
+    @route('schedule')
+    def schedule_appointment_landing(self):
         self.wcc.check_roles_and_route(['Student', 'Administrator'])
+        return render_template('appointments/schedule_appointment.html', **locals())
+
     @route('view-all-appointments')
     def view_appointments(self):
         self.wcc.check_roles_and_route(['Observer', 'Administrator'])
@@ -155,10 +159,6 @@ class AppointmentsView(FlaskView):
         profs = self.ac.get_profs()
         courses = self.ac.get_courses()
         return render_template('appointments/search_appointments.html', **locals())
-
-    @route('schedule')
-    def schedule_appointment_landing(self):
-        return render_template('appointments/schedule_appointment.html', **locals())
 
     @route('view-appointments')
     def student_view_appointments(self):
