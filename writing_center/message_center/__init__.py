@@ -24,9 +24,11 @@ class MessageCenterView(FlaskView):
     def send(self):
         data = request.form
         # grab the group(s) from the form, use the group id to get the emails of all the people in the group(s)
-        groups = data['recipients']
+        # make sure there are no duplicates in the email list
         # need to check that all the stuff is actually filled in, if its not, we need to fill it with an empty value
-        return self.base.send_message(data['subject'], data['message'], data['recipients'], data['cc'], data['bcc'])
+        if self.base.send_message(data['subject'], data['message'], data['recipients'], data['cc'], data['bcc']):
+            return 'Success'
+        return 'Failed'
 
     @route('/close-student', methods=['POST'])
     def close_session_student(self):  # this needs to be connected to the appointment end page

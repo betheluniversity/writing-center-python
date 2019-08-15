@@ -7,6 +7,7 @@ import json
 
 from writing_center.schedules.schedules_controller import SchedulesController
 from writing_center.writing_center_controller import WritingCenterController
+from writing_center.message_center.message_center_controller import MessageCenterController
 
 
 class SchedulesView(FlaskView):
@@ -15,6 +16,7 @@ class SchedulesView(FlaskView):
     def __init__(self):
         self.sc = SchedulesController()
         self.wcc = WritingCenterController()
+        self.mcc = MessageCenterController()
 
     @route("/create-schedule")
     def create_time_slot(self):
@@ -216,7 +218,7 @@ class SchedulesView(FlaskView):
             worked = self.sc.request_substitute(appt_id)
             if not worked:
                 self.wcc.set_alert('danger', 'Failed to request a substitute for appointment id {0}'.format(appt_id))
-        # sub request email
+
         return 'Substitute Requested Successfully'
 
     @route('get-appointments', methods=['GET'])
@@ -308,6 +310,7 @@ class SchedulesView(FlaskView):
     def pickup_shift(self):
         appointment_id = str(json.loads(request.data).get('appt_id'))
         appt = self.sc.get_one_appointment(appointment_id)
+        self.mcc.substitute_request_filled(appointment_id)
         # TODO MAYBE EMAIL STUDENT ABOUT TUTOR CHANGE IF APPLICABLE?
         picked_up = self.sc.pickup_shift(appointment_id, flask_session['USERNAME'])
         if picked_up:
@@ -315,17 +318,16 @@ class SchedulesView(FlaskView):
         else:
             self.wcc.set_alert('danger', 'Failed to pick up the shift.')
 
-        # request fulfilled email
         return 'finished'
 
     @route('request-subtitute', methods=['POST'])
     def request_substitute(self):
         appointment_id = str(json.loads(request.data).get('appt_id'))
         appt = self.sc.get_one_appointment(appointment_id)
-        # TODO MAYBE EMAIL ABOUT SUB
         success = self.sc.request_substitute(appointment_id)
         if success:
             self.wcc.set_alert('success', 'Successfully requested a substitute!')
+            self.mcc.request_substitute(appointment_id)
         else:
             self.wcc.set_alert('danger', 'Error! Substitute not requested.')
         return 'finished'

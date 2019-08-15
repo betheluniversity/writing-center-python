@@ -1,7 +1,7 @@
 from sqlalchemy import orm
 from datetime import datetime, timedelta, date
 
-
+from writing_center.message_center.message_center_controller import MessageCenterController
 from writing_center.db_repository import db_session
 from writing_center.db_repository.tables import UserTable, UserRoleTable, RoleTable, ScheduleTable, AppointmentsTable, \
     SettingsTable
@@ -9,6 +9,7 @@ from writing_center.db_repository.tables import UserTable, UserRoleTable, RoleTa
 
 class SchedulesController:
     def __init__(self):
+        self.mcc = MessageCenterController()
         pass
 
     def get_schedules(self):
@@ -220,6 +221,7 @@ class SchedulesController:
                     .filter(AppointmentsTable.id == appt_id)\
                     .one_or_none()
                 appointment.sub = 1
+                self.mcc.request_substitute(appt_id)
             db_session.commit()
             return True
         except Exception as e:
