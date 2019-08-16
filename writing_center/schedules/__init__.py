@@ -80,12 +80,12 @@ class SchedulesView(FlaskView):
         self.wcc.check_roles_and_route(['Administrator'])
         start_date = str(json.loads(request.data).get('startDate'))
         end_date = str(json.loads(request.data).get('endDate'))
-        start = datetime.strptime(start_date, '%a %b %d %Y').date()
-        end = datetime.strptime(end_date, '%a %b %d %Y').date()
-        # Formats the date strings into date objects
         if not start_date or not end_date:
             self.wcc.set_alert('danger', 'You must set a start date AND an end date!')
             return 'danger'
+        # Formats the date strings into date objects
+        start = datetime.strptime(start_date, '%a %b %d %Y').date()
+        end = datetime.strptime(end_date, '%a %b %d %Y').date()
         if start > end:
             self.wcc.set_alert('danger', 'Start date cannot be further in the future than the end date!')
             return 'danger'
