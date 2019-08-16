@@ -43,12 +43,6 @@ class SchedulesController:
         except orm.exc.NoResultFound:  # otherwise return false
             return False
 
-    def get_user_by_name(self, first_name, last_name):
-        return db_session.query(UserTable)\
-            .filter(UserTable.firstName == first_name)\
-            .filter(UserTable.lastName == last_name)\
-            .one_or_none()
-
     def get_user_by_username(self, username):
         return db_session.query(UserTable)\
             .filter(UserTable.username == username)\
