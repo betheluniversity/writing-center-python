@@ -93,7 +93,7 @@
 {% if session['ADMIN-VIEWER'] %}
     <nav class="navbar navbar-expand-lg navbar-dark custom-user-nav">
         <div class="collapse navbar-collapse custom-user-div" id="navbarSupportedContent">
-            <form action="{{ url_for('UsersView:reset_act_as') }}" method="post">
+            <form action="{{ url_for('UsersView:reset_act_as') }}" method="POST">
                 <p class="custom-user-p">Viewing
                     {% if session['ADMIN-USERNAME'] %}
                         user: [{{ session['USERNAME'] }}]

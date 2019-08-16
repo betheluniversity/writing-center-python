@@ -2,7 +2,7 @@
     {% if users %}
         {% for user in users %}
             <div class="col-md-12 user-search-results">
-                <form action="{{ url_for('UsersView:save_user_ban') }}" method="post">
+                <form action="{{ url_for('UsersView:save_user_ban') }}" method="POST">
                     <input type="hidden" name="username" value="{{ user.username }}">
                     <div class="col-md-6 user-search-result">
                         <button id="ban-user" type="submit" class="btn btn-primary btn-danger search-btn">Ban Student</button>

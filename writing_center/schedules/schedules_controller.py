@@ -1,5 +1,6 @@
 from sqlalchemy import orm
 from datetime import datetime, timedelta, date
+import calendar
 
 from writing_center.message_center.message_center_controller import MessageCenterController
 from writing_center.db_repository import db_session
@@ -42,12 +43,6 @@ class SchedulesController:
             return True
         except orm.exc.NoResultFound:  # otherwise return false
             return False
-
-    def get_user_by_name(self, first_name, last_name):
-        return db_session.query(UserTable)\
-            .filter(UserTable.firstName == first_name)\
-            .filter(UserTable.lastName == last_name)\
-            .one_or_none()
 
     def get_user_by_username(self, username):
         return db_session.query(UserTable)\
@@ -145,7 +140,10 @@ class SchedulesController:
     def delete_tutor_shifts(self, tutors, start_date, end_date):
         delete_list = []
         sub_list = []
-        end_date = end_date.replace(day=end_date.day + 1)
+        if calendar.monthrange(end_date.year, end_date.month)[1] != end_date.day:
+            end_date = end_date.replace(day=end_date.day + 1)
+        else:
+            end_date = end_date.replace(month=(end_date.month + 1) % 12, day=1)
         for tutor_id in tutors:
             tutor = self.get_user_by_id(tutor_id)
             if tutor:
