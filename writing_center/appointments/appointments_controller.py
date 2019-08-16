@@ -221,11 +221,6 @@ class AppointmentsController:
             .filter(AppointmentsTable.student_id == None)\
             .all()
 
-    def get_one_appointment(self, appt_id):
-        return db_session.query(AppointmentsTable)\
-            .filter(AppointmentsTable.id == appt_id)\
-            .one_or_none()
-
     def get_future_user_appointments(self, user_id):
         return db_session.query(AppointmentsTable)\
             .filter(AppointmentsTable.student_id == user_id)\
