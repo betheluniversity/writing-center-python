@@ -117,6 +117,17 @@ class AppointmentsController:
             .filter(AppointmentsTable.tutor_id == tutor.id)\
             .all()
 
+    def tutor_change_appt(self, appt_id, assignment, notes, suggestions):
+        try:
+            appt = self.get_appointment_by_id(appt_id)
+            appt.assignment = assignment
+            appt.notes = notes
+            appt.suggestions = suggestions
+            db_session.commit()
+            return True
+        except Exception as e:
+            return False
+
     def mark_no_show(self, appt_id):
         try:
             appointment = db_session.query(AppointmentsTable)\

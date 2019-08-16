@@ -35,6 +35,9 @@ class AppointmentsView(FlaskView):
         schedule = json.loads(request.data).get('schedule')
         cancel = json.loads(request.data).get('cancel')
         pickup_sub_delete = json.loads(request.data).get('subDelete')
+        tutor_edit = json.loads(request.data).get('tutorEdit')
+        if 'Tutor' not in flask_session['USER-ROLES']:
+            tutor_edit = False
         appointment = self.ac.get_appointment_by_id(appt_id)
         student = self.ac.get_user_by_id(appointment.student_id)
         student_name = 'None'
@@ -337,7 +340,20 @@ class AppointmentsView(FlaskView):
         qualtrics_link = self.ac.get_survey_link()[0]
         return render_template('appointments/end_appointment.html', **locals())
 
+    @route('save-changes', methods=['POST'])
+    def save_changes(self):
         self.wcc.check_roles_and_route(['Tutor'])
+        appt_id = json.loads(request.data).get('appt_id')
+        assignment = str(json.loads(request.data).get('assignment'))
+        notes = str(json.loads(request.data).get('notes'))
+        suggestions = str(json.loads(request.data).get('suggestions'))
+        success = self.ac.tutor_change_appt(appt_id, assignment, notes, suggestions)
+        if success:
+            return 'close'
+        else:
+            return 'failed'
+
+
     @route('/search', methods=['POST'])
     def search(self):
         self.wcc.check_roles_and_route(['Observer', 'Administrator'])
