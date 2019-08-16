@@ -211,7 +211,7 @@ class SchedulesView(FlaskView):
             return '<h3>All appointments deleted successfully!</h3>'
         if sub_appts:
             return render_template('schedules/sub_table.html', **locals(), id_to_user=self.sc.get_user_by_id)
-        return '<h3>There wasn\t any appointments within the date range selected!</h3>'
+        return '<h3>There weren\'t any appointments within the date range selected!</h3>'
 
     @route('request-sub', methods=['POST'])
     def request_sub(self):
