@@ -120,10 +120,6 @@ class StatisticsController:
         else:
             return False
 
-    def get_schedules(self):
-        return db_session.query(ScheduleTable)\
-            .all()
-
     def datetimeformat(self, value, custom_format=None):
         if value:
             if custom_format:
