@@ -71,7 +71,7 @@ class ProfileView(FlaskView):
             flask_session['USERNAME'] = role
             flask_session['NAME'] = ""
             flask_session['USER-ROLES'] = role
-        return redirect(url_for('ProfileView:role_viewer'))
+        return redirect(url_for('View:index'))
 
     @route('/toggle-substitute', methods=['POST'])
     def toggle_substitute(self):
