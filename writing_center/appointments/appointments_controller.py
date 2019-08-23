@@ -294,6 +294,13 @@ class AppointmentsController:
             .filter(RoleTable.name == 'Tutor')\
             .order_by(UserTable.lastName)\
             .all()
+
+    def get_future_tutor_appts(self, tutor_id, time_limit):
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.scheduledStart >= time_limit)\
+            .filter(AppointmentsTable.tutor_id == tutor_id)\
+            .all()
+
     def get_courses(self):
         courses = db_session.query(AppointmentsTable.courseCode)\
             .filter(AppointmentsTable.courseCode != None)\
