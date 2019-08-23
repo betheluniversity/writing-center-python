@@ -16,7 +16,7 @@ class ProfileView(FlaskView):
         self.wcc = WritingCenterController()
         self.mcc = MessageCenterController()
 
-    @route('/edit')
+    @route('/edit-profile')
     def index(self):
         self.wcc.check_roles_and_route(['Student', 'Tutor', 'Observer', 'Administrator'])
         user = self.pc.get_user_by_username(flask_session['USERNAME'])
