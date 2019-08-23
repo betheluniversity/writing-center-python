@@ -15,7 +15,7 @@ class MyBethelController:
         for i, row in enumerate(result):
             row_dict = {}
             for item in row:
-                if isinstance(item, str) or isinstance(item, bytes):
+                if isinstance(item, bytes) or isinstance(item, str):
                     item = item.split(":", 1)
                 else:
                     # blob
