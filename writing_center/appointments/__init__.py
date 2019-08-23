@@ -21,6 +21,13 @@ class AppointmentsView(FlaskView):
     @route('schedule')
     def schedule_appointment_landing(self):
         self.wcc.check_roles_and_route(['Student', 'Administrator'])
+        tutors = self.ac.get_tutors()
+        return render_template('appointments/schedule_appointment.html', **locals())
+
+    @route('schedule/<int:selected_tutor>')
+    def schedule_appointment_landing_tutor(self, selected_tutor):
+        self.wcc.check_roles_and_route(['Student', 'Administrator'])
+        tutors = self.ac.get_tutors()
         return render_template('appointments/schedule_appointment.html', **locals())
 
     @route('view-all-appointments')

@@ -15,6 +15,27 @@
     <hr>
     <div class="row">
         <div class="col-md-3">
+            <div id="tutors">
+                <h3>Tutors</h3>
+                <select id="tutors-schedule" class="chosen-container" size="7" multiple="multiple" onchange="tutorsChanged()">
+                    {% if selected_tutor %}
+                        <option id="view-all" class="select-hr" value="View All">View All Schedules</option>
+                        {% for tutor in tutors %}
+                            {% if selected_tutor == tutor.id %}
+                                <option id="{{ tutor.id }}" selected="selected" value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
+                            {% else %}
+                                <option id="{{ tutor.id }}" value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        <option id="view-all" class="select-hr" selected="selected" value="View All">View All Schedules</option>
+                        {% for tutor in tutors %}
+                            <option id="{{ tutor.id }}" value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
+                        {% endfor %}
+                    {% endif %}
+                </select>
+                <hr>
+            </div>
             <h3>Calendar Key</h3>
             <table class="table">
                 <thead>
