@@ -287,6 +287,13 @@ class AppointmentsController:
             profs_and_emails[prof.profName] = prof.profEmail
         return profs_and_emails
 
+    def get_tutors(self):
+        return db_session.query(UserTable)\
+            .filter(UserTable.id == UserRoleTable.user_id)\
+            .filter(UserRoleTable.role_id == RoleTable.id)\
+            .filter(RoleTable.name == 'Tutor')\
+            .order_by(UserTable.lastName)\
+            .all()
     def get_courses(self):
         courses = db_session.query(AppointmentsTable.courseCode)\
             .filter(AppointmentsTable.courseCode != None)\
