@@ -43,6 +43,12 @@ class SchedulesView(FlaskView):
         time_setting = self.sc.get_time_setting()[0]
         return render_template('schedules/view_tutor_schedule.html', **locals())
 
+    @route('view-tutor-bios')
+    def view_tutor_bios(self):
+        self.wcc.check_roles_and_route(['Student', 'Tutor', 'Observer', 'Administrator'])
+        tutors = self.sc.get_tutors()
+        return render_template('schedules/view_tutor_bios.html', **locals(), get_tutor_profile_pic=self.mbc.portal_common_profile)
+
     @route('/create', methods=['POST'])
     def create_new_time_slot(self):
         self.wcc.check_roles_and_route(['Administrator'])
