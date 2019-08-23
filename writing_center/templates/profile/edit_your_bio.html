@@ -1,0 +1,37 @@
+{% extends 'profile/base.html' %}
+
+{% block page_title %}Edit Bio{% endblock %}
+
+{% block body_content %}
+    <div class="jumbotron">
+        <h1>Edit Your Bio</h1>
+    </div>
+    <div class="col-md-12">
+        <form action="{{ url_for('ProfileView:save_bio_edits') }}" method="POST">
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="first-name">First name</label>
+                    <input value="{{ user.firstName }}" type="text" class="form-control chosen-container chosen-format"
+                           id="first-name" name="first-name">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="last-name">Last name</label>
+                    <input value="{{ user.lastName }}" type="text" class="form-control chosen-container chosen-format"
+                           id="last-name" name="last-name">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-8">
+                    <label for="highlight-text">Highlight Text</label>
+                    <small class="extra-required">This text will appear on faculty listing pages as a short snippet about you!</small>
+                    <textarea id="highlight-text" name="highlight-text" rows="10" style="width: 100%"></textarea>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <button type="submit" class="btn btn-primary" id="save-session">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
