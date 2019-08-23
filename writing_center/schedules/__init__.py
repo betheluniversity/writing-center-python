@@ -8,6 +8,7 @@ import json
 from writing_center.schedules.schedules_controller import SchedulesController
 from writing_center.writing_center_controller import WritingCenterController
 from writing_center.message_center.message_center_controller import MessageCenterController
+from writing_center.MyBethel.MyBethel_controller import MyBethelController
 
 
 class SchedulesView(FlaskView):
@@ -16,6 +17,7 @@ class SchedulesView(FlaskView):
     def __init__(self):
         self.sc = SchedulesController()
         self.wcc = WritingCenterController()
+        self.mbc = MyBethelController()
         self.mcc = MessageCenterController()
 
     @route("/create-schedule")
