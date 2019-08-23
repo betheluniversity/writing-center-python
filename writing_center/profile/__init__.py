@@ -51,6 +51,26 @@ class ProfileView(FlaskView):
             self.wcc.set_alert('danger', 'Failed to edit your profile: {0}'.format(str(error)))
         return redirect(url_for('ProfileView:index'))
 
+    @route('edit-your-bio')
+    def edit_your_bio(self):
+        self.wcc.check_roles_and_route(['Tutor'])
+        user = self.pc.get_user_by_username(flask_session['USERNAME'])
+        return render_template('profile/edit_your_bio.html', **locals())
+
+    @route('save-bio-edits', methods=['POST'])
+    def save_bio_edits(self):
+        self.wcc.check_roles_and_route(['Tutor'])
+        try:
+            form = request.form
+            first_name = form.get('first-name')
+            last_name = form.get('last-name')
+            username = form.get('username')
+            highlight = form.get('highlight-text')
+            # TODO ADD IN BIOS SAVE ONCE ADDED TO DB
+        except Exception as e:
+            pass
+        return redirect(url_for('ProfileView:edit_your_bio'))
+
     @route('/view-role')
     def role_viewer(self):
         self.wcc.check_roles_and_route(['Administrator'])
