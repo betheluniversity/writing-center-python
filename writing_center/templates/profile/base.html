@@ -2,6 +2,9 @@
 
 {% block subnav %}
     <a id="profile" class="nav-link {{ 'active' if 'edit' in request.path else 'disabled'}}" href="{{ url_for('ProfileView:index') }}">Profile</a>
+    {% if 'Tutor' in session['USER-ROLES'] %}
+        <a id="profile" class="nav-link {{ 'active' if 'edit-your-bio' in request.path else 'disabled' }}" href="{{ url_for('ProfileView:edit_your_bio') }}">Edit Your Bio</a>
+    {% endif %}
     {% if 'Administrator' in session['USER-ROLES'] %}
         <a id="profile" class="nav-link {{ 'active' if 'view-role' in request.path else 'disabled'}}" href="{{ url_for('ProfileView:role_viewer') }}">Act As A Role</a>
     {% endif %}
