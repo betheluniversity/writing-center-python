@@ -1,0 +1,32 @@
+{% extends 'schedules/base.html' %}
+
+{% block page_title %}View Bios{% endblock %}
+
+{% block body_content %}
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <div class="header">
+                <div class="jumbotron">
+                    <h3>Meet Your Tutors!</h3>
+                    <p>Use this page to learn more about the tutors of Writing Center and use the blue buttons to view their open appointments.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% for tutor in tutors %}
+        <div class="form-row">
+            <div class="form-group col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <img style="height: 120px; width: 100px; padding-bottom: 20px;" src="{{ get_tutor_profile_pic(tutor.username)[0]['photo'] }}" class="card-img-top" alt="{{ get_tutor_profile_pic(tutor.username)[0]['photo'] }}">
+                        <h5 class="card-title">{{ tutor.firstName }} {{ tutor.lastName }}</h5>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content. Some quick example text to build on the card title and make up the bulk of the card's content. Some quick example text to build on the card title and make up the bulk of the card's content. Some quick example text to build on the card title and make up the bulk of the card's content. Some quick example text to build on the card title and make up the bulk of the card's content. Some quick example text to build on the card title and make up the bulk of the card's content. Some quick example text to build on the card title and make up the bulk of the card's content. Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <a href="{{ url_for('AppointmentsView:schedule_appointment_landing_tutor', selected_tutor=tutor.id) }}" class="btn btn-primary">
+                            View {{ tutor.firstName }} {{ tutor.lastName }}{% if tutor.lastName[tutor.lastName|length - 1:] != 's' %}'s{% else %}'{% endif %} appointments
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
