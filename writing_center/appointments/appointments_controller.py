@@ -298,6 +298,9 @@ class AppointmentsController:
             course_list.append(course_code[1])
         return course_list
 
+    def get_all_users(self):
+        return db_session.query(UserTable).all()
+
     def search_appointments(self, student, tutor, prof, course, start, end):
         appts = db_session.query(AppointmentsTable)
         if student:

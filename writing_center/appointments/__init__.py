@@ -383,7 +383,7 @@ class AppointmentsView(FlaskView):
         self.wcc.check_roles_and_route(['Administrator'])
         appt = self.ac.get_appointment_by_id(appt_id)
         all_tutors = self.ac.get_users_by_role('Tutor')
-        all_students = self.ac.get_users_by_role('Student')
+        all_students = self.ac.get_all_users()
         all_profs = self.ac.get_profs_and_emails()
         all_courses = self.ac.get_courses()
         return render_template('appointments/edit_appointment.html', **locals())
