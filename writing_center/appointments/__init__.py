@@ -58,6 +58,18 @@ class AppointmentsView(FlaskView):
 
         return render_template('macros/appointment_modal.html', **locals())
 
+    @route('load-future-open-appointments', methods=['POST'])
+    def load_future_open_appointments(self):
+        self.wcc.check_roles_and_route(['Student', 'Observer', 'Administrator'])
+        tutors = json.loads(request.data).get('tutors')
+        if tutors[0] == 'view-all':
+            tutors = []
+            for tutor in self.ac.get_tutors():
+                tutors.append(tutor.id)
+        appts = self.ac.get_future_appointments_for_tutors(tutors)
+
+        return jsonify(appts)
+
     @route('load-appointments', methods=['POST'])
     def load_appointments(self):
         self.wcc.check_roles_and_route(['Student', 'Observer', 'Administrator'])

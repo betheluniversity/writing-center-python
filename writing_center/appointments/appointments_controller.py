@@ -301,6 +301,53 @@ class AppointmentsController:
             .filter(AppointmentsTable.tutor_id == tutor_id)\
             .all()
 
+    def get_future_appointments_for_tutors(self, tutor_ids):
+        appointments = []
+        for tutor_id in tutor_ids:
+            tutor = self.get_user_by_id(tutor_id)
+            if tutor:
+                time_limit = int(self.get_time_limit()[0])
+                time_limit = datetime.now() + timedelta(hours=time_limit)
+                appts = self.get_future_tutor_appts(tutor.id, time_limit)
+                for appointment in appts:
+                    if appointment.actualStart and appointment.actualEnd:
+                        start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
+                                                                      appointment.actualStart.strftime('%m'),
+                                                                      appointment.actualStart.strftime('%d'),
+                                                                      appointment.actualStart.strftime('%H'),
+                                                                      appointment.actualStart.strftime('%M'),
+                                                                      appointment.actualStart.strftime('%S'))
+                        end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualEnd.year,
+                                                                    appointment.actualEnd.strftime('%m'),
+                                                                    appointment.actualEnd.strftime('%d'),
+                                                                    appointment.actualEnd.strftime('%H'),
+                                                                    appointment.actualEnd.strftime('%M'),
+                                                                    appointment.actualEnd.strftime('%S'))
+                    else:
+                        start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
+                                                                      appointment.scheduledStart.strftime('%m'),
+                                                                      appointment.scheduledStart.strftime('%d'),
+                                                                      appointment.scheduledStart.strftime('%H'),
+                                                                      appointment.scheduledStart.strftime('%M'),
+                                                                      appointment.scheduledStart.strftime('%S'))
+                        end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledEnd.year,
+                                                                    appointment.scheduledEnd.strftime('%m'),
+                                                                    appointment.scheduledEnd.strftime('%d'),
+                                                                    appointment.scheduledEnd.strftime('%H'),
+                                                                    appointment.scheduledEnd.strftime('%M'),
+                                                                    appointment.scheduledEnd.strftime('%S'))
+                    appointments.append({
+                        'id': appointment.id,
+                        'studentId': appointment.student_id,
+                        'tutorUsername': self.get_user_by_id(appointment.tutor_id).username,
+                        'startTime': start_time,
+                        'endTime': end_time,
+                        'multilingual': appointment.multilingual,
+                        'dropIn': appointment.dropIn
+                    })
+
+        return appointments
+
     def get_courses(self):
         courses = db_session.query(AppointmentsTable.courseCode)\
             .filter(AppointmentsTable.courseCode != None)\
