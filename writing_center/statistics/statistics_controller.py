@@ -55,7 +55,7 @@ class StatisticsController:
                     end_hour += 1
             time += end_hour - start_hour + (end_min - start_min) / 60
 
-        return time
+        return appointments, time
 
     def get_appointments(self, start, end, value):
         if value == 'all':

@@ -36,7 +36,7 @@ class StatisticsView(FlaskView):
         end = str(json.loads(request.data).get('end'))
         start = datetime.strptime(start, '%a %b %d %Y')
         end = datetime.strptime(end, '%a %b %d %Y')
-        time = self.sc.get_appt_hours(start, end, flask_session['USERNAME'])
+        appointments, time = self.sc.get_appt_hours(start, end, flask_session['USERNAME'])
 
         user = self.sc.get_user_by_username(flask_session['USERNAME'])
         start = start.strftime('%B %d %Y')
