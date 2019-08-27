@@ -7,7 +7,7 @@
         <h1><b>Manage Tutor Schedules</b></h1>
         <p>Assign shifts to a Tutor or view a Tutor's schedule.</p>
     </div>
-
+    <div id="modal-results"></div>
     <form>
         <h3>Assign Shifts to Tutors</h3>
         <div class="form-row">
@@ -143,7 +143,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div id="delete-confirm" class="form-row">
+                        <div class="col-md-12">
                             <input type="button" id="delete-shifts" class="btn btn-primary btn-danger" value="Delete Shifts" onclick="confirmDelete()">
                         </div>
                     </div>
@@ -292,7 +292,7 @@
                         }),
                         contentType: 'application/json;charset=UTF-8',
                         success: function (response) {
-                            $('#results').html(response);
+                            $('#modal-results').html(response);
                             $('#info-modal').modal('show');
                         },
                         error: function (error) {
@@ -504,42 +504,11 @@
                 }),
                 contentType: 'application/json;charset=UTF-8',
                 success: function (data) {
-                    $('#delete-confirm').html(data)
+                    $('#modal-results').html(data);
+                    $('#delete-modal').modal('show');
                 },
                 error: function (error) {
 
-                }
-            });
-        }
-
-        function confirmedNo() {
-            $('#delete-confirm').html("<input type=\"button\" id=\"delete-shifts\" class=\"btn btn-primary btn-danger\" value=\"Delete Shifts\" onclick=\"confirmDelete()\">")
-            $('#sub-list-results').html("")
-        }
-
-        function deleteShifts() {
-            let startDate = $('#start-date-delete').val();
-            let endDate = $('#end-date-delete').val();
-            let tutors = [];
-            $("#tutors-delete option:selected").each(function() {
-                tutors.push(this.id);
-            });
-             $.ajax({
-                type: "POST",
-                url: "{{ url_for('SchedulesView:delete_tutors_from_shifts') }}",
-                data: JSON.stringify({
-                    'tutors': tutors,
-                    'startDate': startDate,
-                    'endDate': endDate
-                }),
-                contentType: 'application/json;charset=UTF-8',
-                success: function (data) {
-                    calendar.removeAllEvents();
-                    $('#tutors-schedule option:selected').prop("selected", false);
-                    $('#delete-confirm').html("<input type=\"button\" id=\"delete-shifts\" class=\"btn btn-primary btn-danger\" value=\"Delete Shifts\" onclick=\"confirmDelete()\">")
-                    $('#sub-list-results').html(data)
-                },
-                error: function (error) {
                 }
             });
         }
