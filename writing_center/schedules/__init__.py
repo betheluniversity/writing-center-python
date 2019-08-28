@@ -217,7 +217,7 @@ class SchedulesView(FlaskView):
                 tutor_ids.append(str(ids.id))
         sub_appts = self.sc.delete_tutor_shifts(tutor_ids, start, end)
         if sub_appts == 'none':
-            return '<h3>All appointments deleted successfully!</h3>'
+            return '<h3>All appointments in the selected range were deleted successfully!</h3>'
         if sub_appts:
             return render_template('schedules/sub_table.html', **locals(), id_to_user=self.sc.get_user_by_id)
         return '<h3>There weren\'t any appointments within the date range selected!</h3>'
