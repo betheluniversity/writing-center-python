@@ -108,6 +108,9 @@ class SchedulesView(FlaskView):
         if not success:
             self.wcc.set_alert('warning', 'One or more shifts failed to be scheduled! One or more of the selected day of week never occurs.')
             return ''
+        if success == 'warning':
+            self.wcc.set_alert('warning', 'One or more of the shifts failed to be scheduled.')
+            return ''
         self.wcc.set_alert('success', 'Successfully added the tutor(s) to the time slot(s).')
         return ''
 

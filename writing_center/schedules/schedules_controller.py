@@ -66,6 +66,7 @@ class SchedulesController:
     def create_tutor_shifts(self, start_date, end_date, multilingual, drop_in, tutor_ids, days_of_week, time_slots):
         # I honestly hate this but since we have 3 different selects which all can be multiple I think this is the only
         # way we can achieve the desired effect.
+        warning = False
         for day in days_of_week:
             for tutor_id in tutor_ids:
                 tutor = self.get_user_by_id(tutor_id)
@@ -104,8 +105,12 @@ class SchedulesController:
                                                             inProgress=0, multilingual=multilingual, dropIn=drop_in, sub=0, noShow=0)
                             db_session.add(appointment)
                             db_session.commit()
+                            else:
+                                warning = 'warning'
                             appt_date += timedelta(weeks=1)  # Add a week for next session
-        return None
+        if warning:
+            return warning
+        return True
 
     def get_first_appointment_date(self, week_day, start_date):
         first_date = start_date
