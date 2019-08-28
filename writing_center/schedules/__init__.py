@@ -80,17 +80,18 @@ class SchedulesView(FlaskView):
     @route('/add-tutors-to-shifts', methods=['POST'])
     def add_tutors_to_shifts(self):
         self.wcc.check_roles_and_route(['Administrator'])
+
         start_date = str(json.loads(request.data).get('startDate'))
         end_date = str(json.loads(request.data).get('endDate'))
         if not start_date or not end_date:
             self.wcc.set_alert('danger', 'You must set a start date AND an end date!')
-            return 'danger'
+            return ''
         # Formats the date strings into date objects
         start = datetime.strptime(start_date, '%a %b %d %Y').date()
         end = datetime.strptime(end_date, '%a %b %d %Y').date()
         if start > end:
             self.wcc.set_alert('danger', 'Start date cannot be further in the future than the end date!')
-            return 'danger'
+            return ''
         start_date = datetime.strptime(start_date, '%a %b %d %Y').date()
         end_date = datetime.strptime(end_date, '%a %b %d %Y').date()
         multilingual = str(json.loads(request.data).get('multilingual'))
@@ -105,7 +106,7 @@ class SchedulesView(FlaskView):
                 tutors.append(tutor.id)
         self.sc.create_tutor_shifts(start_date, end_date, multilingual, drop_in, tutors, days, time_slots)
         self.wcc.set_alert('success', 'Successfully added the tutor(s) to the time slot(s).')
-        return 'success'
+        return ''
 
     @route('/show-schedule', methods=['POST'])
     def show_tutor_schedule(self):
