@@ -96,10 +96,7 @@ class SchedulesController:
                             end_ts = datetime.strptime(end_ts, '%I:%M %p')
                         appt_date = self.get_first_appointment_date(day, start_date)
                         while appt_date <= end_date:  # Loop through until our session date is after the end date of the term
-                            # print('ot')
                             # Updates the datetime object with the correct date
-                            # print(start_ts)
-                            # print(tutor.firstName, tutor.lastName)
                             start_ts = start_ts.replace(year=appt_date.year, month=appt_date.month, day=appt_date.day)
                             end_ts = end_ts.replace(year=appt_date.year, month=appt_date.month, day=appt_date.day)
                             appointment = AppointmentsTable(tutor_id=tutor.id, scheduledStart=start_ts, scheduledEnd=end_ts,
