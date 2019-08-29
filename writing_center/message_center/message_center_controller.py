@@ -68,11 +68,14 @@ class MessageCenterController:
                 .one())
 
     def get_email_groups(self, groups):
+        # for group in groups:
+        #     pass
+        print(groups)
         # query to get only the emails from the users from each group
         # select email from User, user_role where User.id = user_role.user_id and user_role.role_id = 2;
         # SQL query to be translated into sqlalchemy
         # make sure there are no duplicates
-        return 'success'
+        return groups
 
     def get_emails(self, users):
         # get user -> get email from the user -> return the list of emails

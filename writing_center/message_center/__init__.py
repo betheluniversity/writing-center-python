@@ -22,20 +22,29 @@ class MessageCenterView(FlaskView):
     
     @route('/send', methods=['POST'])
     def send(self):
-        data = request.form
+        immutable_data = request.form
+        data = immutable_data.copy()
         # grab the group(s) from the form, use the group id to get the emails of all the people in the group(s)
-        recipients = self.base.get_email_groups(data['groups'])
-        # need to make sure these are actually here before trying to use them (isinstance)
-        if isinstance(data['cc'], str):
+        if isinstance(data['recipients'], list):
+            recipients = self.base.get_email_groups(data['recipients'])
+        else:
+            recipients = ''
+
+        if isinstance(data['cc'], list):
             cc = self.base.get_emails(data['cc'])
         else:
             cc = ''
 
-        if isinstance(data['bcc'], str):
+        if isinstance(data['bcc'], list):
             bcc = self.base.get_emails(data['bcc'])
         else:
             bcc = ''
-        # need to check that all the stuff is actually filled in, if its not, we need to fill it with an empty value
+
+        # (this should really be in the form) - checks to make sure we're sending the email to someone
+        if recipients == '' and cc == '' and bcc == '':
+            return 'No recipients'
+
+        # need to check that all the stuff is actually filled in (ideally should be in the form), if its not, we need to fill it with an empty value
         if self.base.send_message(data['subject'], data['message'], recipients, data['cc'], data['bcc']):
             return 'Success'
         return 'Failed'
@@ -49,3 +58,16 @@ class MessageCenterView(FlaskView):
     def close_session_tutor(self):  # this needs to be connected to the appointment end page
         data = request.form
         return self.base.close_session_tutor(data['appointment_id'], data['to_prof'])
+
+    @route('/okay', methods=['POST'])
+    def okay(self):
+        data = request.form
+        data_two = data.copy()
+
+        groups = [data_two['recipients']]
+        # for item in data_two.keys():
+        #     if item == 'recipients':
+        #         groups.append(item)
+        recipients = self.base.get_email_groups(data['recipients'])
+        print(data_two)
+        return ''

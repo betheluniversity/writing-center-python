@@ -8,20 +8,19 @@
     </div>
     <div class="custom-default row">
         <div class="col-md-8">
-            <form action="{{ url_for('MessageCenterView:send') }}" method="post">
+            <form action="{{ url_for('MessageCenterView:okay') }}" method="post">
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="choose-recipients">Recipients</label>
-                        <select name="recipients" class="email-form" id="choose-recipients" multiple>
+                        <select name="recipients" class="email-form" id="choose-recipients" multiple required>
                             {% for role in roles %}
                                 <option value="{{ role.id }}">{{ role.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="form-group col-md-6 email">
-                        <label for="subject">Subject</label>
-                        <input name="subject" type="text" class="form-control email-form" id="subject"
-                            autocomplete="off">
+                        <label for="subject">Subject</label> <!-- Cant be empty -->
+                        <input name="subject" type="text" class="form-control email-form" id="subject" autocomplete="off" required pattern="\S+.*"/> <!-- required means its required, the other means the subject can't just be whitespace -->
                     </div>
                 </div>
                 <div class="form-row">
@@ -46,8 +45,8 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-12">
-                        <label for="subject">Message</label>
-                        <textarea name="message" class="form-control" rows="15" cols="67"></textarea>
+                        <label for="message">Message</label> <!-- Cant be empty -->
+                        <textarea name="message" class="form-control" rows="15" cols="67" required pattern="\S+.*"></textarea>
                     </div>
                 </div>
                 <div class="form-row">
@@ -62,7 +61,7 @@
                 <div class="card-body">
                     <p class="card-text">
                         Send emails to groups using the recipients tab and individuals in the CC/BCC tabs
-                    </p> <!--TODO: Reword this to apply to the writing center stuff-->
+                    </p>
                 </div>
             </div>
         </div>
