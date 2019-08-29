@@ -92,7 +92,26 @@
                             </td>
                         </tr>
                     {% endif %}
-                    {% if not schedule %}
+                    {% if tutor_edit %}
+                        <tr>
+                            <th>View/Edit Assignment</th>
+                            <td>
+                                <textarea id="assignment" name="assignment" class="form-control">{{ appointment.assignment if appointment.assignment else '' }}</textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>View/Edit Notes</th>
+                            <td>
+                                <textarea id="notes" name="notes" class="form-control">{{ appointment.notes if appointment.notes else '' }}</textarea>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>View/Edit Suggestions</th>
+                            <td>
+                                <textarea id="suggestions" name="suggestions" class="form-control">{{ appointment.suggestions if appointment.suggestions else '' }}</textarea>
+                            </td>
+                        </tr>
+                    {% elif not schedule %}
                         <tr>
                             <th>Assignment</th>
                             <td>{{ appointment.assignment if appointment.assignment else '' }}</td>
@@ -113,7 +132,7 @@
                             <th colspan="2"><button class="btn btn-primary darkblue" onclick="scheduleAppointment({{ appt_id }})">Schedule Appointment</button></th>
                         </tr>
                     {% endif %}
-                    {% if cancel %}
+                    {% if cancel and appointment.scheduledStart > now %}
                         <tr>
                             <th colspan="2"><button class="btn btn-primary btn-danger" onclick="cancelAppointment({{ appt_id }})">Cancel Appointment</button></th>
                         </tr>
@@ -140,12 +159,16 @@
                         {% endif %}
                     {% endif %}
                 </table>
+                <div id="save-fail"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary darkblue" data-dismiss="modal">Close</button>
+                {% if tutor_edit %}
+                    <button type="button" class="btn btn-secondary" onclick="saveChanges({{ appt_id }})">Save</button>
+                {% endif %}
                 {% if 'Administrator' in session['USER-ROLES'] %}
                     <a class="btn btn-secondary" id="edit" href="{{ url_for('AppointmentsView:edit', appt_id=appointment.id) }}">Edit</a>
                 {% endif %}
+                <button type="button" class="btn btn-primary darkblue" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -247,5 +270,32 @@
             error: function (error) {
             }
         });
+    }
+
+    function saveChanges(appt_id) {
+        let assignment = $('#assignment').val();
+        let notes = $('#notes').val();
+        let suggestions = $('#suggestions').val();
+        $.ajax({
+            type: "POST",
+            url: "{{ url_for('AppointmentsView:save_changes') }}",
+            data: JSON.stringify({
+                'appt_id': appt_id,
+                'assignment': assignment,
+                'notes': notes,
+                'suggestions': suggestions
+            }),
+            contentType: 'application/json;charset=UTF-8',
+            success: function (response) {
+                if (response === 'close') {
+                    $('#info-modal').modal('hide');
+                } else {
+                    $('#save-fail').html('<h4>Failed to save edits!</h4>')
+                }
+            },
+            error: function (error) {
+            }
+        })
+
     }
 </script>

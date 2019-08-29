@@ -8,11 +8,11 @@
         <p>Edit any information about the appointment.</p>
     </div>
 
-    <div class="row">
+    <div class="form-row">
         <div class="col-md-8">
-            <form action="{{ url_for('AppointmentsView:submit_edits') }}" method="post">
+            <form action="{{ url_for('AppointmentsView:submit_edits') }}" method="POST">
                 <input id="id" name="id" type="text" value="{{ appt.id }}" hidden>
-                <div class="row">
+                <div class="form-row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="tutor">Tutor</label>
@@ -40,76 +40,95 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
+                <div class="form-row">
+                    <div class="col-md-6 form-group" style="margin-bottom: 20px;">
                         <label for="date">Appointment Date</label>
                         <input id="date" type="text" class="form-control" name="date"
                                 value="{{ appt.scheduledStart.strftime('%m/%d/%Y') }}">
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
+                <div class="form-row">
+                    <div class="col-md-6 form-group">
                         <label for="sched-start">Scheduled Start Time</label>
                         <input id="sched-start" type="time" class="form-control" name="sched-start" step="1"
                                value="{{ appt.scheduledStart.strftime('%H:%M:%S') }}">
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 form-group">
                         <label for="sched-end">Scheduled End Time</label>
                         <input id="sched-end" type="time" class="form-control" name="sched-end" step="1"
                                value="{{ appt.scheduledEnd.strftime('%H:%M:%S') }}">
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
+                <div class="form-row">
+                    <div class="col-md-6 form-group">
                         <label for="actual-start">Actual Start Time</label>
                         <input id="actual-start" type="time" class="form-control" name="actual-start" step="1"
                                value="{{ appt.actualStart.strftime('%H:%M:%S') if appt.actualStart else '' }}">
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 form-group">
                         <label for="actual-end">Actual End Time</label>
                         <input id="actual-end" type="time" class="form-control" name="actual-end" step="1"
                                value="{{ appt.actualEnd.strftime('%H:%M:%S') if appt.actualEnd else '' }}">
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-3">
+                <div class="form-row">
+                    <div class="col-md-3 form-group">
                         <label for="prof">Professor</label>
                         <input id="prof" type="text" class="form-control" value="{{ appt.profName }}" name="prof">
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3 form-group">
                         <label for="prof-email">Professor Email</label>
                         <input id="prof-email" type="text" class="form-control" value="{{ appt.profEmail }}" name="email">
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3 form-group">
                         <label for="course">Course</label>
                         <input id="course" type="text" class="form-control" value="{{ appt.courseCode }}" name="course">
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3 form-group">
                         <label for="section">Section</label>
                         <input id="section" type="text" class="form-control" value="{{ appt.courseSection }}" name="section">
                     </div>
                 </div>
-                <div class="row">
+                <div class="form-row">
                     <div class="col-md-12">
                         <label for="assignment">Assignment</label>
                         <textarea id="assignment" class="form-control" name="assignment">{{ appt.assignment }}</textarea>
                     </div>
                 </div>
-                <div class="row">
+                <br>
+                <div class="form-row">
                     <div class="col-md-12">
                         <label for="notes">Notes</label>
                         <textarea id="notes" class="form-control" name="notes">{{ appt.notes }}</textarea>
                     </div>
                 </div>
-                <div class="row">
+                <br>
+                <div class="form-row">
                     <div class="col-md-12">
                         <label for="suggestions">Suggestions</label>
                         <textarea id="suggestions" class="form-control" name="suggestions">{{ appt.suggestions }}</textarea>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-2">
+                <br>
+                <div class="form-row">
+                    <div class="col-md-2 form-group">
                         <label for="sub">Sub Requested</label>
+                    </div>
+                    <div class="col-md-2 form-group">
+                        <label for="drop-in">Drop In</label>
+                    </div>
+                    <div class="col-md-2 form-group">
+                        <label for="multilingual">Multilingual</label>
+                    </div>
+                    <div class="col-md-2 form-group">
+                        <label for="no-show">No Show</label>
+                    </div>
+                    <div class="col-md-2 form-group">
+                        <label for="in-progress">In Progress</label>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-2 form-group">
                         <div id="sub">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" id="sub-radio-yes" name="sub-req"
@@ -123,8 +142,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <label for="drop-in">Drop In</label>
+                    <div class="col-md-2 form-group">
                         <div id="drop-in">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" id="drop-yes" name="drop-in-check"
@@ -138,8 +156,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <label for="multilingual">Multilingual</label>
+                    <div class="col-md-2 form-group">
                         <div id="multilingual">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" id="multi-yes" name="multi-check"
@@ -153,8 +170,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <label for="no-show">No Show</label>
+                    <div class="col-md-2 form-group">
                         <div id="no-show">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" id="no-show-yes" name="no-show-check"
@@ -168,8 +184,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <label for="in-progress">In Progress</label>
+                    <div class="col-md-2 form-group">
                         <div id="in-progress">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" id="in-progress-yes"
@@ -184,7 +199,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                <div class="form-row">
                     <button type="submit" class="btn btn-primary">Submit Edits</button>
                 </div>
             </form>
@@ -199,11 +214,6 @@
             </div>
         </div>
     </div>
-
-    <link rel="stylesheet" href="{{ url_for('static', filename='pikaday.css') }}">
-    <script type="text/javascript" src="{{ url_for('static', filename='moment.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='pikaday.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='pikaday.jquery.js') }}"></script>
 
     <script type="text/javascript">
         var student = new SlimSelect({

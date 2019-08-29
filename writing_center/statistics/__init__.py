@@ -4,14 +4,17 @@ from flask import session as flask_session
 from datetime import datetime, timedelta
 
 from writing_center.statistics.statistics_controller import StatisticsController
+from writing_center.writing_center_controller import WritingCenterController
 
 
 class StatisticsView(FlaskView):
     def __init__(self):
         self.sc = StatisticsController()
+        self.wcc = WritingCenterController()
 
-    @route('/center-manager/statistics/')
+    @route('/stats')
     def stats(self):
+        self.wcc.check_roles_and_route(['Observer', 'Administrator'])
         # Use the default start and end dates to get the first tables of data
         start = flask_session['DATE-SELECTOR-START']
         end = flask_session['DATE-SELECTOR-END']
@@ -23,55 +26,26 @@ class StatisticsView(FlaskView):
 
     @route('/hours-worked')
     def hours_worked(self):
+        self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
         return render_template('statistics/hours_worked.html', **locals())
 
     @route('/get-hours', methods=['POST'])
     def get_hours_worked(self):
+        self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
         start = str(json.loads(request.data).get('start'))
         end = str(json.loads(request.data).get('end'))
         start = datetime.strptime(start, '%a %b %d %Y')
         end = datetime.strptime(end, '%a %b %d %Y')
-        appointments = self.sc.get_appt_hours(start, end, flask_session['USERNAME'])
-        time = 0
-
-        for appointment in appointments:
-            start_time = str(appointment.scheduledStart).split(' ')[1].split(':')
-            start_min = int(start_time[1])
-            start_hour = int(start_time[0])
-            if 0 < start_min < 15:
-                start_min = 15
-            elif 15 < start_min < 30:
-                start_min = 30
-            elif 30 < start_min < 45:
-                start_min = 45
-            elif 45 < start_min < 60:
-                start_min = 0
-                if start_hour < 24:
-                    start_hour += 1
-            end_time = str(appointment.scheduledEnd).split(' ')[1].split(':')
-            end_min = int(end_time[1])
-            end_hour = int(end_time[0])
-            if 0 < end_min < 15:
-                end_min = 15
-            elif 15 < end_min < 30:
-                end_min = 30
-            elif 30 < end_min < 45:
-                end_min = 45
-            elif 45 < end_min < 60:
-                end_min = 0
-                if end_hour < 24:
-                    end_hour += 1
-            time += end_hour - start_hour + (end_min - start_min) / 60
+        appointments, time = self.sc.get_appt_hours(start, end, flask_session['USERNAME'])
 
         user = self.sc.get_user_by_username(flask_session['USERNAME'])
         start = start.strftime('%B %d %Y')
         end = end.strftime('%B %d %Y')
-        # message = '<h5>{0} {1} has worked {2} hours worked between {3} and {4}</h5>'\
-        #     .format(user.firstName, user.lastName, time, start, end)
         return render_template('statistics/hours_worked_table.html', **locals(), id_to_user=self.sc.get_user_by_id)
 
     @route('/handle-stats-change', methods=['POST'])
     def handle_stats_change(self):
+        self.wcc.check_roles_and_route(['Observer', 'Administrator'])
         start = str(json.loads(request.data).get('startDate'))
         end = str(json.loads(request.data).get('endDate'))
         start = datetime.strptime(start, '%a %b %d %Y')
@@ -92,6 +66,7 @@ class StatisticsView(FlaskView):
         return render_template('statistics/statistics_tables.html', **locals())
 
     def get_statistics_data(self, start, end, value, stat_id=''):
+        self.wcc.check_roles_and_route(['Observer', 'Administrator'])
         # Set stored values
         flask_session['DATE-SELECTOR-START'] = start
         flask_session['DATE-SELECTOR-END'] = end

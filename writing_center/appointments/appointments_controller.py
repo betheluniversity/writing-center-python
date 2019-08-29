@@ -108,10 +108,25 @@ class AppointmentsController:
 
     def get_scheduled_appointments(self, username):
         tutor = self.get_user_by_username(username)
+        min_today = datetime.combine(datetime.now(), datetime.min.time())
+        max_today = datetime.combine(datetime.now(), datetime.max.time())
         return db_session.query(AppointmentsTable)\
-            .filter(AppointmentsTable.scheduledStart >= datetime.now())\
+            .filter(AppointmentsTable.scheduledStart >= min_today)\
+            .filter(AppointmentsTable.scheduledEnd <= max_today)\
+            .filter(AppointmentsTable.student_id != None)\
             .filter(AppointmentsTable.tutor_id == tutor.id)\
             .all()
+
+    def tutor_change_appt(self, appt_id, assignment, notes, suggestions):
+        try:
+            appt = self.get_appointment_by_id(appt_id)
+            appt.assignment = assignment
+            appt.notes = notes
+            appt.suggestions = suggestions
+            db_session.commit()
+            return True
+        except Exception as e:
+            return False
 
     def mark_no_show(self, appt_id):
         try:
@@ -217,11 +232,6 @@ class AppointmentsController:
             .filter(AppointmentsTable.student_id == None)\
             .all()
 
-    def get_one_appointment(self, appt_id):
-        return db_session.query(AppointmentsTable)\
-            .filter(AppointmentsTable.id == appt_id)\
-            .one_or_none()
-
     def get_future_user_appointments(self, user_id):
         return db_session.query(AppointmentsTable)\
             .filter(AppointmentsTable.student_id == user_id)\
@@ -287,6 +297,9 @@ class AppointmentsController:
             course_code = str(course).split('\'')
             course_list.append(course_code[1])
         return course_list
+
+    def get_all_users(self):
+        return db_session.query(UserTable).all()
 
     def search_appointments(self, student, tutor, prof, course, start, end):
         appts = db_session.query(AppointmentsTable)

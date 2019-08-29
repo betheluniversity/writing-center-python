@@ -17,13 +17,13 @@ class UsersView(FlaskView):
         self.wsapi = WSAPIController()
         self.wcc = WritingCenterController()
 
-    @route('/center-manager/manage-bans/')
+    @route('/manage-bans/')
     def manage_bans(self):
         users = self.uc.get_banned_users()
 
         return render_template('users/manage_bans.html', **locals())
 
-    @route('/center-manager/view-users')
+    @route('/view-users')
     def view_all_users(self):
         users_query = self.uc.get_users()
         users = {}
@@ -53,7 +53,7 @@ class UsersView(FlaskView):
 
         return render_template('users/view_all_users.html', **locals())
 
-    @route("/center-manager/add-user")
+    @route("/add-user")
     def add_user(self):
         return render_template('users/add_user.html', **locals())
 
@@ -89,10 +89,10 @@ class UsersView(FlaskView):
         sub_email_pref = 0  # Default sending emails to No
         stu_email_pref = 0  # Default sending emails to No
         # If the user is a administrator or a professor, they get emails.
-        if 'Global Admin' in roles or 'Administrator' in roles or 'Center Manager' in roles:
+        if 'Administrator' in roles:
             sub_email_pref = 1
             stu_email_pref = 1
-        if 'tutor' in roles:
+        if 'Tutor' in roles:
             stu_email_pref = 1
         try:
             self.uc.create_user(first_name, last_name, username, sub_email_pref, stu_email_pref)

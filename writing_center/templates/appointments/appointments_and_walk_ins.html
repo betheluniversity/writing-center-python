@@ -8,6 +8,7 @@
             <h1><b>Scheduled Appointments and Walk Ins</b></h1>
             <p>For scheduled appointments, please remember to click 'Start' when you arrive.</p>
         </div>
+        <div id="modal-results"></div>
         <div id="results">
             <div class="form-row">
                 <div class="form-group col-md-12">
@@ -39,43 +40,43 @@
                         <th data-toggle="tooltip" data-placement="top" title="End Time">End Time</th>
                         <th data-toggle="tooltip" data-placement="top" title="Start Appointment">Start/Continue/End Appointment</th>
                         <th data-toggle="tooltip" data-placement="top" title="Mark/Unmark as No Show">Mark/Unmark as No Show</th>
+                        <th data-toggle="tooltip" data-placement="top" title="View More Info">View More Info</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% if appointments|length > 0 %}
                         {% for appointment in appointments %}
-                            {% if appointment.student_id and appointment.scheduledStart >= now_today %}
-                                <tr>
-                                    <td>
-                                        {{ users[appointment.student_id] }}
-                                    </td>
-                                    <td>
-                                        {{ appointment.scheduledStart|datetimeformat('%m/%d/%y') }}
-                                    </td>
-                                    <td>
-                                        {{ appointment.actualStart|datetimeformat }}
-                                    </td>
-                                    <td>
-                                        {{ appointment.actualEnd|datetimeformat }}
-                                    </td>
-                                    <td>
-                                        {% if not appointment.actualStart %}
-                                            <button id="start" value="{{ appointment.id }}" type="button" class="btn btn-primary btn-success">Start Appointment</button>
-                                        {% elif appointment.actualStart and appointment.actualEnd and appointment.inProgress == 0 %}
-                                            <button id="continue" value="{{ appointment.id }}" type="button" class="btn btn-primary background-blue">Continue Appointment</button>
-                                        {% elif appointment.inProgress == 1 %}
-                                            <button id="end" value="{{ appointment.id }}" type="button" class="btn btn-primary btn-danger">End Appointment</button>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if appointment.noShow == 0 or not appointment.noShow %}
-                                            <button id="no-show" value="{{ appointment.id }}" type="button" class="btn btn-primary btn-danger">Mark as No Show</button>
-                                        {% elif appointment.noShow == 1 %}
-                                            <button id="revert-no-show" value="{{ appointment.id }}" type="button" class="btn btn-primary btn-danger">Revert No Show</button>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endif %}
+                            <tr>
+                                <td>
+                                    {{ users[appointment.student_id] }}
+                                </td>
+                                <td>
+                                    {{ appointment.scheduledStart|datetimeformat('%m/%d/%y') }}
+                                </td>
+                                <td>
+                                    {{ appointment.actualStart|datetimeformat }}
+                                </td>
+                                <td>
+                                    {{ appointment.actualEnd|datetimeformat }}
+                                </td>
+                                <td>
+                                    {% if not appointment.actualStart %}
+                                        <button id="start" value="{{ appointment.id }}" type="button" class="btn btn-primary btn-success">Start Appointment</button>
+                                    {% elif appointment.actualStart and appointment.actualEnd and appointment.inProgress == 0 %}
+                                        <button id="continue" value="{{ appointment.id }}" type="button" class="btn btn-primary background-blue">Continue Appointment</button>
+                                    {% elif appointment.inProgress == 1 %}
+                                        <button id="end" value="{{ appointment.id }}" type="button" class="btn btn-primary btn-danger">End Appointment</button>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if appointment.noShow == 0 or not appointment.noShow %}
+                                        <button id="no-show" value="{{ appointment.id }}" type="button" class="btn btn-primary btn-danger">Mark as No Show</button>
+                                    {% elif appointment.noShow == 1 %}
+                                        <button id="revert-no-show" value="{{ appointment.id }}" type="button" class="btn btn-primary btn-danger">Revert No Show</button>
+                                    {% endif %}
+                                </td>
+                                <td><input type="button" class="btn btn-primary darkblue" value="More Info" onclick="viewInfo({{ appt.id }})"></td>
+                            </tr>
                         {% endfor %}
                     {% endif %}
                 </tbody>
@@ -134,5 +135,24 @@
                 }
             });
         }
+
+        function viewInfo(appt_id) {
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('AppointmentsView:load_appointment_data') }}",
+                data: JSON.stringify({
+                    'id': appt_id,
+                    'tutorEdit': true
+                }),
+                contentType: 'application/json;charset=UTF-8',
+                success: function (response) {
+                    $('#modal-results').html(response);
+                    $('#info-modal').modal('show');
+                },
+                error: function (error) {
+                }
+            });
+        }
     </script>
+
 {% endblock %}

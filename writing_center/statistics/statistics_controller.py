@@ -18,11 +18,44 @@ class StatisticsController:
 
     def get_appt_hours(self, start, end, username):
         user = self.get_user_by_username(username)
-        return db_session.query(AppointmentsTable)\
+        appointments = db_session.query(AppointmentsTable)\
             .filter(AppointmentsTable.tutor_id == user.id)\
             .filter(AppointmentsTable.actualStart >= start)\
             .filter(AppointmentsTable.actualEnd <= end)\
             .all()
+
+        time = 0
+
+        for appointment in appointments:
+            start_time = str(appointment.scheduledStart).split(' ')[1].split(':')
+            start_min = int(start_time[1])
+            start_hour = int(start_time[0])
+            if 0 < start_min < 15:
+                start_min = 15
+            elif 15 < start_min < 30:
+                start_min = 30
+            elif 30 < start_min < 45:
+                start_min = 45
+            elif 45 < start_min < 60:
+                start_min = 0
+                if start_hour < 24:
+                    start_hour += 1
+            end_time = str(appointment.scheduledEnd).split(' ')[1].split(':')
+            end_min = int(end_time[1])
+            end_hour = int(end_time[0])
+            if 0 < end_min < 15:
+                end_min = 15
+            elif 15 < end_min < 30:
+                end_min = 30
+            elif 30 < end_min < 45:
+                end_min = 45
+            elif 45 < end_min < 60:
+                end_min = 0
+                if end_hour < 24:
+                    end_hour += 1
+            time += end_hour - start_hour + (end_min - start_min) / 60
+
+        return appointments, time
 
     def get_appointments(self, start, end, value):
         if value == 'all':
@@ -119,10 +152,6 @@ class StatisticsController:
                 .all()
         else:
             return False
-
-    def get_schedules(self):
-        return db_session.query(ScheduleTable)\
-            .all()
 
     def datetimeformat(self, value, custom_format=None):
         if value:
