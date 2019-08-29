@@ -35,7 +35,11 @@
                     {{ user.email }}
                 </td>
                 <td>
-                    <button id="remove-ban" type="submit" onclick="banUser({{ user.id }})" class="btn btn-primary btn-danger">Remove Ban</button>
+                    {% if user.username == session['USERNAME'] %}
+                        N/A
+                    {% else %}
+                        <button id="remove-ban" type="submit" onclick="banUser({{ user.id }})" class="btn btn-primary btn-danger">Remove Ban</button>
+                    {% endif %}
                 </td>
             </tr>
         {% endfor %}
