@@ -14,6 +14,8 @@ class AppointmentsController:
             user = db_session.query(UserTable)\
                 .filter(UserTable.username == username)\
                 .one_or_none()
+            if user.bannedDate != None:
+                self.reactivate_user(user.id)
             return user
         except Exception as e:
             return False
