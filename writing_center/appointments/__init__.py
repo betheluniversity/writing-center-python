@@ -70,6 +70,7 @@ class AppointmentsView(FlaskView):
         else:
             range_appointments = self.ac.get_appointments_in_range(start, end)
         appointments = []
+        # Formats the times to match the fullcalendar desired format
         if range_appointments:
             for appointment in range_appointments:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
@@ -172,6 +173,7 @@ class AppointmentsView(FlaskView):
         self.wcc.check_roles_and_route(['Student', 'Administrator'])
         appts = self.ac.get_all_user_appointments(flask_session['USERNAME'])
         appointments = []
+        # Formats the times to match the fullcalendar desired format
         for appointment in appts:
             if appointment.actualStart and appointment.actualEnd:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
@@ -218,36 +220,45 @@ class AppointmentsView(FlaskView):
         course = str(json.loads(request.data).get('course'))
         assignment = str(json.loads(request.data).get('assignment'))
         username = flask_session['USERNAME']
+        # Checks if the user already exists in WC DB. If a user does, we either continue or reactivate them. If they
+        # don't exist then we create them
         exists = self.ac.check_for_existing_user(username)
-        if exists:
-            self.ac.reactivate_user(exists.id)
-        else:
+        if not exists:
             name = self.wsapi.get_names_from_username(username)
             self.ac.create_user(username, name)
         user = self.ac.get_user_by_username(username)
+        # Checks to make sure the user isn't banned.
         if not user.bannedDate:
-            appt_limit = int(self.ac.get_appointment_limit()[0])
-            user_appointments = self.ac.get_future_user_appointments(user.id)
-            if len(user_appointments) < appt_limit:
-                roles = self.wsapi.get_roles_for_username(username)
-                cas = False
-                for role in roles:
-                    if 'STUDENT-CAS' == roles[role]['userRole']:
-                        cas = True
-                if cas:
-                    appt = self.ac.get_appointment_by_id(appt_id)
+            # Checks to make sure the user is part of CAS.
+            roles = self.wsapi.get_roles_for_username(username)
+            cas = False
+            for role in roles:
+                if 'STUDENT-CAS' == roles[role]['userRole']:
+                    cas = True
+            if cas:
+                appt = self.ac.get_appointment_by_id(appt_id)
+                # Checks to make sure the student hasn't scheduled the limit of appointments per week.
+                appt_limit = int(self.ac.get_appointment_limit()[0])
+                date = appt.scheduledStart
+                weekly_appts = self.ac.get_weekly_users_appointments(user.id, date)
+                if len(weekly_appts) < appt_limit:
+                    # Checks to make sure the student isn't scheduled for an appointment that overlaps with the one they
+                    # are trying to schedule.
                     already_scheduled = False
+                    user_appointments = self.ac.get_future_user_appointments(user.id)
                     for appointment in user_appointments:
-                        if appointment.scheduledStart < appt.scheduledStart < appointment.scheduledEnd or \
-                                appointment.scheduledStart < appt.scheduledEnd < appointment.scheduledEnd:
+                        if appointment.scheduledStart <= appt.scheduledStart < appointment.scheduledEnd or \
+                                appointment.scheduledStart < appt.scheduledEnd <= appointment.scheduledEnd:
                             already_scheduled = True
                     if already_scheduled:
                         self.wcc.set_alert('danger', 'Failed to schedule appointment! You already have an appointment '
                                                      'that overlaps with the one you are trying to schedule.')
                     else:
+                        # Sets course to none if no specific course was selected for the appointment.
                         if 'no-course' == course:
                             course = None
                         else:
+                            # Gets information about the selected course for the appointment.
                             student_courses = self.wsapi.get_student_courses(username)
                             for key in student_courses:
                                 if student_courses[key]['crn'] == course:
@@ -261,6 +272,8 @@ class AppointmentsView(FlaskView):
                                         'instructor_email': instructor_email
                                     }
                                     break
+                        # Schedules the appointment and sends an email to the student and tutor if it is scheduled
+                        # successfully.
                         appt = self.ac.schedule_appointment(appt_id, course, assignment)
                         if appt:
                             self.mcc.appointment_signup_student(appt_id)
@@ -270,18 +283,18 @@ class AppointmentsView(FlaskView):
                         else:
                             self.wcc.set_alert('danger', 'Error! Appointment Not Scheduled!')
                 else:
-                    # TODO MAYBE GIVE THEM A SPECIFIC EMAIL TO EMAIL?
-                    self.wcc.set_alert('danger', 'Appointment NOT scheduled! Only CAS students can schedule'
-                                                 ' appointments here. If you wish to schedule an appointment email a'
-                                                 ' Writing Center Administrator.')
+                    self.wcc.set_alert('danger', 'Failed to schedule appointment. You already have ' + str(appt_limit) +
+                                       ' appointments scheduled and can\'t schedule any more.')
             else:
-                self.wcc.set_alert('danger', 'Failed to schedule appointment. You already have ' + str(appt_limit) +
-                                   ' appointments scheduled and can\'t schedule any more.')
+                # TODO MAYBE GIVE THEM A SPECIFIC EMAIL TO EMAIL?
+                self.wcc.set_alert('danger', 'Appointment NOT scheduled! Only CAS students can schedule'
+                                             ' appointments here. If you wish to schedule an appointment email a'
+                                             ' Writing Center Administrator.')
         else:
             # TODO MAYBE GIVE THEM A SPECIFIC EMAIL TO EMAIL?
             self.wcc.set_alert('danger', 'You are banned from making appointments! If you have any questions email a'
                                          ' Writing Center Administrator.')
-        
+        # Returns the appointment id to remove it from the scheduling calendar.
         return appt_id
 
     @route('cancel-appointment', methods=['POST'])

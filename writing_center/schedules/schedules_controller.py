@@ -14,7 +14,8 @@ class SchedulesController:
         pass
 
     def get_schedules(self):
-        return db_session.query(ScheduleTable).all()
+        return db_session.query(ScheduleTable)\
+            .all()
 
     def create_time_slot(self, start_time, end_time, is_active):
         try:
@@ -65,6 +66,7 @@ class SchedulesController:
     def create_tutor_shifts(self, start_date, end_date, multilingual, drop_in, tutor_ids, days_of_week, time_slots):
         # I honestly hate this but since we have 3 different selects which all can be multiple I think this is the only
         # way we can achieve the desired effect.
+        warning = False
         for day in days_of_week:
             for tutor_id in tutor_ids:
                 tutor = self.get_user_by_id(tutor_id)
@@ -95,19 +97,40 @@ class SchedulesController:
                         except:
                             end_ts = datetime.strptime(end_ts, '%I:%M %p')
                         appt_date = self.get_first_appointment_date(day, start_date)
+                        if appt_date > end_date:
+                            return False
                         while appt_date <= end_date:  # Loop through until our session date is after the end date of the term
-                            # print('ot')
                             # Updates the datetime object with the correct date
-                            # print(start_ts)
-                            # print(tutor.firstName, tutor.lastName)
                             start_ts = start_ts.replace(year=appt_date.year, month=appt_date.month, day=appt_date.day)
                             end_ts = end_ts.replace(year=appt_date.year, month=appt_date.month, day=appt_date.day)
                             appointment = AppointmentsTable(tutor_id=tutor.id, scheduledStart=start_ts, scheduledEnd=end_ts,
                                                             inProgress=0, multilingual=multilingual, dropIn=drop_in, sub=0, noShow=0)
-                            db_session.add(appointment)
-                            db_session.commit()
+                            # This check makes sure only future shifts can be assigned (useful when creating a shift the
+                            # day of)
+                            if start_ts > datetime.now():
+                                appts = self.get_future_tutor_appts(tutor.id)
+                                commit = True
+                                for appt in appts:
+                                    # This check is to make sure the tutor doesn't already have a shift that overlaps
+                                    # with the one you are trying to schedule them for
+                                    if start_ts <= appt.scheduledStart < end_ts or start_ts < appt.scheduledEnd <= end_ts:
+                                        commit = False
+                                        break
+                                if commit:
+                                    db_session.add(appointment)
+                                    db_session.commit()
+                            else:
+                                warning = 'warning'
                             appt_date += timedelta(weeks=1)  # Add a week for next session
-        return None
+        if warning:
+            return warning
+        return True
+
+    def get_future_tutor_appts(self, tutor_id):
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.tutor_id == tutor_id)\
+            .filter(AppointmentsTable.scheduledStart >= datetime.now())\
+            .all()
 
     def get_first_appointment_date(self, week_day, start_date):
         first_date = start_date

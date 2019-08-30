@@ -80,17 +80,18 @@ class SchedulesView(FlaskView):
     @route('/add-tutors-to-shifts', methods=['POST'])
     def add_tutors_to_shifts(self):
         self.wcc.check_roles_and_route(['Administrator'])
+
         start_date = str(json.loads(request.data).get('startDate'))
         end_date = str(json.loads(request.data).get('endDate'))
         if not start_date or not end_date:
             self.wcc.set_alert('danger', 'You must set a start date AND an end date!')
-            return 'danger'
+            return ''
         # Formats the date strings into date objects
         start = datetime.strptime(start_date, '%a %b %d %Y').date()
         end = datetime.strptime(end_date, '%a %b %d %Y').date()
         if start > end:
             self.wcc.set_alert('danger', 'Start date cannot be further in the future than the end date!')
-            return 'danger'
+            return ''
         start_date = datetime.strptime(start_date, '%a %b %d %Y').date()
         end_date = datetime.strptime(end_date, '%a %b %d %Y').date()
         multilingual = str(json.loads(request.data).get('multilingual'))
@@ -103,9 +104,15 @@ class SchedulesView(FlaskView):
             tutors = []
             for tutor in self.sc.get_tutors():
                 tutors.append(tutor.id)
-        self.sc.create_tutor_shifts(start_date, end_date, multilingual, drop_in, tutors, days, time_slots)
+        success = self.sc.create_tutor_shifts(start_date, end_date, multilingual, drop_in, tutors, days, time_slots)
+        if not success:
+            self.wcc.set_alert('warning', 'The shifts failed to be scheduled! One or more of the selected day of week never occurs.')
+            return ''
+        if success == 'warning':
+            self.wcc.set_alert('warning', 'One or more of the shifts failed to be scheduled.')
+            return ''
         self.wcc.set_alert('success', 'Successfully added the tutor(s) to the time slot(s).')
-        return 'success'
+        return ''
 
     @route('/show-schedule', methods=['POST'])
     def show_tutor_schedule(self):
@@ -118,6 +125,7 @@ class SchedulesView(FlaskView):
                 names.append(str(tutor.id))
         all_tutor_appts = self.sc.get_tutor_appointments(names)
         appointments = []
+        # Formats the times to match the fullcalendar desired format
         for tutor_appts in all_tutor_appts:
             for appointment in tutor_appts:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
@@ -210,7 +218,7 @@ class SchedulesView(FlaskView):
                 tutor_ids.append(str(ids.id))
         sub_appts = self.sc.delete_tutor_shifts(tutor_ids, start, end)
         if sub_appts == 'none':
-            return '<h3>All appointments deleted successfully!</h3>'
+            return '<h3>All appointments in the selected range were deleted successfully!</h3>'
         if sub_appts:
             return render_template('schedules/sub_table.html', **locals(), id_to_user=self.sc.get_user_by_id)
         return '<h3>There weren\'t any appointments within the date range selected!</h3>'
@@ -237,6 +245,7 @@ class SchedulesView(FlaskView):
         self.wcc.check_roles_and_route(['Student', 'Tutor', 'Administrator'])
         appts = self.sc.get_all_user_appointments(flask_session['USERNAME'])
         appointments = []
+        # Formats the times to match the fullcalendar desired format
         for appointment in appts:
             if appointment.actualStart and appointment.actualEnd:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
@@ -280,6 +289,7 @@ class SchedulesView(FlaskView):
         self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
         appts = self.sc.get_sub_appointments()
         appointments = []
+        # Formats the times to match the fullcalendar desired format
         for appointment in appts:
             if appointment.actualStart and appointment.actualEnd:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
