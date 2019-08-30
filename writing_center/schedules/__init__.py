@@ -125,6 +125,7 @@ class SchedulesView(FlaskView):
                 names.append(str(tutor.id))
         all_tutor_appts = self.sc.get_tutor_appointments(names)
         appointments = []
+        # Formats the times to match the fullcalendar desired format
         for tutor_appts in all_tutor_appts:
             for appointment in tutor_appts:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
@@ -244,6 +245,7 @@ class SchedulesView(FlaskView):
         self.wcc.check_roles_and_route(['Student', 'Tutor', 'Administrator'])
         appts = self.sc.get_all_user_appointments(flask_session['USERNAME'])
         appointments = []
+        # Formats the times to match the fullcalendar desired format
         for appointment in appts:
             if appointment.actualStart and appointment.actualEnd:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
@@ -287,6 +289,7 @@ class SchedulesView(FlaskView):
         self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
         appts = self.sc.get_sub_appointments()
         appointments = []
+        # Formats the times to match the fullcalendar desired format
         for appointment in appts:
             if appointment.actualStart and appointment.actualEnd:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,

@@ -70,6 +70,7 @@ class AppointmentsView(FlaskView):
         else:
             range_appointments = self.ac.get_appointments_in_range(start, end)
         appointments = []
+        # Formats the times to match the fullcalendar desired format
         if range_appointments:
             for appointment in range_appointments:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
@@ -172,6 +173,7 @@ class AppointmentsView(FlaskView):
         self.wcc.check_roles_and_route(['Student', 'Administrator'])
         appts = self.ac.get_all_user_appointments(flask_session['USERNAME'])
         appointments = []
+        # Formats the times to match the fullcalendar desired format
         for appointment in appts:
             if appointment.actualStart and appointment.actualEnd:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
