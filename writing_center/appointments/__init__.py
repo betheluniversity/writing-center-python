@@ -223,29 +223,29 @@ class AppointmentsView(FlaskView):
         # Checks if the user already exists in WC DB. If a user does, we either continue or reactivate them. If they
         # don't exist then we create them
         exists = self.ac.check_for_existing_user(username)
-        if exists:
-            self.ac.reactivate_user(exists.id)
-        else:
+        if not exists:
             name = self.wsapi.get_names_from_username(username)
             self.ac.create_user(username, name)
         user = self.ac.get_user_by_username(username)
         # Checks to make sure the user isn't banned.
         if not user.bannedDate:
-            appt_limit = int(self.ac.get_appointment_limit()[0])
-            user_appointments = self.ac.get_future_user_appointments(user.id)
-            if len(user_appointments) < appt_limit:
-                roles = self.wsapi.get_roles_for_username(username)
-                cas = False
-                for role in roles:
-                    if 'STUDENT-CAS' == roles[role]['userRole']:
-                        cas = True
-                if cas:
-                    appt = self.ac.get_appointment_by_id(appt_id)
             # Checks to make sure the user is part of CAS.
+            roles = self.wsapi.get_roles_for_username(username)
+            cas = False
+            for role in roles:
+                if 'STUDENT-CAS' == roles[role]['userRole']:
+                    cas = True
+            if cas:
+                appt = self.ac.get_appointment_by_id(appt_id)
                 # Checks to make sure the student hasn't scheduled the limit of appointments per week.
+                appt_limit = int(self.ac.get_appointment_limit()[0])
+                date = appt.scheduledStart
+                weekly_appts = self.ac.get_weekly_users_appointments(user.id, date)
+                if len(weekly_appts) < appt_limit:
                     # Checks to make sure the student isn't scheduled for an appointment that overlaps with the one they
                     # are trying to schedule.
                     already_scheduled = False
+                    user_appointments = self.ac.get_future_user_appointments(user.id)
                     for appointment in user_appointments:
                         if appointment.scheduledStart <= appt.scheduledStart < appointment.scheduledEnd or \
                                 appointment.scheduledStart < appt.scheduledEnd <= appointment.scheduledEnd:
@@ -283,18 +283,18 @@ class AppointmentsView(FlaskView):
                         else:
                             self.wcc.set_alert('danger', 'Error! Appointment Not Scheduled!')
                 else:
-                    # TODO MAYBE GIVE THEM A SPECIFIC EMAIL TO EMAIL?
-                    self.wcc.set_alert('danger', 'Appointment NOT scheduled! Only CAS students can schedule'
-                                                 ' appointments here. If you wish to schedule an appointment email a'
-                                                 ' Writing Center Administrator.')
+                    self.wcc.set_alert('danger', 'Failed to schedule appointment. You already have ' + str(appt_limit) +
+                                       ' appointments scheduled and can\'t schedule any more.')
             else:
-                self.wcc.set_alert('danger', 'Failed to schedule appointment. You already have ' + str(appt_limit) +
-                                   ' appointments scheduled and can\'t schedule any more.')
+                # TODO MAYBE GIVE THEM A SPECIFIC EMAIL TO EMAIL?
+                self.wcc.set_alert('danger', 'Appointment NOT scheduled! Only CAS students can schedule'
+                                             ' appointments here. If you wish to schedule an appointment email a'
+                                             ' Writing Center Administrator.')
         else:
             # TODO MAYBE GIVE THEM A SPECIFIC EMAIL TO EMAIL?
             self.wcc.set_alert('danger', 'You are banned from making appointments! If you have any questions email a'
                                          ' Writing Center Administrator.')
-        
+        # Returns the appointment id to remove it from the scheduling calendar.
         return appt_id
 
     @route('cancel-appointment', methods=['POST'])
