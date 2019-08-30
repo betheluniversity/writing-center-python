@@ -220,6 +220,8 @@ class AppointmentsView(FlaskView):
         course = str(json.loads(request.data).get('course'))
         assignment = str(json.loads(request.data).get('assignment'))
         username = flask_session['USERNAME']
+        # Checks if the user already exists in WC DB. If a user does, we either continue or reactivate them. If they
+        # don't exist then we create them
         exists = self.ac.check_for_existing_user(username)
         if exists:
             self.ac.reactivate_user(exists.id)
@@ -227,6 +229,7 @@ class AppointmentsView(FlaskView):
             name = self.wsapi.get_names_from_username(username)
             self.ac.create_user(username, name)
         user = self.ac.get_user_by_username(username)
+        # Checks to make sure the user isn't banned.
         if not user.bannedDate:
             appt_limit = int(self.ac.get_appointment_limit()[0])
             user_appointments = self.ac.get_future_user_appointments(user.id)
@@ -238,6 +241,10 @@ class AppointmentsView(FlaskView):
                         cas = True
                 if cas:
                     appt = self.ac.get_appointment_by_id(appt_id)
+            # Checks to make sure the user is part of CAS.
+                # Checks to make sure the student hasn't scheduled the limit of appointments per week.
+                    # Checks to make sure the student isn't scheduled for an appointment that overlaps with the one they
+                    # are trying to schedule.
                     already_scheduled = False
                     for appointment in user_appointments:
                         if appointment.scheduledStart <= appt.scheduledStart < appointment.scheduledEnd or \
@@ -247,9 +254,11 @@ class AppointmentsView(FlaskView):
                         self.wcc.set_alert('danger', 'Failed to schedule appointment! You already have an appointment '
                                                      'that overlaps with the one you are trying to schedule.')
                     else:
+                        # Sets course to none if no specific course was selected for the appointment.
                         if 'no-course' == course:
                             course = None
                         else:
+                            # Gets information about the selected course for the appointment.
                             student_courses = self.wsapi.get_student_courses(username)
                             for key in student_courses:
                                 if student_courses[key]['crn'] == course:
@@ -263,6 +272,8 @@ class AppointmentsView(FlaskView):
                                         'instructor_email': instructor_email
                                     }
                                     break
+                        # Schedules the appointment and sends an email to the student and tutor if it is scheduled
+                        # successfully.
                         appt = self.ac.schedule_appointment(appt_id, course, assignment)
                         if appt:
                             self.mcc.appointment_signup_student(appt_id)
