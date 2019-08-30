@@ -240,6 +240,21 @@ class AppointmentsController:
             .filter(AppointmentsTable.scheduledStart > datetime.now())\
             .all()
 
+    def get_weekly_users_appointments(self, user_id, start_date):
+        if start_date.weekday() != 6:
+            while start_date.weekday() != 6:
+                start_date += timedelta(days=-1)
+
+        start_date = datetime.combine(start_date, datetime.min.time())
+        end_date = start_date + timedelta(days=6)
+        end_date = datetime.combine(end_date, datetime.max.time())
+
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.student_id == user_id)\
+            .filter(AppointmentsTable.scheduledStart >= start_date)\
+            .filter(AppointmentsTable.scheduledEnd <= end_date)\
+            .all()
+
     def get_appointment_limit(self):
         return db_session.query(SettingsTable.value)\
             .filter(SettingsTable.id == 1)\
