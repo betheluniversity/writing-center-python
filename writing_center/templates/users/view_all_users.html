@@ -43,7 +43,11 @@
                                     {{ users[user]['roles'] }}
                                 </td>
                                 <td>
-                                    <a id="act-as" href='{{ url_for('UsersView:act_as_user', user_id=users[user]['id']) }}' class="btn btn-primary background-blue">Act As User</a>
+                                    {% if users[user]['username'] == session['USERNAME'] %}
+                                        N/A
+                                    {% else %}
+                                        <a id="act-as" href='{{ url_for('UsersView:act_as_user', user_id=users[user]['id']) }}' class="btn btn-primary background-blue">Act As User</a>
+                                    {% endif %}
                                 </td>
                                 <td>
                                     <a id="edit" href='{{ url_for('UsersView:edit_user', user_id=users[user]['id']) }}' class="btn btn-primary background-blue">Edit</a>
