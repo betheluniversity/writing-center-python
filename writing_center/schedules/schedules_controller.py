@@ -13,9 +13,12 @@ class SchedulesController:
         self.mcc = MessageCenterController()
         pass
 
-    def get_schedules(self):
+    def get_all_schedules(self):
         return db_session.query(ScheduleTable)\
             .all()
+
+    def get_active_schedules(self):
+        return db_session.query(ScheduleTable).filter(ScheduleTable.active == 1).all()
 
     def create_time_slot(self, start_time, end_time, is_active):
         try:

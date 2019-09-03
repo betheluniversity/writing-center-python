@@ -21,14 +21,14 @@ class SchedulesView(FlaskView):
     @route("/create-schedule")
     def create_time_slot(self):
         self.wcc.check_roles_and_route(['Administrator'])
-        schedules = self.sc.get_schedules()
+        schedules = self.sc.get_all_schedules()
         tutors = self.sc.get_tutors()
         return render_template("schedules/create_time_slot.html", **locals())
 
     @route('/manage-tutor-schedules')
     def manage_tutor_schedules(self):
         self.wcc.check_roles_and_route(['Administrator'])
-        schedules = self.sc.get_schedules()
+        schedules = self.sc.get_active_schedules()
         tutors = self.sc.get_tutors()
         time_setting = self.sc.get_time_setting()[0]
         return render_template('schedules/manage_tutor_schedules.html', **locals())
@@ -36,7 +36,7 @@ class SchedulesView(FlaskView):
     @route('view-tutor-schedules')
     def view_tutor_schedules(self):
         self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
-        schedules = self.sc.get_schedules()
+        schedules = self.sc.get_active_schedules()
         tutors = self.sc.get_tutors()
         time_setting = self.sc.get_time_setting()[0]
         return render_template('schedules/view_tutor_schedule.html', **locals())
@@ -44,24 +44,23 @@ class SchedulesView(FlaskView):
     @route('/create', methods=['POST'])
     def create_new_time_slot(self):
         self.wcc.check_roles_and_route(['Administrator'])
-        now = (datetime.now())
+        form = request.form
 
-        start_time = str(json.loads(request.data).get('startTime'))
-        start_time = datetime.strptime(start_time, '%H:%M')
-        start_time = start_time.replace(year=int(now.strftime('%Y')), month=int(now.strftime('%m')), day=int(now.strftime('%d')))
+        start_time = form.get('start-time')
+        start_time = datetime.strftime(datetime.strptime(start_time, '%H:%M'), '%H:%M:%S')
 
-        end_time = str(json.loads(request.data).get('endTime'))
-        end_time = datetime.strptime(end_time, '%H:%M')
-        end_time = end_time.replace(year=int(now.strftime('%Y')), month=int(now.strftime('%m')), day=int(now.strftime('%d')))
+        end_time = form.get('end-time')
+        end_time = datetime.strftime(datetime.strptime(end_time, '%H:%M'), '%H:%M:%S')
 
-        is_active = str(json.loads(request.data).get('isActive'))
+        is_active = form.get('active')
+
         created = self.sc.create_time_slot(start_time, end_time, is_active)
 
         if created:
             self.wcc.set_alert('success', 'Schedule Created Successfully!')
         else:
             self.wcc.set_alert('danger', 'Schedule already exists!')
-        return self.sc.get_schedules()
+        return redirect(url_for('SchedulesView:create_time_slot'))
 
     @route('deactivate-time-slots', methods=['POST'])
     def deactivate_time_slots(self):

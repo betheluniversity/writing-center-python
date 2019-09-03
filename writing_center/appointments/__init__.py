@@ -88,7 +88,7 @@ class AppointmentsView(FlaskView):
                 appointments.append({
                     'id': appointment.id,
                     'studentId': appointment.student_id,
-                    'tutorId': self.ac.get_user_by_id(appointment.tutor_id).username,
+                    'tutorUsername': self.ac.get_user_by_id(appointment.tutor_id).username,
                     'startTime': start_time,
                     'endTime': end_time,
                     'multilingual': appointment.multilingual,
@@ -201,6 +201,9 @@ class AppointmentsView(FlaskView):
                                                             appointment.scheduledEnd.strftime('%H'),
                                                             appointment.scheduledEnd.strftime('%M'),
                                                             appointment.scheduledEnd.strftime('%S'))
+            else:
+                start_time = None
+                end_time = None
             appointments.append({
                 'id': appointment.id,
                 'studentId': appointment.student_id,

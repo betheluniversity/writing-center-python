@@ -9,21 +9,21 @@
     </div>
     <br/>
     <h3>Add Schedule Time Slot</h3>
-    <form>
+    <form action="{{ url_for('SchedulesView:create_new_time_slot') }}" method="post">
         <div class="form-row">
             <div class="col-md-3">
                 <div class="form-group">
-                    <input class="form-control" id="start-time" type="time" placeholder="Start Time"/>
+                    <input name="start-time" class="form-control" id="start-time" type="time" placeholder="Start Time"/>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="form-group">
-                    <input class="form-control" id="end-time" type="time" placeholder="End Time"/>
+                    <input name="end-time" class="form-control" id="end-time" type="time" placeholder="End Time"/>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="form-group">
-                    <select class="form-control" id="isActive">
+                    <select name="active" class="form-control" id="isActive">
                         <option id="active" value="1">Active</option>
                         <option id="inactive" value="0">Inactive</option>
                     </select>
@@ -108,27 +108,6 @@
                 starting_values['setDefaultDate'] = true;
 
                 var picker = new Pikaday(starting_values);
-            });
-        });
-
-        $('#add-schedule-ts').click(function () {
-            let startTime = $('#start-time').val();
-            let endTime = $('#end-time').val();
-            let isActive = $('#isActive option:selected').val();
-            $.ajax({
-                type: "POST",
-                url: "{{ url_for('SchedulesView:create_new_time_slot') }}",
-                async: false,
-                data: JSON.stringify({
-                    'startTime': startTime,
-                    'endTime': endTime,
-                    'isActive': isActive
-                }),
-                contentType: 'application/json;charset=UTF-8',
-                success: function (response) {
-                },
-                error: function (error) {
-                }
             });
         });
 
