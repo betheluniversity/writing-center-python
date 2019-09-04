@@ -67,15 +67,15 @@ class MessageCenterView(FlaskView):
         data = request.form
         return self.base.close_session_tutor(data['appointment_id'], data['to_prof'])
 
-    @route('/okay', methods=['POST'])
+    @route('/test', methods=['POST'])
     def okay(self):
         data = request.form
         data_two = data.copy()
 
-        groups = [data_two['recipients']]
-        # for item in data_two.keys():
-        #     if item == 'recipients':
-        #         groups.append(item)
+        groups = []
+        for item in data_two.keys():
+            if item == 'recipients':
+                groups.append(data_two[item])
         recipients = self.base.get_email_groups(data['recipients'])
         print(data_two)
         return ''
