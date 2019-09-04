@@ -21,14 +21,14 @@ class SchedulesView(FlaskView):
     @route("/create-schedule")
     def create_time_slot(self):
         self.wcc.check_roles_and_route(['Administrator'])
-        schedules = self.sc.get_schedules()
+        schedules = self.sc.get_all_schedules()
         tutors = self.sc.get_tutors()
         return render_template("schedules/create_time_slot.html", **locals())
 
     @route('/manage-tutor-schedules')
     def manage_tutor_schedules(self):
         self.wcc.check_roles_and_route(['Administrator'])
-        schedules = self.sc.get_schedules()
+        schedules = self.sc.get_active_schedules()
         tutors = self.sc.get_tutors()
         time_setting = self.sc.get_time_setting()[0]
         return render_template('schedules/manage_tutor_schedules.html', **locals())
@@ -36,7 +36,7 @@ class SchedulesView(FlaskView):
     @route('view-tutor-schedules')
     def view_tutor_schedules(self):
         self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
-        schedules = self.sc.get_schedules()
+        schedules = self.sc.get_active_schedules()
         tutors = self.sc.get_tutors()
         time_setting = self.sc.get_time_setting()[0]
         return render_template('schedules/view_tutor_schedule.html', **locals())
@@ -44,24 +44,23 @@ class SchedulesView(FlaskView):
     @route('/create', methods=['POST'])
     def create_new_time_slot(self):
         self.wcc.check_roles_and_route(['Administrator'])
-        now = (datetime.now())
+        form = request.form
 
-        start_time = str(json.loads(request.data).get('startTime'))
-        start_time = datetime.strptime(start_time, '%H:%M')
-        start_time = start_time.replace(year=int(now.strftime('%Y')), month=int(now.strftime('%m')), day=int(now.strftime('%d')))
+        start_time = form.get('start-time')
+        start_time = datetime.strftime(datetime.strptime(start_time, '%H:%M'), '%H:%M:%S')
 
-        end_time = str(json.loads(request.data).get('endTime'))
-        end_time = datetime.strptime(end_time, '%H:%M')
-        end_time = end_time.replace(year=int(now.strftime('%Y')), month=int(now.strftime('%m')), day=int(now.strftime('%d')))
+        end_time = form.get('end-time')
+        end_time = datetime.strftime(datetime.strptime(end_time, '%H:%M'), '%H:%M:%S')
 
-        is_active = str(json.loads(request.data).get('isActive'))
+        is_active = form.get('active')
+
         created = self.sc.create_time_slot(start_time, end_time, is_active)
 
         if created:
             self.wcc.set_alert('success', 'Schedule Created Successfully!')
         else:
             self.wcc.set_alert('danger', 'Schedule already exists!')
-        return self.sc.get_schedules()
+        return redirect(url_for('SchedulesView:create_time_slot'))
 
     @route('deactivate-time-slots', methods=['POST'])
     def deactivate_time_slots(self):
@@ -80,17 +79,18 @@ class SchedulesView(FlaskView):
     @route('/add-tutors-to-shifts', methods=['POST'])
     def add_tutors_to_shifts(self):
         self.wcc.check_roles_and_route(['Administrator'])
+
         start_date = str(json.loads(request.data).get('startDate'))
         end_date = str(json.loads(request.data).get('endDate'))
         if not start_date or not end_date:
             self.wcc.set_alert('danger', 'You must set a start date AND an end date!')
-            return 'danger'
+            return ''
         # Formats the date strings into date objects
         start = datetime.strptime(start_date, '%a %b %d %Y').date()
         end = datetime.strptime(end_date, '%a %b %d %Y').date()
         if start > end:
             self.wcc.set_alert('danger', 'Start date cannot be further in the future than the end date!')
-            return 'danger'
+            return ''
         start_date = datetime.strptime(start_date, '%a %b %d %Y').date()
         end_date = datetime.strptime(end_date, '%a %b %d %Y').date()
         multilingual = str(json.loads(request.data).get('multilingual'))
@@ -103,9 +103,15 @@ class SchedulesView(FlaskView):
             tutors = []
             for tutor in self.sc.get_tutors():
                 tutors.append(tutor.id)
-        self.sc.create_tutor_shifts(start_date, end_date, multilingual, drop_in, tutors, days, time_slots)
+        success = self.sc.create_tutor_shifts(start_date, end_date, multilingual, drop_in, tutors, days, time_slots)
+        if not success:
+            self.wcc.set_alert('warning', 'The shifts failed to be scheduled! One or more of the selected day of week never occurs.')
+            return ''
+        if success == 'warning':
+            self.wcc.set_alert('warning', 'One or more of the shifts failed to be scheduled.')
+            return ''
         self.wcc.set_alert('success', 'Successfully added the tutor(s) to the time slot(s).')
-        return 'success'
+        return ''
 
     @route('/show-schedule', methods=['POST'])
     def show_tutor_schedule(self):
@@ -118,6 +124,7 @@ class SchedulesView(FlaskView):
                 names.append(str(tutor.id))
         all_tutor_appts = self.sc.get_tutor_appointments(names)
         appointments = []
+        # Formats the times to match the fullcalendar desired format
         for tutor_appts in all_tutor_appts:
             for appointment in tutor_appts:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
@@ -210,7 +217,7 @@ class SchedulesView(FlaskView):
                 tutor_ids.append(str(ids.id))
         sub_appts = self.sc.delete_tutor_shifts(tutor_ids, start, end)
         if sub_appts == 'none':
-            return '<h3>All appointments deleted successfully!</h3>'
+            return '<h3>All appointments in the selected range were deleted successfully!</h3>'
         if sub_appts:
             return render_template('schedules/sub_table.html', **locals(), id_to_user=self.sc.get_user_by_id)
         return '<h3>There weren\'t any appointments within the date range selected!</h3>'
@@ -237,6 +244,7 @@ class SchedulesView(FlaskView):
         self.wcc.check_roles_and_route(['Student', 'Tutor', 'Administrator'])
         appts = self.sc.get_all_user_appointments(flask_session['USERNAME'])
         appointments = []
+        # Formats the times to match the fullcalendar desired format
         for appointment in appts:
             if appointment.actualStart and appointment.actualEnd:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
@@ -280,6 +288,7 @@ class SchedulesView(FlaskView):
         self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
         appts = self.sc.get_sub_appointments()
         appointments = []
+        # Formats the times to match the fullcalendar desired format
         for appointment in appts:
             if appointment.actualStart and appointment.actualEnd:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
