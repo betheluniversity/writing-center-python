@@ -206,6 +206,24 @@ class MessageCenterController:
             return True
         return False
 
+    def cancel_appointment_student(self, appointment_id):
+        appointment = self.get_appointment_info(appointment_id)
+        tutor = self.get_user_by_id(appointment.tutor_id)
+
+        appt_info = {
+            'date': appointment.scheduledStart.date(),
+            'time': appointment.scheduledStart.time(),
+            'tutor': '{0} {1}'.format(tutor.firstName, tutor.lastName)
+        }
+
+        subject = 'Appointment Cancelled'
+
+        recipient = tutor.email
+
+        if self.send_message(subject, render_template('emails/cancel_appointment.html', **locals()), recipient, cc='', bcc=''):
+            return True
+        return False
+
     def send_message(self, subject, body, recipients, cc, bcc, html=False):
         # data will be compiled in the above functions and sent here
         if app.config['ENVIRON'] != 'prod':

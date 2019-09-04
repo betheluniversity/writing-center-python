@@ -307,6 +307,7 @@ class AppointmentsView(FlaskView):
         appt_id = str(json.loads(request.data).get('appt_id'))
         cancelled = self.ac.cancel_appointment(appt_id)
         if cancelled:
+            self.mcc.cancel_appointment_student(appt_id)
             self.wcc.set_alert('success', 'Successfully cancelled appointment')
         else:
             self.wcc.set_alert('danger', 'Failed to cancel appointment.')
