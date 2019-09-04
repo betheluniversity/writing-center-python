@@ -61,7 +61,7 @@
                             <td>{{ appointment.profEmail if appointment.profEmail else '' }}</td>
                         </tr>
                     {% endif %}
-                    {% if schedule %}
+                    {% if schedule and not walk_in_hours %}
                         <tr>
                             <th>Select a Course</th>
                             <td>
@@ -84,7 +84,7 @@
                             <td>{{ appointment.courseSection if appointment.courseSection else '' }}</td>
                         </tr>
                     {% endif %}
-                    {% if schedule %}
+                    {% if schedule and not walk_in_hours %}
                         <tr>
                             <th>Describe Your Assignment</th>
                             <td>
@@ -127,7 +127,7 @@
                             </tr>
                         {% endif %}
                     {% endif %}
-                    {% if schedule %}
+                    {% if schedule and not walk_in_hours %}
                         <tr>
                             <th colspan="2"><button class="btn btn-primary darkblue" onclick="scheduleAppointment({{ appt_id }})">Schedule Appointment</button></th>
                         </tr>
@@ -159,6 +159,11 @@
                         {% endif %}
                     {% endif %}
                 </table>
+                {% if schedule and walk_in_hours %}
+                    <p>This is a drop in appointment. You do not need to sign up here. Simply show up to the AESC
+                        office during the time of this appointment, and you will be served on a first come, first
+                        served basis.</p>
+                {% endif %}
                 <div id="save-fail"></div>
             </div>
             <div class="modal-footer">
