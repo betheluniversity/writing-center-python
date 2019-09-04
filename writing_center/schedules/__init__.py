@@ -22,14 +22,13 @@ class SchedulesView(FlaskView):
     def create_time_slot(self):
         self.wcc.check_roles_and_route(['Administrator'])
         schedules = self.sc.get_all_schedules()
-        tutors = self.sc.get_tutors()
         return render_template("schedules/create_time_slot.html", **locals())
 
     @route('/manage-tutor-schedules')
     def manage_tutor_schedules(self):
         self.wcc.check_roles_and_route(['Administrator'])
         schedules = self.sc.get_active_schedules()
-        tutors = self.sc.get_tutors()
+        tutors = self.sc.get_active_tutors()
         time_setting = self.sc.get_time_setting()[0]
         return render_template('schedules/manage_tutor_schedules.html', **locals())
 
@@ -37,7 +36,7 @@ class SchedulesView(FlaskView):
     def view_tutor_schedules(self):
         self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
         schedules = self.sc.get_active_schedules()
-        tutors = self.sc.get_tutors()
+        tutors = self.sc.get_active_tutors()
         time_setting = self.sc.get_time_setting()[0]
         return render_template('schedules/view_tutor_schedule.html', **locals())
 
@@ -101,7 +100,7 @@ class SchedulesView(FlaskView):
 
         if tutors[0] == 'select-all':
             tutors = []
-            for tutor in self.sc.get_tutors():
+            for tutor in self.sc.get_active_tutors():
                 tutors.append(tutor.id)
         success = self.sc.create_tutor_shifts(start_date, end_date, multilingual, drop_in, tutors, days, time_slots)
         if not success:
@@ -118,7 +117,7 @@ class SchedulesView(FlaskView):
         self.wcc.check_roles_and_route(['Administrator'])
         names = json.loads(request.data).get('tutors')
         if 'view-all' in names:
-            tutors = self.sc.get_tutors()
+            tutors = self.sc.get_active_tutors()
             names = []
             for tutor in tutors:
                 names.append(str(tutor.id))
@@ -165,7 +164,7 @@ class SchedulesView(FlaskView):
         if start > end:
             invalid_date = True
         if 'view-all' in tutor_ids:
-            tutors = self.sc.get_tutors()
+            tutors = self.sc.get_active_tutors()
             for tutor in tutors:
                 user = self.sc.get_user_by_id(tutor.id)
                 name = '{0} {1}'.format(user.firstName, user.lastName)
@@ -211,7 +210,7 @@ class SchedulesView(FlaskView):
         # If we get past that check, then we delete the appointment(s) and show the substitution table
         tutor_ids = json.loads(request.data).get('tutors')
         if 'view-all' in tutor_ids:
-            tutors = self.sc.get_tutors()
+            tutors = self.sc.get_active_tutors()
             tutor_ids = []
             for ids in tutors:
                 tutor_ids.append(str(ids.id))
