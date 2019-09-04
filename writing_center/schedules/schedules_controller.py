@@ -58,12 +58,13 @@ class SchedulesController:
             .filter(UserTable.id == user_id)\
             .one_or_none()
 
-    def get_tutors(self):
-        return db_session.query(UserTable)\
-            .filter(UserTable.id == UserRoleTable.user_id)\
-            .filter(UserRoleTable.role_id == RoleTable.id)\
+    def get_active_tutors(self):
+        return db_session.query(UserTable) \
+            .filter(UserTable.id == UserRoleTable.user_id) \
+            .filter(UserRoleTable.role_id == RoleTable.id) \
             .filter(RoleTable.name == 'Tutor')\
-            .order_by(UserTable.lastName)\
+            .filter(UserTable.deletedAt == None)\
+            .order_by(UserTable.lastName) \
             .all()
 
     def create_tutor_shifts(self, start_date, end_date, multilingual, drop_in, tutor_ids, days_of_week, time_slots):

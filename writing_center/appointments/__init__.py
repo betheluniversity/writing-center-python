@@ -39,6 +39,7 @@ class AppointmentsView(FlaskView):
         if 'Tutor' not in flask_session['USER-ROLES']:
             tutor_edit = False
         appointment = self.ac.get_appointment_by_id(appt_id)
+        walk_in_hours = True if appointment.dropIn == 1 else False
         student = self.ac.get_user_by_id(appointment.student_id)
         student_name = 'None'
         if student:
@@ -306,6 +307,7 @@ class AppointmentsView(FlaskView):
         appt_id = str(json.loads(request.data).get('appt_id'))
         cancelled = self.ac.cancel_appointment(appt_id)
         if cancelled:
+            self.mcc.cancel_appointment_student(appt_id)
             self.wcc.set_alert('success', 'Successfully cancelled appointment')
         else:
             self.wcc.set_alert('danger', 'Failed to cancel appointment.')
