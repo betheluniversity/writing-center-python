@@ -68,19 +68,18 @@ class MessageCenterController:
                 .one())
 
     def get_substitute_email_recipients(self):
-        users = (db_session.query(EmailPreferencesTable.user_id)
-                 .filter(EmailPreferencesTable.SubRequestEmail == 1)
-                 .all())
+        users = db_session.query(UserTable)\
+            .filter(UserTable.id == EmailPreferencesTable.user_id)\
+            .filter(EmailPreferencesTable.subRequestEmail == 1)\
+            .filter(UserRoleTable.user_id == UserTable.id)\
+            .filter(RoleTable.id == UserRoleTable.role_id)\
+            .filter(RoleTable.name == 'Tutor' or RoleTable.name == 'Administrator')\
+            .all()
 
-        users.append(db_session.query(UserRoleTable.user_id)
-                     .filter(UserRoleTable.role_id == 1 or UserRoleTable.role_id == 2)
-                     .all())
-
-        users = list(dict.fromkeys(users))
         recipients = []
         for user in users:
             if user.username != session['USERNAME']:
-                recipients.append(self.get_user_by_id(user).email)
+                recipients.append(user.email)
 
         return recipients
 
@@ -182,7 +181,7 @@ class MessageCenterController:
 
         appt_info = {'date': appointment.scheduledStart.date(),
                      'time': appointment.scheduledStart.time(),
-                     'student': student.firstName + ' ' + student.lastName,
+                     'student': '{0} {1}'.format(student.firstName, student.lastName) if student else 'None',
                      'assignment': appointment.assignment,
                      'tutor': tutor.firstName + ' ' + tutor.lastName}
 

@@ -350,8 +350,8 @@ class SchedulesView(FlaskView):
         appt = self.sc.get_one_appointment(appointment_id)
         success = self.sc.request_substitute(appointment_id)
         if success:
-            self.wcc.set_alert('success', 'Successfully requested a substitute!')
             self.mcc.request_substitute(appointment_id)
+            self.wcc.set_alert('success', 'Successfully requested a substitute!')
         else:
             self.wcc.set_alert('danger', 'Error! Substitute not requested.')
         return 'finished'
