@@ -73,6 +73,7 @@ class SchedulesController:
         warning = False
         for day in days_of_week:
             for tutor_id in tutor_ids:
+                tutor_id = int(tutor_id)
                 tutor = self.get_user_by_id(tutor_id)
                 if tutor:
                     for time_slot in time_slots:
