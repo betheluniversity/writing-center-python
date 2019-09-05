@@ -322,6 +322,7 @@ class AppointmentsView(FlaskView):
             appt = self.ac.start_appointment(appt_id)
             if appt:
                 self.wcc.set_alert('success', 'Appointment Started Successfully!')
+                return redirect(url_for('AppointmentsView:in_progress_appointment', appt_id=appt_id))
             else:
                 self.wcc.set_alert('danger', 'Appointment Failed To Start.')
         elif btn_id == 'continue':
@@ -357,6 +358,12 @@ class AppointmentsView(FlaskView):
                 self.wcc.set_alert('danger', 'Failed To Revert No Show')
         qualtrics_link = self.ac.get_survey_link()[0]
         return render_template('appointments/end_appointment.html', **locals())
+
+    @route('in-progress/<int:appt_id>')
+    def in_progress_appointment(self, appt_id):
+        appt = self.ac.get_appointment_by_id(appt_id)
+        student = self.ac.get_user_by_id(appt.student_id)
+        return render_template('appointments/in_progress_appointment.html', **locals())
 
     @route('save-changes', methods=['POST'])
     def save_changes(self):

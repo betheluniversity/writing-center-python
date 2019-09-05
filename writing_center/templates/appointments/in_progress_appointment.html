@@ -1,0 +1,64 @@
+{% extends 'writing_center_base.html' %}
+
+{% block page_title %}In Progress Appointment{% endblock %}
+
+{% block body_content %}
+    <div class="jumbotron">
+        {% if student %}
+            <h1><b>{{ student.firstName }} {{ student.lastName }}'s Appointment in Progress</b></h1>
+        {% else %}
+            <h1><b>Appointment in Progress</b></h1>
+        {% endif %}
+        <p>Fill out the following form as you complete this appointment.</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <form>
+{#            <form action="{{ url_for('AppointmentsView:end_appointment', appt_id=appt_id) }}" method="post">#}
+                <div class="form-row">
+                    <div class="col-md-12">
+                        <label for="notes">Notes</label>
+                        <textarea id="notes" class="form-control" name="notes">{{ appt.notes if appt.notes else "" }}</textarea>
+                    </div>
+                </div>
+                <br>
+                <div class="form-row">
+                    <div class="col-md-12">
+                        <label for="suggestions">Suggestions</label>
+                        <textarea id="suggestions" class="form-control" name="suggestions">{{ appt.suggestions if appt.suggestions else "" }}</textarea>
+                    </div>
+                </div>
+                <br>
+                <div class="form-row">
+                    <div class="col-md-12">
+                        <div class="form-group form-check">
+                            <input type="checkbox" class="form-check-input" id="ferpa" name="ferpa">
+                            {% if student %}
+                                <label class="form-check-label" for="ferpa">Email appointment details to
+                                    {{ student.firstName }} {{ student.lastName }}'s professor</label>
+                            {% else %}
+                                <label class="form-check-label" for="ferpa">Email appointment details to student's
+                                    professor</label>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <button type="submit" class="btn btn-primary">End Appointment</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-md-4">
+            <div class="sub-info card info">
+                <div class="card-body">
+                    <p class="card-text">
+                        Before you complete the appointment enter your notes and suggestions and ask the student if
+                        they want to share the appointment information with their professor.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
