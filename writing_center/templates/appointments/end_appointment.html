@@ -10,12 +10,6 @@
 </div>
 <div class="form-row">
     <div class="col-md-12">
-        <button id="finish" class="btn btn-primary darkblue">Finish</button>
+        <a href="{{ url_for('AppointmentsView:appointments_and_walk_ins') }}" id="finish" class="btn btn-primary darkblue">Finish</a>
     </div>
 </div>
-
-<script>
-    $('#finish').click(function () {
-       window.location.reload()
-    });
-</script>

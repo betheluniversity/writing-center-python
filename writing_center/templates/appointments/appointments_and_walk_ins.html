@@ -38,7 +38,7 @@
                         <th data-toggle="tooltip" data-placement="top" title="Date">Date</th>
                         <th data-toggle="tooltip" data-placement="top" title="Start Time">Start Time</th>
                         <th data-toggle="tooltip" data-placement="top" title="End Time">End Time</th>
-                        <th data-toggle="tooltip" data-placement="top" title="Start Appointment">Start/Continue/End Appointment</th>
+                        <th data-toggle="tooltip" data-placement="top" title="Start Appointment">Start/Continue Appointment</th>
                         <th data-toggle="tooltip" data-placement="top" title="Mark/Unmark as No Show">Mark/Unmark as No Show</th>
                         <th data-toggle="tooltip" data-placement="top" title="View More Info">View More Info</th>
                     </tr>
@@ -61,18 +61,20 @@
                                 </td>
                                 <td>
                                     {% if not appointment.actualStart %}
-                                        <button id="start" value="{{ appointment.id }}" type="button" class="btn btn-primary btn-success">Start Appointment</button>
-                                    {% elif appointment.actualStart and appointment.actualEnd and appointment.inProgress == 0 %}
-                                        <button id="continue" value="{{ appointment.id }}" type="button" class="btn btn-primary background-blue">Continue Appointment</button>
-                                    {% elif appointment.inProgress == 1 %}
-                                        <button id="end" value="{{ appointment.id }}" type="button" class="btn btn-primary btn-danger">End Appointment</button>
+                                        <a id="start" href="{{ url_for('AppointmentsView:start_appointment', appt_id=appointment.id) }}"
+                                           class="btn btn-primary btn-success">Start Appointment</a>
+                                    {% else %}
+                                        <a id="continue" href="{{ url_for('AppointmentsView:in_progress_appointment', appt_id=appointment.id) }}"
+                                           class="btn btn-primary background-blue">Continue Appointment</a>
                                     {% endif %}
                                 </td>
                                 <td>
                                     {% if appointment.noShow == 0 or not appointment.noShow %}
-                                        <button id="no-show" value="{{ appointment.id }}" type="button" class="btn btn-primary btn-danger">Mark as No Show</button>
+                                        <a id="no-show" href="{{ url_for('AppointmentsView:toggle_no_show', appt_id=appointment.id) }}"
+                                           class="btn btn-primary btn-danger">Mark as No Show</a>
                                     {% elif appointment.noShow == 1 %}
-                                        <button id="revert-no-show" value="{{ appointment.id }}" type="button" class="btn btn-primary btn-danger">Revert No Show</button>
+                                        <a id="revert-no-show" href="{{ url_for('AppointmentsView:toggle_no_show', appt_id=appointment.id) }}"
+                                           class="btn btn-primary btn-danger">Revert No Show</a>
                                     {% endif %}
                                 </td>
                                 <td><input type="button" class="btn btn-primary darkblue" value="More Info" onclick="viewInfo({{ appt.id }})"></td>
@@ -88,32 +90,6 @@
     </div>
 
     <script>
-        $("button").click(function() {
-            let id = this.id;
-            let value = this.value;
-            if (id === 'start' || id === 'continue' || id === 'end' || id === 'no-show' || id === 'revert-no-show') {
-                $.ajax({
-                    type: "POST",
-                    url: "{{ url_for('AppointmentsView:handle_scheduled_appointments') }}",
-                    data: JSON.stringify({
-                        'id': id,
-                        'value': value
-                    }),
-                    contentType: 'application/json;charset=UTF-8',
-                    success: function (response) {
-                        if (id === 'end') {
-                            $('#end-appt').html(response)
-                        } else {
-                            window.location.reload(true)
-                        }
-                    },
-                    error: function (error) {
-
-                    }
-                });
-            }
-        });
-
         function beginAppointment() {
             let username = $('#username').val();
             $.ajax({

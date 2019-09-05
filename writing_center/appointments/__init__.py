@@ -359,6 +359,49 @@ class AppointmentsView(FlaskView):
         qualtrics_link = self.ac.get_survey_link()[0]
         return render_template('appointments/end_appointment.html', **locals())
 
+    @route('start-appt/<int:appt_id>')
+    def start_appointment(self, appt_id):
+        try:
+            self.ac.start_appointment(appt_id)
+            self.wcc.set_alert('success', 'Appointment Started Successfully!')
+            return redirect(url_for('AppointmentsView:in_progress_appointment', appt_id=appt_id))
+        except Exception as error:
+            self.wcc.set_alert('danger', 'Failed to start appointment: {0}'.format(error))
+            return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))
+
+    @route('toggle-no-show/<int:appt_id>')
+    def toggle_no_show(self, appt_id):
+        try:
+            appt = self.ac.get_appointment_by_id(appt_id)
+            student = self.ac.get_user_by_id(appt.student_id)
+            if appt.noShow == 0:
+                self.ac.mark_no_show(appt_id)
+                self.ac.ban_if_no_show_check(appt.student_id)
+                self.wcc.set_alert('success', '{0} {1} successfully marked as no show.'.format(student.firstName, student.lastName))
+            else:
+                self.ac.revert_no_show(appt_id)
+                self.wcc.set_alert('success', '{0} {1} no longer marked as no show.'.format(student.firstName, student.lastName))
+        except Exception as error:
+            self.wcc.set_alert('danger', 'Failed to toggle no show: {0}'.format(error))
+        return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))
+
+    @route('end-appt/<int:appt_id>')
+    def end_appointment(self, appt_id):
+        form = request.form
+        notes = form.get('notes')
+        suggestions = form.get('suggestions')
+        ferpa_agreement = True if int(form.get('ferpa')) == 1 else False
+        try:
+            self.ac.end_appointment(appt_id, notes, suggestions)
+            if ferpa_agreement:
+                self.mcc.end_appt_prof(appt_id)
+            qualtrics_link = self.ac.get_survey_link()[0]
+            self.wcc.set_alert('success', 'Appointment ended successfully!')
+            return render_template('appointments/end_appointment.html', **locals())
+        except Exception as error:
+            self.wcc.set_alert('danger', 'Failed to end appointment: {0}'.format(error))
+            return redirect(url_for('AppointmentsView:in_progress_appointment', appt_id=appt_id))
+
     @route('in-progress/<int:appt_id>')
     def in_progress_appointment(self, appt_id):
         appt = self.ac.get_appointment_by_id(appt_id)

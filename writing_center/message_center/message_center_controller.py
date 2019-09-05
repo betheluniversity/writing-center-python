@@ -224,6 +224,31 @@ class MessageCenterController:
             return True
         return False
 
+    def end_appt_prof(self, appt_id):
+        appointment = self.get_appointment_info(appt_id)
+        if appointment.profEmail:
+            tutor = self.get_user_by_id(appointment.tutor_id)
+            student = self.get_user_by_id(appointment.student_id)
+
+            appt_info = {
+                'date': appointment.actualStart.date(),
+                'time': '{0} - {1}'.format(appointment.actualStart.time(), appointment.actualEnd.time()),
+                'tutor': '{0} {1}'.format(tutor.firstName, tutor.lastName),
+                'student': '{0} {1}'.format(student.firstName, student.lastName),
+                'assignment': appointment.assignment,
+                'notes': appointment.notes,
+                'suggestions': appointment.suggestions,
+                'course': '{0} Section {1}'.format(appointment.courseCode, appointment.courseSection)
+            }
+
+            subject = '{0} {1} Writing Center Appointment'.format(student.firstName, student.lastName)
+
+            recipient = appointment.profEmail
+
+            if self.send_message(subject, render_template('emails/prof_email.html', **locals()), recipient, cc='', bcc=''):
+                return True
+        return False
+
     def send_message(self, subject, body, recipients, cc, bcc, html=False):
         # data will be compiled in the above functions and sent here
         if app.config['ENVIRON'] != 'prod':

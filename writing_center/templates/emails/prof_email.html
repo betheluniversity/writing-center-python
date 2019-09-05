@@ -1,0 +1,23 @@
+{% block title %}
+<img height="48"
+    src="https://confluence.bethel.edu/download/attachments/327682/global.logo?version=4&amp;modificationDate=1462424762000&amp;api=v2">
+<span class="ml-2  h6 lab-title">Writing Center</span>
+{% endblock %}
+
+{% block email_content %}
+    <h3>Appointment Details:</h3>
+        <br/>
+        <p>Date: {{ appt_info['date']}}</p>
+        <p>Time: {{ appt_info['time'] }}</p>
+        <p>Student: {{ appt_info['student'] }}</p>
+        <p>Tutor: {{ appt_info['tutor'] }}</p>
+        <p>Course: {{ appt_into['course'] }}</p>
+        <p>Assignment: {{ appt_info['assignment'] }}</p>
+        <p>Notes: {{ appt_info['notes'] }}</p>
+        <p>Suggestions: {{ appt_into['suggestions'] }}</p>
+        <br/>
+{% endblock %}
+
+{% block footer %}
+<p class="card-text">&copy; 2013-{{ now.strftime('%Y') }} Bethel University</p>
+{% endblock %}
