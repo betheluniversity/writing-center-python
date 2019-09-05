@@ -385,12 +385,12 @@ class AppointmentsView(FlaskView):
             self.wcc.set_alert('danger', 'Failed to toggle no show: {0}'.format(error))
         return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))
 
-    @route('end-appt/<int:appt_id>')
+    @route('end-appt/<int:appt_id>', methods=['post'])
     def end_appointment(self, appt_id):
         form = request.form
         notes = form.get('notes')
         suggestions = form.get('suggestions')
-        ferpa_agreement = True if int(form.get('ferpa')) == 1 else False
+        ferpa_agreement = True if form.get('ferpa') == 'on' else False
         try:
             self.ac.end_appointment(appt_id, notes, suggestions)
             if ferpa_agreement:

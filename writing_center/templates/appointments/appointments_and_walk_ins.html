@@ -54,10 +54,10 @@
                                     {{ appointment.scheduledStart|datetimeformat('%m/%d/%y') }}
                                 </td>
                                 <td>
-                                    {{ appointment.actualStart|datetimeformat }}
+                                    {{ appointment.scheduledStart|datetimeformat }}
                                 </td>
                                 <td>
-                                    {{ appointment.actualEnd|datetimeformat }}
+                                    {{ appointment.scheduledEnd|datetimeformat }}
                                 </td>
                                 <td>
                                     {% if not appointment.actualStart %}
