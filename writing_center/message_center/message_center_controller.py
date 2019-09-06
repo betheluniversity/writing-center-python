@@ -99,7 +99,7 @@ class MessageCenterController:
 
         recipients = student.email
 
-        self.send_message(subject, render_template('emails/session_email_student.html', **locals()), recipients, cc='', bcc='')
+        self.send_message(subject, render_template('emails/session_email_student.html', **locals()), recipients, cc='', bcc='', html=True)
 
     def close_session_tutor(self, appointment_id, to_prof):  # Todo needs to be connected
         appointment = self.get_appointment_info(appointment_id)
@@ -129,11 +129,11 @@ class MessageCenterController:
 
         if to_prof:
             cc = appointment.profEmail
-            if self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, cc, bcc=''):
+            if self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, cc, bcc='', html=True):
                 return True
             return False
         else:
-            if self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, cc='', bcc=''):
+            if self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, cc='', bcc='', html=True):
                 return True
             return False
 
@@ -150,7 +150,7 @@ class MessageCenterController:
 
         recipient = student.email
 
-        if self.send_message(subject, render_template('emails/appointment_signup_student.html', **locals()), recipient, cc='', bcc=''):
+        if self.send_message(subject, render_template('emails/appointment_signup_student.html', **locals()), recipient, cc='', bcc='', html=True):
             return True
         return False
 
@@ -169,7 +169,7 @@ class MessageCenterController:
 
             recipient = tutor.email
 
-            if self.send_message(subject, render_template('emails/appointment_signup_tutor.html', **locals()), recipient, cc='', bcc=''):
+            if self.send_message(subject, render_template('emails/appointment_signup_tutor.html', **locals()), recipient, cc='', bcc='', html=True):
                 return True
             return False
         return False
@@ -189,7 +189,7 @@ class MessageCenterController:
 
         recipients = self.get_substitute_email_recipients()
 
-        if self.send_message(subject, render_template('emails/sub_request.html', **locals()), recipients, cc='', bcc=''):
+        if self.send_message(subject, render_template('emails/sub_request.html', **locals()), recipients, cc='', bcc='', html=True):
             return True
         return False
 
@@ -202,7 +202,7 @@ class MessageCenterController:
 
         recipient = old_tutor.email
 
-        if self.send_message(subject, render_template('emails/sub_request_fulfilled.html', **locals()), recipient, cc='', bcc=''):
+        if self.send_message(subject, render_template('emails/sub_request_fulfilled.html', **locals()), recipient, cc='', bcc='', html=True):
             return True
         return False
 
@@ -220,7 +220,7 @@ class MessageCenterController:
 
         recipient = tutor.email
 
-        if self.send_message(subject, render_template('emails/cancel_appointment.html', **locals()), recipient, cc='', bcc=''):
+        if self.send_message(subject, render_template('emails/cancel_appointment.html', **locals()), recipient, cc='', bcc='', html=True):
             return True
         return False
 
@@ -245,7 +245,7 @@ class MessageCenterController:
 
             recipient = appointment.profEmail
 
-            if self.send_message(subject, render_template('emails/prof_email.html', **locals()), recipient, cc='', bcc=''):
+            if self.send_message(subject, render_template('emails/prof_email.html', **locals()), recipient, cc='', bcc='', html=True):
                 return True
         return False
 
