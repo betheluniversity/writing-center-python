@@ -74,6 +74,7 @@ class MessageCenterController:
             .filter(UserRoleTable.user_id == UserTable.id)\
             .filter(RoleTable.id == UserRoleTable.role_id)\
             .filter(RoleTable.name == 'Tutor' or RoleTable.name == 'Administrator')\
+            .filter(UserTable.deletedAt == None)\
             .all()
 
         recipients = []
