@@ -473,13 +473,13 @@ class AppointmentsView(FlaskView):
         if not date or not sched_start_time or not sched_end_time:
             self.wcc.set_alert('danger', 'You must select a date and a scheduled start and end time.')
             return redirect(url_for('AppointmentsView:edit', appt_id=appt_id))
-        sched_start = "{0} {1}".format(datetime.strptime(date, "%m/%d/%Y").strftime("%Y-%m-%d"), sched_start_time)
-        sched_end = "{0} {1}".format(datetime.strptime(date, "%m/%d/%Y").strftime("%Y-%m-%d"), sched_end_time)
+        sched_start = "{0} {1}".format(datetime.strptime(date, '%a %b %d %Y').strftime("%Y-%m-%d"), sched_start_time)
+        sched_end = "{0} {1}".format(datetime.strptime(date, '%a %b %d %Y').strftime("%Y-%m-%d"), sched_end_time)
 
         actual_start_time = None if form.get('actual-start') == '' else form.get('actual-start')
         actual_end_time = None if form.get('actual-end') == '' else form.get('actual-end')
-        actual_start = None if not actual_start_time else "{0} {1}".format(datetime.strptime(date, "%m/%d/%Y").strftime("%Y-%m-%d"), actual_start_time)
-        actual_end = None if not actual_end_time else "{0} {1}".format(datetime.strptime(date, "%m/%d/%Y").strftime("%Y-%m-%d"), actual_end_time)
+        actual_start = None if not actual_start_time else "{0} {1}".format(datetime.strptime(date, '%a %b %d %Y').strftime("%Y-%m-%d"), actual_start_time)
+        actual_end = None if not actual_end_time else "{0} {1}".format(datetime.strptime(date, '%a %b %d %Y').strftime("%Y-%m-%d"), actual_end_time)
 
         prof = None if form.get('prof') == 'None' else form.get('prof')
         prof_email = None if form.get('email') == 'None' else form.get('email')
