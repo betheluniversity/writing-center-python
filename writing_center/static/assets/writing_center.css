@@ -284,6 +284,10 @@ ul.list-group{
     flex: 0 0 4%;
 }
 
+.ss-multiple-selected {
+    min-height: 30px !important;
+}
+
 .transparent {
     background-color: transparent;
     border: none;
