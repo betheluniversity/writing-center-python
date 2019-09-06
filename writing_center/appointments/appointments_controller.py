@@ -101,12 +101,14 @@ class AppointmentsController:
             begin_appt = AppointmentsTable(student_id=user.id, tutor_id=tutor.id, scheduledStart=datetime.now(),
                                            actualStart=datetime.now(), profName=prof_name, profEmail=prof_email,
                                            assignment=assignment, courseCode=course_code, courseSection=course_section,
-                                           inProgress=1)
+                                           inProgress=1, dropIn=1, sub=0, multilingual=0, noShow=0)
         else:
             begin_appt = AppointmentsTable(student_id=user.id, tutor_id=tutor.id, scheduledStart=datetime.now(),
-                                           actualStart=datetime.now(), assignment=assignment, inProgress=1)
+                                           actualStart=datetime.now(), assignment=assignment, inProgress=1, dropIn=1,
+                                           sub=0, multilingual=0, noShow=0)
         db_session.add(begin_appt)
         db_session.commit()
+        return begin_appt
 
     def get_scheduled_appointments(self, username):
         tutor = self.get_user_by_username(username)
@@ -131,86 +133,51 @@ class AppointmentsController:
             return False
 
     def mark_no_show(self, appt_id):
-        try:
-            appointment = db_session.query(AppointmentsTable)\
-                .filter(AppointmentsTable.id == appt_id)\
-                .one_or_none()
-            appointment.noShow = 1
-            db_session.commit()
-            return True
-        except Exception as e:
-            return False
+        appointment = db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.id == appt_id)\
+            .one_or_none()
+        appointment.noShow = 1
+        db_session.commit()
 
     def revert_no_show(self, appt_id):
-        try:
-            appointment = db_session.query(AppointmentsTable)\
-                .filter(AppointmentsTable.id == appt_id)\
-                .one_or_none()
-            appointment.noShow = 0
-            db_session.commit()
-            return True
-        except Exception as e:
-            return False
+        appointment = db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.id == appt_id)\
+            .one_or_none()
+        appointment.noShow = 0
+        db_session.commit()
 
     def ban_if_no_show_check(self, user_id):
-        try:
-            no_show_count = db_session.query(AppointmentsTable)\
-                .filter(AppointmentsTable.student_id == user_id)\
-                .filter(AppointmentsTable.noShow == 1)\
-                .count()
-            if no_show_count > int(self.get_ban_limit()[0]):
-                banned = self.ban_user(user_id)
-                return banned
-            return False
-        except Exception as e:
-            return False
+        no_show_count = db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.student_id == user_id)\
+            .filter(AppointmentsTable.noShow == 1)\
+            .count()
+        if no_show_count > int(self.get_ban_limit()[0]):
+            self.ban_user(user_id)
 
     def ban_user(self, user_id):
-        try:
-            user = self.get_user_by_id(user_id)
-            user.bannedDate = datetime.now()
-            db_session.commit()
-            return True
-        except Exception as e:
-            return False
-
-    def continue_appointment(self, appt_id):
-        try:
-            appointment = db_session.query(AppointmentsTable)\
-                .filter(AppointmentsTable.id == appt_id)\
-                .one_or_none()
-            appointment.inProgress = 1
-            appointment.actualEnd = None
-            db_session.commit()
-            return True
-        except Exception as e:
-            return False
+        user = self.get_user_by_id(user_id)
+        user.bannedDate = datetime.now()
+        db_session.commit()
 
     def start_appointment(self, appt_id):
-        try:
-            appointment = db_session.query(AppointmentsTable) \
-                .filter(AppointmentsTable.id == appt_id) \
-                .one_or_none()
-            appointment.inProgress = 1
-            appointment.actualStart = datetime.now()
-            db_session.commit()
-            return True
-        except Exception as e:
-            return False
+        appointment = db_session.query(AppointmentsTable) \
+            .filter(AppointmentsTable.id == appt_id) \
+            .one_or_none()
+        appointment.inProgress = 1
+        appointment.actualStart = datetime.now()
+        db_session.commit()
 
-    def end_appointment(self, appt_id):
-        try:
-            appointment = db_session.query(AppointmentsTable)\
-                .filter(AppointmentsTable.id == appt_id)\
-                .one_or_none()
-            appointment.inProgress = 0
-            appointment.actualEnd = datetime.now()
-            if not appointment.scheduledEnd:
-                appointment.scheduledEnd = datetime.now()
-            db_session.commit()
-            return True
-        except Exception as e:
-            return False
+    def end_appointment(self, appt_id, notes, suggestions):
+        appointment = db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.id == appt_id)\
+            .one_or_none()
+        appointment.inProgress = 0
+        appointment.notes = notes
+        appointment.suggestions = suggestions
+        appointment.actualEnd = datetime.now()
+        if not appointment.scheduledEnd:
+            appointment.scheduledEnd = datetime.now()
+        db_session.commit()
 
     def get_appointment_by_id(self, appt_id):
         return db_session.query(AppointmentsTable)\

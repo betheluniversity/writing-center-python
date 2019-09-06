@@ -79,38 +79,38 @@ class SchedulesView(FlaskView):
     def add_tutors_to_shifts(self):
         self.wcc.check_roles_and_route(['Administrator'])
 
-        start_date = str(json.loads(request.data).get('startDate'))
-        end_date = str(json.loads(request.data).get('endDate'))
+        form = request.form
+
+        start_date = form.get('start-date')
+        end_date = form.get('end-date')
         if not start_date or not end_date:
             self.wcc.set_alert('danger', 'You must set a start date AND an end date!')
-            return ''
+            return redirect(url_for('SchedulesView:manage_tutor_schedules'))
         # Formats the date strings into date objects
         start = datetime.strptime(start_date, '%a %b %d %Y').date()
         end = datetime.strptime(end_date, '%a %b %d %Y').date()
         if start > end:
             self.wcc.set_alert('danger', 'Start date cannot be further in the future than the end date!')
-            return ''
-        start_date = datetime.strptime(start_date, '%a %b %d %Y').date()
-        end_date = datetime.strptime(end_date, '%a %b %d %Y').date()
-        multilingual = str(json.loads(request.data).get('multilingual'))
-        drop_in = str(json.loads(request.data).get('dropIn'))
-        tutors = json.loads(request.data).get('tutors')
-        days = json.loads(request.data).get('days')
-        time_slots = json.loads(request.data).get('timeSlots')
+            return redirect(url_for('SchedulesView:manage_tutor_schedules'))
+        multilingual = int(form.get('multilingual'))
+        drop_in = int(form.get('drop-in'))
+        tutors = form.getlist('tutors')
+        days = form.getlist('days')
+        time_slots = form.getlist('time-slots')
 
-        if tutors[0] == 'select-all':
+        if tutors[0] == 'Select All Tutors':
             tutors = []
             for tutor in self.sc.get_active_tutors():
                 tutors.append(tutor.id)
-        success = self.sc.create_tutor_shifts(start_date, end_date, multilingual, drop_in, tutors, days, time_slots)
+        success = self.sc.create_tutor_shifts(start, end, multilingual, drop_in, tutors, days, time_slots)
         if not success:
             self.wcc.set_alert('warning', 'The shifts failed to be scheduled! One or more of the selected day of week never occurs.')
-            return ''
+            return redirect(url_for('SchedulesView:manage_tutor_schedules'))
         if success == 'warning':
             self.wcc.set_alert('warning', 'One or more of the shifts failed to be scheduled.')
-            return ''
+            return redirect(url_for('SchedulesView:manage_tutor_schedules'))
         self.wcc.set_alert('success', 'Successfully added the tutor(s) to the time slot(s).')
-        return ''
+        return redirect(url_for('SchedulesView:manage_tutor_schedules'))
 
     @route('/show-schedule', methods=['POST'])
     def show_tutor_schedule(self):
