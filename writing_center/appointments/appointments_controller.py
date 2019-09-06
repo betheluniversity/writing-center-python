@@ -101,10 +101,11 @@ class AppointmentsController:
             begin_appt = AppointmentsTable(student_id=user.id, tutor_id=tutor.id, scheduledStart=datetime.now(),
                                            actualStart=datetime.now(), profName=prof_name, profEmail=prof_email,
                                            assignment=assignment, courseCode=course_code, courseSection=course_section,
-                                           inProgress=1)
+                                           inProgress=1, dropIn=1, sub=0, multilingual=0, noShow=0)
         else:
             begin_appt = AppointmentsTable(student_id=user.id, tutor_id=tutor.id, scheduledStart=datetime.now(),
-                                           actualStart=datetime.now(), assignment=assignment, inProgress=1)
+                                           actualStart=datetime.now(), assignment=assignment, inProgress=1, dropIn=1,
+                                           sub=0, multilingual=0, noShow=0)
         db_session.add(begin_appt)
         db_session.commit()
         return begin_appt
