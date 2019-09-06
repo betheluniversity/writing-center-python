@@ -253,7 +253,8 @@ class MessageCenterController:
         # data will be compiled in the above functions and sent here
         if app.config['ENVIRON'] != 'prod':
             print('Would have sent email to: {0} cc: {1}, bcc: {2}'.format(str(recipients), str(cc), str(bcc)))
-            subject = '{0}'.format(subject)
+            subject = '{0}: Would have sent email to - {1} cc: {2}, bcc: {3}'.format(subject, str(recipients), str(cc), str(bcc))
+            recipients = app.config['TEST_EMAIL']
 
         # if we are sending a message to a single user, go ahead and convert the string into a list
         if isinstance(recipients, str):
