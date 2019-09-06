@@ -255,6 +255,8 @@ class MessageCenterController:
             print('Would have sent email to: {0} cc: {1}, bcc: {2}'.format(str(recipients), str(cc), str(bcc)))
             subject = '{0}: Would have sent email to - {1} cc: {2}, bcc: {3}'.format(subject, str(recipients), str(cc), str(bcc))
             recipients = app.config['TEST_EMAIL']
+            cc = []
+            bcc = []
 
         # if we are sending a message to a single user, go ahead and convert the string into a list
         if isinstance(recipients, str):
