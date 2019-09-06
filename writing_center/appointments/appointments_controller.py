@@ -107,6 +107,7 @@ class AppointmentsController:
                                            actualStart=datetime.now(), assignment=assignment, inProgress=1)
         db_session.add(begin_appt)
         db_session.commit()
+        return begin_appt
 
     def get_scheduled_appointments(self, username):
         tutor = self.get_user_by_username(username)

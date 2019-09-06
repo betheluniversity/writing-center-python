@@ -131,9 +131,11 @@ class AppointmentsView(FlaskView):
     @route('begin-walk-in', methods=['POST'])
     def begin_walk_in(self):
         self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
-        username = str(json.loads(request.data).get('username'))
-        course = json.loads(request.data).get('course')
-        assignment = str(json.loads(request.data).get('username'))
+
+        form = request.form
+        username = form.get('username')
+        course = form.get('course')
+        assignment = form.get('assignment')
         if 'no-course' == course:
             course = None
         else:
@@ -151,9 +153,9 @@ class AppointmentsView(FlaskView):
                     break
         user = self.ac.get_user_by_username(username)
         tutor = self.ac.get_user_by_username(flask_session['USERNAME'])
-        self.ac.begin_walk_in_appointment(user, tutor, course, assignment)
+        appt = self.ac.begin_walk_in_appointment(user, tutor, course, assignment)
         self.wcc.set_alert('success', 'Appointment for ' + user.firstName + ' ' + user.lastName + ' started')
-        return 'success'
+        return redirect(url_for('AppointmentsView:in_progress_appointment', appt_id=appt.id))
 
     @route('search-appointments')
     def search_appointments(self):
