@@ -15,7 +15,7 @@
                 <div id="tutors">
                     <h3>Tutors</h3>
                     <select id="tutors-schedule" class="chosen-container" size="7" multiple="multiple" onchange="tutorsChanged()">
-                        <option id="view-all" class="select-hr" value="View All">View All Schedules</option>
+                        <option id="view-all" class="select-hr" value="View All" selected>View All Schedules</option>
                         {% for tutor in tutors %}
                             <option id="{{ tutor.id }}" value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
                         {% endfor %}
@@ -278,5 +278,12 @@
                 button.val('view-sub');
             }
         }
+
+        // Need to wait just a little otherwise db gets overwhelmed with calls
+        $(document).ready(function(){
+            setTimeout(function(){
+                tutorsChanged();
+            }, 250);
+        });
     </script>
 {% endblock %}
