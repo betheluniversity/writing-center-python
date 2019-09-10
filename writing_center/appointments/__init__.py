@@ -175,6 +175,10 @@ class AppointmentsView(FlaskView):
     @route('get-appointments', methods=['GET'])
     def get_users_appointments(self):
         self.wcc.check_roles_and_route(['Student', 'Administrator'])
+
+        if flask_session['USERNAME'] in ['Student', 'Tutor', 'Administrator', 'Observer']:
+            return ''
+
         appts = self.ac.get_all_user_appointments(flask_session['USERNAME'])
         appointments = []
         # Formats the times to match the fullcalendar desired format

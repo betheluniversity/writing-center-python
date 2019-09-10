@@ -32,6 +32,10 @@ class StatisticsView(FlaskView):
     @route('/get-hours', methods=['POST'])
     def get_hours_worked(self):
         self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
+
+        if flask_session['USERNAME'] in ['Student', 'Tutor', 'Administrator', 'Observer']:
+            return "No user selected"
+
         start = str(json.loads(request.data).get('start'))
         end = str(json.loads(request.data).get('end'))
         start = datetime.strptime(start, '%a %b %d %Y')
