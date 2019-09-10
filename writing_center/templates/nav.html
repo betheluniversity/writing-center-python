@@ -19,7 +19,7 @@
                     <a class="dropdown-item" href="{{ url_for('AppointmentsView:student_view_appointments') }}">View Your Appointments</a>
                 {% endif %}
                 {% if 'Tutor' in session['USER-ROLES'] or 'Administrator' in session['USER-ROLES'] %}
-                    <a class="dropdown-item" href="{{ url_for('AppointmentsView:appointments_and_walk_ins') }}">Appointments and Walk Ins</a>
+                    <a class="dropdown-item" href="{{ url_for('AppointmentsView:appointments_and_walk_ins') }}">Begin a Session</a>
                 {% endif %}
                 {% if 'Observer' in session['USER-ROLES'] or 'Administrator' in session['USER-ROLES'] %}
                     <a class="dropdown-item" href="{{ url_for('AppointmentsView:view_appointments') }}">View All Appointments</a>

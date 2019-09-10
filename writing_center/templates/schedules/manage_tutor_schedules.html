@@ -102,7 +102,7 @@
             <div id="tutors">
                 <h3>Tutors</h3>
                 <select id="tutors-schedule" class="chosen-container" size="7" multiple="multiple" onchange="tutorsChanged()">
-                    <option id="view-all" class="select-hr" value="View All">View All Schedules</option>
+                    <option id="view-all" class="select-hr" value="View All" selected>View All Schedules</option>
                     {% for tutor in tutors %}
                         <option id="{{ tutor.id }}" value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
                     {% endfor %}
@@ -172,6 +172,10 @@
                     <tr>
                         <td class="calendar-green">Green</td>
                         <td>Drop-in Hours</td>
+                    </tr>
+                    <tr>
+                        <td class="calendar-red">Red</td>
+                        <td>Sub Requested</td>
                     </tr>
                 </tbody>
             </table>
@@ -321,7 +325,15 @@
                     calendar.removeAllEvents();
                     calendar.batchRendering(function() {
                         for (let i = 0; i < response.length; i ++) {
-                            if (response[i].multilingual === 1) {
+                            if (response[i].sub === 1){
+                                calendar.addEvent({
+                                    id: response[i].id,
+                                    title: response[i].tutorUsername,
+                                    start: response[i].startTime,
+                                    end: response[i].endTime,
+                                    color: 'red'
+                                });
+                            } else if (response[i].multilingual === 1) {
                                 calendar.addEvent({
                                     id: response[i].id,
                                     title: response[i].tutorUsername,
@@ -473,5 +485,12 @@
                 }
             });
         }
+
+        // Need to wait just a little otherwise db gets overwhelmed with calls
+        $(document).ready(function(){
+            setTimeout(function(){
+                tutorsChanged();
+            }, 250);
+        });
     </script>
 {% endblock %}

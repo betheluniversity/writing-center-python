@@ -143,6 +143,10 @@ ul.list-group{
     background-color: orange;
 }
 
+.calendar-red{
+    background-color: #FF0000;
+}
+
 .chosen {
     height: 29px !important;
 }
