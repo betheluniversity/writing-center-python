@@ -138,10 +138,11 @@ class SchedulesView(FlaskView):
                                                             appointment.scheduledEnd.strftime('%H'),
                                                             appointment.scheduledEnd.strftime('%M'),
                                                             appointment.scheduledEnd.strftime('%S'))
+                tutor = self.sc.get_user_by_id(appointment.tutor_id)
                 appointments.append({
                     'id': appointment.id,
                     'studentId': appointment.student_id,
-                    'tutorUsername': self.sc.get_user_by_id(appointment.tutor_id).username,
+                    'tutorName': '{0} {1}'.format(tutor.firstName, tutor.lastName),
                     'startTime': start_time,
                     'endTime': end_time,
                     'multilingual': appointment.multilingual,
@@ -276,10 +277,11 @@ class SchedulesView(FlaskView):
                                                             appointment.scheduledEnd.strftime('%H'),
                                                             appointment.scheduledEnd.strftime('%M'),
                                                             appointment.scheduledEnd.strftime('%S'))
+            tutor = self.sc.get_user_by_id(appointment.tutor_id)
             appointments.append({
                 'id': appointment.id,
                 'studentId': appointment.student_id,
-                'tutorUsername': self.sc.get_user_by_id(appointment.tutor_id).username,
+                'tutorName': '{0} {1}'.format(tutor.firstName, tutor.lastName),
                 'startTime': start_time,
                 'endTime': end_time,
                 'multilingual': appointment.multilingual,
@@ -321,10 +323,11 @@ class SchedulesView(FlaskView):
                                                             appointment.scheduledEnd.strftime('%H'),
                                                             appointment.scheduledEnd.strftime('%M'),
                                                             appointment.scheduledEnd.strftime('%S'))
+            tutor = self.sc.get_user_by_id(appointment.tutor_id)
             appointments.append({
                 'id': appointment.id,
                 'studentId': appointment.student_id,
-                'tutorUsername': self.sc.get_user_by_id(appointment.tutor_id).username,
+                'tutorName': '{0} {1}'.format(tutor.firstName, tutor.lastName),
                 'startTime': start_time,
                 'endTime': end_time,
                 'multilingual': appointment.multilingual,
