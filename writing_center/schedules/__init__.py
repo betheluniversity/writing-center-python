@@ -194,6 +194,19 @@ class SchedulesView(FlaskView):
             self.wcc.set_alert('danger', 'Failed to delete appointment!')
             return redirect(url_for('SchedulesView:manage_tutor_schedules'))
 
+    @route('confirm-delete', methods=['post'])
+    def confirm_delete_appointment(self):
+        self.wcc.check_roles_and_route(['Administrator'])
+
+        appt_id = str(json.loads(request.data).get('appt_id'))
+        deleted = self.sc.confirm_delete_appointment(appt_id)
+        if deleted:
+            # TODO: probably should send an email here
+            return appt_id
+        else:
+            self.wcc.set_alert('danger', 'Failed to delete appointment!')
+            return redirect(url_for('SchedulesView:manage_tutor_schedules'))
+
     @route('delete-tutor-shifts', methods=['POST'])
     def delete_tutors_from_shifts(self):
         self.wcc.check_roles_and_route(['Administrator'])

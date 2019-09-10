@@ -216,6 +216,15 @@ class SchedulesController:
         except Exception as e:
             return False
 
+    def confirm_delete_appointment(self, appt_id):
+        try:
+            appointment = db_session.query(AppointmentsTable).filter(AppointmentsTable.id == appt_id).one_or_none()
+            db_session.delete(appointment)
+            db_session.commit()
+            return True
+        except Exception as e:
+            return False
+
     def pickup_shift(self, appt_id, username):
         try:
             appointment = db_session.query(AppointmentsTable) \
