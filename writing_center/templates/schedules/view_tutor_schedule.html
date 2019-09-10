@@ -315,11 +315,14 @@
             }
         }
 
-        // Need to wait just a little otherwise db gets overwhelmed with calls
-        $(document).ready(function(){
-            setTimeout(function(){
-                tutorsChanged();
-            }, 250);
-        });
+        {% if 'Administrator' in session['USER-ROLES'] %}
+            // Need to wait just a little otherwise db gets overwhelmed with calls
+            $(document).ready(function(){
+
+                setTimeout(function(){
+                    tutorsChanged();
+                }, 250);
+            });
+        {% endif %}
     </script>
 {% endblock %}

@@ -114,7 +114,7 @@ class SchedulesView(FlaskView):
 
     @route('/show-schedule', methods=['POST'])
     def show_tutor_schedule(self):
-        self.wcc.check_roles_and_route(['Administrator'])
+        self.wcc.check_roles_and_route(['Administrator', 'Tutor'])
         names = json.loads(request.data).get('tutors')
         if 'view-all' in names:
             tutors = self.sc.get_active_tutors()
