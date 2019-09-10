@@ -138,10 +138,11 @@ class SchedulesView(FlaskView):
                                                             appointment.scheduledEnd.strftime('%H'),
                                                             appointment.scheduledEnd.strftime('%M'),
                                                             appointment.scheduledEnd.strftime('%S'))
+                tutor = self.sc.get_user_by_id(appointment.tutor_id)
                 appointments.append({
                     'id': appointment.id,
                     'studentId': appointment.student_id,
-                    'tutorUsername': self.sc.get_user_by_id(appointment.tutor_id).username,
+                    'tutorName': '{0} {1}'.format(tutor.firstName, tutor.lastName),
                     'startTime': start_time,
                     'endTime': end_time,
                     'multilingual': appointment.multilingual,
@@ -189,6 +190,19 @@ class SchedulesView(FlaskView):
                 return deleted
             else:
                 return appt_id
+        else:
+            self.wcc.set_alert('danger', 'Failed to delete appointment!')
+            return redirect(url_for('SchedulesView:manage_tutor_schedules'))
+
+    @route('confirm-delete', methods=['post'])
+    def confirm_delete_appointment(self):
+        self.wcc.check_roles_and_route(['Administrator'])
+
+        appt_id = str(json.loads(request.data).get('appt_id'))
+        deleted = self.sc.confirm_delete_appointment(appt_id)
+        if deleted:
+            # TODO: probably should send an email here
+            return appt_id
         else:
             self.wcc.set_alert('danger', 'Failed to delete appointment!')
             return redirect(url_for('SchedulesView:manage_tutor_schedules'))
@@ -242,6 +256,10 @@ class SchedulesView(FlaskView):
     @route('get-appointments', methods=['GET'])
     def get_users_appointments(self):
         self.wcc.check_roles_and_route(['Student', 'Tutor', 'Administrator'])
+
+        if flask_session['USERNAME'] in ['Student', 'Tutor', 'Administrator', 'Observer']:
+            return ''
+
         appts = self.sc.get_all_user_appointments(flask_session['USERNAME'])
         appointments = []
         # Formats the times to match the fullcalendar desired format
@@ -272,10 +290,11 @@ class SchedulesView(FlaskView):
                                                             appointment.scheduledEnd.strftime('%H'),
                                                             appointment.scheduledEnd.strftime('%M'),
                                                             appointment.scheduledEnd.strftime('%S'))
+            tutor = self.sc.get_user_by_id(appointment.tutor_id)
             appointments.append({
                 'id': appointment.id,
                 'studentId': appointment.student_id,
-                'tutorUsername': self.sc.get_user_by_id(appointment.tutor_id).username,
+                'tutorName': '{0} {1}'.format(tutor.firstName, tutor.lastName),
                 'startTime': start_time,
                 'endTime': end_time,
                 'multilingual': appointment.multilingual,
@@ -317,10 +336,11 @@ class SchedulesView(FlaskView):
                                                             appointment.scheduledEnd.strftime('%H'),
                                                             appointment.scheduledEnd.strftime('%M'),
                                                             appointment.scheduledEnd.strftime('%S'))
+            tutor = self.sc.get_user_by_id(appointment.tutor_id)
             appointments.append({
                 'id': appointment.id,
                 'studentId': appointment.student_id,
-                'tutorUsername': self.sc.get_user_by_id(appointment.tutor_id).username,
+                'tutorName': '{0} {1}'.format(tutor.firstName, tutor.lastName),
                 'startTime': start_time,
                 'endTime': end_time,
                 'multilingual': appointment.multilingual,

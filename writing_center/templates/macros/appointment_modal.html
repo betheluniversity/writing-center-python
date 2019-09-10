@@ -179,6 +179,26 @@
     </div>
 </div>
 
+<div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="modal-label-delete" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-label-delete">Confirm Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>There is a student already signed up for this appointment. Are you sure you want to delete it?</p>
+            </div>
+            <div class="modal-footer">
+                <button style="margin-left: 10px" class="btn btn-primary btn-danger" onclick="confirmDeleteAppointment({{ appt_id }})">Delete Appointment</button>
+                <button type="button" class="btn btn-primary darkblue" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
     function scheduleAppointment(appt_id) {
         let course = '';
@@ -229,11 +249,8 @@
             contentType: 'application/json;charset=UTF-8',
             success: function (response) {
                 if (response === 'sub') {
-                    if (type === 'request') {
-                        $('#request-sub-container').html("<h6><b>Error!</b> You cannot delete the appointment since it is already scheduled. Instead request a substitute by clicking on the button.</h6><button style=\"margin-left: 10px\" class=\"btn btn-primary darkblue\" onclick=\"requestSub()\">Request Substitute</button>")
-                    } else if (type === 'pickup') {
-                        $('#pickup-sub-container').html("<h6><b>Error!</b> You cannot delete the appointment since it is already scheduled. Instead request a substitute by clicking on the button.</h6><button style=\"margin-left: 10px\" class=\"btn btn-primary darkblue\" onclick=\"requestSub()\">Request Substitute</button>")
-                    }
+                    $('#info-modal').modal('hide');
+                    $('#delete-modal').modal('show');
                 } else {
                     let event = calendar.getEventById(response);
                     event.remove();
@@ -302,5 +319,23 @@
             }
         })
 
+    }
+
+    function confirmDeleteAppointment(appt_id) {
+        $.ajax({
+            type: "POST",
+            url: "{{ url_for('SchedulesView:confirm_delete_appointment') }}",
+            data: JSON.stringify({
+                'appt_id': appt_id,
+            }),
+            contentType: 'application/json;charset=UTF-8',
+            success: function (response) {
+                let event = calendar.getEventById(response);
+                event.remove();
+                $('#delete-modal').modal('hide');
+            },
+            error: function (error) {
+            }
+        });
     }
 </script>

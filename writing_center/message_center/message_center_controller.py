@@ -1,8 +1,8 @@
 # Packages
 import socket
 from flask import render_template, session
-from flask_classy import route
 from flask_mail import Mail, Message
+from datetime import datetime
 
 # Local
 from writing_center import app
@@ -143,8 +143,8 @@ class MessageCenterController:
         appointment = self.get_appointment_info(appointment_id)
         student = self.get_user_by_id(appointment.student_id)
         tutor = self.get_user_by_id(appointment.tutor_id)
-        appt_info = {'date': appointment.scheduledStart.date(),
-                     'time': appointment.scheduledStart.time(),
+        appt_info = {'date': appointment.scheduledStart.date().strftime("%m/%d/%Y"),
+                     'time': appointment.scheduledStart.time().strftime("%I:%M %p"),
                      'tutor': tutor.firstName + ' ' + tutor.lastName}
         # other email information: recipient, subject, body
         subject = 'Appointment on {0}'.format(appointment.scheduledStart.date())
@@ -160,8 +160,8 @@ class MessageCenterController:
         student = self.get_user_by_id(appointment.student_id)
         tutor = self.get_user_by_id(appointment.tutor_id)
         if self.get_email_preferences_by_id(tutor.id).studentSignUpEmail == 1:
-            appt_info = {'date': appointment.scheduledStart.date(),
-                         'time': appointment.scheduledStart.time(),
+            appt_info = {'date': appointment.scheduledStart.date().strftime("%m/%d/%Y"),
+                         'time': appointment.scheduledStart.time().strftime("%I:%M %p"),
                          'student': student.firstName + ' ' + student.lastName,
                          'assignment': appointment.assignment}
 
@@ -180,8 +180,8 @@ class MessageCenterController:
         student = self.get_user_by_id(appointment.student_id)
         tutor = self.get_user_by_id(appointment.tutor_id)
 
-        appt_info = {'date': appointment.scheduledStart.date(),
-                     'time': appointment.scheduledStart.time(),
+        appt_info = {'date': appointment.scheduledStart.date().strftime("%m/%d/%Y"),
+                     'time': appointment.scheduledStart.time().strftime("%I:%M %p"),
                      'student': '{0} {1}'.format(student.firstName, student.lastName) if student else 'None',
                      'assignment': appointment.assignment,
                      'tutor': tutor.firstName + ' ' + tutor.lastName}
@@ -212,8 +212,8 @@ class MessageCenterController:
         tutor = self.get_user_by_id(appointment.tutor_id)
 
         appt_info = {
-            'date': appointment.scheduledStart.date(),
-            'time': appointment.scheduledStart.time(),
+            'date': appointment.scheduledStart.date().strftime("%m/%d/%Y"),
+            'time': appointment.scheduledStart.time().strftime("%I:%M %p"),
             'tutor': '{0} {1}'.format(tutor.firstName, tutor.lastName)
         }
 
@@ -232,8 +232,9 @@ class MessageCenterController:
             student = self.get_user_by_id(appointment.student_id)
 
             appt_info = {
-                'date': appointment.actualStart.date(),
-                'time': '{0} - {1}'.format(appointment.actualStart.time(), appointment.actualEnd.time()),
+                'date': appointment.actualStart.date().strftime("%m/%d/%Y"),
+                'time': '{0} - {1}'.format(appointment.actualStart.time().strftime("%I:%M %p"),
+                                           appointment.actualEnd.time().strftime("%I:%M %p")),
                 'tutor': '{0} {1}'.format(tutor.firstName, tutor.lastName),
                 'student': '{0} {1}'.format(student.firstName, student.lastName),
                 'assignment': appointment.assignment,
