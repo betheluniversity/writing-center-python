@@ -18,7 +18,7 @@ class SchedulesController:
             .all()
 
     def get_active_schedules(self):
-        return db_session.query(ScheduleTable).filter(ScheduleTable.active == 1).all()
+        return db_session.query(ScheduleTable).filter(ScheduleTable.active == 1).order_by(ScheduleTable.startTime).all()
 
     def create_time_slot(self, start_time, end_time, is_active):
         try:
