@@ -145,7 +145,8 @@ class SchedulesView(FlaskView):
                     'startTime': start_time,
                     'endTime': end_time,
                     'multilingual': appointment.multilingual,
-                    'dropIn': appointment.dropIn
+                    'dropIn': appointment.dropIn,
+                    'sub': appointment.sub
                 })
                 
         return jsonify(appointments)
@@ -278,7 +279,8 @@ class SchedulesView(FlaskView):
                 'startTime': start_time,
                 'endTime': end_time,
                 'multilingual': appointment.multilingual,
-                'dropIn': appointment.dropIn
+                'dropIn': appointment.dropIn,
+                'sub': appointment.sub
             })
 
         return jsonify(appointments)
@@ -322,7 +324,8 @@ class SchedulesView(FlaskView):
                 'startTime': start_time,
                 'endTime': end_time,
                 'multilingual': appointment.multilingual,
-                'dropIn': appointment.dropIn
+                'dropIn': appointment.dropIn,
+                'sub': appointment.sub
             })
 
         return jsonify(appointments)
