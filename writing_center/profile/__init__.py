@@ -61,16 +61,18 @@ class ProfileView(FlaskView):
     def change_role(self):
         self.wcc.check_roles_and_route(['Administrator'])
         if not flask_session['ADMIN-VIEWER']:
-            role = str(json.loads(request.data).get('chosen-role'))
+            form = request.form
+            role_id = form.get('role')
+            role = self.pc.get_role(role_id)
             flask_session['ADMIN-VIEWER'] = True
             # Saving old info to return too
             flask_session['ADMIN-USERNAME'] = flask_session['USERNAME']
             flask_session['ADMIN-ROLES'] = flask_session['USER-ROLES']
             flask_session['ADMIN-NAME'] = flask_session['NAME']
             # Setting up viewing role
-            flask_session['USERNAME'] = role
+            flask_session['USERNAME'] = role.name
             flask_session['NAME'] = ""
-            flask_session['USER-ROLES'] = role
+            flask_session['USER-ROLES'] = role.name
         return redirect(url_for('View:index'))
 
     @route('/toggle-substitute', methods=['POST'])
