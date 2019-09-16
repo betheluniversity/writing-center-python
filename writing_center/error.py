@@ -5,8 +5,6 @@ from flask import render_template
 from flask import session as flask_session
 
 # Local
-from writing_center import app, sentry
-
 
 def error_render_template(template, error, code=None):
 
@@ -19,12 +17,7 @@ def error_render_template(template, error, code=None):
     if 'USERNAME' in flask_session.keys():
         username = flask_session['USERNAME']
 
-    sentry.client.extra_context({
-        'time': time.strftime("%c"),
-        'username': username,
-    })
 
-    sentry.captureException()
     app.logger.error("{0} -- {1}".format(username, str(error)))
 
     return render_template(template, code=code), code
