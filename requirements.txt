@@ -1,5 +1,6 @@
 Flask
 Flask-Classy
+sentry_sdk
 blinker
 requests
 SQLAlchemy>=1.3.0
