@@ -1,6 +1,6 @@
 # Packages
 import socket
-from flask import render_template, session
+from flask import render_template, session as flask_session
 from flask_mail import Mail, Message
 from datetime import datetime
 
@@ -37,7 +37,7 @@ class MessageCenterController:
                 .all())
 
     def get_email_preferences(self):
-        user = self.get_user(session['USERNAME'])
+        user = self.get_user(flask_session['USERNAME'])
         return (db_session.query(EmailPreferencesTable)
                 .filter(EmailPreferencesTable.user_id == user.id)
                 .one())
@@ -79,7 +79,7 @@ class MessageCenterController:
 
         recipients = []
         for user in users:
-            if user.username != session['USERNAME']:
+            if user.username != flask_session['USERNAME']:
                 recipients.append(user.email)
 
         return recipients
@@ -197,7 +197,7 @@ class MessageCenterController:
     def substitute_request_filled(self, appointment_id):
         appointment = self.get_appointment_info(appointment_id)
         old_tutor = self.get_user_by_id(appointment.tutor_id)
-        sub_tutor = self.get_user(session['USERNAME'])
+        sub_tutor = self.get_user(flask_session['USERNAME'])
 
         subject = 'Substitute Request Filled'
 
