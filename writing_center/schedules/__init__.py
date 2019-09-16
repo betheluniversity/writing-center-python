@@ -22,14 +22,13 @@ class SchedulesView(FlaskView):
     def create_time_slot(self):
         self.wcc.check_roles_and_route(['Administrator'])
         schedules = self.sc.get_all_schedules()
-        tutors = self.sc.get_tutors()
         return render_template("schedules/create_time_slot.html", **locals())
 
     @route('/manage-tutor-schedules')
     def manage_tutor_schedules(self):
         self.wcc.check_roles_and_route(['Administrator'])
         schedules = self.sc.get_active_schedules()
-        tutors = self.sc.get_tutors()
+        tutors = self.sc.get_active_tutors()
         time_setting = self.sc.get_time_setting()[0]
         return render_template('schedules/manage_tutor_schedules.html', **locals())
 
@@ -37,7 +36,7 @@ class SchedulesView(FlaskView):
     def view_tutor_schedules(self):
         self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
         schedules = self.sc.get_active_schedules()
-        tutors = self.sc.get_tutors()
+        tutors = self.sc.get_active_tutors()
         time_setting = self.sc.get_time_setting()[0]
         return render_template('schedules/view_tutor_schedule.html', **locals())
 
@@ -80,45 +79,45 @@ class SchedulesView(FlaskView):
     def add_tutors_to_shifts(self):
         self.wcc.check_roles_and_route(['Administrator'])
 
-        start_date = str(json.loads(request.data).get('startDate'))
-        end_date = str(json.loads(request.data).get('endDate'))
+        form = request.form
+
+        start_date = form.get('start-date')
+        end_date = form.get('end-date')
         if not start_date or not end_date:
             self.wcc.set_alert('danger', 'You must set a start date AND an end date!')
-            return ''
+            return redirect(url_for('SchedulesView:manage_tutor_schedules'))
         # Formats the date strings into date objects
         start = datetime.strptime(start_date, '%a %b %d %Y').date()
         end = datetime.strptime(end_date, '%a %b %d %Y').date()
         if start > end:
             self.wcc.set_alert('danger', 'Start date cannot be further in the future than the end date!')
-            return ''
-        start_date = datetime.strptime(start_date, '%a %b %d %Y').date()
-        end_date = datetime.strptime(end_date, '%a %b %d %Y').date()
-        multilingual = str(json.loads(request.data).get('multilingual'))
-        drop_in = str(json.loads(request.data).get('dropIn'))
-        tutors = json.loads(request.data).get('tutors')
-        days = json.loads(request.data).get('days')
-        time_slots = json.loads(request.data).get('timeSlots')
+            return redirect(url_for('SchedulesView:manage_tutor_schedules'))
+        multilingual = int(form.get('multilingual'))
+        drop_in = int(form.get('drop-in'))
+        tutors = form.getlist('tutors')
+        days = form.getlist('days')
+        time_slots = form.getlist('time-slots')
 
-        if tutors[0] == 'select-all':
+        if tutors[0] == 'Select All Tutors':
             tutors = []
-            for tutor in self.sc.get_tutors():
+            for tutor in self.sc.get_active_tutors():
                 tutors.append(tutor.id)
-        success = self.sc.create_tutor_shifts(start_date, end_date, multilingual, drop_in, tutors, days, time_slots)
+        success = self.sc.create_tutor_shifts(start, end, multilingual, drop_in, tutors, days, time_slots)
         if not success:
             self.wcc.set_alert('warning', 'The shifts failed to be scheduled! One or more of the selected day of week never occurs.')
-            return ''
+            return redirect(url_for('SchedulesView:manage_tutor_schedules'))
         if success == 'warning':
             self.wcc.set_alert('warning', 'One or more of the shifts failed to be scheduled.')
-            return ''
+            return redirect(url_for('SchedulesView:manage_tutor_schedules'))
         self.wcc.set_alert('success', 'Successfully added the tutor(s) to the time slot(s).')
-        return ''
+        return redirect(url_for('SchedulesView:manage_tutor_schedules'))
 
     @route('/show-schedule', methods=['POST'])
     def show_tutor_schedule(self):
-        self.wcc.check_roles_and_route(['Administrator'])
+        self.wcc.check_roles_and_route(['Administrator', 'Tutor'])
         names = json.loads(request.data).get('tutors')
         if 'view-all' in names:
-            tutors = self.sc.get_tutors()
+            tutors = self.sc.get_active_tutors()
             names = []
             for tutor in tutors:
                 names.append(str(tutor.id))
@@ -139,14 +138,16 @@ class SchedulesView(FlaskView):
                                                             appointment.scheduledEnd.strftime('%H'),
                                                             appointment.scheduledEnd.strftime('%M'),
                                                             appointment.scheduledEnd.strftime('%S'))
+                tutor = self.sc.get_user_by_id(appointment.tutor_id)
                 appointments.append({
                     'id': appointment.id,
                     'studentId': appointment.student_id,
-                    'tutorUsername': self.sc.get_user_by_id(appointment.tutor_id).username,
+                    'tutorName': '{0} {1}'.format(tutor.firstName, tutor.lastName),
                     'startTime': start_time,
                     'endTime': end_time,
                     'multilingual': appointment.multilingual,
-                    'dropIn': appointment.dropIn
+                    'dropIn': appointment.dropIn,
+                    'sub': appointment.sub
                 })
                 
         return jsonify(appointments)
@@ -165,7 +166,7 @@ class SchedulesView(FlaskView):
         if start > end:
             invalid_date = True
         if 'view-all' in tutor_ids:
-            tutors = self.sc.get_tutors()
+            tutors = self.sc.get_active_tutors()
             for tutor in tutors:
                 user = self.sc.get_user_by_id(tutor.id)
                 name = '{0} {1}'.format(user.firstName, user.lastName)
@@ -193,6 +194,19 @@ class SchedulesView(FlaskView):
             self.wcc.set_alert('danger', 'Failed to delete appointment!')
             return redirect(url_for('SchedulesView:manage_tutor_schedules'))
 
+    @route('confirm-delete', methods=['post'])
+    def confirm_delete_appointment(self):
+        self.wcc.check_roles_and_route(['Administrator'])
+
+        appt_id = str(json.loads(request.data).get('appt_id'))
+        deleted = self.sc.confirm_delete_appointment(appt_id)
+        if deleted:
+            # TODO: probably should send an email here
+            return appt_id
+        else:
+            self.wcc.set_alert('danger', 'Failed to delete appointment!')
+            return redirect(url_for('SchedulesView:manage_tutor_schedules'))
+
     @route('delete-tutor-shifts', methods=['POST'])
     def delete_tutors_from_shifts(self):
         self.wcc.check_roles_and_route(['Administrator'])
@@ -211,7 +225,7 @@ class SchedulesView(FlaskView):
         # If we get past that check, then we delete the appointment(s) and show the substitution table
         tutor_ids = json.loads(request.data).get('tutors')
         if 'view-all' in tutor_ids:
-            tutors = self.sc.get_tutors()
+            tutors = self.sc.get_active_tutors()
             tutor_ids = []
             for ids in tutors:
                 tutor_ids.append(str(ids.id))
@@ -242,6 +256,10 @@ class SchedulesView(FlaskView):
     @route('get-appointments', methods=['GET'])
     def get_users_appointments(self):
         self.wcc.check_roles_and_route(['Student', 'Tutor', 'Administrator'])
+
+        if flask_session['USERNAME'] in ['Student', 'Tutor', 'Administrator', 'Observer']:
+            return ''
+
         appts = self.sc.get_all_user_appointments(flask_session['USERNAME'])
         appointments = []
         # Formats the times to match the fullcalendar desired format
@@ -272,14 +290,16 @@ class SchedulesView(FlaskView):
                                                             appointment.scheduledEnd.strftime('%H'),
                                                             appointment.scheduledEnd.strftime('%M'),
                                                             appointment.scheduledEnd.strftime('%S'))
+            tutor = self.sc.get_user_by_id(appointment.tutor_id)
             appointments.append({
                 'id': appointment.id,
                 'studentId': appointment.student_id,
-                'tutorUsername': self.sc.get_user_by_id(appointment.tutor_id).username,
+                'tutorName': '{0} {1}'.format(tutor.firstName, tutor.lastName),
                 'startTime': start_time,
                 'endTime': end_time,
                 'multilingual': appointment.multilingual,
-                'dropIn': appointment.dropIn
+                'dropIn': appointment.dropIn,
+                'sub': appointment.sub
             })
 
         return jsonify(appointments)
@@ -316,14 +336,16 @@ class SchedulesView(FlaskView):
                                                             appointment.scheduledEnd.strftime('%H'),
                                                             appointment.scheduledEnd.strftime('%M'),
                                                             appointment.scheduledEnd.strftime('%S'))
+            tutor = self.sc.get_user_by_id(appointment.tutor_id)
             appointments.append({
                 'id': appointment.id,
                 'studentId': appointment.student_id,
-                'tutorUsername': self.sc.get_user_by_id(appointment.tutor_id).username,
+                'tutorName': '{0} {1}'.format(tutor.firstName, tutor.lastName),
                 'startTime': start_time,
                 'endTime': end_time,
                 'multilingual': appointment.multilingual,
-                'dropIn': appointment.dropIn
+                'dropIn': appointment.dropIn,
+                'sub': appointment.sub
             })
 
         return jsonify(appointments)
@@ -350,8 +372,8 @@ class SchedulesView(FlaskView):
         appt = self.sc.get_one_appointment(appointment_id)
         success = self.sc.request_substitute(appointment_id)
         if success:
-            self.wcc.set_alert('success', 'Successfully requested a substitute!')
             self.mcc.request_substitute(appointment_id)
+            self.wcc.set_alert('success', 'Successfully requested a substitute!')
         else:
             self.wcc.set_alert('danger', 'Error! Substitute not requested.')
         return 'finished'

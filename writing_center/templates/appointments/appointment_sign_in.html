@@ -3,31 +3,33 @@
     <div class="form-row">
         <h3><b>Please enter the reason for your appointment.</b></h3>
     </div>
-    <div class="form-row">
-        <div class="col-md-5">
-            <div class="form-group">
-                <input id="username" type="hidden" value="{{ username }}">
-                <label for="course">Course/Reason:</label>
-                <select class="form-control" id="courses">
-                    <option id="no-course" class="select-hr" selected="selected">No Specific Course</option>
-                    {% for course in courses %}
-                        <option id="{{ courses[course]['crn'] }}">{{ courses[course]['subject'] }}{{ courses[course]['cNumber'] }} {{ courses[course]['title'] }}</option>
-                    {% endfor %}
-                </select>
+    <form action="{{ url_for('AppointmentsView:begin_walk_in') }}" method="post">
+        <div class="form-row">
+            <div class="col-md-5">
+                <div class="form-group">
+                    <input id="username" type="hidden" value="{{ username }}" name="username">
+                    <label for="course">Course/Reason:</label>
+                    <select class="form-control" id="courses" name="course">
+                        <option value="no-course" class="select-hr" selected="selected">No Specific Course</option>
+                        {% for course in courses %}
+                            <option value="{{ courses[course]['crn'] }}">{{ courses[course]['subject'] }}{{ courses[course]['cNumber'] }} {{ courses[course]['title'] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label for="assignment">Assignment:</label>
+                    <textarea id="assignment" name="assignment" class="form-control"></textarea>
+                </div>
             </div>
         </div>
-        <div class="col-md-5">
-            <div class="form-group">
-                <label for="assignment">Assignment:</label>
-                <textarea id="assignment" name="assignment" class="form-control"></textarea>
+        <div class="form-row">
+            <div class="col-md-3">
+                <button id="start-walk-in" type="submit" class="btn btn-primary btn-success">Start Appointment</button>
             </div>
         </div>
-    </div>
-    <div class="form-row">
-        <div class="col-md-3">
-            <button id="start-walk-in" value="" type="button" class="btn btn-primary btn-success" onclick="startWalkIn()">Start Appointment</button>
-        </div>
-    </div>
+    </form>
     <script>
         function startWalkIn() {
             let username = $('#username').val();

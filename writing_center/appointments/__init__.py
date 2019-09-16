@@ -39,6 +39,7 @@ class AppointmentsView(FlaskView):
         if 'Tutor' not in flask_session['USER-ROLES']:
             tutor_edit = False
         appointment = self.ac.get_appointment_by_id(appt_id)
+        walk_in_hours = True if appointment.dropIn == 1 else False
         student = self.ac.get_user_by_id(appointment.student_id)
         student_name = 'None'
         if student:
@@ -85,14 +86,16 @@ class AppointmentsView(FlaskView):
                                                             appointment.scheduledEnd.strftime('%H'),
                                                             appointment.scheduledEnd.strftime('%M'),
                                                             appointment.scheduledEnd.strftime('%S'))
+                tutor = self.ac.get_user_by_id(appointment.tutor_id)
                 appointments.append({
                     'id': appointment.id,
                     'studentId': appointment.student_id,
-                    'tutorUsername': self.ac.get_user_by_id(appointment.tutor_id).username,
+                    'tutorName': '{0} {1}'.format(tutor.firstName, tutor.lastName),
                     'startTime': start_time,
                     'endTime': end_time,
                     'multilingual': appointment.multilingual,
-                    'dropIn': appointment.dropIn
+                    'dropIn': appointment.dropIn,
+                    'sub': appointment.sub
                 })
         return jsonify(appointments)
 
@@ -130,9 +133,11 @@ class AppointmentsView(FlaskView):
     @route('begin-walk-in', methods=['POST'])
     def begin_walk_in(self):
         self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
-        username = str(json.loads(request.data).get('username'))
-        course = json.loads(request.data).get('course')
-        assignment = str(json.loads(request.data).get('username'))
+
+        form = request.form
+        username = form.get('username')
+        course = form.get('course')
+        assignment = form.get('assignment')
         if 'no-course' == course:
             course = None
         else:
@@ -150,9 +155,9 @@ class AppointmentsView(FlaskView):
                     break
         user = self.ac.get_user_by_username(username)
         tutor = self.ac.get_user_by_username(flask_session['USERNAME'])
-        self.ac.begin_walk_in_appointment(user, tutor, course, assignment)
+        appt = self.ac.begin_walk_in_appointment(user, tutor, course, assignment)
         self.wcc.set_alert('success', 'Appointment for ' + user.firstName + ' ' + user.lastName + ' started')
-        return 'success'
+        return redirect(url_for('AppointmentsView:in_progress_appointment', appt_id=appt.id))
 
     @route('search-appointments')
     def search_appointments(self):
@@ -171,6 +176,10 @@ class AppointmentsView(FlaskView):
     @route('get-appointments', methods=['GET'])
     def get_users_appointments(self):
         self.wcc.check_roles_and_route(['Student', 'Administrator'])
+
+        if flask_session['USERNAME'] in ['Student', 'Tutor', 'Administrator', 'Observer']:
+            return ''
+
         appts = self.ac.get_all_user_appointments(flask_session['USERNAME'])
         appointments = []
         # Formats the times to match the fullcalendar desired format
@@ -204,10 +213,11 @@ class AppointmentsView(FlaskView):
             else:
                 start_time = None
                 end_time = None
+            tutor = self.ac.get_user_by_id(appointment.tutor_id)
             appointments.append({
                 'id': appointment.id,
                 'studentId': appointment.student_id,
-                'tutorUsername': self.ac.get_user_by_id(appointment.tutor_id).username,
+                'tutorName': '{0} {1}'.format(tutor.firstName, tutor.lastName),
                 'startTime': start_time,
                 'endTime': end_time,
                 'multilingual': appointment.multilingual,
@@ -306,6 +316,7 @@ class AppointmentsView(FlaskView):
         appt_id = str(json.loads(request.data).get('appt_id'))
         cancelled = self.ac.cancel_appointment(appt_id)
         if cancelled:
+            self.mcc.cancel_appointment_student(appt_id)
             self.wcc.set_alert('success', 'Successfully cancelled appointment')
         else:
             self.wcc.set_alert('danger', 'Failed to cancel appointment.')
@@ -320,6 +331,7 @@ class AppointmentsView(FlaskView):
             appt = self.ac.start_appointment(appt_id)
             if appt:
                 self.wcc.set_alert('success', 'Appointment Started Successfully!')
+                return redirect(url_for('AppointmentsView:in_progress_appointment', appt_id=appt_id))
             else:
                 self.wcc.set_alert('danger', 'Appointment Failed To Start.')
         elif btn_id == 'continue':
@@ -355,6 +367,55 @@ class AppointmentsView(FlaskView):
                 self.wcc.set_alert('danger', 'Failed To Revert No Show')
         qualtrics_link = self.ac.get_survey_link()[0]
         return render_template('appointments/end_appointment.html', **locals())
+
+    @route('start-appt/<int:appt_id>')
+    def start_appointment(self, appt_id):
+        try:
+            self.ac.start_appointment(appt_id)
+            self.wcc.set_alert('success', 'Appointment Started Successfully!')
+            return redirect(url_for('AppointmentsView:in_progress_appointment', appt_id=appt_id))
+        except Exception as error:
+            self.wcc.set_alert('danger', 'Failed to start appointment: {0}'.format(error))
+            return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))
+
+    @route('toggle-no-show/<int:appt_id>')
+    def toggle_no_show(self, appt_id):
+        try:
+            appt = self.ac.get_appointment_by_id(appt_id)
+            student = self.ac.get_user_by_id(appt.student_id)
+            if appt.noShow == 0:
+                self.ac.mark_no_show(appt_id)
+                self.ac.ban_if_no_show_check(appt.student_id)
+                self.wcc.set_alert('success', '{0} {1} successfully marked as no show.'.format(student.firstName, student.lastName))
+            else:
+                self.ac.revert_no_show(appt_id)
+                self.wcc.set_alert('success', '{0} {1} no longer marked as no show.'.format(student.firstName, student.lastName))
+        except Exception as error:
+            self.wcc.set_alert('danger', 'Failed to toggle no show: {0}'.format(error))
+        return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))
+
+    @route('end-appt/<int:appt_id>', methods=['post'])
+    def end_appointment(self, appt_id):
+        form = request.form
+        notes = form.get('notes')
+        suggestions = form.get('suggestions')
+        ferpa_agreement = True if form.get('ferpa') == 'on' else False
+        try:
+            self.ac.end_appointment(appt_id, notes, suggestions)
+            if ferpa_agreement:
+                self.mcc.end_appt_prof(appt_id)
+            qualtrics_link = self.ac.get_survey_link()[0]
+            self.wcc.set_alert('success', 'Appointment ended successfully!')
+            return render_template('appointments/end_appointment.html', **locals())
+        except Exception as error:
+            self.wcc.set_alert('danger', 'Failed to end appointment: {0}'.format(error))
+            return redirect(url_for('AppointmentsView:in_progress_appointment', appt_id=appt_id))
+
+    @route('in-progress/<int:appt_id>')
+    def in_progress_appointment(self, appt_id):
+        appt = self.ac.get_appointment_by_id(appt_id)
+        student = self.ac.get_user_by_id(appt.student_id)
+        return render_template('appointments/in_progress_appointment.html', **locals())
 
     @route('save-changes', methods=['POST'])
     def save_changes(self):
@@ -419,13 +480,13 @@ class AppointmentsView(FlaskView):
         if not date or not sched_start_time or not sched_end_time:
             self.wcc.set_alert('danger', 'You must select a date and a scheduled start and end time.')
             return redirect(url_for('AppointmentsView:edit', appt_id=appt_id))
-        sched_start = "{0} {1}".format(datetime.strptime(date, "%m/%d/%Y").strftime("%Y-%m-%d"), sched_start_time)
-        sched_end = "{0} {1}".format(datetime.strptime(date, "%m/%d/%Y").strftime("%Y-%m-%d"), sched_end_time)
+        sched_start = "{0} {1}".format(datetime.strptime(date, '%a %b %d %Y').strftime("%Y-%m-%d"), sched_start_time)
+        sched_end = "{0} {1}".format(datetime.strptime(date, '%a %b %d %Y').strftime("%Y-%m-%d"), sched_end_time)
 
         actual_start_time = None if form.get('actual-start') == '' else form.get('actual-start')
         actual_end_time = None if form.get('actual-end') == '' else form.get('actual-end')
-        actual_start = None if not actual_start_time else "{0} {1}".format(datetime.strptime(date, "%m/%d/%Y").strftime("%Y-%m-%d"), actual_start_time)
-        actual_end = None if not actual_end_time else "{0} {1}".format(datetime.strptime(date, "%m/%d/%Y").strftime("%Y-%m-%d"), actual_end_time)
+        actual_start = None if not actual_start_time else "{0} {1}".format(datetime.strptime(date, '%a %b %d %Y').strftime("%Y-%m-%d"), actual_start_time)
+        actual_end = None if not actual_end_time else "{0} {1}".format(datetime.strptime(date, '%a %b %d %Y').strftime("%Y-%m-%d"), actual_end_time)
 
         prof = None if form.get('prof') == 'None' else form.get('prof')
         prof_email = None if form.get('email') == 'None' else form.get('email')

@@ -24,17 +24,8 @@ def error_render_template(template, error, code=None):
         'username': username,
     })
 
-    # Means that it's a handled error/exception
-    if code is not None:
-        # Catch all errors for now - may change later
-        # if code == 403 or code > 499:
-        sentry.captureException()
-        app.logger.error("{0} -- {1}".format(username, str(error)))
-
-    else:  # Means it's an unhandled exception
-        sentry.captureException()
-        app.logger.error('Unhandled Exception: {0}'.format(str(error)))
-        code = 500  # To make sure that the return statement doesn't break
+    sentry.captureException()
+    app.logger.error("{0} -- {1}".format(username, str(error)))
 
     return render_template(template, code=code), code
 
@@ -61,4 +52,4 @@ def transport_error(e):
 
 @app.errorhandler(Exception)
 def other_error(e):
-    return error_render_template('error/error.html', e, 0)
+    return error_render_template('error/error.html', e, 500)

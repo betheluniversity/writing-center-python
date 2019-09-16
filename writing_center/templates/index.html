@@ -58,13 +58,13 @@
                         <a class="dashboard-link" href="{{ url_for('AppointmentsView:appointments_and_walk_ins') }}">
                             <div class="card dashboard-card text-center">
                                 <div class="card-body">
-                                    <h4>Appointments and Walk Ins</h4>
+                                    <h4>Begin a Session</h4>
                                 </div>
                             </div>
                         </a>
                     </div>
                     <div class="col-md-6">
-                        <a class="dashboard-link" href="{{ url_for('SchedulesView:manage_tutor_schedules') }}">
+                        <a class="dashboard-link" href="{{ url_for('SchedulesView:view_tutor_schedules') }}">
                             <div class="card dashboard-card text-center">
                                 <div class="card-body">
                                     {% if 'Tutor' in session['USER-ROLES'] %}

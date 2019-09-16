@@ -18,7 +18,7 @@ class SchedulesController:
             .all()
 
     def get_active_schedules(self):
-        return db_session.query(ScheduleTable).filter(ScheduleTable.active == 1).all()
+        return db_session.query(ScheduleTable).filter(ScheduleTable.active == 1).order_by(ScheduleTable.startTime).all()
 
     def create_time_slot(self, start_time, end_time, is_active):
         try:
@@ -58,12 +58,13 @@ class SchedulesController:
             .filter(UserTable.id == user_id)\
             .one_or_none()
 
-    def get_tutors(self):
-        return db_session.query(UserTable)\
-            .filter(UserTable.id == UserRoleTable.user_id)\
-            .filter(UserRoleTable.role_id == RoleTable.id)\
+    def get_active_tutors(self):
+        return db_session.query(UserTable) \
+            .filter(UserTable.id == UserRoleTable.user_id) \
+            .filter(UserRoleTable.role_id == RoleTable.id) \
             .filter(RoleTable.name == 'Tutor')\
-            .order_by(UserTable.lastName)\
+            .filter(UserTable.deletedAt == None)\
+            .order_by(UserTable.lastName) \
             .all()
 
     def create_tutor_shifts(self, start_date, end_date, multilingual, drop_in, tutor_ids, days_of_week, time_slots):
@@ -72,6 +73,7 @@ class SchedulesController:
         warning = False
         for day in days_of_week:
             for tutor_id in tutor_ids:
+                tutor_id = int(tutor_id)
                 tutor = self.get_user_by_id(tutor_id)
                 if tutor:
                     for time_slot in time_slots:
@@ -211,6 +213,15 @@ class SchedulesController:
                 db_session.delete(appointment)
                 db_session.commit()
                 return True
+        except Exception as e:
+            return False
+
+    def confirm_delete_appointment(self, appt_id):
+        try:
+            appointment = db_session.query(AppointmentsTable).filter(AppointmentsTable.id == appt_id).one_or_none()
+            db_session.delete(appointment)
+            db_session.commit()
+            return True
         except Exception as e:
             return False
 

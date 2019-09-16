@@ -34,26 +34,18 @@ class MessageCenterView(FlaskView):
         they both come as data['recipients'] keys, but they're separate. By making this into a mutable object,
         we are able to iterate through and get all recipient groups. 
         """
-
-        # grab the group(s) from the form, use the group id to get the emails of all the people in the group(s)
-        if isinstance(data['recipients'], list):
-            recipients = self.mcc.get_email_groups(data['recipients'])
+        # make sure there are no duplicates in the email list
+        # need to check that all the stuff is actually filled in, if its not, we need to fill it with an empty value
+        subject = data.get('subject')
+        message = data.get('message')
+        recipients = data.get('recipients')
+        cc = data.get('cc')
+        bcc = data.get('bcc')
+        if self.base.send_message(subject, message, recipients, cc, bcc):
+            self.wcc.set_alert('success', 'Email sent successfully!')
         else:
-            recipients = ''
-
-        if isinstance(data['cc'], list):
-            cc = self.mcc.get_emails(data['cc'])
-        else:
-            cc = ''
-
-        if isinstance(data['bcc'], list):
-            bcc = self.mcc.get_emails(data['bcc'])
-        else:
-            bcc = ''
-
-        if self.mcc.send_message(data['subject'], data['message'], recipients, data['cc'], data['bcc']):
-            return 'Success'
-        return 'Failed'
+            self.wcc.set_alert('danger', 'Email failed to send.')
+        return redirect(url_for('MessageCenterView:index'))
 
     @route('/close-student', methods=['POST'])
     def close_session_student(self):  # this needs to be connected to the appointment end page

@@ -18,3 +18,6 @@ class ProfileController:
 
     def get_all_roles(self):
         return db_session.query(RoleTable).all()
+
+    def get_role(self, role_id):
+        return db_session.query(RoleTable).filter(RoleTable.id == role_id).one()

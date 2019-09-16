@@ -143,6 +143,10 @@ ul.list-group{
     background-color: orange;
 }
 
+.calendar-red{
+    background-color: #FF0000;
+}
+
 .chosen {
     height: 29px !important;
 }
@@ -282,6 +286,10 @@ ul.list-group{
     width: 30px;
     height: 30px;
     flex: 0 0 4%;
+}
+
+.ss-multiple-selected {
+    min-height: 30px !important;
 }
 
 .transparent {

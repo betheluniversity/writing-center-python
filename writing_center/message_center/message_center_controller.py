@@ -1,8 +1,8 @@
 # Packages
 import socket
 from flask import render_template, session
-from flask_classy import route
 from flask_mail import Mail, Message
+from datetime import datetime
 
 # Local
 from writing_center import app
@@ -83,19 +83,19 @@ class MessageCenterController:
         return 'success'
 
     def get_substitute_email_recipients(self):
-        users = (db_session.query(EmailPreferencesTable.user_id)
-                 .filter(EmailPreferencesTable.SubRequestEmail == 1)
-                 .all())
+        users = db_session.query(UserTable)\
+            .filter(UserTable.id == EmailPreferencesTable.user_id)\
+            .filter(EmailPreferencesTable.subRequestEmail == 1)\
+            .filter(UserRoleTable.user_id == UserTable.id)\
+            .filter(RoleTable.id == UserRoleTable.role_id)\
+            .filter(RoleTable.name == 'Tutor' or RoleTable.name == 'Administrator')\
+            .filter(UserTable.deletedAt == None)\
+            .all()
 
-        users.append(db_session.query(UserRoleTable.user_id)
-                     .filter(UserRoleTable.role_id == 1 or UserRoleTable.role_id == 2)
-                     .all())
-
-        users = list(dict.fromkeys(users))
         recipients = []
         for user in users:
             if user.username != session['USERNAME']:
-                recipients.append(self.get_user_by_id(user).email)
+                recipients.append(user.email)
 
         return recipients
 
@@ -115,7 +115,7 @@ class MessageCenterController:
 
         recipients = student.email
 
-        self.send_message(subject, render_template('emails/session_email_student.html', **locals()), recipients, cc='', bcc='')
+        self.send_message(subject, render_template('emails/session_email_student.html', **locals()), recipients, cc='', bcc='', html=True)
 
     def close_session_tutor(self, appointment_id, to_prof):  # Todo needs to be connected
         appointment = self.get_appointment_info(appointment_id)
@@ -145,11 +145,11 @@ class MessageCenterController:
 
         if to_prof:
             cc = appointment.profEmail
-            if self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, cc, bcc=''):
+            if self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, cc, bcc='', html=True):
                 return True
             return False
         else:
-            if self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, cc='', bcc=''):
+            if self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, cc='', bcc='', html=True):
                 return True
             return False
 
@@ -158,15 +158,15 @@ class MessageCenterController:
         appointment = self.get_appointment_info(appointment_id)
         student = self.get_user_by_id(appointment.student_id)
         tutor = self.get_user_by_id(appointment.tutor_id)
-        appt_info = {'date': appointment.scheduledStart.date(),
-                     'time': appointment.scheduledStart.time(),
+        appt_info = {'date': appointment.scheduledStart.date().strftime("%m/%d/%Y"),
+                     'time': appointment.scheduledStart.time().strftime("%I:%M %p"),
                      'tutor': tutor.firstName + ' ' + tutor.lastName}
         # other email information: recipient, subject, body
         subject = 'Appointment on {0}'.format(appointment.scheduledStart.date())
 
         recipient = student.email
 
-        if self.send_message(subject, render_template('emails/appointment_signup_student.html', **locals()), recipient, cc='', bcc=''):
+        if self.send_message(subject, render_template('emails/appointment_signup_student.html', **locals()), recipient, cc='', bcc='', html=True):
             return True
         return False
 
@@ -175,8 +175,8 @@ class MessageCenterController:
         student = self.get_user_by_id(appointment.student_id)
         tutor = self.get_user_by_id(appointment.tutor_id)
         if self.get_email_preferences_by_id(tutor.id).studentSignUpEmail == 1:
-            appt_info = {'date': appointment.scheduledStart.date(),
-                         'time': appointment.scheduledStart.time(),
+            appt_info = {'date': appointment.scheduledStart.date().strftime("%m/%d/%Y"),
+                         'time': appointment.scheduledStart.time().strftime("%I:%M %p"),
                          'student': student.firstName + ' ' + student.lastName,
                          'assignment': appointment.assignment}
 
@@ -185,7 +185,7 @@ class MessageCenterController:
 
             recipient = tutor.email
 
-            if self.send_message(subject, render_template('emails/appointment_signup_tutor.html', **locals()), recipient, cc='', bcc=''):
+            if self.send_message(subject, render_template('emails/appointment_signup_tutor.html', **locals()), recipient, cc='', bcc='', html=True):
                 return True
             return False
         return False
@@ -195,9 +195,9 @@ class MessageCenterController:
         student = self.get_user_by_id(appointment.student_id)
         tutor = self.get_user_by_id(appointment.tutor_id)
 
-        appt_info = {'date': appointment.scheduledStart.date(),
-                     'time': appointment.scheduledStart.time(),
-                     'student': student.firstName + ' ' + student.lastName,
+        appt_info = {'date': appointment.scheduledStart.date().strftime("%m/%d/%Y"),
+                     'time': appointment.scheduledStart.time().strftime("%I:%M %p"),
+                     'student': '{0} {1}'.format(student.firstName, student.lastName) if student else 'None',
                      'assignment': appointment.assignment,
                      'tutor': tutor.firstName + ' ' + tutor.lastName}
 
@@ -205,7 +205,7 @@ class MessageCenterController:
 
         recipients = self.get_substitute_email_recipients()
 
-        if self.send_message(subject, render_template('emails/sub_request.html', **locals()), recipients, cc='', bcc=''):
+        if self.send_message(subject, render_template('emails/sub_request.html', **locals()), recipients, cc='', bcc='', html=True):
             return True
         return False
 
@@ -218,15 +218,62 @@ class MessageCenterController:
 
         recipient = old_tutor.email
 
-        if self.send_message(subject, render_template('emails/sub_request_fulfilled.html', **locals()), recipient, cc='', bcc=''):
+        if self.send_message(subject, render_template('emails/sub_request_fulfilled.html', **locals()), recipient, cc='', bcc='', html=True):
             return True
+        return False
+
+    def cancel_appointment_student(self, appointment_id):
+        appointment = self.get_appointment_info(appointment_id)
+        tutor = self.get_user_by_id(appointment.tutor_id)
+
+        appt_info = {
+            'date': appointment.scheduledStart.date().strftime("%m/%d/%Y"),
+            'time': appointment.scheduledStart.time().strftime("%I:%M %p"),
+            'tutor': '{0} {1}'.format(tutor.firstName, tutor.lastName)
+        }
+
+        subject = 'Appointment Cancelled'
+
+        recipient = tutor.email
+
+        if self.send_message(subject, render_template('emails/cancel_appointment.html', **locals()), recipient, cc='', bcc='', html=True):
+            return True
+        return False
+
+    def end_appt_prof(self, appt_id):
+        appointment = self.get_appointment_info(appt_id)
+        if appointment.profEmail:
+            tutor = self.get_user_by_id(appointment.tutor_id)
+            student = self.get_user_by_id(appointment.student_id)
+
+            appt_info = {
+                'date': appointment.actualStart.date().strftime("%m/%d/%Y"),
+                'time': '{0} - {1}'.format(appointment.actualStart.time().strftime("%I:%M %p"),
+                                           appointment.actualEnd.time().strftime("%I:%M %p")),
+                'tutor': '{0} {1}'.format(tutor.firstName, tutor.lastName),
+                'student': '{0} {1}'.format(student.firstName, student.lastName),
+                'assignment': appointment.assignment,
+                'notes': appointment.notes,
+                'suggestions': appointment.suggestions,
+                'course': '{0} Section {1}'.format(appointment.courseCode, appointment.courseSection)
+            }
+
+            subject = '{0} {1} Writing Center Appointment'.format(student.firstName, student.lastName)
+
+            recipient = appointment.profEmail
+
+            if self.send_message(subject, render_template('emails/prof_email.html', **locals()), recipient, cc='', bcc='', html=True):
+                return True
         return False
 
     def send_message(self, subject, body, recipients, cc, bcc, html=False):
         # data will be compiled in the above functions and sent here
         if app.config['ENVIRON'] != 'prod':
             print('Would have sent email to: {0} cc: {1}, bcc: {2}'.format(str(recipients), str(cc), str(bcc)))
-            subject = '{0}'.format(subject)
+            subject = '{0}: Would have sent email to - {1} cc: {2}, bcc: {3}'.format(subject, str(recipients), str(cc), str(bcc))
+            recipients = app.config['TEST_EMAIL']
+            cc = []
+            bcc = []
 
         # if we are sending a message to a single user, go ahead and convert the string into a list
         if isinstance(recipients, str):
