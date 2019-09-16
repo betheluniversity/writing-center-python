@@ -27,15 +27,7 @@ class MessageCenterView(FlaskView):
     def send(self):
         immutable_data = request.form
         data = immutable_data.copy()
-        """
-        The reason the data is being made into a variable and then immediately copied is because
-        it comes from the form as an immutable object. Meaning it cant be iterated through. 
-        This is important, because when someone selects more than one group to send emails to, 
-        they both come as data['recipients'] keys, but they're separate. By making this into a mutable object,
-        we are able to iterate through and get all recipient groups. 
-        """
         # make sure there are no duplicates in the email list
-        # need to check that all the stuff is actually filled in, if its not, we need to fill it with an empty value
         subject = data.get('subject')
         message = data.get('message')
         recipients = data.get('recipients')
@@ -60,17 +52,3 @@ class MessageCenterView(FlaskView):
         # self.wcc.check_roles_and_route(['Administrator'])
         data = request.form
         return self.mcc.close_session_tutor(data['appointment_id'], data['to_prof'])
-
-    @route('/test', methods=['POST'])
-    def test(self):
-        data = request.form
-        data_two = data.copy()  # makes the data into a mutable object so we can iterate through it
-
-        groups = []
-        for item in data_two.keys():  # iterate through the keys - need to figure out how to iterate all keys vs just unique keys
-            print(item)
-            if item == 'recipients':  # if our key is recipients, then we add the value to our list
-                groups.append(data_two[item])  # adding the calue to our list
-        # recipients = self.mcc.get_email_groups(data['recipients'])
-        print(data_two)
-        return ''
