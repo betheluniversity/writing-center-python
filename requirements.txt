@@ -1,6 +1,5 @@
 Flask
 Flask-Classy
-raven
 blinker
 requests
 SQLAlchemy>=1.3.0
