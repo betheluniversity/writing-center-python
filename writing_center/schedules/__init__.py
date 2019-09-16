@@ -353,15 +353,20 @@ class SchedulesView(FlaskView):
     @route('pickup-shift', methods=['POST'])
     def pickup_shift(self):
         self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
-        appointment_id = str(json.loads(request.data).get('appt_id'))
-        appt = self.sc.get_one_appointment(appointment_id)
-        self.mcc.substitute_request_filled(appointment_id)
-        # TODO MAYBE EMAIL STUDENT ABOUT TUTOR CHANGE IF APPLICABLE?
-        picked_up = self.sc.pickup_shift(appointment_id, flask_session['USERNAME'])
-        if picked_up:
-            self.wcc.set_alert('success', 'Successfully picked up the shift!')
+
+        if flask_session['USERNAME'] in ['Administrator', 'Observer', 'Tutor', 'Student']:
+            self.wcc.set_alert('danger', 'You cannot pick up a shift while acting as a role')
         else:
-            self.wcc.set_alert('danger', 'Failed to pick up the shift.')
+
+            appointment_id = str(json.loads(request.data).get('appt_id'))
+            appt = self.sc.get_one_appointment(appointment_id)
+            self.mcc.substitute_request_filled(appointment_id)
+            # TODO MAYBE EMAIL STUDENT ABOUT TUTOR CHANGE IF APPLICABLE?
+            picked_up = self.sc.pickup_shift(appointment_id, flask_session['USERNAME'])
+            if picked_up:
+                self.wcc.set_alert('success', 'Successfully picked up the shift!')
+            else:
+                self.wcc.set_alert('danger', 'Failed to pick up the shift.')
 
         return 'finished'
 
