@@ -138,6 +138,7 @@ class AppointmentsView(FlaskView):
         username = form.get('username')
         course = form.get('course')
         assignment = form.get('assignment')
+        multilingual = int(form.get('multi'))
         if 'no-course' == course:
             course = None
         else:
@@ -155,7 +156,7 @@ class AppointmentsView(FlaskView):
                     break
         user = self.ac.get_user_by_username(username)
         tutor = self.ac.get_user_by_username(flask_session['USERNAME'])
-        appt = self.ac.begin_walk_in_appointment(user, tutor, course, assignment)
+        appt = self.ac.begin_walk_in_appointment(user, tutor, course, assignment, multilingual)
         self.wcc.set_alert('success', 'Appointment for ' + user.firstName + ' ' + user.lastName + ' started')
         return redirect(url_for('AppointmentsView:in_progress_appointment', appt_id=appt.id))
 
@@ -395,6 +396,21 @@ class AppointmentsView(FlaskView):
                 self.wcc.set_alert('success', '{0} {1} no longer marked as no show.'.format(student.firstName, student.lastName))
         except Exception as error:
             self.wcc.set_alert('danger', 'Failed to toggle no show: {0}'.format(error))
+        return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))
+
+    @route('toggle-multilingual/<int:appt_id>')
+    def toggle_multilingual(self, appt_id):
+        try:
+            appt = self.ac.get_appointment_by_id(appt_id)
+            student = self.ac.get_user_by_id(appt.student_id)
+            if appt.multilingual == 0:
+                self.ac.mark_multilingual(appt_id)
+                self.wcc.set_alert('success', '{0} {1}\'s appointment successfully marked as multilingual.'.format(student.firstName, student.lastName))
+            else:
+                self.ac.revert_multilingual(appt_id)
+                self.wcc.set_alert('success', '{0} {1}\'s appointment no longer marked as multilingual.'.format(student.firstName, student.lastName))
+        except Exception as error:
+            self.wcc.set_alert('danger', 'Failed to toggle multilingual: {0}'.format(error))
         return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))
 
     @route('end-appt/<int:appt_id>', methods=['post'])

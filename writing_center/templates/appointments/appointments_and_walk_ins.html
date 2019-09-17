@@ -40,6 +40,7 @@
                         <th data-toggle="tooltip" data-placement="top" title="End Time">End Time</th>
                         <th data-toggle="tooltip" data-placement="top" title="Start Appointment">Start/Continue Appointment</th>
                         <th data-toggle="tooltip" data-placement="top" title="Mark/Unmark as No Show">Mark/Unmark as No Show</th>
+                        <th data-toggle="tooltip" data-placement="top" title="Mark/Unmark as Multilingual">Mark/Unmark as Multilingual</th>
                         <th data-toggle="tooltip" data-placement="top" title="View More Info">View More Info</th>
                     </tr>
                 </thead>
@@ -75,6 +76,15 @@
                                     {% elif appointment.noShow == 1 %}
                                         <a id="revert-no-show" href="{{ url_for('AppointmentsView:toggle_no_show', appt_id=appointment.id) }}"
                                            class="btn btn-primary btn-danger">Revert No Show</a>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if appointment.multilingual == 0 or not appointment.multilingual %}
+                                        <a id="multilingual" href="{{ url_for('AppointmentsView:toggle_multilingual', appt_id=appointment.id) }}"
+                                           class="btn btn-primary btn-danger">Mark as Multilingual</a>
+                                    {% elif appointment.multilingual == 1 %}
+                                        <a id="revert-multilingual" href="{{ url_for('AppointmentsView:toggle_multilingual', appt_id=appointment.id) }}"
+                                           class="btn btn-primary btn-danger">Revert Multilingual</a>
                                     {% endif %}
                                 </td>
                                 <td><input type="button" class="btn btn-primary darkblue" value="More Info" onclick="viewInfo({{ appointment.id }})"></td>

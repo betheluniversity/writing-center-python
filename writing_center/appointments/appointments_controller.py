@@ -92,7 +92,7 @@ class AppointmentsController:
         except Exception as e:
             return False
 
-    def begin_walk_in_appointment(self, user, tutor, course, assignment):
+    def begin_walk_in_appointment(self, user, tutor, course, assignment, multilingual):
         if course:
             course_code = course['course_code']
             course_section = course['section']
@@ -101,11 +101,11 @@ class AppointmentsController:
             begin_appt = AppointmentsTable(student_id=user.id, tutor_id=tutor.id, scheduledStart=datetime.now(),
                                            actualStart=datetime.now(), profName=prof_name, profEmail=prof_email,
                                            assignment=assignment, courseCode=course_code, courseSection=course_section,
-                                           inProgress=1, dropIn=1, sub=0, multilingual=0, noShow=0)
+                                           inProgress=1, dropIn=1, sub=0, multilingual=multilingual, noShow=0)
         else:
             begin_appt = AppointmentsTable(student_id=user.id, tutor_id=tutor.id, scheduledStart=datetime.now(),
                                            actualStart=datetime.now(), assignment=assignment, inProgress=1, dropIn=1,
-                                           sub=0, multilingual=0, noShow=0)
+                                           sub=0, multilingual=multilingual, noShow=0)
         db_session.add(begin_appt)
         db_session.commit()
         return begin_appt
@@ -144,6 +144,16 @@ class AppointmentsController:
             .filter(AppointmentsTable.id == appt_id)\
             .one_or_none()
         appointment.noShow = 0
+        db_session.commit()
+
+    def mark_multilingual(self, appt_id):
+        appointment = db_session.query(AppointmentsTable).filter(AppointmentsTable.id == appt_id).one_or_none()
+        appointment.multilingual = 1
+        db_session.commit()
+
+    def revert_multilingual(self, appt_id):
+        appointment = db_session.query(AppointmentsTable).filter(AppointmentsTable.id == appt_id).one_or_none()
+        appointment.multilingual = 0
         db_session.commit()
 
     def ban_if_no_show_check(self, user_id):
