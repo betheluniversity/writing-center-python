@@ -326,52 +326,6 @@ class AppointmentsView(FlaskView):
             self.wcc.set_alert('danger', 'Failed to cancel appointment.')
         return appt_id
 
-    @route('/handle-scheduled-appointments', methods=['POST'])
-    def handle_scheduled_appointments(self):
-        self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
-        btn_id = str(json.loads(request.data).get('id'))
-        appt_id = str(json.loads(request.data).get('value'))
-        if btn_id == 'start':
-            appt = self.ac.start_appointment(appt_id)
-            if appt:
-                self.wcc.set_alert('success', 'Appointment Started Successfully!')
-                return redirect(url_for('AppointmentsView:in_progress_appointment', appt_id=appt_id))
-            else:
-                self.wcc.set_alert('danger', 'Appointment Failed To Start.')
-        elif btn_id == 'continue':
-            appt = self.ac.continue_appointment(appt_id)
-            if appt:
-                self.wcc.set_alert('success', 'Appointment Successfully Re-started!')
-            else:
-                self.wcc.set_alert('danger', 'Appointment Failed To Continue!')
-        elif btn_id == 'end':
-            appt = self.ac.end_appointment(appt_id)
-            if appt:
-                self.wcc.set_alert('success', 'Successfully Ended Appointment')
-            else:
-                self.wcc.set_alert('danger', 'Failed To End Appointment')
-        elif btn_id == 'no-show':
-            appt = self.ac.mark_no_show(appt_id)
-            if appt:
-                appointment = self.ac.get_user_by_appt(appt_id)
-                user = self.ac.get_user_by_id(appointment.student_id)
-                self.ac.ban_if_no_show_check(user.id)
-                message = '{0} {1} Marked As No Show'.format(user.firstName, user.lastName)
-                self.wcc.set_alert('success', message)
-            else:
-                self.wcc.set_alert('danger', 'Failed To Set As No Show')
-        elif btn_id == 'revert-no-show':
-            appt = self.ac.revert_no_show(appt_id)
-            if appt:
-                appointment = self.ac.get_user_by_appt(appt_id)
-                user = self.ac.get_user_by_id(appointment.student_id)
-                message = '{0} {1} No Longer No Show'.format(user.firstName, user.lastName)
-                self.wcc.set_alert('success', message)
-            else:
-                self.wcc.set_alert('danger', 'Failed To Revert No Show')
-        qualtrics_link = self.ac.get_survey_link()[0]
-        return render_template('appointments/end_appointment.html', **locals())
-
     @route('start-appt/<int:appt_id>')
     def start_appointment(self, appt_id):
         try:
@@ -413,7 +367,7 @@ class AppointmentsView(FlaskView):
             self.wcc.set_alert('danger', 'Failed to toggle multilingual: {0}'.format(error))
         return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))
 
-    @route('end-appt/<int:appt_id>', methods=['post'])
+    @route('end-appt/<int:appt_id>', methods=['post', 'get'])
     def end_appointment(self, appt_id):
         form = request.form
         notes = form.get('notes')
@@ -448,7 +402,6 @@ class AppointmentsView(FlaskView):
             return 'close'
         else:
             return 'failed'
-
 
     @route('/search', methods=['POST'])
     def search(self):
