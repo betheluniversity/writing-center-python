@@ -32,7 +32,7 @@ class MessageCenterView(FlaskView):
         # need to check that all the stuff is actually filled in, if its not, we need to fill it with an empty value
         subject = data.get('subject')
         message = data.get('message')
-        recipients = data.get('recipients')
+        recipients = data.getlist('recipients')
         cc = data.get('cc')
         bcc = data.get('bcc')
         if self.base.send_message(subject, message, recipients, cc, bcc):
