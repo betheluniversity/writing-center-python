@@ -8,6 +8,7 @@ class CronController:
     def __init__(self):
         pass
 
+    # get appointments between now and 24 hours from now.
     def get_upcoming_appointments(self):
         tomorrow = datetime.now() + timedelta(days=1)
         return db_session.query(AppointmentsTable)\
