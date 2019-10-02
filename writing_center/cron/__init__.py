@@ -50,17 +50,21 @@ class CronView(FlaskView):
                 tutor = self.cron.get_user(appointment.tutor_id)
                 student = self.cron.get_user(appointment.student_id)
                 subject = "Your Upcoming Appointment"
+
                 appt_info = {'date': appointment.scheduledStart.date().strftime("%m/%d/%Y"),
                              'time': appointment.scheduledStart.time().strftime("%I:%M %p"),
                              'tutor': tutor.firstName + ' ' + tutor.lastName}
+
                 if appointment.multilingual:
-                    if self.mail.send_message(subject, render_template('emails/upcoming_email_multilingual.html', **locals()), student.email, cc='', bcc='', html=True):
-                        cron_message += "Email sent successfully to {0} {1}\n".format(student.firstName, student.lastName)
+                    self.mail.send_message(subject, render_template('emails/upcoming_email_multilingual.html', **locals()), student.email, cc='', bcc='', html=True)
                 else:
-                    if self.mail.send_message(subject, render_template('emails/upcoming_email.html', **locals()), student.email, cc='', bcc='', html=True):
-                        cron_message += "Email sent successfully to {0} {1}\n".format(student.firstName, student.lastName)
+                    self.mail.send_message(subject, render_template('emails/upcoming_email.html', **locals()), student.email, cc='', bcc='', html=True)
+
+                cron_message += "Email sent successfully to {0} {1}\n".format(student.firstName, student.lastName)
+
             cron_message += "All reminders sent\n\n"
             return cron_message
+
         except Exception as error:
             cron_message += "An error occurred: {0}\n\n".format(str(error))
             return cron_message
