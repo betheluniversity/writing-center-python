@@ -12,8 +12,8 @@ class CronController:
         tomorrow = datetime.now() + timedelta(days=1)
         return db_session.query(AppointmentsTable)\
             .filter(AppointmentsTable.student_id != None)\
-            .filter(AppointmentsTable.scheduledStart > tomorrow)\
-            .filter(AppointmentsTable.scheduledStart < tomorrow + timedelta(days=1))\
+            .filter(AppointmentsTable.scheduledStart > datetime.now())\
+            .filter(AppointmentsTable.scheduledStart < tomorrow)\
             .all()
 
     def get_user(self, user_id):
