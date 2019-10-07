@@ -56,10 +56,10 @@ class CronView(FlaskView):
 
                 if appointment.multilingual:
                     subject = 'Writing Center Multilingual Appointment Reminder'
-                    appt_info.append({'type': 'Multilingual Writing Support'})
+                    appt_info.update({'type': 'Multilingual Writing Support'})
                 else:
                     subject = 'Writing Center Appointment Reminder'
-                    appt_info.append({'type': 'Writing Support'})
+                    appt_info.update({'type': 'Writing Support'})
 
                 cron_message += "Email sent successfully to {0} {1}\n".format(student.firstName, student.lastName)
 
