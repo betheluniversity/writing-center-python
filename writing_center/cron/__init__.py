@@ -49,16 +49,17 @@ class CronView(FlaskView):
             for appointment in upcoming_appointments:
                 tutor = self.cron.get_user(appointment.tutor_id)
                 student = self.cron.get_user(appointment.student_id)
-                subject = "Your Upcoming Appointment"
 
                 appt_info = {'date': appointment.scheduledStart.date().strftime("%m/%d/%Y"),
                              'time': appointment.scheduledStart.time().strftime("%I:%M %p"),
                              'tutor': tutor.firstName + ' ' + tutor.lastName}
 
                 if appointment.multilingual:
-                    self.mail.send_message(subject, render_template('emails/upcoming_email_multilingual.html', **locals()), student.email, cc='', bcc='', html=True)
+                    subject = 'Writing Center Multilingual Appointment Reminder'
+                    appt_info.append({'type': 'Multilingual Writing Support'})
                 else:
-                    self.mail.send_message(subject, render_template('emails/upcoming_email.html', **locals()), student.email, cc='', bcc='', html=True)
+                    subject = 'Writing Center Appointment Reminder'
+                    appt_info.append({'type': 'Writing Support'})
 
                 cron_message += "Email sent successfully to {0} {1}\n".format(student.firstName, student.lastName)
 
