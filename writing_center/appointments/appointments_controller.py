@@ -177,11 +177,23 @@ class AppointmentsController:
         appointment.actualStart = datetime.now()
         db_session.commit()
 
-    def end_appointment(self, appt_id, notes, suggestions):
+    def end_appointment(self, appt_id, course, assignment, multilingual, notes, suggestions):
         appointment = db_session.query(AppointmentsTable)\
             .filter(AppointmentsTable.id == appt_id)\
             .one_or_none()
         appointment.inProgress = 0
+        if not course:
+            appointment.courseCode = None
+            appointment.courseSection = None
+            appointment.profName = None
+            appointment.profEmail = None
+        else:
+            appointment.courseCode = course['course_code']
+            appointment.courseSection = course['section']
+            appointment.profName = course['instructor']
+            appointment.profEmail = course['instructor_email']
+        appointment.assignment = assignment
+        appointment.multilingual = multilingual
         appointment.notes = notes
         appointment.suggestions = suggestions
         appointment.actualEnd = datetime.now()
