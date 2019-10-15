@@ -370,11 +370,32 @@ class AppointmentsView(FlaskView):
     @route('end-appt/<int:appt_id>', methods=['post', 'get'])
     def end_appointment(self, appt_id):
         form = request.form
+        course = form.get('course')
+        assignment = form.get('assignment')
+        multilingual = int(form.get('multi'))
         notes = form.get('notes')
         suggestions = form.get('suggestions')
         ferpa_agreement = True if form.get('ferpa') == 'on' else False
+        if 'no-course' == course:
+            course = None
+        else:
+            appt = self.ac.get_appointment_by_id(appt_id)
+            student = self.ac.get_user_by_id(appt.student_id)
+            student_courses = self.wsapi.get_student_courses(student.username)
+            for key in student_courses:
+                if student_courses[key]['crn'] == course:
+                    course_code = '{0}{1}'.format(student_courses[key]['subject'], student_courses[key]['cNumber'])
+                    instructor_email = '{0}@bethel.edu'.format(student_courses[key]['instructorUsername'])
+                    course = {
+                        'course_code': course_code,
+                        'section': student_courses[key]['section'],
+                        'instructor': student_courses[key]['instructor'],
+                        'instructor_email': instructor_email
+                    }
+                    break
+
         try:
-            self.ac.end_appointment(appt_id, notes, suggestions)
+            self.ac.end_appointment(appt_id, course, assignment, multilingual, notes, suggestions)
             if ferpa_agreement:
                 self.mcc.end_appt_prof(appt_id)
             qualtrics_link = self.ac.get_survey_link()[0]
@@ -388,6 +409,7 @@ class AppointmentsView(FlaskView):
     def in_progress_appointment(self, appt_id):
         appt = self.ac.get_appointment_by_id(appt_id)
         student = self.ac.get_user_by_id(appt.student_id)
+        courses = self.wsapi.get_student_courses(student.username)
         return render_template('appointments/in_progress_appointment.html', **locals())
 
     @route('save-changes', methods=['POST'])
