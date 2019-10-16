@@ -16,7 +16,7 @@
         <div class="col-md-8">
             <form action="{{ url_for('AppointmentsView:end_appointment', appt_id=appt_id) }}" method="post">
                 <div class="form-row">
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label for="courses">Course/Reason:</label>
                             <select class="form-control" id="courses" name="course">
@@ -27,23 +27,10 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label for="assignment">Assignment:</label>
                             <textarea id="assignment" name="assignment" class="form-control">{{ appt.assignment }}</textarea>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label>Multilingual:</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="multi" id="multi-yes" value="1" {{ 'checked' if appt.multilingual == 1 }}>
-                                <label class="form-check-label" for="multi-yes">Yes</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="multi" id="multi-no" value="0" {{ 'checked' if appt.multilingual == 0 }}>
-                                <label class="form-check-label" for="multi-no">No</label>
-                            </div>
                         </div>
                     </div>
                 </div>

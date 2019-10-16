@@ -177,7 +177,7 @@ class AppointmentsController:
         appointment.actualStart = datetime.now()
         db_session.commit()
 
-    def end_appointment(self, appt_id, course, assignment, multilingual, notes, suggestions):
+    def end_appointment(self, appt_id, course, assignment, notes, suggestions):
         appointment = db_session.query(AppointmentsTable)\
             .filter(AppointmentsTable.id == appt_id)\
             .one_or_none()
@@ -193,7 +193,6 @@ class AppointmentsController:
             appointment.profName = course['instructor']
             appointment.profEmail = course['instructor_email']
         appointment.assignment = assignment
-        appointment.multilingual = multilingual
         appointment.notes = notes
         appointment.suggestions = suggestions
         appointment.actualEnd = datetime.now()

@@ -372,7 +372,6 @@ class AppointmentsView(FlaskView):
         form = request.form
         course = form.get('course')
         assignment = form.get('assignment')
-        multilingual = int(form.get('multi'))
         notes = form.get('notes')
         suggestions = form.get('suggestions')
         ferpa_agreement = True if form.get('ferpa') == 'on' else False
@@ -395,7 +394,7 @@ class AppointmentsView(FlaskView):
                     break
 
         try:
-            self.ac.end_appointment(appt_id, course, assignment, multilingual, notes, suggestions)
+            self.ac.end_appointment(appt_id, course, assignment, notes, suggestions)
             if ferpa_agreement:
                 self.mcc.end_appt_prof(appt_id)
             qualtrics_link = self.ac.get_survey_link()[0]
