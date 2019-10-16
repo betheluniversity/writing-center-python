@@ -4,13 +4,14 @@ from flask import Flask, request
 from flask import session as flask_session
 from datetime import datetime
 
+import sentry_sdk
+
 app = Flask(__name__)
 app.config.from_object('config')
 
 from writing_center.db_repository import db_session
 
 if app.config['ENVIRON'] == 'prod' and app.config['SENTRY_URL']:
-    import sentry_sdk
     from sentry_sdk.integrations.flask import FlaskIntegration
     sentry_sdk.init(dsn=app.config['SENTRY_URL'], integrations=[FlaskIntegration()])
     from writing_center import error
