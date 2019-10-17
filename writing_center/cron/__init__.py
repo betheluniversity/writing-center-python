@@ -69,3 +69,19 @@ class CronView(FlaskView):
         except Exception as error:
             cron_message += "An error occurred: {0}\n\n".format(str(error))
             return cron_message
+
+    @requires_auth
+    @route('/end-appts', methods=['get'])
+    def end_appointments(self):
+        cron_message = 'Cron closing open appointments...\n'
+        try:
+            open_appointments = self.cron.get_open_appts()
+            for appt in open_appointments:
+                tutor = self.cron.get_user(appt.tutor_id)
+                student = self.cron.get_user(appt.student_id)
+                cron_message += 'Closing appointment for {0} {1} tutored by {2} {3} with start date/time: {4}'.format(
+                    student.firstName, student.lastName, tutor.firstName, tutor.lastName, appt.actualStart)
+                self.cron.close_appt(appt.id)
+        except Exception as error:
+            cron_message += 'An error occurred: {0}\n\n'.format(str(error))
+        return cron_message
