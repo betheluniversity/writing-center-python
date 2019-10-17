@@ -19,3 +19,13 @@ class CronController:
 
     def get_user(self, user_id):
         return db_session.query(UserTable).filter(UserTable.id == user_id).one()
+
+    def get_open_appts(self):
+        return db_session.query(AppointmentsTable).filter(AppointmentsTable.inProgress == 1).all()
+
+    def close_appt(self, appt_id):
+        appt = db_session.query(AppointmentsTable).filter(AppointmentsTable.id == appt_id).one()
+        appt.inProgress = 0
+        if not appt.actualEnd:
+            appt.actualEnd = datetime.now()
+        db_session.commit()
