@@ -272,6 +272,10 @@ ul.list-group{
     font-size: .8em;
 }
 
+.schedule {
+    height: 9.3em;
+}
+
 .search-btn {
     float: right;
 }
