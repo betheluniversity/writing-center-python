@@ -49,7 +49,7 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="tutors-shifts">Select Tutors</label>
-                    <select class="form-control" id="tutors-shifts" multiple="multiple" required="required" name="tutors">
+                    <select class="form-control schedule" id="tutors-shifts" multiple="multiple" required="required" name="tutors">
                         <option id="select-all" class="select-hr" value="Select All Tutors">Select All Tutors</option>
                         {% for tutor in tutors %}
                             <option id="{{ tutor.id }}" value="{{ tutor.id }}">{{ tutor.firstName }} {{ tutor.lastName }}</option>
@@ -60,7 +60,7 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="days">Select Days</label>
-                    <select class="form-control" id="days" multiple="multiple" required="required" name="days">
+                    <select class="form-control schedule" id="days" multiple="multiple" required="required" name="days">
                         <option value="0">Monday</option>
                         <option value="1">Tuesday</option>
                         <option value="2">Wednesday</option>
@@ -74,7 +74,7 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="times">Select Time Slots</label>
-                    <select class="form-control" id="times" multiple="multiple" required="required" name="time-slots">
+                    <select class="form-control schedule" id="times" multiple="multiple" required="required" name="time-slots">
                         {% for schedule in schedules %}
                             <option id="{{ schedule.id }}" value="{{ schedule.startTime|datetimeformat }} - {{ schedule.endTime|datetimeformat }}">{{ schedule.startTime|datetimeformat }} - {{ schedule.endTime|datetimeformat }}</option>
                         {% endfor %}
