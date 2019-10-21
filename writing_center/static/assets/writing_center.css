@@ -316,3 +316,7 @@ ul.list-group{
     position: absolute;
     z-index: 999;
 }
+
+.scroll {
+    overflow: scroll;
+}
