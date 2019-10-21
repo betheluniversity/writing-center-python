@@ -219,6 +219,13 @@ class AppointmentsController:
             .filter(AppointmentsTable.tutor_id != None)\
             .all()
 
+    def get_walk_in_appointments_in_range(self, start, end):
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.actualStart >= start)\
+            .filter(AppointmentsTable.actualEnd <= end)\
+            .filter(AppointmentsTable.tutor_id != None)\
+            .all()
+
     def get_open_appointments_in_range(self, start, end, time_limit):
         time_limit = datetime.now() + timedelta(hours=time_limit)
         return db_session.query(AppointmentsTable) \

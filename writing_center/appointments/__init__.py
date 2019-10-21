@@ -70,22 +70,38 @@ class AppointmentsView(FlaskView):
             range_appointments = self.ac.get_open_appointments_in_range(start, end, time_limit)
         else:
             range_appointments = self.ac.get_appointments_in_range(start, end)
+            walk_in_appointments = self.ac.get_walk_in_appointments_in_range(start, end)
+            range_appointments.extend(walk_in_appointments)
         appointments = []
         # Formats the times to match the fullcalendar desired format
         if range_appointments:
             for appointment in range_appointments:
-                start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
-                                                              appointment.scheduledStart.strftime('%m'),
-                                                              appointment.scheduledStart.strftime('%d'),
-                                                              appointment.scheduledStart.strftime('%H'),
-                                                              appointment.scheduledStart.strftime('%M'),
-                                                              appointment.scheduledStart.strftime('%S'))
-                end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledEnd.year,
-                                                            appointment.scheduledEnd.strftime('%m'),
-                                                            appointment.scheduledEnd.strftime('%d'),
-                                                            appointment.scheduledEnd.strftime('%H'),
-                                                            appointment.scheduledEnd.strftime('%M'),
-                                                            appointment.scheduledEnd.strftime('%S'))
+                if appointment.actualStart and appointment.actualEnd:
+                    start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
+                                                                  appointment.actualStart.strftime('%m'),
+                                                                  appointment.actualStart.strftime('%d'),
+                                                                  appointment.actualStart.strftime('%H'),
+                                                                  appointment.actualStart.strftime('%M'),
+                                                                  appointment.actualStart.strftime('%S'))
+                    end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualEnd.year,
+                                                                appointment.actualEnd.strftime('%m'),
+                                                                appointment.actualEnd.strftime('%d'),
+                                                                appointment.actualEnd.strftime('%H'),
+                                                                appointment.actualEnd.strftime('%M'),
+                                                                appointment.actualEnd.strftime('%S'))
+                else:
+                    start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
+                                                                  appointment.scheduledStart.strftime('%m'),
+                                                                  appointment.scheduledStart.strftime('%d'),
+                                                                  appointment.scheduledStart.strftime('%H'),
+                                                                  appointment.scheduledStart.strftime('%M'),
+                                                                  appointment.scheduledStart.strftime('%S'))
+                    end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledEnd.year,
+                                                                appointment.scheduledEnd.strftime('%m'),
+                                                                appointment.scheduledEnd.strftime('%d'),
+                                                                appointment.scheduledEnd.strftime('%H'),
+                                                                appointment.scheduledEnd.strftime('%M'),
+                                                                appointment.scheduledEnd.strftime('%S'))
                 tutor = self.ac.get_user_by_id(appointment.tutor_id)
                 appointments.append({
                     'id': appointment.id,
