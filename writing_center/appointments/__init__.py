@@ -103,6 +103,8 @@ class AppointmentsView(FlaskView):
         self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
         tutor = flask_session['USERNAME']
         appointments = self.ac.get_scheduled_appointments(tutor)
+        in_progress_appointments = self.ac.get_in_progress_appointments(tutor)
+        appointments.extend(in_progress_appointments)
         users = {}
         for appt in appointments:
             user = self.ac.get_user_by_id(appt.student_id)
