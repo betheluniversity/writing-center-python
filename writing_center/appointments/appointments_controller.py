@@ -98,7 +98,7 @@ class AppointmentsController:
             course_section = course['section']
             prof_name = course['instructor']
             prof_email = course['instructor_email']
-            begin_appt = AppointmentsTable(student_id=user.id, tutor_id=tutor.id, scheduledStart=datetime.now(),
+            begin_appt = AppointmentsTable(student_id=user.id, tutor_id=tutor.id,
                                            actualStart=datetime.now(), profName=prof_name, profEmail=prof_email,
                                            assignment=assignment, courseCode=course_code, courseSection=course_section,
                                            inProgress=1, dropIn=1, sub=0, multilingual=multilingual, noShow=0)
@@ -204,8 +204,7 @@ class AppointmentsController:
         appointment.notes = notes
         appointment.suggestions = suggestions
         appointment.actualEnd = datetime.now()
-        if not appointment.scheduledEnd:
-            appointment.scheduledEnd = datetime.now()
+
         db_session.commit()
 
     def get_appointment_by_id(self, appt_id):
