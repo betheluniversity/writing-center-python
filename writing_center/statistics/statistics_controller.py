@@ -91,9 +91,9 @@ class StatisticsController:
         if value == 'all':
             return db_session.query(AppointmentsTable)\
                 .filter(AppointmentsTable.dropIn == 1)\
-                .filter(AppointmentsTable.scheduledStart >= start)\
-                .filter(AppointmentsTable.scheduledEnd <= end) \
-                .filter(AppointmentsTable.scheduledStart != AppointmentsTable.scheduledEnd) \
+                .filter(AppointmentsTable.actualStart >= start)\
+                .filter(AppointmentsTable.actualEnd <= end) \
+                .filter(AppointmentsTable.actualStart != AppointmentsTable.actualEnd) \
                 .filter(AppointmentsTable.student_id) \
                 .filter(AppointmentsTable.tutor_id) \
                 .all()
@@ -101,9 +101,9 @@ class StatisticsController:
             return db_session.query(AppointmentsTable)\
                 .filter(AppointmentsTable.dropIn == 1)\
                 .filter(AppointmentsTable.multilingual == 0)\
-                .filter(AppointmentsTable.scheduledStart >= start)\
-                .filter(AppointmentsTable.scheduledEnd <= end) \
-                .filter(AppointmentsTable.scheduledStart != AppointmentsTable.scheduledEnd) \
+                .filter(AppointmentsTable.actualStart >= start)\
+                .filter(AppointmentsTable.actualEnd <= end) \
+                .filter(AppointmentsTable.actualStart != AppointmentsTable.actualEnd) \
                 .filter(AppointmentsTable.student_id) \
                 .filter(AppointmentsTable.tutor_id) \
                 .all()
@@ -111,9 +111,9 @@ class StatisticsController:
             return db_session.query(AppointmentsTable)\
                 .filter(AppointmentsTable.dropIn == 1)\
                 .filter(AppointmentsTable.multilingual == 1)\
-                .filter(AppointmentsTable.scheduledStart >= start)\
-                .filter(AppointmentsTable.scheduledEnd <= end) \
-                .filter(AppointmentsTable.scheduledStart != AppointmentsTable.scheduledEnd) \
+                .filter(AppointmentsTable.actualStart >= start)\
+                .filter(AppointmentsTable.actualEnd <= end) \
+                .filter(AppointmentsTable.actualStart != AppointmentsTable.actualEnd) \
                 .filter(AppointmentsTable.student_id) \
                 .filter(AppointmentsTable.tutor_id) \
                 .all()
