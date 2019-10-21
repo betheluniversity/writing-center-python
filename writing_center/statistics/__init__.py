@@ -86,6 +86,9 @@ class StatisticsView(FlaskView):
         appointments = self.sc.get_appointments(start, end, value)
         walk_in_appts = self.sc.get_walk_in_appointments(start, end, value)
         no_show_appts = self.sc.get_no_show_appointments(start, end, value)
+        appts_list = []
+        appts_list.extend(appointments)
+        appts_list.extend(walk_in_appts)
         # If stat_id == busyness then we are only looking at busyness statistics so only return them to save time
         if stat_id == 'busyness':
             # Used to get the busiest week(s)
@@ -167,9 +170,12 @@ class StatisticsView(FlaskView):
             busiest_day = {}
             busiest_tod = {}
             busiest_tutors = {}
-            for appt in appointments:
+            for appt in appts_list:
                 # Used to get the busiest day(s)
-                date = appt.scheduledStart.strftime('%b %d %Y')
+                if appt.scheduledStart and appt.scheduledEnd:
+                    date = appt.scheduledStart.strftime('%b %d %Y')
+                else:
+                    date = appt.actualStart.strftime("%b %d %Y")
                 try:
                     if busiest_day[date] != None:
                         count = busiest_day[date] + 1
@@ -195,7 +201,13 @@ class StatisticsView(FlaskView):
                     })
                 # Used to get busiest week(s)
                 for week in busiest_week:
-                    if appt.scheduledStart > busiest_week[week]['start'] and appt.scheduledEnd < busiest_week[week]['end']:
+                    if appt.scheduledStart and appt.scheduledEnd:
+                        time_start = appt.scheduledStart
+                        time_end = appt.scheduledEnd
+                    else:
+                        time_start = appt.actualStart
+                        time_end = appt.actualEnd
+                    if time_start > busiest_week[week]['start'] and time_end < busiest_week[week]['end']:
                         count = busiest_week[week]['count'] + 1
                         busiest_week[week].update({
                             'count': count
@@ -217,7 +229,7 @@ class StatisticsView(FlaskView):
         elif stat_id == 'course-busyness':
             # Else if stat_id == course-busyness we are only looking at courses so only return that data
             courses = {}
-            for appt in appointments:
+            for appt in appts_list:
                 # Used to get the Courses
                 course_str = '{0} {1}'.format(appt.courseCode, appt.courseSection)
                 try:
