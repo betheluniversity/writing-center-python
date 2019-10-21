@@ -328,9 +328,9 @@ class AppointmentsController:
             else:
                 appts = appts.filter(AppointmentsTable.courseCode.like("____%{0}%".format(course)))
         if start:
-            appts = appts.filter(AppointmentsTable.scheduledStart > start)
+            appts = appts.filter(AppointmentsTable.actualStart > start)
         if end:
-            appts = appts.filter(AppointmentsTable.scheduledEnd < end)
+            appts = appts.filter(AppointmentsTable.actualEnd < end)
         return appts.order_by(AppointmentsTable.scheduledStart.desc()).all()
 
     def edit_appt(self, appt_id, student_id, tutor_id, sched_start, sched_end, actual_start, actual_end, prof_name,
