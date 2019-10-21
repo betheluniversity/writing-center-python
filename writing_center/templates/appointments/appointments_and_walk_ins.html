@@ -38,7 +38,7 @@
                         <th data-toggle="tooltip" data-placement="top" title="Date">Date</th>
                         <th data-toggle="tooltip" data-placement="top" title="Start Time">Start Time</th>
                         <th data-toggle="tooltip" data-placement="top" title="End Time">End Time</th>
-                        <th data-toggle="tooltip" data-placement="top" title="Start Appointment">Start/Continue Appointment</th>
+                        <th data-toggle="tooltip" data-placement="top" title="Start Appointment">Start/Continue/End Appointment</th>
                         <th data-toggle="tooltip" data-placement="top" title="Mark/Unmark as No Show">Mark/Unmark as No Show</th>
                         <th data-toggle="tooltip" data-placement="top" title="Mark/Unmark as Multilingual">Mark/Unmark as Multilingual</th>
                         <th data-toggle="tooltip" data-placement="top" title="View More Info">View More Info</th>
@@ -64,6 +64,9 @@
                                     {% if not appointment.actualStart %}
                                         <a id="start" href="{{ url_for('AppointmentsView:start_appointment', appt_id=appointment.id) }}"
                                            class="btn btn-primary btn-success">Start Appointment</a>
+                                    {% elif not appointment.actualEnd %}
+                                        <a id="End" href="{{ url_for('AppointmentsView:in_progress_appointment', appt_id=appointment.id) }}"
+                                           class="btn btn-primary btn-danger">End Appointment</a>
                                     {% else %}
                                         <a id="continue" href="{{ url_for('AppointmentsView:in_progress_appointment', appt_id=appointment.id) }}"
                                            class="btn btn-primary background-blue">Continue Appointment</a>

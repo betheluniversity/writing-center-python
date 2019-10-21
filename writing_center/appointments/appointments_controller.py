@@ -121,6 +121,14 @@ class AppointmentsController:
             .filter(AppointmentsTable.tutor_id == tutor.id)\
             .all()
 
+    def get_in_progress_appointments(self, username):
+        tutor = self.get_user_by_username(username)
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.scheduledEnd == None)\
+            .filter(AppointmentsTable.student_id != None)\
+            .filter(AppointmentsTable.tutor_id == tutor.id)\
+            .all()
+
     def tutor_change_appt(self, appt_id, assignment, notes, suggestions):
         try:
             appt = self.get_appointment_by_id(appt_id)
