@@ -120,7 +120,9 @@ class AppointmentsView(FlaskView):
         tutor = flask_session['USERNAME']
         appointments = self.ac.get_scheduled_appointments(tutor)
         in_progress_appointments = self.ac.get_in_progress_appointments(tutor)
+        in_progress_walk_ins = self.ac.get_in_progress_walk_ins(tutor)
         appointments.extend(in_progress_appointments)
+        appointments.extend(in_progress_walk_ins)
         users = {}
         for appt in appointments:
             user = self.ac.get_user_by_id(appt.student_id)

@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from flask import session as flask_session
+from sqlalchemy import or_
 
 from writing_center.db_repository import db_session
 from writing_center.db_repository.tables import UserTable, AppointmentsTable, SettingsTable, UserRoleTable, RoleTable
@@ -124,7 +125,19 @@ class AppointmentsController:
     def get_in_progress_appointments(self, username):
         tutor = self.get_user_by_username(username)
         return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.scheduledStart != None)\
             .filter(AppointmentsTable.scheduledEnd == None)\
+            .filter(AppointmentsTable.student_id != None)\
+            .filter(AppointmentsTable.tutor_id == tutor.id)\
+            .all()
+
+    def get_in_progress_walk_ins(self, username):
+        tutor = self.get_user_by_username(username)
+        min_today = datetime.combine(datetime.now(), datetime.min.time())
+        max_today = datetime.combine(datetime.now(), datetime.max.time())
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.actualStart >= min_today)\
+            .filter(or_(AppointmentsTable.actualEnd == None, AppointmentsTable.actualEnd <= max_today))\
             .filter(AppointmentsTable.student_id != None)\
             .filter(AppointmentsTable.tutor_id == tutor.id)\
             .all()
