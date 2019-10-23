@@ -191,7 +191,7 @@ class StatisticsView(FlaskView):
                     timeslot = '{0} - {1}'.format(self.sc.datetimeformat(appt.scheduledStart),
                                                   self.sc.datetimeformat(appt.scheduledEnd))
                 else:
-                    timeslot = '{0} - {1}'.format(self.sc.datetimeformat(appt.actualStart),
+                    timeslot = '{0} - {1} (Walk In)'.format(self.sc.datetimeformat(appt.actualStart),
                                                   self.sc.datetimeformat(appt.actualEnd))
                 try:
                     if busiest_tod[timeslot] != None:
