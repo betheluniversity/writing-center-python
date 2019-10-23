@@ -187,8 +187,12 @@ class StatisticsView(FlaskView):
                         date: 1
                     })
                 # Used to get busiest time(s) of day
-                timeslot = '{0} - {1}'.format(self.sc.datetimeformat(appt.scheduledStart),
-                                              self.sc.datetimeformat(appt.scheduledEnd))
+                if appt.scheduledStart and appt.scheduledEnd:
+                    timeslot = '{0} - {1}'.format(self.sc.datetimeformat(appt.scheduledStart),
+                                                  self.sc.datetimeformat(appt.scheduledEnd))
+                else:
+                    timeslot = '{0} - {1}'.format(self.sc.datetimeformat(appt.actualStart),
+                                                  self.sc.datetimeformat(appt.actualEnd))
                 try:
                     if busiest_tod[timeslot] != None:
                         count = busiest_tod[timeslot] + 1
