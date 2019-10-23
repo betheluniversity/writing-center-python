@@ -488,11 +488,12 @@ class AppointmentsView(FlaskView):
         date = None if form.get('date') == '' else form.get('date')
         sched_start_time = None if form.get('sched-start') == '' else form.get('sched-start')
         sched_end_time = None if form.get('sched-end') == '' else form.get('sched-end')
-        if not date or not sched_start_time or not sched_end_time:
-            self.wcc.set_alert('danger', 'You must select a date and a scheduled start and end time.')
+        if not date:
+            self.wcc.set_alert('danger', 'You must select a date.')
             return redirect(url_for('AppointmentsView:edit', appt_id=appt_id))
-        sched_start = "{0} {1}".format(datetime.strptime(date, '%a %b %d %Y').strftime("%Y-%m-%d"), sched_start_time)
-        sched_end = "{0} {1}".format(datetime.strptime(date, '%a %b %d %Y').strftime("%Y-%m-%d"), sched_end_time)
+        if sched_start_time and sched_end_time:
+            sched_start_time = "{0} {1}".format(datetime.strptime(date, '%a %b %d %Y').strftime("%Y-%m-%d"), sched_start_time)
+            sched_end_time = "{0} {1}".format(datetime.strptime(date, '%a %b %d %Y').strftime("%Y-%m-%d"), sched_end_time)
 
         actual_start_time = None if form.get('actual-start') == '' else form.get('actual-start')
         actual_end_time = None if form.get('actual-end') == '' else form.get('actual-end')
@@ -513,7 +514,7 @@ class AppointmentsView(FlaskView):
         in_progress = int(form.get('in-progress-check'))
 
         try:
-            self.ac.edit_appt(appt_id, student_id, tutor_id, sched_start, sched_end, actual_start, actual_end, prof,
+            self.ac.edit_appt(appt_id, student_id, tutor_id, sched_start_time, sched_end_time, actual_start, actual_end, prof,
                               prof_email, drop_in, sub, assignment, notes, suggestions, multilingual, course, section,
                               no_show, in_progress)
             self.wcc.set_alert('success', 'Appointment edited successfully!')

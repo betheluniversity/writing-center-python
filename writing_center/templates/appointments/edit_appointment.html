@@ -56,12 +56,12 @@
                     <div class="col-md-6 form-group">
                         <label for="sched-start">Scheduled Start Time</label>
                         <input id="sched-start" type="time" class="form-control" name="sched-start" step="1"
-                               value="{{ appt.scheduledStart.strftime('%H:%M:%S') }}">
+                               value="{{ appt.scheduledStart.strftime('%H:%M:%S') if appt.scheduledStart else '' }}">
                     </div>
                     <div class="col-md-6 form-group">
                         <label for="sched-end">Scheduled End Time</label>
                         <input id="sched-end" type="time" class="form-control" name="sched-end" step="1"
-                               value="{{ appt.scheduledEnd.strftime('%H:%M:%S') }}">
+                               value="{{ appt.scheduledEnd.strftime('%H:%M:%S') if appt.scheduledEnd else '' }}">
                     </div>
                 </div>
                 <div class="form-row">
