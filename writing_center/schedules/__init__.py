@@ -126,6 +126,8 @@ class SchedulesView(FlaskView):
         # Formats the times to match the fullcalendar desired format
         for tutor_appts in all_tutor_appts:
             for appointment in tutor_appts:
+                start_time = ""
+                end_time = ""
                 if appointment.actualStart and appointment.actualEnd:
                     start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
                                                                   appointment.actualStart.strftime('%m'),
