@@ -139,7 +139,7 @@ class SchedulesView(FlaskView):
                                                                 appointment.actualEnd.strftime('%H'),
                                                                 appointment.actualEnd.strftime('%M'),
                                                                 appointment.actualEnd.strftime('%S'))
-                else:
+                elif appointment.scheduledStart and appointment.actualEnd:
                     start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
                                                                   appointment.scheduledStart.strftime('%m'),
                                                                   appointment.scheduledStart.strftime('%d'),
