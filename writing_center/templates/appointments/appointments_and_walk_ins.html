@@ -52,13 +52,25 @@
                                     {{ users[appointment.student_id] }}
                                 </td>
                                 <td>
-                                    {{ appointment.scheduledStart|datetimeformat('%m/%d/%y') }}
+                                    {% if appointment.scheduledStart %}
+                                        {{ appointment.scheduledStart|datetimeformat('%m/%d/%y') }}
+                                    {% elif appointment.actualStart %}
+                                        {{ appointment.actualStart|datetimeformat('%m/%d/%y') }}
+                                    {% endif %}
                                 </td>
                                 <td>
-                                    {{ appointment.scheduledStart|datetimeformat }}
+                                    {% if appointment.scheduledStart %}
+                                        {{ appointment.scheduledStart|datetimeformat }}
+                                    {% elif appointment.actualStart %}
+                                        {{ appointment.actualStart|datetimeformat }}
+                                    {% endif %}
                                 </td>
                                 <td>
-                                    {{ appointment.scheduledEnd|datetimeformat }}
+                                    {% if appointment.scheduledEnd %}
+                                        {{ appointment.scheduledEnd|datetimeformat }}
+                                    {% elif appointment.actualEnd %}
+                                        {{ appointment.actualEnd|datetimeformat }}
+                                    {% endif %}
                                 </td>
                                 <td>
                                     {% if not appointment.actualStart %}

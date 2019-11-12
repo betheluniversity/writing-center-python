@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from flask import session as flask_session
+from sqlalchemy import or_
 
 from writing_center.db_repository import db_session
 from writing_center.db_repository.tables import UserTable, AppointmentsTable, SettingsTable, UserRoleTable, RoleTable
@@ -98,12 +99,12 @@ class AppointmentsController:
             course_section = course['section']
             prof_name = course['instructor']
             prof_email = course['instructor_email']
-            begin_appt = AppointmentsTable(student_id=user.id, tutor_id=tutor.id, scheduledStart=datetime.now(),
+            begin_appt = AppointmentsTable(student_id=user.id, tutor_id=tutor.id,
                                            actualStart=datetime.now(), profName=prof_name, profEmail=prof_email,
                                            assignment=assignment, courseCode=course_code, courseSection=course_section,
                                            inProgress=1, dropIn=1, sub=0, multilingual=multilingual, noShow=0)
         else:
-            begin_appt = AppointmentsTable(student_id=user.id, tutor_id=tutor.id, scheduledStart=datetime.now(),
+            begin_appt = AppointmentsTable(student_id=user.id, tutor_id=tutor.id,
                                            actualStart=datetime.now(), assignment=assignment, inProgress=1, dropIn=1,
                                            sub=0, multilingual=multilingual, noShow=0)
         db_session.add(begin_appt)
@@ -124,7 +125,19 @@ class AppointmentsController:
     def get_in_progress_appointments(self, username):
         tutor = self.get_user_by_username(username)
         return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.scheduledStart != None)\
             .filter(AppointmentsTable.scheduledEnd == None)\
+            .filter(AppointmentsTable.student_id != None)\
+            .filter(AppointmentsTable.tutor_id == tutor.id)\
+            .all()
+
+    def get_in_progress_walk_ins(self, username):
+        tutor = self.get_user_by_username(username)
+        min_today = datetime.combine(datetime.now(), datetime.min.time())
+        max_today = datetime.combine(datetime.now(), datetime.max.time())
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.actualStart >= min_today)\
+            .filter(or_(AppointmentsTable.actualEnd == None, AppointmentsTable.actualEnd <= max_today))\
             .filter(AppointmentsTable.student_id != None)\
             .filter(AppointmentsTable.tutor_id == tutor.id)\
             .all()
@@ -204,8 +217,7 @@ class AppointmentsController:
         appointment.notes = notes
         appointment.suggestions = suggestions
         appointment.actualEnd = datetime.now()
-        if not appointment.scheduledEnd:
-            appointment.scheduledEnd = datetime.now()
+
         db_session.commit()
 
     def get_appointment_by_id(self, appt_id):
@@ -217,6 +229,13 @@ class AppointmentsController:
         return db_session.query(AppointmentsTable)\
             .filter(AppointmentsTable.scheduledStart >= start)\
             .filter(AppointmentsTable.scheduledEnd <= end)\
+            .filter(AppointmentsTable.tutor_id != None)\
+            .all()
+
+    def get_walk_in_appointments_in_range(self, start, end):
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.actualStart >= start)\
+            .filter(AppointmentsTable.actualEnd <= end)\
             .filter(AppointmentsTable.tutor_id != None)\
             .all()
 
@@ -328,9 +347,9 @@ class AppointmentsController:
             else:
                 appts = appts.filter(AppointmentsTable.courseCode.like("____%{0}%".format(course)))
         if start:
-            appts = appts.filter(AppointmentsTable.scheduledStart > start)
+            appts = appts.filter(AppointmentsTable.actualStart > start)
         if end:
-            appts = appts.filter(AppointmentsTable.scheduledEnd < end)
+            appts = appts.filter(AppointmentsTable.actualEnd < end)
         return appts.order_by(AppointmentsTable.scheduledStart.desc()).all()
 
     def edit_appt(self, appt_id, student_id, tutor_id, sched_start, sched_end, actual_start, actual_end, prof_name,

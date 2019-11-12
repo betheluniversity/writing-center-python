@@ -25,8 +25,15 @@
                         {% endif %}
                     </td>
                     <td class="one-line">{{ info['tutor'].firstName }} {{ info['tutor'].lastName }}</td>
-                    <td class="one-line">{{ appt.scheduledStart.strftime("%m/%d/%y %I:%M %p") }}</td>
-                    <td class="one-line">{{ appt.scheduledEnd.strftime("%m/%d/%y %I:%M %p") }}</td>
+                    <td class="one-line">{{ appt.scheduledStart.strftime("%m/%d/%y %I:%M %p") if appt.scheduledStart else '' }}</td>
+                    <td class="one-line">{{ appt.scheduledEnd.strftime("%m/%d/%y %I:%M %p") if appt.scheduledEnd else '' }}</td>
+                    {% if not appt.scheduledStart and appt.actualStart %}
+                        <td class="one-line">{{ appt.actualStart.strftime("%m/%d/%y %I:%M %p") }}</td>
+                    {% endif %}
+                    {% if not appt.scheduledEnd and appt.actualEnd %}
+                        <td class="one-line">{{ appt.actualEnd.strftime("%m/%d/%y %I:%M %p") }}</td>
+                    {% endif %}
+
                     <td class="one-line">{{ appt.profName }}</td>
                     <td>{{ 'Yes' if appt.multilingual else 'No' }}</td>
                     <td>{{ appt.courseCode }}</td>
