@@ -68,6 +68,8 @@ class AppointmentsView(FlaskView):
         if schedule_appt:
             time_limit = int(self.ac.get_time_limit()[0])
             range_appointments = self.ac.get_open_appointments_in_range(start, end, time_limit)
+            open_no_show_appts = self.ac.get_no_show_appointments_in_range(start, end, time_limit)
+            range_appointments.extend(open_no_show_appts)
         else:
             range_appointments = self.ac.get_appointments_in_range(start, end)
             walk_in_appointments = self.ac.get_walk_in_appointments_in_range(start, end)

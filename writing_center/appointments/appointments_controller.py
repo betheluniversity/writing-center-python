@@ -64,6 +64,16 @@ class AppointmentsController:
             appointment = db_session.query(AppointmentsTable)\
                 .filter(AppointmentsTable.id == appt_id)\
                 .one_or_none()
+
+            appointment.profName = None
+            appointment.profEmail = None
+            appointment.assignment = None
+            appointment.notes = None
+            appointment.suggestions = None
+            appointment.courseCode = None
+            appointment.courseSection = None
+            appointment.noShow = 0
+
             # Updates the student username
             user = self.get_user_by_username(flask_session['USERNAME'])
             appointment.student_id = user.id
@@ -248,6 +258,17 @@ class AppointmentsController:
             .filter(AppointmentsTable.tutor_id != None)\
             .filter(AppointmentsTable.student_id == None)\
             .all()
+
+    def get_no_show_appointments_in_range(self, start, end, time_limit):
+            time_limit = datetime.now() + timedelta(hours=time_limit)
+            return db_session.query(AppointmentsTable) \
+                .filter(AppointmentsTable.scheduledStart >= start) \
+                .filter(AppointmentsTable.scheduledEnd >= time_limit) \
+                .filter(AppointmentsTable.scheduledEnd <= end) \
+                .filter(AppointmentsTable.tutor_id != None) \
+                .filter(AppointmentsTable.student_id != None) \
+                .filter(AppointmentsTable.noShow) \
+                .all()
 
     def get_future_user_appointments(self, user_id):
         return db_session.query(AppointmentsTable)\
