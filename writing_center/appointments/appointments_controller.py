@@ -252,8 +252,8 @@ class AppointmentsController:
     def get_open_appointments_in_range(self, start, end, time_limit):
         time_limit = datetime.now() + timedelta(hours=time_limit)
         return db_session.query(AppointmentsTable) \
-            .filter(AppointmentsTable.scheduledStart >= time_limit)\
             .filter(AppointmentsTable.scheduledStart >= start)\
+            .filter(AppointmentsTable.scheduledEnd >= time_limit)\
             .filter(AppointmentsTable.scheduledEnd <= end)\
             .filter(AppointmentsTable.tutor_id != None)\
             .filter(AppointmentsTable.student_id == None)\
