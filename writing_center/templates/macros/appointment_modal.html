@@ -132,7 +132,7 @@
                             <th colspan="2"><button class="btn btn-primary darkblue" onclick="scheduleAppointment({{ appt_id }})">Schedule Appointment</button></th>
                         </tr>
                     {% endif %}
-                    {% if cancel and appointment.scheduledStart > now %}
+                    {% if cancel and appointment.scheduledStart and appointment.scheduledStart > now %}
                         <tr>
                             <th colspan="2"><button class="btn btn-primary btn-danger" onclick="cancelAppointment({{ appt_id }})">Cancel Appointment</button></th>
                         </tr>
