@@ -91,7 +91,7 @@ class AppointmentsView(FlaskView):
                                                                 appointment.actualEnd.strftime('%H'),
                                                                 appointment.actualEnd.strftime('%M'),
                                                                 appointment.actualEnd.strftime('%S'))
-                else:
+                elif appointment.scheduledStart and appointment.scheduledEnd:
                     start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
                                                                   appointment.scheduledStart.strftime('%m'),
                                                                   appointment.scheduledStart.strftime('%d'),
@@ -104,6 +104,9 @@ class AppointmentsView(FlaskView):
                                                                 appointment.scheduledEnd.strftime('%H'),
                                                                 appointment.scheduledEnd.strftime('%M'),
                                                                 appointment.scheduledEnd.strftime('%S'))
+                else:
+                    start_time = None
+                    end_time = None
                 tutor = self.ac.get_user_by_id(appointment.tutor_id)
                 appointments.append({
                     'id': appointment.id,

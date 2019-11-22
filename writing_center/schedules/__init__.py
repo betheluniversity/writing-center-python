@@ -126,8 +126,6 @@ class SchedulesView(FlaskView):
         # Formats the times to match the fullcalendar desired format
         for tutor_appts in all_tutor_appts:
             for appointment in tutor_appts:
-                start_time = ""
-                end_time = ""
                 if appointment.actualStart and appointment.actualEnd:
                     start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.actualStart.year,
                                                                   appointment.actualStart.strftime('%m'),
@@ -141,20 +139,22 @@ class SchedulesView(FlaskView):
                                                                 appointment.actualEnd.strftime('%H'),
                                                                 appointment.actualEnd.strftime('%M'),
                                                                 appointment.actualEnd.strftime('%S'))
-                elif appointment.scheduledStart:
+                elif appointment.scheduledStart and appointment.scheduledEnd:
                     start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
                                                                   appointment.scheduledStart.strftime('%m'),
                                                                   appointment.scheduledStart.strftime('%d'),
                                                                   appointment.scheduledStart.strftime('%H'),
                                                                   appointment.scheduledStart.strftime('%M'),
                                                                   appointment.scheduledStart.strftime('%S'))
-                    if appointment.scheduledEnd:
-                        end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledEnd.year,
-                                                                    appointment.scheduledEnd.strftime('%m'),
-                                                                    appointment.scheduledEnd.strftime('%d'),
-                                                                    appointment.scheduledEnd.strftime('%H'),
-                                                                    appointment.scheduledEnd.strftime('%M'),
-                                                                    appointment.scheduledEnd.strftime('%S'))
+                    end_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledEnd.year,
+                                                                appointment.scheduledEnd.strftime('%m'),
+                                                                appointment.scheduledEnd.strftime('%d'),
+                                                                appointment.scheduledEnd.strftime('%H'),
+                                                                appointment.scheduledEnd.strftime('%M'),
+                                                                appointment.scheduledEnd.strftime('%S'))
+                else:
+                    start_time = None
+                    end_time = None
 
                 tutor = self.sc.get_user_by_id(appointment.tutor_id)
                 appointments.append({
@@ -295,7 +295,7 @@ class SchedulesView(FlaskView):
                                                             appointment.actualEnd.strftime('%H'),
                                                             appointment.actualEnd.strftime('%M'),
                                                             appointment.actualEnd.strftime('%S'))
-            else:
+            elif appointment.scheduledStart and appointment.scheduledEnd:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
                                                               appointment.scheduledStart.strftime('%m'),
                                                               appointment.scheduledStart.strftime('%d'),
@@ -308,6 +308,9 @@ class SchedulesView(FlaskView):
                                                             appointment.scheduledEnd.strftime('%H'),
                                                             appointment.scheduledEnd.strftime('%M'),
                                                             appointment.scheduledEnd.strftime('%S'))
+            else:
+                start_time = None
+                end_time = None
             tutor = self.sc.get_user_by_id(appointment.tutor_id)
             appointments.append({
                 'id': appointment.id,
@@ -341,7 +344,7 @@ class SchedulesView(FlaskView):
                                                             appointment.actualEnd.strftime('%H'),
                                                             appointment.actualEnd.strftime('%M'),
                                                             appointment.actualEnd.strftime('%S'))
-            else:
+            elif appointment.scheduledStart and appointment.scheduledEnd:
                 start_time = '{0}-{1}-{2}T{3}:{4}:{5}'.format(appointment.scheduledStart.year,
                                                               appointment.scheduledStart.strftime('%m'),
                                                               appointment.scheduledStart.strftime('%d'),
@@ -354,6 +357,9 @@ class SchedulesView(FlaskView):
                                                             appointment.scheduledEnd.strftime('%H'),
                                                             appointment.scheduledEnd.strftime('%M'),
                                                             appointment.scheduledEnd.strftime('%S'))
+            else:
+                start_time = None
+                end_time = None
             tutor = self.sc.get_user_by_id(appointment.tutor_id)
             appointments.append({
                 'id': appointment.id,
