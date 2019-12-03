@@ -100,7 +100,7 @@ class MessageCenterController:
 
         recipients = student.email
 
-        self.send_message(subject, render_template('emails/session_email_student.html', **locals()), recipients, cc='', bcc='', html=True)
+        self.send_message(subject, render_template('emails/session_email_student.html', **locals()), recipients, bcc='', html=True)
 
     def close_session_tutor(self, appointment_id, to_prof):  # Todo needs to be connected
         appointment = self.get_appointment_info(appointment_id)
@@ -126,15 +126,15 @@ class MessageCenterController:
 
         subject = 'Appointment with {0} {1}'.format(student.firstName, student.lastName)
 
-        recipients = tutor.email
+        recipients = [tutor.email]
 
         if to_prof:
-            cc = appointment.profEmail
-            if self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, cc, bcc='', html=True):
+            recipients.append(appointment.profEmail)
+            if self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, bcc='', html=True):
                 return True
             return False
         else:
-            if self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, cc='', bcc='', html=True):
+            if self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, bcc='', html=True):
                 return True
             return False
 
@@ -151,7 +151,7 @@ class MessageCenterController:
 
         recipient = student.email
 
-        if self.send_message(subject, render_template('emails/appointment_signup_student.html', **locals()), recipient, cc='', bcc='', html=True):
+        if self.send_message(subject, render_template('emails/appointment_signup_student.html', **locals()), recipient, bcc='', html=True):
             return True
         return False
 
@@ -170,7 +170,7 @@ class MessageCenterController:
 
             recipient = tutor.email
 
-            if self.send_message(subject, render_template('emails/appointment_signup_tutor.html', **locals()), recipient, cc='', bcc='', html=True):
+            if self.send_message(subject, render_template('emails/appointment_signup_tutor.html', **locals()), recipient, bcc='', html=True):
                 return True
             return False
         return False
@@ -190,7 +190,7 @@ class MessageCenterController:
 
         recipients = self.get_substitute_email_recipients()
 
-        if self.send_message(subject, render_template('emails/sub_request.html', **locals()), recipients, cc='', bcc='', html=True):
+        if self.send_message(subject, render_template('emails/sub_request.html', **locals()), recipients, bcc='', html=True):
             return True
         return False
 
@@ -203,7 +203,7 @@ class MessageCenterController:
 
         recipient = old_tutor.email
 
-        if self.send_message(subject, render_template('emails/sub_request_fulfilled.html', **locals()), recipient, cc='', bcc='', html=True):
+        if self.send_message(subject, render_template('emails/sub_request_fulfilled.html', **locals()), recipient, bcc='', html=True):
             return True
         return False
 
@@ -221,7 +221,7 @@ class MessageCenterController:
 
         recipient = tutor.email
 
-        if self.send_message(subject, render_template('emails/cancel_appointment.html', **locals()), recipient, cc='', bcc='', html=True):
+        if self.send_message(subject, render_template('emails/cancel_appointment.html', **locals()), recipient, bcc='', html=True):
             return True
         return False
 
@@ -247,17 +247,42 @@ class MessageCenterController:
 
             recipient = appointment.profEmail
 
-            if self.send_message(subject, render_template('emails/prof_email.html', **locals()), recipient, cc='', bcc='', html=True):
+            if self.send_message(subject, render_template('emails/prof_email.html', **locals()), recipient, bcc='', html=True):
                 return True
         return False
 
-    def send_message(self, subject, body, recipients, cc, bcc, html=False):
+    def get_cc(self, cc_ids):
+        emails = []
+        for cc in cc_ids:
+            emails.append(self.get_user_email(int(cc)))
+        return emails
+
+    def get_bcc(self, groups, bcc_ids):
+        emails = []
+        for bcc in bcc_ids:
+            emails.append(self.get_user_email(int(bcc)))
+
+        for group in groups:
+            group_users = self.get_group_active_users(int(group))
+            for user in group_users:
+                emails.append(user.email)
+
+        return emails
+
+    def get_user_email(self, user_id):
+        user = db_session.query(UserTable).filter(UserTable.id == user_id).one()
+        return user.email
+
+    def get_group_active_users(self, role_id):
+        return db_session.query(UserTable).filter(UserTable.id == UserRoleTable.user_id)\
+            .filter(UserRoleTable.role_id == role_id).filter(UserTable.deletedAt == None).all()
+
+    def send_message(self, subject, body, recipients, bcc, html=False):
         # data will be compiled in the above functions and sent here
         if app.config['ENVIRON'] != 'prod':
-            print('Would have sent email to: {0} cc: {1}, bcc: {2}'.format(str(recipients), str(cc), str(bcc)))
-            subject = '{0}: Would have sent email to - {1} cc: {2}, bcc: {3}'.format(subject, str(recipients), str(cc), str(bcc))
+            print('Would have sent email to: {0}, bcc: {1}'.format(str(recipients), str(bcc)))
+            subject = '{0}: Would have sent email to - {1}, bcc: {2}'.format(subject, str(recipients), str(bcc))
             recipients = app.config['TEST_EMAIL']
-            cc = []
             bcc = []
 
         # if we are sending a message to a single user, go ahead and convert the string into a list
@@ -265,14 +290,11 @@ class MessageCenterController:
             recipients = [recipients]
         if isinstance(bcc, str):
             bcc = [bcc]
-        if isinstance(cc, str):
-            cc = [cc]
 
         mail = Mail(app)
         msg = Message(subject=subject,
                       sender='noreply@bethel.edu',
                       recipients=recipients,
-                      cc=cc,
                       bcc=bcc)
         if html:
             msg.html = body
