@@ -32,10 +32,14 @@ class MessageCenterView(FlaskView):
         # need to check that all the stuff is actually filled in, if its not, we need to fill it with an empty value
         subject = data.get('subject')
         message = data.get('message')
-        recipients = data.getlist('recipients')
-        cc = data.get('cc')
-        bcc = data.get('bcc')
-        if self.base.send_message(subject, message, recipients, cc, bcc):
+        groups = data.getlist('recipients')
+        cc_ids = data.getlist('cc')
+        bcc_ids = data.getlist('bcc')
+
+        recipients = self.base.get_cc(cc_ids)
+        bcc = self.base.get_bcc(groups, bcc_ids)
+
+        if self.base.send_message(subject, message, recipients, bcc, False):
             self.wcc.set_alert('success', 'Email sent successfully!')
         else:
             self.wcc.set_alert('danger', 'Email failed to send.')
