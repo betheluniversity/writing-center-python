@@ -91,7 +91,7 @@ class MessageCenterController:
 
         appt_info = {'tutor': tutor.firstName + " " + tutor.lastName,
                      'date': appointment.scheduledStart.date().strftime("%m/%d/%Y"),
-                     'time': appointment.scheduledStart.time().strftime("%I:%M %p"),
+                     'time': appointment.scheduledStart.time().strftime("%I:%M %p") + " - " + appointment.scheduledEnd.time().strftime("%I:%M %p"),
                      'assignment': appointment.assignment,
                      'notes': appointment.notes,
                      'suggestions': appointment.suggestions}
