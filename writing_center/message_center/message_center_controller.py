@@ -104,7 +104,6 @@ class MessageCenterController:
                          'notes': appointment.notes,
                          'suggestions': appointment.suggestions}
 
-
         subject = 'Appointment with {0} {1}'.format(tutor.firstName, tutor.lastName)
 
         recipients = student.email
