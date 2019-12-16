@@ -102,42 +102,6 @@ class MessageCenterController:
 
         self.send_message(subject, render_template('emails/session_email_student.html', **locals()), recipients, bcc='', html=True)
 
-    def close_session_tutor(self, appointment_id, to_prof):  # Todo needs to be connected
-        appointment = self.get_appointment_info(appointment_id)
-        student = self.get_user_by_id(appointment.student_id)
-
-        if appointment.ProfUsername != '':
-            professor = appointment.profName
-        else:
-            professor = 'n/a'
-
-        if appointment.dropIn == 0:
-            appt_type = 'Scheduled'
-        else:
-            appt_type = 'Drop In'
-
-        tutor = self.get_user_by_id(appointment.tutor_id)
-
-        appt_info = {'student': student.FirstName + student.LastName,
-                     'type': appt_type,
-                     'actual_start': appointment.actualStart,
-                     'actual_end': appointment.actualEnd,
-                     'assignment': appointment.assignment}
-
-        subject = 'Appointment with {0} {1}'.format(student.firstName, student.lastName)
-
-        recipients = [tutor.email]
-
-        if to_prof:
-            recipients.append(appointment.profEmail)
-            if self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, bcc='', html=True):
-                return True
-            return False
-        else:
-            if self.send_message(subject, render_template('emails/session_email_tutor.html', **locals()), recipients, bcc='', html=True):
-                return True
-            return False
-
     def appointment_signup_student(self, appointment_id):
         # get the appointment via the appointment id
         appointment = self.get_appointment_info(appointment_id)
