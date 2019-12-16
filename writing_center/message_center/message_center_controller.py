@@ -89,12 +89,21 @@ class MessageCenterController:
         student = self.get_user_by_id(appointment.student_id)
         tutor = self.get_user_by_id(appointment.tutor_id)
 
-        appt_info = {'tutor': tutor.firstName + " " + tutor.lastName,
-                     'date': appointment.scheduledStart.date().strftime("%m/%d/%Y"),
-                     'time': appointment.scheduledStart.time().strftime("%I:%M %p") + " - " + appointment.scheduledEnd.time().strftime("%I:%M %p"),
-                     'assignment': appointment.assignment,
-                     'notes': appointment.notes,
-                     'suggestions': appointment.suggestions}
+        if appointment.scheduledStart and appointment.scheduledEnd:
+            appt_info = {'tutor': tutor.firstName + " " + tutor.lastName,
+                         'date': appointment.scheduledStart.date().strftime("%m/%d/%Y"),
+                         'time': appointment.scheduledStart.time().strftime("%I:%M %p") + " - " + appointment.scheduledEnd.time().strftime("%I:%M %p"),
+                         'assignment': appointment.assignment,
+                         'notes': appointment.notes,
+                         'suggestions': appointment.suggestions}
+        elif appointment.actualStart and appointment.actualEnd:
+            appt_info = {'tutor': tutor.firstName + " " + tutor.lastName,
+                         'date': appointment.actualStart.date().strftime("%m/%d/%Y"),
+                         'time': appointment.actualStart.time().strftime("%I:%M %p") + " - " + appointment.actualEnd.time().strftime("%I:%M %p"),
+                         'assignment': appointment.assignment,
+                         'notes': appointment.notes,
+                         'suggestions': appointment.suggestions}
+
 
         subject = 'Appointment with {0} {1}'.format(tutor.firstName, tutor.lastName)
 
