@@ -89,9 +89,9 @@ class MessageCenterController:
         student = self.get_user_by_id(appointment.student_id)
         tutor = self.get_user_by_id(appointment.tutor_id)
 
-        appt_info = {'tutor': tutor.firstName + tutor.lastName,
-                     'actual_start': appointment.actualStart,
-                     'actual_end': appointment.actualEnd,
+        appt_info = {'tutor': tutor.firstName + " " + tutor.lastName,
+                     'date': appointment.scheduledStart.date().strftime("%m/%d/%Y"),
+                     'time': appointment.scheduledStart.time().strftime("%I:%M %p"),
                      'assignment': appointment.assignment,
                      'notes': appointment.notes,
                      'suggestions': appointment.suggestions}
