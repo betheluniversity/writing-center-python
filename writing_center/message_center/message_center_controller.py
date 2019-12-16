@@ -84,7 +84,7 @@ class MessageCenterController:
 
         return recipients
 
-    def close_session_student(self, appointment_id):  # todo needs to be connected
+    def close_session_student(self, appointment_id):
         appointment = self.get_appointment_info(appointment_id)
         student = self.get_user_by_id(appointment.student_id)
         tutor = self.get_user_by_id(appointment.tutor_id)
