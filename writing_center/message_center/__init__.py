@@ -44,17 +44,3 @@ class MessageCenterView(FlaskView):
         else:
             self.wcc.set_alert('danger', 'Email failed to send.')
         return redirect(url_for('MessageCenterView:index'))
-
-    @route('/close-student', methods=['POST'])
-    def close_session_student(self):  # this needs to be connected to the appointment end page
-        # TODO ADD CORRECT ROLES TO ROUTE CHECK BELOW
-        # self.wcc.check_roles_and_route(['Administrator'])
-        data = request.form
-        return self.base.close_session_student(data['appointment_id'])
-
-    @route('/close-tutor', methods=['POST'])
-    def close_session_tutor(self):  # this needs to be connected to the appointment end page
-        # TODO ADD CORRECT ROLES TO ROUTE CHECK BELOW
-        # self.wcc.check_roles_and_route(['Administrator'])
-        data = request.form
-        return self.base.close_session_tutor(data['appointment_id'], data['to_prof'])
