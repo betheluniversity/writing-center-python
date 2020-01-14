@@ -52,6 +52,7 @@ def utility_processor():
     return to_return
 
 
+# This will be accessible in the templates to format dates quickly
 def datetimeformat(value, custom_format=None):
     if value:
         if custom_format:
