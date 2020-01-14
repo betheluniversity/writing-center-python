@@ -420,6 +420,7 @@ class AppointmentsView(FlaskView):
 
         try:
             self.ac.end_appointment(appt_id, course, assignment, notes, suggestions)
+            self.mcc.close_session_student(appt_id)
             if ferpa_agreement:
                 self.mcc.end_appt_prof(appt_id)
             qualtrics_link = self.ac.get_survey_link()[0]

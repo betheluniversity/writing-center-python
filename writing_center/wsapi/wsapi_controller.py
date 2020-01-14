@@ -24,17 +24,8 @@ class WSAPIController:
         path = '/username/{0}/roles'.format(username)
         return self.get_hmac_request(path)
 
-    # TODO: I left these in as examples but I don't know which ones we will use
     def get_student_courses(self, username):
         path = '/username/{0}/courses'.format(username)
-        return self.get_hmac_request(path)
-
-    def get_course_info(self, course_dept, course_num):
-        path = '/course/info/{0}/{1}'.format(course_dept, course_num)
-        return self.get_hmac_request(path)
-
-    def validate_course(self, course_dept, course_num):
-        path = '/course/valid/{0}/{1}'.format(course_dept, course_num)
         return self.get_hmac_request(path)
 
     def get_username_from_name(self, first_name, last_name):
