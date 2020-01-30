@@ -77,7 +77,7 @@ class AppointmentsController:
             # Updates the student username
             user = self.get_user_by_username(flask_session['USERNAME'])
             appointment.student_id = user.id
-            appointment.assignment = assignment
+            appointment.assignment = assignment.encode('latin-1', 'ignore')  # this ignores invalid characters
             if course:
                 appointment.courseCode = course['course_code']
                 appointment.courseSection = course['section']
