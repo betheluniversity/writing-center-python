@@ -84,8 +84,11 @@ class AppointmentsController:
                 appointment.profName = course['instructor']
                 appointment.profEmail = course['instructor_email']
             # Commits to DB
-            db_session.commit()
-            return True
+            try:
+                db_session.commit()
+                return True
+            except Exception as e:
+                return False
 
     def cancel_appointment(self, appt_id):
         try:
