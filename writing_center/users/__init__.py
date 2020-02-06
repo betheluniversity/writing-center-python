@@ -102,7 +102,7 @@ class UsersView(FlaskView):
             self.wcc.set_alert('success', '{0} {1} ({2}) added successfully!'.format(first_name, last_name, username))
             return redirect(url_for('UsersView:view_all_users'))
         except Exception as error:
-            self.wcc.set_alert('danger', 'Failed to add user: {0}'.format(str(error)))
+            self.wcc.set_alert('danger', 'Failed to add user: {0}.'.format(str(error)))
             return redirect(url_for('UsersView:select_user_roles', username=username, first_name=first_name, last_name=last_name))
 
     @route("/edit/<int:user_id>")
@@ -129,7 +129,7 @@ class UsersView(FlaskView):
             self.wcc.set_alert('success', '{0} {1} edited successfully!'.format(first_name, last_name))
             return redirect(url_for('UsersView:view_all_users'))
         except Exception as error:
-            self.wcc.set_alert('danger', 'Failed to edit user: ' + str(error))
+            self.wcc.set_alert('danger', 'Failed to edit user: {0}.'.format(str(error)))
             return redirect(url_for('UsersView:edit_user', user_id=user_id))
 
     @route("/remove-ban/", methods=['POST'])
@@ -197,10 +197,10 @@ class UsersView(FlaskView):
                 flask_session.pop('ADMIN-NAME')
                 return redirect(url_for('View:index'))
             except Exception as error:
-                self.wcc.set_alert('danger', 'An error occurred: {0}'.format(str(error)))
+                self.wcc.set_alert('danger', 'An error occurred: {0}.'.format(str(error)))
                 return redirect(url_for('View:index'))
         else:
-            self.wcc.set_alert('danger', 'You do not have permission to access this function')
+            self.wcc.set_alert('danger', 'You do not have permission to access this function.')
             return redirect(url_for('View:index'))
 
     @route('/deactivate/<int:user_id>', methods=['POST', 'GET'])
@@ -210,7 +210,7 @@ class UsersView(FlaskView):
             self.wcc.set_alert('success', 'Users deactivated successfully!')
             return redirect(url_for("UsersView:view_all_users"))
         except Exception as e:
-            self.wcc.set_alert('danger', 'Failed to deactivate user(s)')
+            self.wcc.set_alert('danger', 'Failed to deactivate user(s).')
             return redirect(url_for("UsersView:edit", user_id=user_id))
 
     @route("/deactivate-users", methods=['post'])
@@ -223,5 +223,5 @@ class UsersView(FlaskView):
                 self.uc.deactivate_user(user)
             self.wcc.set_alert('success', 'User(s) deactivated successfully!')
         except Exception as error:
-            self.wcc.set_alert('danger', 'Failed to deactivate user(s): {0}'.format(str(error)))
+            self.wcc.set_alert('danger', 'Failed to deactivate user(s): {0}.'.format(str(error)))
         return 'done'  # Return doesn't matter: success or failure take you to the same page. Only the alert changes.
