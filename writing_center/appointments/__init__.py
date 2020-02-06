@@ -260,7 +260,7 @@ class AppointmentsView(FlaskView):
         assignment = str(json.loads(request.data).get('assignment'))
         username = flask_session['USERNAME']
         if username in ['Administrator', 'Observer', 'Tutor', 'Student']:
-            self.wcc.set_alert('danger', 'You cannot schedule an appointment while acting as a role')
+            self.wcc.set_alert('danger', 'You cannot schedule an appointment while acting as a role.')
         else:
             # Checks if the user already exists in WC DB. If a user does, we either continue or reactivate them. If they
             # don't exist then we create them
@@ -346,7 +346,7 @@ class AppointmentsView(FlaskView):
         cancelled = self.ac.cancel_appointment(appt_id)
         if cancelled:
             self.mcc.cancel_appointment_student(appt_id)
-            self.wcc.set_alert('success', 'Successfully cancelled appointment')
+            self.wcc.set_alert('success', 'Successfully cancelled appointment.')
         else:
             self.wcc.set_alert('danger', 'Failed to cancel appointment.')
         return appt_id
@@ -358,7 +358,7 @@ class AppointmentsView(FlaskView):
             self.wcc.set_alert('success', 'Appointment Started Successfully!')
             return redirect(url_for('AppointmentsView:in_progress_appointment', appt_id=appt_id))
         except Exception as error:
-            self.wcc.set_alert('danger', 'Failed to start appointment: {0}'.format(error))
+            self.wcc.set_alert('danger', 'Failed to start appointment: {0}.'.format(error))
             return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))
 
     @route('toggle-no-show/<int:appt_id>')
@@ -374,7 +374,7 @@ class AppointmentsView(FlaskView):
                 self.ac.revert_no_show(appt_id)
                 self.wcc.set_alert('success', '{0} {1} no longer marked as no show.'.format(student.firstName, student.lastName))
         except Exception as error:
-            self.wcc.set_alert('danger', 'Failed to toggle no show: {0}'.format(error))
+            self.wcc.set_alert('danger', 'Failed to toggle no show: {0}.'.format(error))
         return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))
 
     @route('toggle-multilingual/<int:appt_id>')
@@ -389,7 +389,7 @@ class AppointmentsView(FlaskView):
                 self.ac.revert_multilingual(appt_id)
                 self.wcc.set_alert('success', '{0} {1}\'s appointment no longer marked as multilingual.'.format(student.firstName, student.lastName))
         except Exception as error:
-            self.wcc.set_alert('danger', 'Failed to toggle multilingual: {0}'.format(error))
+            self.wcc.set_alert('danger', 'Failed to toggle multilingual: {0}.'.format(error))
         return redirect(url_for('AppointmentsView:appointments_and_walk_ins'))
 
     @route('end-appt/<int:appt_id>', methods=['post', 'get'])
@@ -427,7 +427,7 @@ class AppointmentsView(FlaskView):
             self.wcc.set_alert('success', 'Appointment ended successfully!')
             return render_template('appointments/end_appointment.html', **locals())
         except Exception as error:
-            self.wcc.set_alert('danger', 'Failed to end appointment: {0}'.format(error))
+            self.wcc.set_alert('danger', 'Failed to end appointment: {0}.'.format(error))
             return redirect(url_for('AppointmentsView:in_progress_appointment', appt_id=appt_id))
 
     @route('in-progress/<int:appt_id>')
@@ -527,5 +527,5 @@ class AppointmentsView(FlaskView):
                               no_show, in_progress)
             self.wcc.set_alert('success', 'Appointment edited successfully!')
         except Exception as e:
-            self.wcc.set_alert('danger', 'Failed to edit appointment: ' + str(e))
+            self.wcc.set_alert('danger', 'Failed to edit appointment: {0}.'.format(str(e)))
         return redirect(url_for('AppointmentsView:edit', appt_id=appt_id))

@@ -27,7 +27,7 @@ class SettingsView(FlaskView):
             self.wcc.set_alert('success', 'Settings updated successfully!')
             return 'success'
         except Exception as error:
-            self.wcc.set_alert('danger', 'Failed to update settings: {0}'.format(str(error)))
+            self.wcc.set_alert('danger', 'Failed to update settings: {0}.'.format(str(error)))
             return 'failed'
 
     @route('cleanse', methods=['get'])
@@ -37,5 +37,5 @@ class SettingsView(FlaskView):
             self.sc.cleanse()
             self.wcc.set_alert('success', 'System cleansed successfully!')
         except Exception as error:
-            self.wcc.set_alert('danger', 'Failed to cleanse system: {0}'.format(str(error)))
+            self.wcc.set_alert('danger', 'Failed to cleanse system: {0}.'.format(str(error)))
         return redirect(url_for('SettingsView:index'))

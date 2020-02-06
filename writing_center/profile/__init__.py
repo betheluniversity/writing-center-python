@@ -48,7 +48,7 @@ class ProfileView(FlaskView):
             flask_session.modified = True
             self.wcc.set_alert('success', 'Your profile has been edited successfully!')
         except Exception as error:
-            self.wcc.set_alert('danger', 'Failed to edit your profile: {0}'.format(str(error)))
+            self.wcc.set_alert('danger', 'Failed to edit your profile: {0}.'.format(str(error)))
         return redirect(url_for('ProfileView:index'))
 
     @route('/view-role')

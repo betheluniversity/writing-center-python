@@ -72,7 +72,7 @@ class SchedulesView(FlaskView):
                 self.sc.deactivate_time_slot(schedule_id)
             self.wcc.set_alert('success', 'Time slot(s) deactivated successfully!')
         except Exception as error:
-            self.wcc.set_alert('danger', 'Failed to deactivate time slot(s)')
+            self.wcc.set_alert('danger', 'Failed to deactivate time slot(s).')
         return 'done'  # Return doesn't matter: success or failure take you to the same page. Only the alert changes.
 
     @route('/add-tutors-to-shifts', methods=['POST'])
@@ -263,11 +263,11 @@ class SchedulesView(FlaskView):
         if appt_id == 'all':
             worked = self.sc.sub_all(appt_id_list)
             if not worked:
-                self.wcc.set_alert('danger', 'Failed to request a substitute for all appointments')
+                self.wcc.set_alert('danger', 'Failed to request a substitute for all appointments.')
         else:
             worked = self.sc.request_substitute(appt_id)
             if not worked:
-                self.wcc.set_alert('danger', 'Failed to request a substitute for appointment id {0}'.format(appt_id))
+                self.wcc.set_alert('danger', 'Failed to request a substitute for appointment id {0}.'.format(appt_id))
 
         return 'Substitute Requested Successfully'
 
@@ -379,7 +379,7 @@ class SchedulesView(FlaskView):
         self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
 
         if flask_session['USERNAME'] in ['Administrator', 'Observer', 'Tutor', 'Student']:
-            self.wcc.set_alert('danger', 'You cannot pick up a shift while acting as a role')
+            self.wcc.set_alert('danger', 'You cannot pick up a shift while acting as a role.')
         else:
 
             appointment_id = str(json.loads(request.data).get('appt_id'))
