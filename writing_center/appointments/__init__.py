@@ -182,7 +182,10 @@ class AppointmentsView(FlaskView):
         user = self.ac.get_user_by_username(username)
         tutor = self.ac.get_user_by_username(flask_session['USERNAME'])
         appt = self.ac.begin_walk_in_appointment(user, tutor, course, assignment, multilingual)
-        self.wcc.set_alert('success', 'Appointment for ' + user.firstName + ' ' + user.lastName + ' started')
+        if not appt:
+            self.wcc.set_alert('danger', 'Walk in appointment failed to be started.')
+            return self.appointments_and_walk_ins()
+        self.wcc.set_alert('success', 'Appointment for ' + user.firstName + ' ' + user.lastName + ' started.')
         return redirect(url_for('AppointmentsView:in_progress_appointment', appt_id=appt.id))
 
     @route('search-appointments')
