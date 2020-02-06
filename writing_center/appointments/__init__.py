@@ -319,14 +319,17 @@ class AppointmentsView(FlaskView):
                                         break
                             # Schedules the appointment and sends an email to the student and tutor if it is scheduled
                             # successfully.
-                            appt = self.ac.schedule_appointment(appt_id, course, assignment)
-                            if appt:
-                                self.mcc.appointment_signup_student(appt_id)
-                                self.mcc.appointment_signup_tutor(appt_id)
-                                self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your '
-                                                              'Appointments, Go To The "View Your Appointments" Page!')
+                            if not self.ac.get_appointment_by_id(appt_id).student_id:
+                                appt = self.ac.schedule_appointment(appt_id, course, assignment)
+                                if appt:
+                                    self.mcc.appointment_signup_student(appt_id)
+                                    self.mcc.appointment_signup_tutor(appt_id)
+                                    self.wcc.set_alert('success', 'Your Appointment Has Been Scheduled! To View Your '
+                                                                  'Appointments, Go To The "View Your Appointments" Page!')
+                                else:
+                                    self.wcc.set_alert('danger', 'Error! Appointment Not Scheduled!')
                             else:
-                                self.wcc.set_alert('danger', 'Error! Appointment Not Scheduled!')
+                                self.wcc.set_alert('danger', 'Appointment has already been scheduled by someone else. Please try again.')
                     else:
                         self.wcc.set_alert('danger', 'Failed to schedule appointment. You already have ' + str(appt_limit) +
                                            ' appointments scheduled and can\'t schedule any more.')
