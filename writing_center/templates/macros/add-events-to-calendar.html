@@ -1,0 +1,19 @@
+{% macro add_events_to_calendar(button_text) %}
+    <div class="form-row">
+        <button id="add-events-to-gcal" class="btn btn-primary darkblue"><i class="far fa-calendar-alt"></i> {{ button_text }}</button>
+    </div>
+    <script type="text/javascript">
+        $('#add-events-to-gcal').click(function() {
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('GoogleCalendarView:add_events_to_google_calendar') }}",
+                contentType: 'application/json;charset=UTF-8',
+                success: function (response) {
+                    $('#add-events-to-gcal').html("Successfully added!");
+                },
+                error: function (error) {
+                }
+            });
+        });
+    </script>
+{% endmacro %}
