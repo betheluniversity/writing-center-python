@@ -6,6 +6,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
+                <input id="appt-id" value="{{ appt_id }}" type="hidden" />
             </div>
             <div class="modal-body">
                 <table id="modal-table" class="table table-striped table-bordered">
@@ -158,6 +159,13 @@
                             </tr>
                         {% endif %}
                     {% endif %}
+                    {% if not schedule and appointment.scheduledStart and appointment.scheduledStart >= now %}
+                        <tr>
+                            <th colspan="2">
+                                <button id="add-event-to-gcal" class="btn btn-primary darkblue"><i class="far fa-calendar-alt"></i> Add to Google Calendar</button>
+                            </th>
+                        </tr>
+                    {% endif %}
                 </table>
                 {% if schedule and walk_in_hours %}
                     <p>This is a drop in appointment. You do not need to sign up here. Simply show up to the AESC
@@ -200,6 +208,23 @@
 </div>
 
 <script type="text/javascript">
+    $('#add-event-to-gcal').click(function() {
+        let appt_id = $('#appt-id').val();
+        $.ajax({
+            type: "POST",
+            url: "{{ url_for('GoogleCalendarView:add_event_to_google_calendar') }}",
+            data: JSON.stringify({
+                'appt_id': appt_id,
+            }),
+            contentType: 'application/json;charset=UTF-8',
+            success: function (response) {
+                $('#add-event-to-gcal').html("Successfully added!");
+            },
+            error: function (error) {
+            }
+        });
+    });
+
     function scheduleAppointment(appt_id) {
         let course = '';
         $('#courses option:selected').each(function () {
