@@ -159,12 +159,10 @@ class GoogleCalendarView(FlaskView):
         flask_session['CREDENTIALS'] = self.gcc.credentials_to_dict(credentials)
 
         global login_page
-        if login_page == 'student':
-            return redirect(url_for('AppointmentsView:student_view_appointments'))
-        elif login_page == 'tutor':
+        if login_page == 'tutor':
             return redirect(url_for('SchedulesView:view_tutor_schedules'))
         else:
-            return ''
+            return redirect(url_for('AppointmentsView:student_view_appointments'))
 
 
 
