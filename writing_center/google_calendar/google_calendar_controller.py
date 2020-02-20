@@ -1,9 +1,3 @@
-from __future__ import print_function
-import pickle
-import os.path
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-from googleapiclient.discovery import build
 from datetime import datetime
 
 
@@ -15,47 +9,18 @@ class GoogleCalendarController:
     def __init__(self):
         pass
 
-    def get_calendar_service(self):
-        scopes = ['https://www.googleapis.com/auth/calendar.events']
-
-        creds = None
-        # The file token.pickle stores the user's access and refresh tokens, and is
-        # created automatically when the authorization flow completes for the first
-        # time.
-
-        if os.path.exists('token.pickle'):
-            with open('token.pickle', 'rb') as token:
-                creds = pickle.load(token)
-        # If there are no (valid) credentials available, let the user log in.
-
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    'gc_client_secret.json', scopes)
-                creds = flow.run_local_server(port=0)
-            # Save the credentials for the next run
-            with open('token.pickle', 'wb') as token:
-                pickle.dump(creds, token)
-
-        service = build('calendar', 'v3', credentials=creds)
-
-        return service
-
-    def handle_event(self, appt_id):
-        service = self.get_calendar_service()
-
+    def handle_event(self, appt_id, service):
         appt = self.get_appointment_by_id(appt_id)
         start_time = appt.scheduledStart
         end_time = appt.scheduledEnd
 
         self.create_event(appt.id, start_time, end_time, service)
 
-    def handle_events(self, user):
-        service = self.get_calendar_service()
-
-        future_appts = self.get_future_user_appointments(user.id)
+    def handle_events(self, user, page_type, service):
+        if page_type == 'student':
+            future_appts = self.get_future_user_appointments(user.id)
+        else:
+            future_appts = self.get_future_tutor_appts(user.id)
 
         for appt in future_appts:
             self.create_event(appt.id, appt.scheduledStart, appt.scheduledEnd, service)
@@ -117,4 +82,18 @@ class GoogleCalendarController:
         return db_session.query(UserTable)\
             .filter(UserTable.username == username)\
             .one_or_none()
+
+    def get_future_tutor_appts(self, tutor_id):
+        return db_session.query(AppointmentsTable)\
+            .filter(AppointmentsTable.tutor_id == tutor_id)\
+            .filter(AppointmentsTable.scheduledStart >= datetime.now())\
+            .all()
+
+    def credentials_to_dict(self, credentials):
+        return {'token': credentials.token,
+                'refresh_token': credentials.refresh_token,
+                'token_uri': credentials.token_uri,
+                'client_id': credentials.client_id,
+                'client_secret': credentials.client_secret,
+                'scopes': credentials.scopes}
 
