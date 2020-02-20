@@ -8,6 +8,7 @@ from flask import session as flask_session
 from writing_center import app, sentry_sdk
 from sentry_sdk import configure_scope
 
+
 def error_render_template(template, error, code=None):
 
     # Check to make sure ALERT has been set, otherwise the template will fail to load
