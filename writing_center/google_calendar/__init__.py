@@ -11,16 +11,13 @@ from writing_center.google_calendar.google_calendar_controller import GoogleCale
 class GoogleCalendarView(FlaskView):
     route_base = '/google-calendar'
 
-    global login_page
-    login_page = None
-
     def __init__(self):
         self.gcc = GoogleCalendarController()
 
     @route('login-to-google-calendar', methods=['POST'])
     def login_to_google_calendar(self):
-        global login_page
         login_page = str(json.loads(request.data).get('page_type'))
+        flask_session['LOGIN-PAGE'] = login_page
 
         scopes = ['https://www.googleapis.com/auth/calendar.events']
         user = self.gcc.get_user_by_username(flask_session['USERNAME'])
@@ -155,11 +152,13 @@ class GoogleCalendarView(FlaskView):
         credentials = flow.credentials
         flask_session['CREDENTIALS'] = self.gcc.credentials_to_dict(credentials)
 
-        global login_page
+        login_page = flask_session['LOGIN-PAGE']
         if login_page == 'tutor':
             return redirect(url_for('SchedulesView:view_tutor_schedules'))
-        else:
+        elif login_page == 'student':
             return redirect(url_for('AppointmentsView:student_view_appointments'))
+        else:
+            return redirect(url_for('View:index'))
 
 
 
