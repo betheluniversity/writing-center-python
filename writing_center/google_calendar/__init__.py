@@ -17,9 +17,6 @@ class GoogleCalendarView(FlaskView):
     def __init__(self):
         self.gcc = GoogleCalendarController()
 
-    def index(self):
-        return 'cat'
-
     @route('login-to-google-calendar', methods=['POST'])
     def login_to_google_calendar(self):
         global login_page
