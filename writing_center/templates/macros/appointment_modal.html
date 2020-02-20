@@ -159,7 +159,7 @@
                             </tr>
                         {% endif %}
                     {% endif %}
-                    {% if not schedule and appointment.scheduledStart and appointment.scheduledStart >= now %}
+                    {% if not schedule and appointment.scheduledStart and appointment.scheduledStart >= now and add_google_calendar %}
                         <tr>
                             <th colspan="2">
                                 <button id="add-event-to-gcal" class="btn btn-primary darkblue"><i class="far fa-calendar-alt"></i> Add to Google Calendar</button>

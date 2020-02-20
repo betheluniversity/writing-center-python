@@ -7,7 +7,7 @@
         <h1><b>View Tutor Schedule</b></h1>
         <p>Displays the appointments a tutor is assigned to.</p>
     </div>
-    {{ gcal_macros.add_events_to_calendar("Add Upcoming Shifts To Google Calendar") }}
+    {{ gcal_macros.add_events_to_calendar("Add All Upcoming Shifts To Google Calendar") }}
     <div id="results"></div>
     <hr>
     <div class="row">
@@ -134,7 +134,8 @@
                         url: "{{ url_for('AppointmentsView:load_appointment_data') }}",
                         data: JSON.stringify({
                             'id': info.event.id,
-                            'subDelete': true
+                            'subDelete': true,
+                            'gcalAdd': 'tutor',
                         }),
                         contentType: 'application/json;charset=UTF-8',
                         success: function (response) {

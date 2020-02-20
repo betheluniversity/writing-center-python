@@ -7,7 +7,7 @@
         <h1><b>Scheduled Appointments</b></h1>
         <p>View or cancel your scheduled appointments here.</p>
     </div>
-    {{ gcal_macros.add_events_to_calendar("Add Upcoming Appointments To Google Calendar") }}
+    {{ gcal_macros.add_events_to_calendar("Add All Upcoming Appointments To Google Calendar") }}
     <div id="results"></div>
     <hr>
     <div id="calendar"></div>
@@ -52,7 +52,8 @@
                         url: "{{ url_for('AppointmentsView:load_appointment_data') }}",
                         data: JSON.stringify({
                             'id': info.event.id,
-                            'cancel': true
+                            'cancel': true,
+                            'gcalAdd': 'student',
                         }),
                         contentType: 'application/json;charset=UTF-8',
                         success: function (response) {
