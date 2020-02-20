@@ -52,7 +52,7 @@ class GoogleCalendarView(FlaskView):
         credentials = Credentials(
             **flask_session['CREDENTIALS'])
 
-        service = build('calendar', 'v3', credentials=credentials, cache_discovery=True, cache=None)
+        service = build('calendar', 'v3', credentials=credentials)
 
         appt_id = str(json.loads(request.data).get('appt_id'))
 
