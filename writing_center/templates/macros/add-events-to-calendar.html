@@ -1,17 +1,42 @@
 {% macro add_events_to_calendar(button_text) %}
     <div class="form-row">
-        <button id="add-events-to-gcal" class="btn btn-primary darkblue"><i class="far fa-calendar-alt"></i> {{ button_text }}</button>
+        <input id="page-type" type="hidden" value="{% if "Appointments" in button_text %}student{% else %}tutor{% endif %}" />
+        <button id="{% if "CREDENTIALS" in session %}add-events-to-gcal{% else %}login-to-gcal{% endif %}" class="btn btn-primary darkblue"><i class="far fa-calendar-alt"></i>
+            {% if "CREDENTIALS" in session %}{{ button_text }}{% else %}Login To Add All {% if "Appointments" in button_text %}Appointments{% else %}Shifts{% endif %} To Google Calendar{% endif %}
+        </button>
     </div>
     <script type="text/javascript">
         $('#add-events-to-gcal').click(function() {
+            let page_type = $("#page-type").val();
             $.ajax({
                 type: "POST",
                 url: "{{ url_for('GoogleCalendarView:add_events_to_google_calendar') }}",
                 contentType: 'application/json;charset=UTF-8',
+                data: JSON.stringify({
+                    'page_type': page_type
+                }),
                 success: function (response) {
                     $('#add-events-to-gcal').html("Successfully added!");
                 },
                 error: function (error) {
+                }
+            });
+        });
+
+        $('#login-to-gcal').click(function() {
+            let page_type = $("#page-type").val();
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('GoogleCalendarView:login_to_google_calendar') }}",
+                data: JSON.stringify({
+                    'page_type': page_type
+                }),
+                contentType: 'application/json;charset=UTF-8',
+                success: function (response) {
+                    window.location.replace(response);
+                },
+                error: function (error) {
+
                 }
             });
         });
