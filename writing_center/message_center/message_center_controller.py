@@ -79,8 +79,11 @@ class MessageCenterController:
 
         recipients = []
         for user in users:
-            if user.username != flask_session['USERNAME']:
-                recipients.append(user.email)
+            recipients.append(user.email)
+
+        current_user = self.get_user(flask_session['USERNAME'])
+        if current_user.email not in recipients:
+            recipients.append(current_user.email)
 
         return recipients
 
