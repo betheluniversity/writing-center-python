@@ -36,7 +36,7 @@ class GoogleCalendarView(FlaskView):
         authorization_url, state = flow.authorization_url(
             # Enable offline access so that you can refresh an access token without
             # re-prompting the user for permission. Recommended for web server apps.
-            access_type='offline',
+            access_type='online',
             login_hint=user.email,
             prompt='consent',
             # Enable incremental authorization. Recommended as a best practice.
@@ -119,7 +119,7 @@ class GoogleCalendarView(FlaskView):
         authorization_url, state = flow.authorization_url(
             # Enable offline access so that you can refresh an access token without
             # re-prompting the user for permission. Recommended for web server apps.
-            access_type='offline',
+            access_type='online',
             login_hint=user.email,
             prompt='consent',
             # Enable incremental authorization. Recommended as a best practice.
