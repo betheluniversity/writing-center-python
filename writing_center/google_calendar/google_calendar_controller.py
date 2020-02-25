@@ -27,13 +27,12 @@ class GoogleCalendarController:
     def create_event(self, appt_id, start_time, end_time, service):
         query = "Writing Center Appointment"
         events = service.events().list(calendarId='primary', q=query, singleEvents='True', orderBy='startTime',
-                                       timeMin=start_time.strftime('%Y-%m-%dT%H:%M:%S-06:00'),
-                                       timeMax=end_time.strftime('%Y-%m-%dT%H:%M:%S-06:00'), showDeleted=True).execute()
+                                       timeMin=datetime.now().strftime('%Y-%m-%dT%H:%M:%S-06:00'),
+                                       showDeleted=True).execute()
         events = events.get('items')
 
         exists = False
         for event in events:
-
             try:
                 if int(event['id']) == appt_id:
                     event['status'] = 'confirmed'
@@ -71,7 +70,8 @@ class GoogleCalendarController:
 
             try:
                 event = service.events().insert(calendarId='primary', body=event).execute()
-            except:
+            except Exception as e:
+                print(e)
                 pass
 
     def get_appointment_by_id(self, appt_id):
