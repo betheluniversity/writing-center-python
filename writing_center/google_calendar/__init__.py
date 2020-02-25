@@ -5,6 +5,7 @@ from google.oauth2.credentials import Credentials
 import google_auth_oauthlib.flow
 from googleapiclient.discovery import build
 
+from writing_center import app
 from writing_center.google_calendar.google_calendar_controller import GoogleCalendarController
 
 
@@ -24,7 +25,7 @@ class GoogleCalendarView(FlaskView):
 
         # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
         flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-            'gc_client_secret.json', scopes=scopes)
+            app.config['GC_CLIENT_SECRET'], scopes=scopes)
 
         # The URI created here must exactly match one of the authorized redirect URIs
         # for the OAuth 2.0 client, which you configured in the API Console. If this
@@ -107,7 +108,7 @@ class GoogleCalendarView(FlaskView):
 
         # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
         flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-            'gc_client_secret.json', scopes=scopes)
+            app.config['GC_CLIENT_SECRET'], scopes=scopes)
 
         # The URI created here must exactly match one of the authorized redirect URIs
         # for the OAuth 2.0 client, which you configured in the API Console. If this
@@ -136,7 +137,7 @@ class GoogleCalendarView(FlaskView):
         state = flask_session['STATE']
 
         flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-            'gc_client_secret.json',
+            app.config['GC_CLIENT_SECRET'],
             scopes=scopes,
             state=state)
         flow.redirect_uri = url_for('GoogleCalendarView:oauth2callback', _external=True)
