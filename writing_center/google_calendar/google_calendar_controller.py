@@ -1,6 +1,5 @@
 from datetime import datetime
 
-
 from writing_center.db_repository import db_session
 from writing_center.db_repository.tables import UserTable, AppointmentsTable
 
@@ -29,43 +28,51 @@ class GoogleCalendarController:
         query = "Writing Center Appointment"
         events = service.events().list(calendarId='primary', q=query, singleEvents='True', orderBy='startTime',
                                        timeMin=start_time.strftime('%Y-%m-%dT%H:%M:%S-06:00'),
-                                       timeMax=end_time.strftime('%Y-%m-%dT%H:%M:%S-06:00')).execute()
+                                       timeMax=end_time.strftime('%Y-%m-%dT%H:%M:%S-06:00'), showDeleted=True).execute()
         events = events.get('items')
 
-        if events:
+        exists = False
+        for event in events:
+
             try:
-                event = service.events().delete(calendarId='primary', eventId=appt_id).execute()
+                if int(event['id']) == appt_id:
+                    event['status'] = 'confirmed'
+                    event['start']['dateTime'] = start_time.strftime('%Y-%m-%dT%H:%M:%S')
+                    event['end']['dateTime'] = end_time.strftime('%Y-%m-%dT%H:%M:%S')
+                    event = service.events().update(calendarId='primary', body=event, eventId=appt_id).execute()
+                    exists = True
             except:
                 pass
 
-        timezone = 'America/Chicago'
+        if not exists:
+            timezone = 'America/Chicago'
 
-        event = {
-            'id': appt_id,
-            'summary': 'Writing Center Appointment',
-            'location': 'Bethel University',
-            'start': {
-                'dateTime': start_time.strftime('%Y-%m-%dT%H:%M:%S'),
-                'timeZone': timezone,
-            },
-            'end': {
-                'dateTime': end_time.strftime('%Y-%m-%dT%H:%M:%S'),
-                'timeZone': timezone,
-            },
-            'reminders': {
-                'useDefault': False,
-                'overrides': [
-                    {'method': 'email', 'minutes': 24 * 60},
-                    {'method': 'popup', 'minutes': 10},
-                ],
-            },
-            'Content-Type': 'application/json;charset=UTF-8',
-        }
+            event = {
+                'id': appt_id,
+                'summary': 'Writing Center Appointment',
+                'location': 'Bethel University',
+                'start': {
+                    'dateTime': start_time.strftime('%Y-%m-%dT%H:%M:%S'),
+                    'timeZone': timezone,
+                },
+                'end': {
+                    'dateTime': end_time.strftime('%Y-%m-%dT%H:%M:%S'),
+                    'timeZone': timezone,
+                },
+                'reminders': {
+                    'useDefault': False,
+                    'overrides': [
+                        {'method': 'email', 'minutes': 24 * 60},
+                        {'method': 'popup', 'minutes': 10},
+                    ],
+                },
+                'Content-Type': 'application/json;charset=UTF-8',
+            }
 
-        try:
-            event = service.events().insert(calendarId='primary', body=event).execute()
-        except Exception as e:
-            event = service.events().update(calendarId='primary', body=event, eventId=appt_id).execute()
+            try:
+                event = service.events().insert(calendarId='primary', body=event).execute()
+            except:
+                pass
 
     def get_appointment_by_id(self, appt_id):
         return db_session.query(AppointmentsTable)\
