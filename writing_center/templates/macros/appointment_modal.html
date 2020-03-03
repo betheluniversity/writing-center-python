@@ -1,3 +1,5 @@
+{% import 'macros/login-to-google-calendar.html' as gcal_login %}
+
 <div class="modal fade" id="info-modal" tabindex="-1" role="dialog" aria-labelledby="modal-label" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -163,9 +165,13 @@
                         <tr>
                             <th colspan="2">
                                 <input id="page-type" type="hidden" value="{{ add_google_calendar }}" />
-                                <button id="{% if "CREDENTIALS" in session %}add-event-to-gcal{% else %}login-to-google-calendar{% endif %}" class="btn btn-primary darkblue"><i class="far fa-calendar-alt"></i>
-                                    {% if "CREDENTIALS" in session %}Add To Google Calendar{% else %}Login To Add {% if 'student' in add_google_calendar %}Appointment{% else %}Shift{% endif %} To Your Google Calendar{% endif %}
-                                </button>
+                                {% if 'CREDENTIALS' in session %}
+                                    <button id="add-event-to-gcal" class="btn btn-primary darkblue"><i class="far fa-calendar-alt"></i>
+                                        Add To Google Calendar
+                                    </button>
+                                {% else %}
+                                    {{ gcal_login.login_to_google_calendar() }}
+                                {% endif %}
                             </th>
                         </tr>
                     {% endif %}
@@ -211,23 +217,6 @@
 </div>
 
 <script type="text/javascript">
-    $('#login-to-google-calendar').click(function() {
-        let page_type = $("#page-type").val();
-        $.ajax({
-            type: "POST",
-            url: "{{ url_for('GoogleCalendarView:login_to_google_calendar') }}",
-            data: JSON.stringify({
-                'page_type': page_type,
-            }),
-            contentType: 'application/json;charset=UTF-8',
-            success: function (response) {
-                window.location.replace(response);
-            },
-            error: function (error) {
-            }
-        });
-    });
-
     $('#add-event-to-gcal').click(function() {
         let appt_id = $('#appt-id').val();
         $.ajax({

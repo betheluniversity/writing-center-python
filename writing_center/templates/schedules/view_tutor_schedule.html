@@ -7,7 +7,11 @@
         <h1><b>View Tutor Schedule</b></h1>
         <p>Displays the appointments a tutor is assigned to.</p>
     </div>
-    {{ gcal_macros.add_events_to_calendar("Add All Upcoming Shifts To Google Calendar") }}
+    {% if 'CREDENTIALS' in session %}
+        {{ gcal_events.add_events_to_calendar("Add All Upcoming Appointments To Google Calendar") }}
+    {% else %}
+        {{ gcal_login.login_to_google_calendar() }}
+    {% endif %}
     <div id="results"></div>
     <hr>
     <div class="row">
