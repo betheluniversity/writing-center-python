@@ -34,11 +34,11 @@ class GoogleCalendarController:
         exists = False
         for event in events:
             try:
-                if int(event['id']) == appt_id:
+                if int(event['id'].replace('appt', '')) == appt_id:
                     event['status'] = 'confirmed'
                     event['start']['dateTime'] = start_time.strftime('%Y-%m-%dT%H:%M:%S')
                     event['end']['dateTime'] = end_time.strftime('%Y-%m-%dT%H:%M:%S')
-                    event = service.events().update(calendarId='primary', body=event, eventId=appt_id).execute()
+                    event = service.events().update(calendarId='primary', body=event, eventId=event['id']).execute()
                     exists = True
             except:
                 pass
@@ -46,8 +46,10 @@ class GoogleCalendarController:
         if not exists:
             timezone = 'America/Chicago'
 
+            event_id = 'appt' + str(appt_id)
+
             event = {
-                'id': appt_id,
+                'id': event_id,
                 'summary': 'Writing Center Appointment',
                 'location': 'Bethel University',
                 'start': {
