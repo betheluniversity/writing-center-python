@@ -93,7 +93,6 @@ class GoogleCalendarView(FlaskView):
         global calendar_service
         calendar_service = build('calendar', 'v3', credentials=credentials, cache_discovery=False)
 
-
         # Save credentials back to session in case access token was refreshed.
         # ACTION ITEM: In a production app, you likely want to save these
         #              credentials in a persistent database instead.
