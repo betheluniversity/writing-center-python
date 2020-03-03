@@ -16,9 +16,6 @@ if app.config['ENVIRON'] == 'prod' and app.config['SENTRY_URL']:
     sentry_sdk.init(dsn=app.config['SENTRY_URL'], integrations=[FlaskIntegration()])
     from writing_center import error
 
-if app.config['ENVIRON'] == 'prod' or app.config['ENVIRON'] == 'xp':
-    logging.getLogger('googleapiclient.discovery_cache').setLevel(logging.ERROR)
-
 # Declaring and registering the views
 from writing_center.views import View
 from writing_center.message_center import MessageCenterView

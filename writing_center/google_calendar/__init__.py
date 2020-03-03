@@ -53,7 +53,7 @@ class GoogleCalendarView(FlaskView):
         credentials = Credentials(
             **flask_session['CREDENTIALS'])
 
-        service = build('calendar', 'v3', credentials=credentials)
+        service = build('calendar', 'v3', credentials=credentials, cache_discovery=False)
 
         appt_id = str(json.loads(request.data).get('appt_id'))
 
@@ -67,7 +67,7 @@ class GoogleCalendarView(FlaskView):
         credentials = Credentials(
             **flask_session['CREDENTIALS'])
 
-        service = build('calendar', 'v3', credentials=credentials)
+        service = build('calendar', 'v3', credentials=credentials, cache_discovery=False)
 
         user = self.gcc.get_user_by_username(flask_session['USERNAME'])
 
@@ -91,7 +91,7 @@ class GoogleCalendarView(FlaskView):
             **flask_session['CREDENTIALS'])
 
         global calendar_service
-        calendar_service = build('calendar', 'v3', credentials=credentials)
+        calendar_service = build('calendar', 'v3', credentials=credentials, cache_discovery=False)
 
 
         # Save credentials back to session in case access token was refreshed.
