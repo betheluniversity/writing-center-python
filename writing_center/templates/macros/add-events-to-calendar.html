@@ -2,7 +2,7 @@
     <div class="form-row">
         <input id="page-type" type="hidden" value="{% if "Appointments" in button_text %}student{% else %}tutor{% endif %}" />
         <button id="{% if "CREDENTIALS" in session %}add-events-to-gcal{% else %}login-to-gcal{% endif %}" class="btn btn-primary darkblue"><i class="far fa-calendar-alt"></i>
-            {% if "CREDENTIALS" in session %}{{ button_text }}{% else %}Login To Add All {% if "Appointments" in button_text %}Appointments{% else %}Shifts{% endif %} To Google Calendar{% endif %}
+            {% if "CREDENTIALS" in session %}{{ button_text }}{% else %}Login To Add {% if "Appointments" in button_text %}Appointments{% else %}Shifts{% endif %} To Your Google Calendar{% endif %}
         </button>
     </div>
     <script type="text/javascript">

@@ -164,7 +164,7 @@
                             <th colspan="2">
                                 <input id="page-type" type="hidden" value="{{ add_google_calendar }}" />
                                 <button id="{% if "CREDENTIALS" in session %}add-event-to-gcal{% else %}login-to-google-calendar{% endif %}" class="btn btn-primary darkblue"><i class="far fa-calendar-alt"></i>
-                                    {% if "CREDENTIALS" in session %}Add To Google Calendar{% else %}Login To Add {% if 'student' in add_google_calendar %}Appointment{% else %}Shift{% endif %} To Google Calendar{% endif %}
+                                    {% if "CREDENTIALS" in session %}Add To Google Calendar{% else %}Login To Add {% if 'student' in add_google_calendar %}Appointment{% else %}Shift{% endif %} To Your Google Calendar{% endif %}
                                 </button>
                             </th>
                         </tr>
