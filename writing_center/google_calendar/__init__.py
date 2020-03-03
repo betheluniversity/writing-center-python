@@ -76,27 +76,6 @@ class GoogleCalendarView(FlaskView):
 
         return ''
 
-    @route('/test')
-    def test_api_request(self):
-        if 'credentials' in flask_session:
-            flask_session.pop("credentials")
-        if 'CREDENTIALS' in flask_session:
-            flask_session.pop("CREDENTIALS")
-        if 'CREDENTIALS' not in flask_session:
-            return redirect('authorize')
-
-        # Load credentials from the session.
-        credentials = Credentials(
-            **flask_session['CREDENTIALS'])
-
-        global calendar_service
-        calendar_service = build('calendar', 'v3', credentials=credentials, cache_discovery=False)
-
-        # Save credentials back to session in case access token was refreshed.
-        flask_session['CREDENTIALS'] = self.gcc.credentials_to_dict(credentials)
-
-        return 'cat'
-
     @route('/authorize')
     def authorize(self):
         scopes = ['https://www.googleapis.com/auth/calendar.events']
