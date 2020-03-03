@@ -1,5 +1,5 @@
 from flask_classy import route, FlaskView, request
-from flask import json, url_for, redirect, jsonify
+from flask import json, url_for, redirect
 from flask import session as flask_session
 from google.oauth2.credentials import Credentials
 import google_auth_oauthlib.flow
@@ -35,11 +35,10 @@ class GoogleCalendarView(FlaskView):
 
         authorization_url, state = flow.authorization_url(
             # Enable offline access so that you can refresh an access token without
-            # re-prompting the user for permission. Recommended for web server apps.
+            # re-prompting the user for permission.
             access_type='offline',
             login_hint=user.email,
             prompt='consent',
-            # Enable incremental authorization. Recommended as a best practice.
             include_granted_scopes='true')
 
         # Store the state so the callback can verify the auth server response.
@@ -115,11 +114,10 @@ class GoogleCalendarView(FlaskView):
 
         authorization_url, state = flow.authorization_url(
             # Enable offline access so that you can refresh an access token without
-            # re-prompting the user for permission. Recommended for web server apps.
+            # re-prompting the user for permission.
             access_type='offline',
             login_hint=user.email,
             prompt='consent',
-            # Enable incremental authorization. Recommended as a best practice.
             include_granted_scopes='true')
 
         # Store the state so the callback can verify the auth server response.
@@ -145,8 +143,6 @@ class GoogleCalendarView(FlaskView):
         flow.fetch_token(authorization_response=authorization_response)
 
         # Store credentials in the session.
-        # ACTION ITEM: In a production app, you likely want to save these
-        #              credentials in a persistent database instead.
         credentials = flow.credentials
         flask_session['CREDENTIALS'] = self.gcc.credentials_to_dict(credentials)
 
