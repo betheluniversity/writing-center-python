@@ -58,7 +58,7 @@ class GoogleCalendarView(FlaskView):
 
         self.gcc.handle_event(appt_id, service)
 
-        return ''
+        return 'success'
 
     @route("/add-google-calendar-events", methods=['POST'])
     def add_events_to_google_calendar(self):
@@ -74,7 +74,7 @@ class GoogleCalendarView(FlaskView):
 
         self.gcc.handle_events(user, page_type, service)
 
-        return ''
+        return 'success'
 
     @route('/authorize')
     def authorize(self):
