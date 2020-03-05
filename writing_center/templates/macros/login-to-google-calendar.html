@@ -1,8 +1,8 @@
-{% macro login_to_google_calendar() %}
+{% macro login_to_google_calendar(type) %}
     <div class="form-row">
-        <input id="page-type" type="hidden" value="{% if "Appointments" in button_text %}student{% else %}tutor{% endif %}" />
+        <input id="page-type" type="hidden" value="{{ type }}" />
         <button id="" class="btn btn-primary darkblue login-to-google-calendar"><i class="far fa-calendar-alt"></i>
-            Login To Add {% if "Appointments" in button_text %}Appointments{% else %}Shifts{% endif %} To Your Google Calendar
+            Login To Add {% if "student" in type %}Appointments{% else %}Shifts{% endif %} To Your Google Calendar
         </button>
     </div>
     <script type="text/javascript">

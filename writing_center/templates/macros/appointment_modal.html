@@ -170,7 +170,11 @@
                                         Add To Google Calendar
                                     </button>
                                 {% else %}
-                                    {{ gcal_login.login_to_google_calendar() }}
+                                    {% if cancel %}
+                                        {{ gcal_login.login_to_google_calendar("student") }}
+                                    {% else %}
+                                        {{ gcal_login.login_to_google_calendar("tutor") }}
+                                    {% endif %}
                                 {% endif %}
                             </th>
                         </tr>

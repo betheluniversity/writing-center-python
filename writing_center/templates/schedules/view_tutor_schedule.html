@@ -10,7 +10,7 @@
     {% if 'CREDENTIALS' in session %}
         {{ gcal_events.add_events_to_calendar("Add All Upcoming Appointments To Google Calendar") }}
     {% else %}
-        {{ gcal_login.login_to_google_calendar() }}
+        {{ gcal_login.login_to_google_calendar("tutor") }}
     {% endif %}
     <div id="results"></div>
     <hr>
