@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+{% import 'macros/add-events-to-calendar.html' as gcal_events %}
+{% import 'macros/login-to-google-calendar.html' as gcal_login %}
 
 {% block html_attribs %}
     <html lang="en">
@@ -75,6 +77,9 @@
             <!-- JQuery/JS for slim-select -->
             <script src="https://cdnjs.cloudflare.com/ajax/libs/slim-select/1.22.0/slimselect.min.js"></script>
             <link href="https://cdnjs.cloudflare.com/ajax/libs/slim-select/1.22.0/slimselect.min.css" rel="stylesheet">
+
+            <!-- Font Awesome -->
+            <script src="https://kit.fontawesome.com/ef15f9ef70.js" crossorigin="anonymous"></script>
 
             {% block styles %}
                 <!-- Full Calendar CSS -->

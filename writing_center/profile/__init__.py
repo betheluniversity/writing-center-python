@@ -1,7 +1,6 @@
 from flask_classy import FlaskView, route
 from flask import render_template, request, redirect, url_for
 from flask import session as flask_session
-import json
 
 from writing_center.profile.profile_controller import ProfileController
 from writing_center.writing_center_controller import WritingCenterController

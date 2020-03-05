@@ -1,0 +1,26 @@
+{% macro login_to_google_calendar() %}
+    <div class="form-row">
+        <input id="page-type" type="hidden" value="{% if "Appointments" in button_text %}student{% else %}tutor{% endif %}" />
+        <button id="" class="btn btn-primary darkblue login-to-google-calendar"><i class="far fa-calendar-alt"></i>
+            Login To Add {% if "Appointments" in button_text %}Appointments{% else %}Shifts{% endif %} To Your Google Calendar
+        </button>
+    </div>
+    <script type="text/javascript">
+        $('.login-to-google-calendar').click(function() {
+            let page_type = $("#page-type").val();
+            $.ajax({
+                type: "POST",
+                url: "{{ url_for('GoogleCalendarView:login_to_google_calendar') }}",
+                data: JSON.stringify({
+                    'page_type': page_type
+                }),
+                contentType: 'application/json;charset=UTF-8',
+                success: function (response) {
+                    window.location.replace(response);
+                },
+                error: function (error) {
+                }
+            });
+        });
+    </script>
+{% endmacro %}

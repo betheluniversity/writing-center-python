@@ -6,6 +6,8 @@ SECRET_KEY = ""
 
 SENTRY_URL = ""
 
+GC_CLIENT_SECRET = ""
+
 ENVIRON = ""
 
 DATABASE_KEY = ""

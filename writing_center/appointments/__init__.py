@@ -36,6 +36,7 @@ class AppointmentsView(FlaskView):
         cancel = json.loads(request.data).get('cancel')
         pickup_sub_delete = json.loads(request.data).get('subDelete')
         tutor_edit = json.loads(request.data).get('tutorEdit')
+        add_google_calendar = json.loads(request.data).get('gcalAdd', None)
         if 'Tutor' not in flask_session['USER-ROLES']:
             tutor_edit = False
         appointment = self.ac.get_appointment_by_id(appt_id)

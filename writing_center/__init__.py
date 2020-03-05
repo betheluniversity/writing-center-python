@@ -26,6 +26,7 @@ from writing_center.schedules import SchedulesView
 from writing_center.settings import SettingsView
 from writing_center.statistics import StatisticsView
 from writing_center.users import UsersView
+from writing_center.google_calendar import GoogleCalendarView
 from writing_center.users.users_controller import UsersController as uc
 from writing_center.writing_center_controller import WritingCenterController as wcc
 
@@ -38,6 +39,7 @@ SchedulesView.register(app)
 SettingsView.register(app)
 StatisticsView.register(app)
 UsersView.register(app)
+GoogleCalendarView.register(app)
 
 
 # This makes these variables open to use everywhere
