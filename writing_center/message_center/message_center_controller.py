@@ -138,6 +138,7 @@ class MessageCenterController:
             appt_info = {'date': appointment.scheduledStart.date().strftime("%m/%d/%Y"),
                          'time': appointment.scheduledStart.time().strftime("%I:%M %p"),
                          'student': student.firstName + ' ' + student.lastName,
+                         'student-email': student.email,
                          'assignment': appointment.assignment}
 
             # other email information: recipient, body, subject

@@ -11,6 +11,37 @@
         <p>Tutor: {{ appt_info['tutor'] }}</p>
         <p>Go to the <a href="https://www.bethel.edu/undergrad/academics/support/writing">Writing Support for CAS</a> page to find out more about the Writing Center's services and resources</p>
         <p>Cancel your appointment <a href="{{ url_for('AppointmentsView:student_view_appointments') }}">here</a></p>
+
+    <h3>Additional Information:</h3>
+        <p>For our online Writing Center appointments, we will be using Google Docs and Google Hangouts Meet.</p>
+        <h4>Google Docs</h4>
+            <p>Five minutes before the start of your appointment, please <strong>Share</strong> your Google Doc with
+                your tutor. Make sure they have permission to <strong>Edit</strong> the document.</p>
+        <h4>Google Hangouts Meet</h4>
+            <p>Your writing center tutor will invite you to a Google Hangouts Meet appointment; you will receive this
+                invitation via your e-mail account (or it can be done through your Google calendar).</p>
+            <p>Please follow these steps to connect with them:</p>
+                <ol>
+                    <li>Click on the email from your tutor that begins with "Invitation: Your name @time/date of
+                        appointment..."</li>
+                    <li>Once the email has opened, it will show the appointment scheduled. Click on the blue highlighted
+                        url link under the "Join Hangouts Meet" if you can join via your laptop.  Otherwise, there is a
+                        highlighted phone number link for phone calls.</li>
+                    <li>A Meet window should pop up of a video running of yourself and a green button that says, "Join
+                        Now." Go ahead and click that button and then click again the "Join Now" button to start the
+                        virtual appointment. Please start this process 5 minutes before your appointed time to make sure
+                        your connection and equipment are all working. Also, make sure video and audio are on (or
+                        whatever your preferences are).</li>
+                </ol>
+            <p>See <a href="https://confluence.bethel.edu/display/ITSKB/Using+Google+Hangouts+Meet">
+                Using Google Hangouts Meet</a> for more information.</p>
+        <h4>Writing Center Survey</h4>
+            <p>When your appointment is completed, please click on the link below to complete the survey. We value your
+                input!</p>
+            <p>Link to survery <a href="https://bethel.qualtrics.com/jfe/form/SV_6WHc204vQMp2A9D">here</a>.</p>
+        <br>
+        <p>For technology assistance, click
+            <a href="https://confluence.bethel.edu/display/TLT/Orientation+to+Bethel+Technology">here</a>.</p>
 {% endblock %}
 
 {% block footer %}
