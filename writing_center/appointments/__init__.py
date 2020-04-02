@@ -43,8 +43,10 @@ class AppointmentsView(FlaskView):
         walk_in_hours = True if appointment.dropIn == 1 else False
         student = self.ac.get_user_by_id(appointment.student_id)
         student_name = 'None'
+        student_email = 'None'
         if student:
             student_name = '{0} {1}'.format(student.firstName, student.lastName)
+            student_email = student.email
         tutor = self.ac.get_user_by_id(appointment.tutor_id)
         tutor_name = 'None'
         if tutor:
