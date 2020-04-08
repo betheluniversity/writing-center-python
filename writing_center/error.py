@@ -15,16 +15,17 @@ def error_render_template(template, error, code=None):
     if 'ALERT' not in flask_session.keys():
         flask_session['ALERT'] = []
 
-    # Check for username - it is possible for there not to be one though so handle that as well
-    username = 'no username'
-    if 'USERNAME' in flask_session.keys():
-        username = flask_session['USERNAME']
+    if code != 403:  # don't log 403 errors (4/8/20)
+        # Check for username - it is possible for there not to be one though so handle that as well
+        username = 'no username'
+        if 'USERNAME' in flask_session.keys():
+            username = flask_session['USERNAME']
 
-    with configure_scope() as scope:
-        scope.set_tag("time", time.strftime("%c"))
-        scope.set_tag("username", username)
+        with configure_scope() as scope:
+            scope.set_tag("time", time.strftime("%c"))
+            scope.set_tag("username", username)
 
-    app.logger.error("{0} -- {1}".format(username, str(error)))
+        app.logger.error("{0} -- {1}".format(username, str(error)))
 
     return render_template(template, code=code), code
 
