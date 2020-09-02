@@ -96,7 +96,7 @@ def before_request():
             flask_session['ALERT'] = []
     else:
         if 'USERNAME' not in flask_session.keys():
-            if app.config['ENVIRON'] == 'prod':
+            if app.config['ENVIRON'] == 'prod' or app.config['ENVIRON'] == 'xp':
                 username = request.environ.get('REMOTE_USER')
             else:
                 username = app.config['TEST_USERNAME']
