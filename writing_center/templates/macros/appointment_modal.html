@@ -52,6 +52,10 @@
                         <th>Multilingual</th>
                         <td>{{ 'Yes' if appointment.multilingual == 1 else 'No' }}</td>
                     </tr>
+                    <tr>
+                        <th>Virtual</th>
+                        <td>{{ 'Yes' if appointment.online == 1 else 'No' }}</td>
+                    </tr>
                     {% if not schedule and not cancel %}
                         <tr>
                             <th>No Show</th>
