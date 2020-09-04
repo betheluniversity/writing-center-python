@@ -527,12 +527,13 @@ class AppointmentsView(FlaskView):
         sub = int(form.get('sub-req'))
         drop_in = int(form.get('drop-in-check'))
         multilingual = int(form.get('multi-check'))
+        virtual = int(form.get('virtual-check'))
         no_show = int(form.get('no-show-check'))
         in_progress = int(form.get('in-progress-check'))
 
         try:
             self.ac.edit_appt(appt_id, student_id, tutor_id, sched_start_time, sched_end_time, actual_start, actual_end, prof,
-                              prof_email, drop_in, sub, assignment, notes, suggestions, multilingual, course, section,
+                              prof_email, drop_in, virtual, sub, assignment, notes, suggestions, multilingual, course, section,
                               no_show, in_progress)
             self.wcc.set_alert('success', 'Appointment edited successfully!')
         except Exception as e:

@@ -380,7 +380,7 @@ class AppointmentsController:
         return appts.order_by(AppointmentsTable.scheduledStart.desc()).all()
 
     def edit_appt(self, appt_id, student_id, tutor_id, sched_start, sched_end, actual_start, actual_end, prof_name,
-                  prof_email, drop_in, sub, assignment, notes, suggestions, multiligual, course, section, no_show,
+                  prof_email, drop_in, virtual, sub, assignment, notes, suggestions, multiligual, course, section, no_show,
                   in_progress):
         appt = db_session.query(AppointmentsTable).filter(AppointmentsTable.id == appt_id).one()
         appt.student_id = student_id
@@ -392,6 +392,7 @@ class AppointmentsController:
         appt.profName = prof_name
         appt.profEmail = prof_email
         appt.dropIn = drop_in
+        appt.online = virtual
         appt.sub = sub
         appt.assignment = assignment
         appt.notes = notes
