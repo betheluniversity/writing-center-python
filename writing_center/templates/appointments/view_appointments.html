@@ -29,8 +29,16 @@
                         <td>General Appointment</td>
                     </tr>
                     <tr>
+                        <td class="calendar-purple">Purple</td>
+                        <td>Open Virtual Appointment</td>
+                    </tr>
+                    <tr>
                         <td class="calendar-orange">Orange</td>
                         <td>Multilingual Appointment</td>
+                    </tr>
+                    <tr>
+                        <td class="calendar-cyan">Cyan</td>
+                        <td>Open Virtual Multilingual Appointment</td>
                     </tr>
                     <tr>
                         <td class="calendar-green">Green</td>
@@ -67,7 +75,23 @@
                     success: function (response) {
                         calendar.batchRendering(function() {
                             for (let i = 0; i < response.length; i ++) {
-                                if (response[i].sub === 1){
+                                if (response[i].multilingual === 1 && response[i].virtual === 1) {
+                                    calendar.addEvent({
+                                        id: response[i].id,
+                                        title: response[i].tutorName,
+                                        start: response[i].startTime,
+                                        end: response[i].endTime,
+                                        color: '#cbaacb'
+                                    });
+                                } else if (response[i].virtual === 1) {
+                                    calendar.addEvent({
+                                        id: response[i].id,
+                                        title: response[i].tutorName,
+                                        start: response[i].startTime,
+                                        end: response[i].endTime,
+                                        color: '#a2e1db'
+                                    });
+                                } else if (response[i].sub === 1){
                                     calendar.addEvent({
                                         id: response[i].id,
                                         title: response[i].tutorName,

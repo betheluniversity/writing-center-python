@@ -118,6 +118,7 @@ class AppointmentsView(FlaskView):
                     'startTime': start_time,
                     'endTime': end_time,
                     'multilingual': appointment.multilingual,
+                    'virtual': appointment.online,
                     'dropIn': appointment.dropIn,
                     'sub': appointment.sub
                 })
