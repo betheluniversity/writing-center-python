@@ -94,6 +94,7 @@ class SchedulesView(FlaskView):
             return redirect(url_for('SchedulesView:manage_tutor_schedules'))
         multilingual = int(form.get('multilingual'))
         drop_in = int(form.get('drop-in'))
+        virtual = int(form.get('virtual'))
         tutors = form.getlist('tutors')
         days = form.getlist('days')
         time_slots = form.getlist('time-slots')
@@ -102,7 +103,7 @@ class SchedulesView(FlaskView):
             tutors = []
             for tutor in self.sc.get_active_tutors():
                 tutors.append(tutor.id)
-        success = self.sc.create_tutor_shifts(start, end, multilingual, drop_in, tutors, days, time_slots)
+        success = self.sc.create_tutor_shifts(start, end, multilingual, drop_in, virtual, tutors, days, time_slots)
         if not success:
             self.wcc.set_alert('warning', 'The shifts failed to be scheduled! One or more of the selected day of week never occurs.')
             return redirect(url_for('SchedulesView:manage_tutor_schedules'))

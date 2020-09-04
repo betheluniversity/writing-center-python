@@ -67,7 +67,7 @@ class SchedulesController:
             .order_by(UserTable.lastName) \
             .all()
 
-    def create_tutor_shifts(self, start_date, end_date, multilingual, drop_in, tutor_ids, days_of_week, time_slots):
+    def create_tutor_shifts(self, start_date, end_date, multilingual, drop_in, virtual, tutor_ids, days_of_week, time_slots):
         # I honestly hate this but since we have 3 different selects which all can be multiple I think this is the only
         # way we can achieve the desired effect.
         warning = False
@@ -109,7 +109,7 @@ class SchedulesController:
                             start_ts = start_ts.replace(year=appt_date.year, month=appt_date.month, day=appt_date.day)
                             end_ts = end_ts.replace(year=appt_date.year, month=appt_date.month, day=appt_date.day)
                             appointment = AppointmentsTable(tutor_id=tutor.id, scheduledStart=start_ts, scheduledEnd=end_ts,
-                                                            inProgress=0, multilingual=multilingual, dropIn=drop_in, sub=0, noShow=0)
+                                                            inProgress=0, multilingual=multilingual, dropIn=drop_in, online=virtual, sub=0, noShow=0)
                             # This check makes sure only future shifts can be assigned (useful when creating a shift the
                             # day of)
                             if start_ts > datetime.now():
