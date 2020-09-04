@@ -21,16 +21,19 @@ class AppointmentsView(FlaskView):
     @route('schedule')
     def schedule_appointment_landing(self):
         self.wcc.check_roles_and_route(['Student', 'Administrator'])
+
         return render_template('appointments/schedule_appointment.html', **locals())
 
     @route('view-all-appointments')
     def view_appointments(self):
         self.wcc.check_roles_and_route(['Observer', 'Administrator'])
+
         return render_template('appointments/view_appointments.html', **locals())
 
     @route('load-appointment-data', methods=['POST'])
     def load_appointment_data(self):
         self.wcc.check_roles_and_route(['Student', 'Tutor', 'Observer', 'Administrator'])
+
         appt_id = json.loads(request.data).get('id')
         schedule = json.loads(request.data).get('schedule')
         cancel = json.loads(request.data).get('cancel')
@@ -60,6 +63,7 @@ class AppointmentsView(FlaskView):
     @route('load-appointments', methods=['POST'])
     def load_appointments(self):
         self.wcc.check_roles_and_route(['Student', 'Observer', 'Administrator'])
+
         dates = json.loads(request.data).get('dates')
         schedule_appt = json.loads(request.data).get('scheduleAppt')
         start = dates['start']
@@ -128,6 +132,7 @@ class AppointmentsView(FlaskView):
 
     def appointments_and_walk_ins(self):
         self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
+
         tutor = flask_session['USERNAME']
         appointments = self.ac.get_scheduled_appointments(tutor)
         in_progress_appointments = self.ac.get_in_progress_appointments(tutor)
@@ -147,6 +152,7 @@ class AppointmentsView(FlaskView):
     @route('/begin-checks', methods=['POST'])
     def begin_walk_in_checks(self):
         self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
+
         username = str(json.loads(request.data).get('username'))
         if not self.wsapi.get_names_from_username(username):
             self.wcc.set_alert('danger', 'Username ' + username + ' is not valid. Please try again with a valid username.')
@@ -197,6 +203,7 @@ class AppointmentsView(FlaskView):
     @route('search-appointments')
     def search_appointments(self):
         self.wcc.check_roles_and_route(['Observer', 'Administrator'])
+
         students = self.ac.get_users_by_role("Student")
         tutors = self.ac.get_users_by_role("Tutor")
         profs = self.ac.get_profs()
@@ -265,6 +272,7 @@ class AppointmentsView(FlaskView):
     @route('schedule-appointment', methods=['POST'])
     def schedule_appointment(self):
         self.wcc.check_roles_and_route(['Student', 'Administrator'])
+
         appt_id = str(json.loads(request.data).get('appt_id'))
         course = str(json.loads(request.data).get('course'))
         assignment = str(json.loads(request.data).get('assignment'))
@@ -355,6 +363,7 @@ class AppointmentsView(FlaskView):
     @route('cancel-appointment', methods=['POST'])
     def cancel_appointment(self):
         self.wcc.check_roles_and_route(['Student', 'Administrator'])
+
         appt_id = str(json.loads(request.data).get('appt_id'))
         cancelled = self.ac.cancel_appointment(appt_id)
         if cancelled:
@@ -453,6 +462,7 @@ class AppointmentsView(FlaskView):
     @route('save-changes', methods=['POST'])
     def save_changes(self):
         self.wcc.check_roles_and_route(['Tutor'])
+
         appt_id = json.loads(request.data).get('appt_id')
         assignment = str(json.loads(request.data).get('assignment'))
         notes = str(json.loads(request.data).get('notes'))
@@ -466,6 +476,7 @@ class AppointmentsView(FlaskView):
     @route('/search', methods=['POST'])
     def search(self):
         self.wcc.check_roles_and_route(['Observer', 'Administrator'])
+
         form = request.form
         student = None if form.get('student') == 'None' else int(form.get('student'))
         tutor = None if form.get('tutor') == 'None' else int(form.get('tutor'))
@@ -490,6 +501,7 @@ class AppointmentsView(FlaskView):
     @route('/edit/<int:appt_id>', methods=['GET', 'POST'])
     def edit(self, appt_id):
         self.wcc.check_roles_and_route(['Administrator'])
+
         appt = self.ac.get_appointment_by_id(appt_id)
         all_tutors = self.ac.get_users_by_role('Tutor')
         all_students = self.ac.get_all_users()
@@ -500,6 +512,7 @@ class AppointmentsView(FlaskView):
     @route('/submit-edits', methods=['POST'])
     def submit_edits(self):
         self.wcc.check_roles_and_route(['Administrator'])
+        
         form = request.form
 
         appt_id = int(form.get('id'))
