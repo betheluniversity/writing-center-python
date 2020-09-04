@@ -204,6 +204,7 @@ class AppointmentsView(FlaskView):
     @route('view-appointments')
     def student_view_appointments(self):
         self.wcc.check_roles_and_route(['Student', 'Administrator'])
+
         return render_template('appointments/student_view_appointments.html', **locals())
 
     @route('get-appointments', methods=['GET'])
