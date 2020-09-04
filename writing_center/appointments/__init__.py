@@ -53,6 +53,8 @@ class AppointmentsView(FlaskView):
             tutor_name = '{0} {1}'.format(tutor.firstName, tutor.lastName)
         courses = self.wsapi.get_student_courses(flask_session['USERNAME'])
 
+        zoom_url = self.ac.get_zoom_url()[0]
+
         return render_template('macros/appointment_modal.html', **locals())
 
     @route('load-appointments', methods=['POST'])
