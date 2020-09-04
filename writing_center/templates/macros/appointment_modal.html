@@ -56,7 +56,7 @@
                         <th>Virtual</th>
                         <td>{{ 'Yes' if appointment.online == 1 else 'No' }}</td>
                     </tr>
-                    {% if appointment.online %}
+                    {% if appointment.online and show_zoom_url %}
                         <tr>
                             <th>Zoom Url</th>
                             <td><a target="_blank" href="{{ zoom_url }}">Zoom Url</a></td>
