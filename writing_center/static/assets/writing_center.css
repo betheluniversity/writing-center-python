@@ -135,12 +135,20 @@ ul.list-group{
     background-color: #9cb3f7;
 }
 
+.calendar-cyan{
+    background-color: #a2e1db;
+}
+
 .calendar-green{
     background-color: #9ee98d;
 }
 
 .calendar-orange{
     background-color: #f5c773;
+}
+
+.calendar-purple{
+    background-color: #cbaacb;
 }
 
 .calendar-red{
