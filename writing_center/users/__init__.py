@@ -19,12 +19,16 @@ class UsersView(FlaskView):
 
     @route('/manage-bans/')
     def manage_bans(self):
+        self.wcc.check_roles_and_route(['Administrator'])
+
         users = self.uc.get_banned_users()
 
         return render_template('users/manage_bans.html', **locals())
 
     @route('/view-users')
     def view_all_users(self):
+        self.wcc.check_roles_and_route(['Administrator'])
+
         users_query = self.uc.get_users()
         users = {}
         for user, role in users_query:
@@ -57,10 +61,14 @@ class UsersView(FlaskView):
 
     @route("/add-user")
     def add_user(self):
+        self.wcc.check_roles_and_route(['Administrator'])
+
         return render_template('users/add_user.html', **locals())
 
     @route("/search-users", methods=['POST'])
     def search_users(self):
+        self.wcc.check_roles_and_route(['Administrator'])
+
         form = request.form
         first_name = form.get('firstName')
         last_name = form.get('lastName')
@@ -69,6 +77,8 @@ class UsersView(FlaskView):
 
     @route('/create/<username>/<first_name>/<last_name>')
     def select_user_roles(self, username, first_name, last_name):
+        self.wcc.check_roles_and_route(['Administrator'])
+
         roles = self.uc.get_all_roles()
         existing_user = self.uc.get_user_by_username(username)
         if existing_user:  # User exists in system
@@ -83,6 +93,8 @@ class UsersView(FlaskView):
 
     @route('/create-user', methods=['POST'])
     def create_user(self):
+        self.wcc.check_roles_and_route(['Administrator'])
+
         form = request.form
         first_name = form.get('first-name')
         last_name = form.get('last-name')
@@ -107,6 +119,8 @@ class UsersView(FlaskView):
 
     @route("/edit/<int:user_id>")
     def edit_user(self, user_id):
+        self.wcc.check_roles_and_route(['Administrator'])
+
         user = self.uc.get_user_by_id(user_id)
         roles = self.uc.get_all_roles()
         user_role_ids = self.uc.get_user_role_ids(user_id)
@@ -115,6 +129,8 @@ class UsersView(FlaskView):
 
     @route('/save-user-edits', methods=['POST'])
     def save_user_edits(self):
+        self.wcc.check_roles_and_route(['Administrator'])
+
         form = request.form
         user_id = form.get('user-id')
         username = form.get('username')
@@ -134,17 +150,23 @@ class UsersView(FlaskView):
 
     @route("/remove-ban/", methods=['POST'])
     def remove_ban(self):
+        self.wcc.check_roles_and_route(['Administrator'])
+
         user_id = str(json.loads(request.data).get('id'))
         self.uc.remove_user_ban(user_id)
         return redirect(url_for('UsersView:manage_bans'))
 
     @route("/unban-all", methods=['POST'])
     def remove_all_bans(self):
+        self.wcc.check_roles_and_route(['Administrator'])
+
         self.uc.remove_all_bans()
         return redirect(url_for('UsersView:manage_bans'))
 
     @route('/search-ban-users', methods=['POST'])
     def search_ban_users(self):
+        self.wcc.check_roles_and_route(['Administrator'])
+
         form = request.form
         first_name = form.get('firstName')
         last_name = form.get('lastName')
@@ -153,6 +175,8 @@ class UsersView(FlaskView):
 
     @route('/ban/user/', methods=['POST'])
     def save_user_ban(self):
+        self.wcc.check_roles_and_route(['Administrator'])
+
         form = request.form
         username = form.get('username')
         user = self.uc.get_user_by_username(username)
@@ -166,6 +190,8 @@ class UsersView(FlaskView):
         return redirect(url_for('UsersView:manage_bans'))
 
     def act_as_user(self, user_id):
+        self.wcc.check_roles_and_route(['Administrator'])
+
         if not flask_session['ADMIN-VIEWER']:
             user_info = self.uc.get_user_by_id(user_id)
             flask_session['ADMIN-VIEWER'] = True
@@ -205,6 +231,8 @@ class UsersView(FlaskView):
 
     @route('/deactivate/<int:user_id>', methods=['POST', 'GET'])
     def deactivate_user(self, user_id):
+        self.wcc.check_roles_and_route(['Administrator'])
+
         try:
             self.uc.deactivate_user(user_id)
             self.wcc.set_alert('success', 'Users deactivated successfully!')
@@ -215,6 +243,8 @@ class UsersView(FlaskView):
 
     @route("/deactivate-users", methods=['post'])
     def deactivate_users(self):
+        self.wcc.check_roles_and_route(['Administrator'])
+
         form = request.form
         json_user_ids = form.get('jsonUserIds')
         user_ids = json.loads(json_user_ids)
