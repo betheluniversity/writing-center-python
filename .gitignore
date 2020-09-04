@@ -9,3 +9,5 @@ config/*.py
 *.log
 .vscode/settings.json
 **/.vscode/**
+*/gc_client_secret.json
+
