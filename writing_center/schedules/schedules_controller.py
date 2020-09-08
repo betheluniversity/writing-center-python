@@ -23,7 +23,16 @@ class SchedulesController:
     def create_time_slot(self, start_time, end_time, is_active):
         try:
             if self.check_for_existing_schedule(start_time, end_time):
-                return False
+                schedule = db_session.query(ScheduleTable) \
+                    .filter(ScheduleTable.startTime == start_time) \
+                    .filter(ScheduleTable.endTime == end_time) \
+                    .one()
+                if schedule.active == 0 and is_active == 1:
+                    schedule.active = 1
+                    db_session.commit()
+                    return True
+                else:
+                    return False
             new_schedule = ScheduleTable(startTime=start_time, endTime=end_time, active=is_active)
             db_session.add(new_schedule)
             db_session.commit()
