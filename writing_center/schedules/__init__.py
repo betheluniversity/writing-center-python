@@ -51,7 +51,7 @@ class SchedulesView(FlaskView):
         end_time = form.get('end-time')
         end_time = datetime.strftime(datetime.strptime(end_time, '%H:%M'), '%H:%M:%S')
 
-        is_active = form.get('active')
+        is_active = int(form.get('active'))
 
         created = self.sc.create_time_slot(start_time, end_time, is_active)
 
