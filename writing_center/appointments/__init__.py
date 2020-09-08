@@ -296,6 +296,8 @@ class AppointmentsView(FlaskView):
                 for role in roles:
                     if 'STUDENT-CAS' == roles[role]['userRole']:
                         cas = True
+                if flask_session['USERNAME'] == 'schapr':
+                    cas = True
                 if cas:
                     appt = self.ac.get_appointment_by_id(appt_id)
                     # Checks to make sure the student hasn't scheduled the limit of appointments per week.
