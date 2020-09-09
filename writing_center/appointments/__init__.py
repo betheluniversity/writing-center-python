@@ -460,6 +460,7 @@ class AppointmentsView(FlaskView):
         appt = self.ac.get_appointment_by_id(appt_id)
         student = self.ac.get_user_by_id(appt.student_id)
         courses = self.wsapi.get_student_courses(student.username)
+        zoom_url = self.ac.get_zoom_url()[0]
         return render_template('appointments/in_progress_appointment.html', **locals())
 
     @route('save-changes', methods=['POST'])
