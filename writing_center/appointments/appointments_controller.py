@@ -115,11 +115,11 @@ class AppointmentsController:
             begin_appt = AppointmentsTable(student_id=user.id, tutor_id=tutor.id,
                                            actualStart=datetime.now(), profName=prof_name, profEmail=prof_email,
                                            assignment=assignment, courseCode=course_code, courseSection=course_section,
-                                           inProgress=1, dropIn=1, sub=0, multilingual=multilingual, noShow=0)
+                                           inProgress=1, dropIn=1, sub=0, multilingual=multilingual, noShow=0, online=0)
         else:
             begin_appt = AppointmentsTable(student_id=user.id, tutor_id=tutor.id,
                                            actualStart=datetime.now(), assignment=assignment, inProgress=1, dropIn=1,
-                                           sub=0, multilingual=multilingual, noShow=0)
+                                           sub=0, multilingual=multilingual, noShow=0, online=0)
         db_session.add(begin_appt)
         try:
             db_session.commit()
