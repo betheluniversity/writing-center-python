@@ -7,7 +7,8 @@ from datetime import datetime
 # Local
 from writing_center import app
 from writing_center.db_repository import db_session
-from writing_center.db_repository.tables import UserTable, EmailPreferencesTable, AppointmentsTable, UserRoleTable, RoleTable
+from writing_center.db_repository.tables import UserTable, EmailPreferencesTable, AppointmentsTable, UserRoleTable, \
+    RoleTable, SettingsTable
 
 
 class MessageCenterController:
@@ -125,10 +126,16 @@ class MessageCenterController:
         subject = 'Appointment on {0}'.format(appointment.scheduledStart.date())
 
         recipient = student.email
+        qualtrics_link = self.get_survey_link()[0]
 
         if self.send_message(subject, render_template('emails/appointment_signup_student.html', **locals()), recipient, bcc='', html=True):
             return True
         return False
+
+    def get_survey_link(self):
+        return db_session.query(SettingsTable.value)\
+            .filter(SettingsTable.id == 4)\
+            .one_or_none()
 
     def appointment_signup_tutor(self, appointment_id):
         appointment = self.get_appointment_info(appointment_id)
