@@ -117,6 +117,7 @@ class MessageCenterController:
     def appointment_signup_student(self, appointment_id):
         # get the appointment via the appointment id
         appointment = self.get_appointment_info(appointment_id)
+        virtual = False if appointment.online == 0 else True
         student = self.get_user_by_id(appointment.student_id)
         tutor = self.get_user_by_id(appointment.tutor_id)
         appt_info = {'date': appointment.scheduledStart.date().strftime("%m/%d/%Y"),

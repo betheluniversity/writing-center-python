@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block email_content %}
-    <h3>You signed up for an appointment:</h3>
+    <h3>You signed up for {% if virtual %}a virtual{% else %}an{% endif %} appointment:</h3>
         <p>Date: {{ appt_info['date']}}</p>
         <p>Your scheduled start time: {{ appt_info['time'] }}</p>
         <p>Tutor: {{ appt_info['tutor'] }}</p>
