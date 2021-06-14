@@ -28,7 +28,7 @@ a.nav-link:focus, a.nav-link:hover.active {
     color: white !important;
 }
 
-.banned-users, .scheduled-appointments, .writing-center-users {
+.banned-users, .scheduled-appointments, .writing-center-users, #results {
     display: inherit;
     overflow: auto;
 }
@@ -243,7 +243,7 @@ ul.list-group{
     margin-left: 20px;
 }
 
-.login-to-google-calendar {
+.login-to-google-calendar, .fc-toolbar.fc-header-toolbar {
     overflow: auto;
 }
 
