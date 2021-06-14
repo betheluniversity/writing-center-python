@@ -28,6 +28,11 @@ a.nav-link:focus, a.nav-link:hover.active {
     color: white !important;
 }
 
+.banned-users, .scheduled-appointments, .writing-center-users {
+    display: inherit;
+    overflow: auto;
+}
+
 body {
     background: #fff;
     color: #222;
@@ -221,12 +226,25 @@ ul.list-group{
     background: yellow !important;
 }
 
+@media screen and (max-width: 450px) {
+    .fc-unthemed .fc-today-button {
+        display: none;
+    }
+    .fc-center {
+        text-align: center;
+    }
+}
+
 .form-check-input {
     margin-left: 0px !important;
 }
 
 .form-check-label {
     margin-left: 20px;
+}
+
+.login-to-google-calendar {
+    overflow: auto;
 }
 
 .nav.margins {

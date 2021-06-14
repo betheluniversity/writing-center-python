@@ -6,62 +6,64 @@
     <div class="jumbotron">
         <h3>Writing Center Users</h3>
     </div>
-    <form>
-        <div class="form-row">
-            <div class="form-group col-md-12">
-                <table id="table"  class="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th data-toggle="tooltip" data-placement="top" title="User Last Name">Last</th>
-                            <th data-toggle="tooltip" data-placement="top" title="User First Name">First</th>
-                            <th data-toggle="tooltip" data-placement="top" title="User Email">Email</th>
-                            <th data-toggle="tooltip" data-placement="top" title="User Role">Role(s)</th>
-                            <th data-toggle="tooltip" data-placement="top" title="Act As This User">Change User</th>
-                            <th data-toggle="tooltip" data-placement="top" title="Edit User">Edit</th>
-                            <th>✓</th>
-                        </tr>
-                        <tr>
-                            <th colspan="6"></th>
-                            <th colspan="1">
-                                <button id="deactivate-users" type="button" class="btn btn-primary btn-danger hover-bright">Deactivate</button>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for user in users %}
+    <div class="writing-center-users">
+        <form>
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <table id="table"  class="table table-striped table-bordered">
+                        <thead>
                             <tr>
-                                <td>
-                                    {{ users[user]['lastName'] }}
-                                </td>
-                                <td>
-                                    {{ users[user]['firstName'] }}
-                                </td>
-                                <td>
-                                    {{ users[user]['email'] }}
-                                </td>
-                                <td>
-                                    {{ users[user]['roles'] }}
-                                </td>
-                                <td>
-                                    {% if users[user]['username'] == session['USERNAME'] %}
-                                        N/A
-                                    {% else %}
-                                        <a id="act-as" href='{{ url_for('UsersView:act_as_user', user_id=users[user]['id']) }}' class="btn btn-primary background-blue">Act As User</a>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <a id="edit" href='{{ url_for('UsersView:edit_user', user_id=users[user]['id']) }}' class="btn btn-primary background-blue">Edit</a>
-                                </td>
-                                <td class="text-center">
-                                    <input type="checkbox" value="{{ users[user]['id'] }}" class="deactivate-checkbox">
-                                </td>
+                                <th data-toggle="tooltip" data-placement="top" title="User Last Name">Last</th>
+                                <th data-toggle="tooltip" data-placement="top" title="User First Name">First</th>
+                                <th data-toggle="tooltip" data-placement="top" title="User Email">Email</th>
+                                <th data-toggle="tooltip" data-placement="top" title="User Role">Role(s)</th>
+                                <th data-toggle="tooltip" data-placement="top" title="Act As This User">Change User</th>
+                                <th data-toggle="tooltip" data-placement="top" title="Edit User">Edit</th>
+                                <th>✓</th>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                            <tr>
+                                <th colspan="6"></th>
+                                <th colspan="1">
+                                    <button id="deactivate-users" type="button" class="btn btn-primary btn-danger hover-bright">Deactivate</button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                                <tr>
+                                    <td>
+                                        {{ users[user]['lastName'] }}
+                                    </td>
+                                    <td>
+                                        {{ users[user]['firstName'] }}
+                                    </td>
+                                    <td>
+                                        {{ users[user]['email'] }}
+                                    </td>
+                                    <td>
+                                        {{ users[user]['roles'] }}
+                                    </td>
+                                    <td>
+                                        {% if users[user]['username'] == session['USERNAME'] %}
+                                            N/A
+                                        {% else %}
+                                            <a id="act-as" href='{{ url_for('UsersView:act_as_user', user_id=users[user]['id']) }}' class="btn btn-primary background-blue">Act As User</a>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a id="edit" href='{{ url_for('UsersView:edit_user', user_id=users[user]['id']) }}' class="btn btn-primary background-blue">Edit</a>
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="checkbox" value="{{ users[user]['id'] }}" class="deactivate-checkbox">
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
 
     <script>
         $(document).ready( function () {

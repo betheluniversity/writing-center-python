@@ -31,83 +31,85 @@
                     <h3>Scheduled appointments:</h3>
                 </div>
             </div>
-            <table id="table"  class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th data-toggle="tooltip" data-placement="top" title="Student">Student</th>
-                        <th data-toggle="tooltip" data-placement="top" title="Date">Date</th>
-                        <th data-toggle="tooltip" data-placement="top" title="Start Time">Start Time</th>
-                        <th data-toggle="tooltip" data-placement="top" title="End Time">End Time</th>
-                        <th data-toggle="tooltip" data-placement="top" title="Start Appointment">Start/Continue/End Appointment</th>
-                        <th data-toggle="tooltip" data-placement="top" title="Mark/Unmark as No Show">Mark/Unmark as No Show</th>
-                        <th data-toggle="tooltip" data-placement="top" title="Mark/Unmark as Multilingual">Mark/Unmark as Multilingual</th>
-                        <th data-toggle="tooltip" data-placement="top" title="View More Info">View More Info</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if appointments|length > 0 %}
-                        {% for appointment in appointments %}
-                            <tr>
-                                <td>
-                                    {{ users[appointment.student_id] }}
-                                </td>
-                                <td>
-                                    {% if appointment.scheduledStart %}
-                                        {{ appointment.scheduledStart|datetimeformat('%m/%d/%y') }}
-                                    {% elif appointment.actualStart %}
-                                        {{ appointment.actualStart|datetimeformat('%m/%d/%y') }}
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if appointment.scheduledStart %}
-                                        {{ appointment.scheduledStart|datetimeformat }}
-                                    {% elif appointment.actualStart %}
-                                        {{ appointment.actualStart|datetimeformat }}
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if appointment.scheduledEnd %}
-                                        {{ appointment.scheduledEnd|datetimeformat }}
-                                    {% elif appointment.actualEnd %}
-                                        {{ appointment.actualEnd|datetimeformat }}
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if not appointment.actualStart %}
-                                        <a id="start" href="{{ url_for('AppointmentsView:start_appointment', appt_id=appointment.id) }}"
-                                           class="btn btn-primary btn-success">Start Appointment</a>
-                                    {% elif not appointment.actualEnd %}
-                                        <a id="End" href="{{ url_for('AppointmentsView:in_progress_appointment', appt_id=appointment.id) }}"
-                                           class="btn btn-primary btn-danger">End Appointment</a>
-                                    {% else %}
-                                        <a id="continue" href="{{ url_for('AppointmentsView:in_progress_appointment', appt_id=appointment.id) }}"
-                                           class="btn btn-primary background-blue">Continue Appointment</a>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if appointment.noShow == 0 or not appointment.noShow %}
-                                        <a id="no-show" href="{{ url_for('AppointmentsView:toggle_no_show', appt_id=appointment.id) }}"
-                                           class="btn btn-primary btn-danger">Mark as No Show</a>
-                                    {% elif appointment.noShow == 1 %}
-                                        <a id="revert-no-show" href="{{ url_for('AppointmentsView:toggle_no_show', appt_id=appointment.id) }}"
-                                           class="btn btn-primary btn-danger">Revert No Show</a>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if appointment.multilingual == 0 or not appointment.multilingual %}
-                                        <a id="multilingual" href="{{ url_for('AppointmentsView:toggle_multilingual', appt_id=appointment.id) }}"
-                                           class="btn btn-primary btn-danger">Mark as Multilingual</a>
-                                    {% elif appointment.multilingual == 1 %}
-                                        <a id="revert-multilingual" href="{{ url_for('AppointmentsView:toggle_multilingual', appt_id=appointment.id) }}"
-                                           class="btn btn-primary btn-danger">Revert Multilingual</a>
-                                    {% endif %}
-                                </td>
-                                <td><input type="button" class="btn btn-primary darkblue" value="More Info" onclick="viewInfo({{ appointment.id }})"></td>
-                            </tr>
-                        {% endfor %}
-                    {% endif %}
-                </tbody>
-            </table>
+            <div class="scheduled-appointments">
+                <table id="table"  class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th data-toggle="tooltip" data-placement="top" title="Student">Student</th>
+                            <th data-toggle="tooltip" data-placement="top" title="Date">Date</th>
+                            <th data-toggle="tooltip" data-placement="top" title="Start Time">Start Time</th>
+                            <th data-toggle="tooltip" data-placement="top" title="End Time">End Time</th>
+                            <th data-toggle="tooltip" data-placement="top" title="Start Appointment">Start/Continue/End Appointment</th>
+                            <th data-toggle="tooltip" data-placement="top" title="Mark/Unmark as No Show">Mark/Unmark as No Show</th>
+                            <th data-toggle="tooltip" data-placement="top" title="Mark/Unmark as Multilingual">Mark/Unmark as Multilingual</th>
+                            <th data-toggle="tooltip" data-placement="top" title="View More Info">View More Info</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if appointments|length > 0 %}
+                            {% for appointment in appointments %}
+                                <tr>
+                                    <td>
+                                        {{ users[appointment.student_id] }}
+                                    </td>
+                                    <td>
+                                        {% if appointment.scheduledStart %}
+                                            {{ appointment.scheduledStart|datetimeformat('%m/%d/%y') }}
+                                        {% elif appointment.actualStart %}
+                                            {{ appointment.actualStart|datetimeformat('%m/%d/%y') }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if appointment.scheduledStart %}
+                                            {{ appointment.scheduledStart|datetimeformat }}
+                                        {% elif appointment.actualStart %}
+                                            {{ appointment.actualStart|datetimeformat }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if appointment.scheduledEnd %}
+                                            {{ appointment.scheduledEnd|datetimeformat }}
+                                        {% elif appointment.actualEnd %}
+                                            {{ appointment.actualEnd|datetimeformat }}
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if not appointment.actualStart %}
+                                            <a id="start" href="{{ url_for('AppointmentsView:start_appointment', appt_id=appointment.id) }}"
+                                               class="btn btn-primary btn-success">Start Appointment</a>
+                                        {% elif not appointment.actualEnd %}
+                                            <a id="End" href="{{ url_for('AppointmentsView:in_progress_appointment', appt_id=appointment.id) }}"
+                                               class="btn btn-primary btn-danger">End Appointment</a>
+                                        {% else %}
+                                            <a id="continue" href="{{ url_for('AppointmentsView:in_progress_appointment', appt_id=appointment.id) }}"
+                                               class="btn btn-primary background-blue">Continue Appointment</a>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if appointment.noShow == 0 or not appointment.noShow %}
+                                            <a id="no-show" href="{{ url_for('AppointmentsView:toggle_no_show', appt_id=appointment.id) }}"
+                                               class="btn btn-primary btn-danger">Mark as No Show</a>
+                                        {% elif appointment.noShow == 1 %}
+                                            <a id="revert-no-show" href="{{ url_for('AppointmentsView:toggle_no_show', appt_id=appointment.id) }}"
+                                               class="btn btn-primary btn-danger">Revert No Show</a>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if appointment.multilingual == 0 or not appointment.multilingual %}
+                                            <a id="multilingual" href="{{ url_for('AppointmentsView:toggle_multilingual', appt_id=appointment.id) }}"
+                                               class="btn btn-primary btn-danger">Mark as Multilingual</a>
+                                        {% elif appointment.multilingual == 1 %}
+                                            <a id="revert-multilingual" href="{{ url_for('AppointmentsView:toggle_multilingual', appt_id=appointment.id) }}"
+                                               class="btn btn-primary btn-danger">Revert Multilingual</a>
+                                        {% endif %}
+                                    </td>
+                                    <td><input type="button" class="btn btn-primary darkblue" value="More Info" onclick="viewInfo({{ appointment.id }})"></td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
             {% if appointments|length == 0 %}
                 You current do no have any scheduled appointments
             {% endif %}
