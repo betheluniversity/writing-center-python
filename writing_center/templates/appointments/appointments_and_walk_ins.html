@@ -31,7 +31,7 @@
                     <h3>Scheduled appointments:</h3>
                 </div>
             </div>
-            <table id="table"  class="table table-striped table-bordered">
+            <table id="table" class="table mobile table-striped table-bordered">
                 <thead>
                     <tr>
                         <th data-toggle="tooltip" data-placement="top" title="Student">Student</th>
@@ -48,31 +48,31 @@
                     {% if appointments|length > 0 %}
                         {% for appointment in appointments %}
                             <tr>
-                                <td>
+                                <td data-th="Student">
                                     {{ users[appointment.student_id] }}
                                 </td>
-                                <td>
+                                <td data-th="Date">
                                     {% if appointment.scheduledStart %}
                                         {{ appointment.scheduledStart|datetimeformat('%m/%d/%y') }}
                                     {% elif appointment.actualStart %}
                                         {{ appointment.actualStart|datetimeformat('%m/%d/%y') }}
                                     {% endif %}
                                 </td>
-                                <td>
+                                <td data-th="Start Time">
                                     {% if appointment.scheduledStart %}
                                         {{ appointment.scheduledStart|datetimeformat }}
                                     {% elif appointment.actualStart %}
                                         {{ appointment.actualStart|datetimeformat }}
                                     {% endif %}
                                 </td>
-                                <td>
+                                <td data-th="End Time">
                                     {% if appointment.scheduledEnd %}
                                         {{ appointment.scheduledEnd|datetimeformat }}
                                     {% elif appointment.actualEnd %}
                                         {{ appointment.actualEnd|datetimeformat }}
                                     {% endif %}
                                 </td>
-                                <td>
+                                <td data-th="Start Appointment">
                                     {% if not appointment.actualStart %}
                                         <a id="start" href="{{ url_for('AppointmentsView:start_appointment', appt_id=appointment.id) }}"
                                            class="btn btn-primary btn-success">Start Appointment</a>
@@ -84,7 +84,7 @@
                                            class="btn btn-primary background-blue">Continue Appointment</a>
                                     {% endif %}
                                 </td>
-                                <td>
+                                <td data-th="Mark/Unmark as No Show">
                                     {% if appointment.noShow == 0 or not appointment.noShow %}
                                         <a id="no-show" href="{{ url_for('AppointmentsView:toggle_no_show', appt_id=appointment.id) }}"
                                            class="btn btn-primary btn-danger">Mark as No Show</a>
@@ -93,7 +93,7 @@
                                            class="btn btn-primary btn-danger">Revert No Show</a>
                                     {% endif %}
                                 </td>
-                                <td>
+                                <td data-th="Mark/Unmark as Multilingual">
                                     {% if appointment.multilingual == 0 or not appointment.multilingual %}
                                         <a id="multilingual" href="{{ url_for('AppointmentsView:toggle_multilingual', appt_id=appointment.id) }}"
                                            class="btn btn-primary btn-danger">Mark as Multilingual</a>
@@ -102,7 +102,7 @@
                                            class="btn btn-primary btn-danger">Revert Multilingual</a>
                                     {% endif %}
                                 </td>
-                                <td><input type="button" class="btn btn-primary darkblue" value="More Info" onclick="viewInfo({{ appointment.id }})"></td>
+                                <td data-th="View More Info"><input type="button" class="btn btn-primary darkblue" value="More Info" onclick="viewInfo({{ appointment.id }})"></td>
                             </tr>
                         {% endfor %}
                     {% endif %}
