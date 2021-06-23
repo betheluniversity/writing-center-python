@@ -143,7 +143,8 @@
                 url: "{{ url_for('AppointmentsView:load_appointment_data') }}",
                 data: JSON.stringify({
                     'id': appt_id,
-                    'tutorEdit': true
+                    'tutorEdit': true,
+                    'zoom-url': true
                 }),
                 contentType: 'application/json;charset=UTF-8',
                 success: function (response) {

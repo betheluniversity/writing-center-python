@@ -1,35 +1,51 @@
 <div class="form-row">
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="form-group">
             <label for="start-date">Start Date</label>
             <input class="form-control datepicker" id="start-date" value="{{ session['DATE-SELECTOR-START'] }}" type="text" readonly/>
             <div id="start-container"></div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="form-group">
             <label for="end-date">End Date</label>
             <input class="form-control datepicker" id="end-date" type="text" value="{{ session['DATE-SELECTOR-END'] }}" readonly/>
             <div id="end-container"></div>
         </div>
     </div>
-    <div class="form-group col-md-4">
+    <div class="form-group col-md-3">
         {% if session['DATE-SELECTOR-VALUE'] == 'all' %}
             <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="all" onchange="inputParamsChanged('date-appt-change')" checked>All Appointments</label>
         {% else %}
-            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="all" onchange="inputParamsChanged('date-appt-change')" >All Appointments</label>
+            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="all" onchange="inputParamsChanged('date-appt-change')">All Appointments</label>
         {% endif %}
         {% if session['DATE-SELECTOR-VALUE'] == 'non' %}
-            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="non" onchange="inputParamsChanged('date-appt-change')" checked>Only Non-Multilingual Appointments</label>
+            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="non" onchange="inputParamsChanged('date-appt-change')" checked>Only Non-Virtual Non-Multilingual Appointments</label>
         {% else %}
-            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="non" onchange="inputParamsChanged('date-appt-change')">Only Non-Multilingual Appointments</label>
+            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="non" onchange="inputParamsChanged('date-appt-change')">Only Non-Virtual Non-Multilingual Appointments</label>
         {% endif %}
         {% if session['DATE-SELECTOR-VALUE'] == 'multilingual' %}
             <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="multilingual" onchange="inputParamsChanged('date-appt-change')" checked>Only Multilingual Appointments</label>
         {% else %}
             <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="multilingual" onchange="inputParamsChanged('date-appt-change')">Only Multilingual Appointments</label>
         {% endif %}
-
+    </div>
+    <div class="form-group col-md-3">
+        {% if session['DATE-SELECTOR-VALUE'] == 'non-virtual' %}
+            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="non-virtual" onchange="inputParamsChanged('date-appt-change')" checked>Only Non-Virtual Appointments</label>
+        {% else %}
+            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="non-virtual" onchange="inputParamsChanged('date-appt-change')">Only Non-Virtual Appointments</label>
+        {% endif %}
+        {% if session['DATE-SELECTOR-VALUE'] == 'virtual' %}
+            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="virtual" onchange="inputParamsChanged('date-appt-change')" checked>Only Virtual Appointments</label>
+        {% else %}
+            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="virtual" onchange="inputParamsChanged('date-appt-change')">Only Virtual Appointments</label>
+        {% endif %}
+        {% if session['DATE-SELECTOR-VALUE'] == 'virtual-multilingual' %}
+            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="virtual-multilingual" onchange="inputParamsChanged('date-appt-change')" checked>Only Virtual Multilingual Appointments</label>
+        {% else %}
+            <label class="radio"><input style="margin: 0px 5px" type="radio" name="radios" value="virtual-multilingual" onchange="inputParamsChanged('date-appt-change')">Only Virtual Multilingual Appointments</label>
+        {% endif %}
     </div>
     {# spinner placeholder #}
     <div id="spinner" class="spinner" style="display: none;">

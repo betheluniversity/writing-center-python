@@ -1,0 +1,35 @@
+{% macro calendar_key(subs=None) %}
+    <h3>Calendar Key</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Color</th>
+                <th>Meaning</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="calendar-blue">Blue</td>
+                <td>F2F Appointment</td>
+            </tr>
+            <tr>
+                <td class="calendar-purple">Purple</td>
+                <td>Virtual Appointment</td>
+            </tr>
+            <tr>
+                <td class="calendar-orange">Orange</td>
+                <td>F2F Multilingual Appointment</td>
+            </tr>
+            <tr>
+                <td class="calendar-green">Green</td>
+                <td>Virtual Multilingual Appointment</td>
+            </tr>
+            {% if subs %}
+                <tr>
+                    <td class="calendar-red">Red</td>
+                    <td>Sub Requested</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+{% endmacro %}

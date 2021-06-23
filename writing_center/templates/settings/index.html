@@ -91,6 +91,27 @@
             {% endif %}
         {% endfor %}
     </div>
+    <div class="row">
+        {% for setting in settings %}
+            {% if setting.name == 'Zoom Url' %}
+                <div class="mx-auto col-md-6">
+                    <div class="card settings-card">
+                        <div class="card-body">
+                            <h5>Zoom Url</h5>
+                            <p>This is the same zoom url used for every session</p>
+                            <br>
+                            <div class="input-group mb-3">
+                                <input id="zoom-url" type="text" class="form-control" value="{{ setting.value }}" disabled aria-describedby="edit-zoom-url">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="edit-zoom-url">Edit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
 
     <!-- Modal -->
     <div class="modal fade" id="cleanseConfirm" tabindex="-1" role="dialog" aria-labelledby=cleanseConfirmLabel" aria-hidden="true">
@@ -168,6 +189,17 @@
                     makeChange('Qualtrics Link', $('#qualtrics').val());
                     $(this).text("Edit");
                     document.getElementById("qualtrics").disabled = true;
+                }
+            });
+
+            $('#edit-zoom-url').click(function(){
+                if($(this).text() === "Edit") {
+                    $(this).text("Submit");
+                    document.getElementById("zoom-url").disabled = false;
+                }else{
+                    makeChange('Zoom Url', $('#zoom-url').val());
+                    $(this).text("Edit");
+                    document.getElementById("zoom-url").disabled = true;
                 }
             });
 

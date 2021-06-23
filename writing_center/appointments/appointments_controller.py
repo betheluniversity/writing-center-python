@@ -115,11 +115,11 @@ class AppointmentsController:
             begin_appt = AppointmentsTable(student_id=user.id, tutor_id=tutor.id,
                                            actualStart=datetime.now(), profName=prof_name, profEmail=prof_email,
                                            assignment=assignment, courseCode=course_code, courseSection=course_section,
-                                           inProgress=1, dropIn=1, sub=0, multilingual=multilingual, noShow=0)
+                                           inProgress=1, dropIn=1, sub=0, multilingual=multilingual, noShow=0, online=0)
         else:
             begin_appt = AppointmentsTable(student_id=user.id, tutor_id=tutor.id,
                                            actualStart=datetime.now(), assignment=assignment, inProgress=1, dropIn=1,
-                                           sub=0, multilingual=multilingual, noShow=0)
+                                           sub=0, multilingual=multilingual, noShow=0, online=0)
         db_session.add(begin_appt)
         try:
             db_session.commit()
@@ -317,6 +317,11 @@ class AppointmentsController:
             .filter(SettingsTable.id == 4)\
             .one_or_none()
 
+    def get_zoom_url(self):
+        return db_session.query(SettingsTable.value)\
+            .filter(SettingsTable.id == 5)\
+            .one_or_none()
+
     def get_users_by_role(self, role_name):
         return db_session.query(UserTable)\
             .filter(UserTable.id == UserRoleTable.user_id)\
@@ -380,7 +385,7 @@ class AppointmentsController:
         return appts.order_by(AppointmentsTable.scheduledStart.desc()).all()
 
     def edit_appt(self, appt_id, student_id, tutor_id, sched_start, sched_end, actual_start, actual_end, prof_name,
-                  prof_email, drop_in, sub, assignment, notes, suggestions, multiligual, course, section, no_show,
+                  prof_email, drop_in, virtual, sub, assignment, notes, suggestions, multiligual, course, section, no_show,
                   in_progress):
         appt = db_session.query(AppointmentsTable).filter(AppointmentsTable.id == appt_id).one()
         appt.student_id = student_id
@@ -392,6 +397,7 @@ class AppointmentsController:
         appt.profName = prof_name
         appt.profEmail = prof_email
         appt.dropIn = drop_in
+        appt.online = virtual
         appt.sub = sub
         appt.assignment = assignment
         appt.notes = notes

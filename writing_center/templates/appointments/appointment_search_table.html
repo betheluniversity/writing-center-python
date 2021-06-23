@@ -9,6 +9,7 @@
                 <th class="one-line">Scheduled End</th>
                 <th>Professor</th>
                 <th>Multilingual</th>
+                <th>Virtual</th>
                 <th>Course</th>
                 <th class="one-line">No Show</th>
                 <th>Info</th>
@@ -36,6 +37,7 @@
 
                     <td class="one-line">{{ appt.profName }}</td>
                     <td>{{ 'Yes' if appt.multilingual else 'No' }}</td>
+                    <td>{{ 'Yes' if appt.online else 'No' }}</td>
                     <td>{{ appt.courseCode }}</td>
                     <td>{{ 'Yes' if appt.noShow else 'No' }}</td>
                     <td><input type="button" class="btn btn-primary darkblue" value="Info" onclick="viewInfo({{ appt.id }})"></td>
