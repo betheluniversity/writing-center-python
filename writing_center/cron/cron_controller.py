@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from writing_center.db_repository import db_session
-from writing_center.db_repository.tables import AppointmentsTable, UserTable
+from writing_center.db_repository.tables import AppointmentsTable, SettingsTable, UserTable
 
 
 class CronController:
@@ -19,6 +19,11 @@ class CronController:
 
     def get_user(self, user_id):
         return db_session.query(UserTable).filter(UserTable.id == user_id).one()
+
+    def get_zoom_url(self):
+        return db_session.query(SettingsTable.value)\
+            .filter(SettingsTable.id == 5)\
+            .one_or_none()
 
     def get_open_appts(self):
         return db_session.query(AppointmentsTable).filter(AppointmentsTable.inProgress == 1).all()

@@ -74,6 +74,7 @@ class StatisticsController:
                 .filter(AppointmentsTable.scheduledStart != AppointmentsTable.scheduledEnd) \
                 .filter(AppointmentsTable.student_id) \
                 .filter(AppointmentsTable.tutor_id) \
+                .filter(AppointmentsTable.online == 0) \
                 .all()
         elif value == 'multilingual':
             return db_session.query(AppointmentsTable) \
@@ -83,6 +84,36 @@ class StatisticsController:
                 .filter(AppointmentsTable.scheduledStart != AppointmentsTable.scheduledEnd) \
                 .filter(AppointmentsTable.student_id) \
                 .filter(AppointmentsTable.tutor_id) \
+                .filter(AppointmentsTable.online == 0) \
+                .all()
+        elif value == 'non-virtual':
+            return db_session.query(AppointmentsTable) \
+                .filter(AppointmentsTable.scheduledStart >= start) \
+                .filter(AppointmentsTable.scheduledEnd <= end) \
+                .filter(AppointmentsTable.scheduledStart != AppointmentsTable.scheduledEnd) \
+                .filter(AppointmentsTable.student_id) \
+                .filter(AppointmentsTable.tutor_id) \
+                .filter(AppointmentsTable.online == 0) \
+                .all()
+        elif value == 'virtual':
+            return db_session.query(AppointmentsTable) \
+                .filter(AppointmentsTable.multilingual == 0) \
+                .filter(AppointmentsTable.scheduledStart >= start) \
+                .filter(AppointmentsTable.scheduledEnd <= end) \
+                .filter(AppointmentsTable.scheduledStart != AppointmentsTable.scheduledEnd) \
+                .filter(AppointmentsTable.student_id) \
+                .filter(AppointmentsTable.tutor_id) \
+                .filter(AppointmentsTable.online == 1) \
+                .all()
+        elif value == 'virtual-multilingual':
+            return db_session.query(AppointmentsTable) \
+                .filter(AppointmentsTable.multilingual == 1) \
+                .filter(AppointmentsTable.scheduledStart >= start) \
+                .filter(AppointmentsTable.scheduledEnd <= end) \
+                .filter(AppointmentsTable.scheduledStart != AppointmentsTable.scheduledEnd) \
+                .filter(AppointmentsTable.student_id) \
+                .filter(AppointmentsTable.tutor_id) \
+                .filter(AppointmentsTable.online == 1) \
                 .all()
         else:
             return False
@@ -106,6 +137,7 @@ class StatisticsController:
                 .filter(AppointmentsTable.actualStart != AppointmentsTable.actualEnd) \
                 .filter(AppointmentsTable.student_id) \
                 .filter(AppointmentsTable.tutor_id) \
+                .filter(AppointmentsTable.online == 0) \
                 .all()
         elif value == 'multilingual':
             return db_session.query(AppointmentsTable)\
@@ -116,6 +148,39 @@ class StatisticsController:
                 .filter(AppointmentsTable.actualStart != AppointmentsTable.actualEnd) \
                 .filter(AppointmentsTable.student_id) \
                 .filter(AppointmentsTable.tutor_id) \
+                .filter(AppointmentsTable.online == 0) \
+                .all()
+        elif value == 'non-virtual':
+            return db_session.query(AppointmentsTable)\
+                .filter(AppointmentsTable.dropIn == 1)\
+                .filter(AppointmentsTable.actualStart >= start)\
+                .filter(AppointmentsTable.actualEnd <= end) \
+                .filter(AppointmentsTable.actualStart != AppointmentsTable.actualEnd) \
+                .filter(AppointmentsTable.student_id) \
+                .filter(AppointmentsTable.tutor_id) \
+                .filter(AppointmentsTable.online == 0) \
+                .all()
+        elif value == 'virtual':
+            return db_session.query(AppointmentsTable)\
+                .filter(AppointmentsTable.dropIn == 1)\
+                .filter(AppointmentsTable.multilingual == 0)\
+                .filter(AppointmentsTable.actualStart >= start)\
+                .filter(AppointmentsTable.actualEnd <= end) \
+                .filter(AppointmentsTable.actualStart != AppointmentsTable.actualEnd) \
+                .filter(AppointmentsTable.student_id) \
+                .filter(AppointmentsTable.tutor_id) \
+                .filter(AppointmentsTable.online == 1) \
+                .all()
+        elif value == 'virtual-multilingual':
+            return db_session.query(AppointmentsTable)\
+                .filter(AppointmentsTable.dropIn == 1)\
+                .filter(AppointmentsTable.multilingual == 1)\
+                .filter(AppointmentsTable.actualStart >= start)\
+                .filter(AppointmentsTable.actualEnd <= end) \
+                .filter(AppointmentsTable.actualStart != AppointmentsTable.actualEnd) \
+                .filter(AppointmentsTable.student_id) \
+                .filter(AppointmentsTable.tutor_id) \
+                .filter(AppointmentsTable.online == 1) \
                 .all()
         else:
             return False
@@ -139,6 +204,7 @@ class StatisticsController:
                 .filter(AppointmentsTable.scheduledStart != AppointmentsTable.scheduledEnd) \
                 .filter(AppointmentsTable.student_id) \
                 .filter(AppointmentsTable.tutor_id) \
+                .filter(AppointmentsTable.online == 0) \
                 .all()
         elif value == 'multilingual':
             return db_session.query(AppointmentsTable)\
@@ -149,6 +215,39 @@ class StatisticsController:
                 .filter(AppointmentsTable.scheduledStart != AppointmentsTable.scheduledEnd) \
                 .filter(AppointmentsTable.student_id) \
                 .filter(AppointmentsTable.tutor_id) \
+                .filter(AppointmentsTable.online == 0) \
+                .all()
+        elif value == 'non-virtual':
+            return db_session.query(AppointmentsTable)\
+                .filter(AppointmentsTable.noShow == 1)\
+                .filter(AppointmentsTable.scheduledStart >= start)\
+                .filter(AppointmentsTable.scheduledEnd <= end) \
+                .filter(AppointmentsTable.scheduledStart != AppointmentsTable.scheduledEnd) \
+                .filter(AppointmentsTable.student_id) \
+                .filter(AppointmentsTable.tutor_id) \
+                .filter(AppointmentsTable.online == 0) \
+                .all()
+        elif value == 'virtual':
+            return db_session.query(AppointmentsTable)\
+                .filter(AppointmentsTable.noShow == 1)\
+                .filter(AppointmentsTable.multilingual == 0)\
+                .filter(AppointmentsTable.scheduledStart >= start)\
+                .filter(AppointmentsTable.scheduledEnd <= end) \
+                .filter(AppointmentsTable.scheduledStart != AppointmentsTable.scheduledEnd) \
+                .filter(AppointmentsTable.student_id) \
+                .filter(AppointmentsTable.tutor_id) \
+                .filter(AppointmentsTable.online == 1) \
+                .all()
+        elif value == 'virtual-multilingual':
+            return db_session.query(AppointmentsTable)\
+                .filter(AppointmentsTable.noShow == 1)\
+                .filter(AppointmentsTable.multilingual == 1)\
+                .filter(AppointmentsTable.scheduledStart >= start)\
+                .filter(AppointmentsTable.scheduledEnd <= end) \
+                .filter(AppointmentsTable.scheduledStart != AppointmentsTable.scheduledEnd) \
+                .filter(AppointmentsTable.student_id) \
+                .filter(AppointmentsTable.tutor_id) \
+                .filter(AppointmentsTable.online == 1) \
                 .all()
         else:
             return False

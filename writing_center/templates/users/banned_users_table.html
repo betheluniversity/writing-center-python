@@ -1,49 +1,53 @@
 <div id="table-container">
-    <table id="table"  class="table table-striped table-bordered">
-        <thead>
-            <tr>
-                <th data-toggle="tooltip" data-placement="top" title="User Last Name">Last</th>
-                <th data-toggle="tooltip" data-placement="top" title="User First Name">First</th>
-                <th data-toggle="tooltip" data-placement="top" title="Date Banned">Date Banned</th>
-                <th data-toggle="tooltip" data-placement="top" title="User Username">Username</th>
-                <th data-toggle="tooltip" data-placement="top" title="User Email">Email</th>
-                <th data-toggle="tooltip" data-placement="top" title="Remove Bans">Remove Bans</th>
-            </tr>
-            <tr>
-                <th colspan="5"></th>
-                <th colspan="1">
-                    <button id="remove-all" type="submit" onclick="banAllConfirmation()" class="btn btn-primary btn-danger hover-bright">Remove All Bans</button>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
-            <tr>
-                <td>
-                    {{ user.lastName }}
-                </td>
-                <td>
-                    {{ user.firstName }}
-                </td>
-                <td>
-                    {{ user.bannedDate }}
-                </td>
-                <td>
-                    {{ user.username }}
-                </td>
-                <td>
-                    {{ user.email }}
-                </td>
-                <td>
-                    {% if user.username == session['USERNAME'] %}
-                        N/A
-                    {% else %}
-                        <button id="remove-ban" type="submit" onclick="banUser({{ user.id }})" class="btn btn-primary btn-danger">Remove Ban</button>
-                    {% endif %}
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
+    <table id="table" class="table mobile table-striped table-bordered">
+        {% if users | length == 0 %}
+            There is no data to display
+        {% else %}
+            <thead>
+                <tr>
+                    <th data-toggle="tooltip" data-placement="top" title="User Last Name">Last</th>
+                    <th data-toggle="tooltip" data-placement="top" title="User First Name">First</th>
+                    <th data-toggle="tooltip" data-placement="top" title="Date Banned">Date Banned</th>
+                    <th data-toggle="tooltip" data-placement="top" title="User Username">Username</th>
+                    <th data-toggle="tooltip" data-placement="top" title="User Email">Email</th>
+                    <th data-toggle="tooltip" data-placement="top" title="Remove Bans">Remove Bans</th>
+                </tr>
+                <tr>
+                    <th colspan="5"></th>
+                    <th colspan="1">
+                        <button id="remove-all" type="submit" onclick="banAllConfirmation()" class="btn btn-primary btn-danger hover-bright">Remove All Bans</button>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <td data-th="User Last Name">
+                        {{ user.lastName }}
+                    </td>
+                    <td data-th="User First Name">
+                        {{ user.firstName }}
+                    </td>
+                    <td data-th="Date Banned">
+                        {{ user.bannedDate }}
+                    </td>
+                    <td data-th="User Username">
+                        {{ user.username }}
+                    </td>
+                    <td data-th="User Email">
+                        {{ user.email }}
+                    </td>
+                    <td data-th="Remove Bans">
+                        {% if user.username == session['USERNAME'] %}
+                            N/A
+                        {% else %}
+                            <button id="remove-ban" type="submit" onclick="banUser({{ user.id }})" class="btn btn-primary btn-danger">Remove Ban</button>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        {% endif %}
     </table>
 </div>
 

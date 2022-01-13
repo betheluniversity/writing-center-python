@@ -7,7 +7,8 @@ from datetime import datetime
 # Local
 from writing_center import app
 from writing_center.db_repository import db_session
-from writing_center.db_repository.tables import UserTable, EmailPreferencesTable, AppointmentsTable, UserRoleTable, RoleTable
+from writing_center.db_repository.tables import UserTable, EmailPreferencesTable, AppointmentsTable, UserRoleTable, \
+    RoleTable, SettingsTable
 
 
 class MessageCenterController:
@@ -116,19 +117,35 @@ class MessageCenterController:
     def appointment_signup_student(self, appointment_id):
         # get the appointment via the appointment id
         appointment = self.get_appointment_info(appointment_id)
+        virtual = appointment.online
         student = self.get_user_by_id(appointment.student_id)
         tutor = self.get_user_by_id(appointment.tutor_id)
         appt_info = {'date': appointment.scheduledStart.date().strftime("%m/%d/%Y"),
                      'time': appointment.scheduledStart.time().strftime("%I:%M %p"),
                      'tutor': tutor.firstName + ' ' + tutor.lastName}
         # other email information: recipient, subject, body
-        subject = 'Appointment on {0}'.format(appointment.scheduledStart.date())
+        if virtual == 0:
+            subject = 'F2F Writing Center Appointment {0}'.format(appointment.scheduledStart.date())
+        else:
+            subject = 'Virtual Writing Center Appointment {0}'.format(appointment.scheduledStart.date())
 
         recipient = student.email
+        qualtrics_link = self.get_survey_link()[0]
+        zoom_url = self.get_zoom_url()[0]
 
         if self.send_message(subject, render_template('emails/appointment_signup_student.html', **locals()), recipient, bcc='', html=True):
             return True
         return False
+
+    def get_survey_link(self):
+        return db_session.query(SettingsTable.value)\
+            .filter(SettingsTable.id == 4)\
+            .one_or_none()
+
+    def get_zoom_url(self):
+        return db_session.query(SettingsTable.value) \
+            .filter(SettingsTable.id == 5) \
+            .one_or_none()
 
     def appointment_signup_tutor(self, appointment_id):
         appointment = self.get_appointment_info(appointment_id)

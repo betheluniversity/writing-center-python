@@ -51,7 +51,7 @@ class SchedulesView(FlaskView):
         end_time = form.get('end-time')
         end_time = datetime.strftime(datetime.strptime(end_time, '%H:%M'), '%H:%M:%S')
 
-        is_active = form.get('active')
+        is_active = int(form.get('active'))
 
         created = self.sc.create_time_slot(start_time, end_time, is_active)
 
@@ -94,6 +94,7 @@ class SchedulesView(FlaskView):
             return redirect(url_for('SchedulesView:manage_tutor_schedules'))
         multilingual = int(form.get('multilingual'))
         drop_in = int(form.get('drop-in'))
+        virtual = int(form.get('virtual'))
         tutors = form.getlist('tutors')
         days = form.getlist('days')
         time_slots = form.getlist('time-slots')
@@ -102,7 +103,7 @@ class SchedulesView(FlaskView):
             tutors = []
             for tutor in self.sc.get_active_tutors():
                 tutors.append(tutor.id)
-        success = self.sc.create_tutor_shifts(start, end, multilingual, drop_in, tutors, days, time_slots)
+        success = self.sc.create_tutor_shifts(start, end, multilingual, drop_in, virtual, tutors, days, time_slots)
         if not success:
             self.wcc.set_alert('warning', 'The shifts failed to be scheduled! One or more of the selected day of week never occurs.')
             return redirect(url_for('SchedulesView:manage_tutor_schedules'))
@@ -164,6 +165,7 @@ class SchedulesView(FlaskView):
                     'startTime': start_time,
                     'endTime': end_time,
                     'multilingual': appointment.multilingual,
+                    'virtual': appointment.online,
                     'dropIn': appointment.dropIn,
                     'sub': appointment.sub
                 })
@@ -319,6 +321,7 @@ class SchedulesView(FlaskView):
                 'startTime': start_time,
                 'endTime': end_time,
                 'multilingual': appointment.multilingual,
+                'virtual': appointment.online,
                 'dropIn': appointment.dropIn,
                 'sub': appointment.sub
             })
@@ -368,6 +371,7 @@ class SchedulesView(FlaskView):
                 'startTime': start_time,
                 'endTime': end_time,
                 'multilingual': appointment.multilingual,
+                'virtual': appointment.online,
                 'dropIn': appointment.dropIn,
                 'sub': appointment.sub
             })

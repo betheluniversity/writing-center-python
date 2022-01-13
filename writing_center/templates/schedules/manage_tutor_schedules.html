@@ -26,7 +26,7 @@
                     <div id="end-container"></div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <div class="form-group">
                     <label for="multilingual">Multilingual Appointment</label>
                     <select class="form-control" id="multilingual" name="multilingual">
@@ -35,12 +35,21 @@
                     </select>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <div class="form-group">
                     <label for="drop-in">Drop-in Hours Appointment</label>
                     <select class="form-control" id="drop-in" name="drop-in">
                         <option id="d-yes" value="1">Yes</option>
                         <option id="d-no" value="0" selected="selected">No</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label for="virtual">Virtual Appointment</label>
+                    <select class="form-control" id="virtual" name="virtual">
+                        <option id="v-yes" value="1">Yes</option>
+                        <option id="v-no" value="0" selected="selected">No</option>
                     </select>
                 </div>
             </div>
@@ -152,33 +161,7 @@
                 </div>
             </div>
             <hr>
-            <h3>Calendar Key</h3>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Color</th>
-                        <th>Meaning</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="calendar-blue">Blue</td>
-                        <td>General Appointment</td>
-                    </tr>
-                    <tr>
-                        <td class="calendar-orange">Orange</td>
-                        <td>Multilingual Appointment</td>
-                    </tr>
-                    <tr>
-                        <td class="calendar-green">Green</td>
-                        <td>Drop-in Hours</td>
-                    </tr>
-                    <tr>
-                        <td class="calendar-red">Red</td>
-                        <td>Sub Requested</td>
-                    </tr>
-                </tbody>
-            </table>
+            {{ calendar_key.calendar_key(True) }}
             <hr>
             <button id="view-type" value="view-sub" class="btn btn-primary darkblue" onclick="viewEvents()">View Open Appointments</button>
         </div>
@@ -325,7 +308,23 @@
                     calendar.removeAllEvents();
                     calendar.batchRendering(function() {
                         for (let i = 0; i < response.length; i ++) {
-                            if (response[i].sub === 1){
+                            if (response[i].multilingual === 1 && response[i].virtual === 1) {
+                                calendar.addEvent({
+                                    id: response[i].id,
+                                    title: response[i].tutorName,
+                                    start: response[i].startTime,
+                                    end: response[i].endTime,
+                                    color: '#9ee98d'
+                                });
+                            } else if (response[i].virtual === 1) {
+                                calendar.addEvent({
+                                    id: response[i].id,
+                                    title: response[i].tutorName,
+                                    start: response[i].startTime,
+                                    end: response[i].endTime,
+                                    color: '#cbaacb'
+                                });
+                            } else if (response[i].sub === 1){
                                 calendar.addEvent({
                                     id: response[i].id,
                                     title: response[i].tutorName,
@@ -333,21 +332,13 @@
                                     end: response[i].endTime,
                                     color: '#f58181'
                                 });
-                            } else if (response[i].multilingual === 1) {
+                            }else if (response[i].multilingual === 1) {
                                 calendar.addEvent({
                                     id: response[i].id,
                                     title: response[i].tutorName,
                                     start: response[i].startTime,
                                     end: response[i].endTime,
                                     color: '#f5c773'
-                                });
-                            } else if (response[i].dropIn === 1) {
-                                calendar.addEvent({
-                                    id: response[i].id,
-                                    title: response[i].tutorName,
-                                    start: response[i].startTime,
-                                    end: response[i].endTime,
-                                    color: '#9ee98d'
                                 });
                             } else {
                                 calendar.addEvent({
@@ -380,21 +371,37 @@
                         if (response != null) {
                             calendar.batchRendering(function() {
                                 for (let i = 0; i < response.length; i ++) {
-                                    if (response[i].multilingual === 1) {
-                                        calendar.addEvent({
-                                            id: response[i].id,
-                                            title: response[i].tutorName,
-                                            start: response[i].startTime,
-                                            end: response[i].endTime,
-                                            color: '#f5c773'
-                                        });
-                                    } else if (response[i].dropIn === 1) {
+                                    if (response[i].multilingual === 1 && response[i].virtual === 1) {
                                         calendar.addEvent({
                                             id: response[i].id,
                                             title: response[i].tutorName,
                                             start: response[i].startTime,
                                             end: response[i].endTime,
                                             color: '#9ee98d'
+                                        });
+                                    } else if (response[i].virtual === 1) {
+                                        calendar.addEvent({
+                                            id: response[i].id,
+                                            title: response[i].tutorName,
+                                            start: response[i].startTime,
+                                            end: response[i].endTime,
+                                            color: '#cbaacb'
+                                        });
+                                    } else if (response[i].sub === 1){
+                                        calendar.addEvent({
+                                            id: response[i].id,
+                                            title: response[i].tutorName,
+                                            start: response[i].startTime,
+                                            end: response[i].endTime,
+                                            color: '#f58181'
+                                        });
+                                    }else if (response[i].multilingual === 1) {
+                                        calendar.addEvent({
+                                            id: response[i].id,
+                                            title: response[i].tutorName,
+                                            start: response[i].startTime,
+                                            end: response[i].endTime,
+                                            color: '#f5c773'
                                         });
                                     } else {
                                         calendar.addEvent({
@@ -423,21 +430,37 @@
                         if (response != null) {
                             calendar.batchRendering(function() {
                                 for (let i = 0; i < response.length; i ++) {
-                                    if (response[i].multilingual === 1) {
-                                        calendar.addEvent({
-                                            id: response[i].id,
-                                            title: response[i].tutorName,
-                                            start: response[i].startTime,
-                                            end: response[i].endTime,
-                                            color: '#f5c773'
-                                        });
-                                    } else if (response[i].dropIn === 1) {
+                                    if (response[i].multilingual === 1 && response[i].virtual === 1) {
                                         calendar.addEvent({
                                             id: response[i].id,
                                             title: response[i].tutorName,
                                             start: response[i].startTime,
                                             end: response[i].endTime,
                                             color: '#9ee98d'
+                                        });
+                                    } else if (response[i].virtual === 1) {
+                                        calendar.addEvent({
+                                            id: response[i].id,
+                                            title: response[i].tutorName,
+                                            start: response[i].startTime,
+                                            end: response[i].endTime,
+                                            color: '#cbaacb'
+                                        });
+                                    } else if (response[i].sub === 1){
+                                        calendar.addEvent({
+                                            id: response[i].id,
+                                            title: response[i].tutorName,
+                                            start: response[i].startTime,
+                                            end: response[i].endTime,
+                                            color: '#f58181'
+                                        });
+                                    }else if (response[i].multilingual === 1) {
+                                        calendar.addEvent({
+                                            id: response[i].id,
+                                            title: response[i].tutorName,
+                                            start: response[i].startTime,
+                                            end: response[i].endTime,
+                                            color: '#f5c773'
                                         });
                                     } else {
                                         calendar.addEvent({

@@ -46,6 +46,10 @@ button.cleanse{
     margin-bottom: 10px;
 }
 
+.btn {
+    white-space: normal;
+}
+
 div.centered {
     text-align:center;
 }
@@ -135,12 +139,20 @@ ul.list-group{
     background-color: #9cb3f7;
 }
 
+.calendar-cyan{
+    background-color: #a2e1db;
+}
+
 .calendar-green{
     background-color: #9ee98d;
 }
 
 .calendar-orange{
     background-color: #f5c773;
+}
+
+.calendar-purple{
+    background-color: #cbaacb;
 }
 
 .calendar-red{
@@ -234,6 +246,10 @@ ul.list-group{
     padding: 1em 2em !important;
 }
 
+.overflow-table {
+    overflow: auto;
+}
+
 .wc-margins {
     width: 100%;
     margin: 20px auto;
@@ -316,3 +332,56 @@ ul.list-group{
     position: absolute;
     z-index: 999;
 }
+
+@media screen and (max-width: 1430px) {
+  table.mobile thead, td.text-center.hide-mobile {
+      display: none;
+  }
+
+  .side-borders, .right-side-borders, .left-side-borders {
+      border-right: none !important;
+      border-left: none !important;
+  }
+
+  table.mobile td, table.mobile th {
+      background: #e9e9e9;
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+      word-break: break-word;
+      break-word: word-break;
+  }
+
+  #table, .table {
+      width: 100% !important;
+  }
+
+  table.mobile td:nth-child(even) {
+      background-color: white;
+  }
+
+  td[data-th]:before  {
+      content: attr(data-th);
+      font-weight: bold;
+  }
+
+  td[data-th]:first-child {
+      color: white;
+      background-color: #0F2C52;
+      font-size: larger;
+  }
+
+  table.mobile td:last-child {
+      padding-bottom: 2em !important;
+  }
+}
+
+@media screen and (max-width: 525px) {
+
+     .fc-toolbar.fc-header-toolbar {
+        display: grid;
+     }
+     .fc-center {
+         text-align: center;
+     }
+ }

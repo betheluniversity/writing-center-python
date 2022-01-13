@@ -15,33 +15,7 @@
     <hr>
     <div class="row">
         <div class="col-md-3">
-            <h3>Calendar Key</h3>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Color</th>
-                        <th>Meaning</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="calendar-blue">Blue</td>
-                        <td>General Appointment</td>
-                    </tr>
-                    <tr>
-                        <td class="calendar-orange">Orange</td>
-                        <td>Multilingual Appointment</td>
-                    </tr>
-                    <tr>
-                        <td class="calendar-green">Green</td>
-                        <td>Drop-in Hours</td>
-                    </tr>
-                    <tr>
-                        <td class="calendar-red">Red</td>
-                        <td>Sub Requested</td>
-                    </tr>
-                </tbody>
-            </table>
+            {{ calendar_key.calendar_key(True) }}
         </div>
         <div class="col-md-9">
             <div id="calendar"></div>
@@ -67,7 +41,23 @@
                     success: function (response) {
                         calendar.batchRendering(function() {
                             for (let i = 0; i < response.length; i ++) {
-                                if (response[i].sub === 1){
+                                if (response[i].multilingual === 1 && response[i].virtual === 1) {
+                                    calendar.addEvent({
+                                        id: response[i].id,
+                                        title: response[i].tutorName,
+                                        start: response[i].startTime,
+                                        end: response[i].endTime,
+                                        color: '#9ee98d'
+                                    });
+                                } else if (response[i].virtual === 1) {
+                                    calendar.addEvent({
+                                        id: response[i].id,
+                                        title: response[i].tutorName,
+                                        start: response[i].startTime,
+                                        end: response[i].endTime,
+                                        color: '#cbaacb'
+                                    });
+                                } else if (response[i].sub === 1){
                                     calendar.addEvent({
                                         id: response[i].id,
                                         title: response[i].tutorName,
@@ -82,14 +72,6 @@
                                         start: response[i].startTime,
                                         end: response[i].endTime,
                                         color: '#f5c773'
-                                    });
-                                } else if (response[i].dropIn === 1) {
-                                    calendar.addEvent({
-                                        id: response[i].id,
-                                        title: response[i].tutorName,
-                                        start: response[i].startTime,
-                                        end: response[i].endTime,
-                                        color: '#9ee98d'
                                     });
                                 } else {
                                     calendar.addEvent({

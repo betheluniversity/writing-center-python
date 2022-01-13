@@ -47,6 +47,14 @@
                         <textarea id="suggestions" class="form-control" name="suggestions">{{ appt.suggestions if appt.suggestions else "" }}</textarea>
                     </div>
                 </div>
+                {% if appt.online == 1 %}
+                    <br/>
+                    <div class="form-row">
+                        <div class="col-md-12 text-center">
+                            <a target="_blank" href="{{ zoom_url }}">Zoom Url</a>
+                        </div>
+                    </div>
+                {% endif %}
                 <br>
                 <div class="form-row">
                     <div class="col-md-12">

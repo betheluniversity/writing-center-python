@@ -1,44 +1,46 @@
 {% if appointments %}
     <div id="modal-results"></div>
-    <table id="table" class="table table-striped table-bordered">
+    <table id="table" class="table mobile table-striped table-bordered">
         <thead>
             <tr>
                 <th>Student</th>
                 <th>Tutor</th>
-                <th class="one-line">Scheduled Start</th>
-                <th class="one-line">Scheduled End</th>
+                <th>Scheduled Start</th>
+                <th>Scheduled End</th>
                 <th>Professor</th>
                 <th>Multilingual</th>
+                <th>Virtual</th>
                 <th>Course</th>
-                <th class="one-line">No Show</th>
+                <th>No Show</th>
                 <th>Info</th>
             </tr>
         </thead>
         <tbody>
             {% for appt, info in appts_and_info.items() %}
                 <tr>
-                    <td class="one-line">
+                    <td data-th="Student">
                         {% if info['student'] %}
                             {{ info['student'].firstName }} {{ info['student'].lastName }}
                         {% else %}
                             None
                         {% endif %}
                     </td>
-                    <td class="one-line">{{ info['tutor'].firstName }} {{ info['tutor'].lastName }}</td>
-                    <td class="one-line">{{ appt.scheduledStart.strftime("%m/%d/%y %I:%M %p") if appt.scheduledStart else '' }}</td>
-                    <td class="one-line">{{ appt.scheduledEnd.strftime("%m/%d/%y %I:%M %p") if appt.scheduledEnd else '' }}</td>
+                    <td data-th="Tutor">{{ info['tutor'].firstName }} {{ info['tutor'].lastName }}</td>
+                    <td data-th="Scheduled Start">{{ appt.scheduledStart.strftime("%m/%d/%y %I:%M %p") if appt.scheduledStart else '' }}</td>
+                    <td data-th="Scheduled End">{{ appt.scheduledEnd.strftime("%m/%d/%y %I:%M %p") if appt.scheduledEnd else '' }}</td>
                     {% if not appt.scheduledStart and appt.actualStart %}
-                        <td class="one-line">{{ appt.actualStart.strftime("%m/%d/%y %I:%M %p") }}</td>
+                        <td>{{ appt.actualStart.strftime("%m/%d/%y %I:%M %p") }}</td>
                     {% endif %}
                     {% if not appt.scheduledEnd and appt.actualEnd %}
-                        <td class="one-line">{{ appt.actualEnd.strftime("%m/%d/%y %I:%M %p") }}</td>
+                        <td>{{ appt.actualEnd.strftime("%m/%d/%y %I:%M %p") }}</td>
                     {% endif %}
 
-                    <td class="one-line">{{ appt.profName }}</td>
-                    <td>{{ 'Yes' if appt.multilingual else 'No' }}</td>
-                    <td>{{ appt.courseCode }}</td>
-                    <td>{{ 'Yes' if appt.noShow else 'No' }}</td>
-                    <td><input type="button" class="btn btn-primary darkblue" value="Info" onclick="viewInfo({{ appt.id }})"></td>
+                    <td data-th="Professor">{{ appt.profName }}</td>
+                    <td data-th="Multilingual">{{ 'Yes' if appt.multilingual else 'No' }}</td>
+                    <td data-th="Virtual">{{ 'Yes' if appt.online else 'No' }}</td>
+                    <td data-th="Course">{{ appt.courseCode }}</td>
+                    <td data-th="No Show">{{ 'Yes' if appt.noShow else 'No' }}</td>
+                    <td data-th="Info"><input type="button" class="btn btn-primary darkblue" value="Info" onclick="viewInfo({{ appt.id }})"></td>
                 </tr>
             {% endfor %}
         </tbody>

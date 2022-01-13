@@ -54,7 +54,15 @@ class CronView(FlaskView):
                              'time': appointment.scheduledStart.time().strftime("%I:%M %p"),
                              'tutor': tutor.firstName + ' ' + tutor.lastName}
 
-                if appointment.multilingual:
+                if appointment.online == 1:
+                    subject = 'Writing Center Virtual Appointment Reminder'
+                    appt_info.update({'type': 'Virtual Writing Support'})
+                    appt_info.update({'zoom-url': self.cron.get_zoom_url()[0]})
+                elif appointment.multilingual == 1 and appointment.online == 1:
+                    subject = 'Writing Center Virtual Multilingual Appointment Reminder'
+                    appt_info.update({'type': 'Virtual Multilingual Writing Support'})
+                    appt_info.update({'zoom-url': self.cron.get_zoom_url()[0]})
+                elif appointment.multilingual == 1:
                     subject = 'Writing Center Multilingual Appointment Reminder'
                     appt_info.update({'type': 'Multilingual Writing Support'})
                 else:

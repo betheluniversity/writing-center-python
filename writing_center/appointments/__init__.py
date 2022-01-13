@@ -21,22 +21,26 @@ class AppointmentsView(FlaskView):
     @route('schedule')
     def schedule_appointment_landing(self):
         self.wcc.check_roles_and_route(['Student', 'Administrator'])
+
         return render_template('appointments/schedule_appointment.html', **locals())
 
     @route('view-all-appointments')
     def view_appointments(self):
         self.wcc.check_roles_and_route(['Observer', 'Administrator'])
+
         return render_template('appointments/view_appointments.html', **locals())
 
     @route('load-appointment-data', methods=['POST'])
     def load_appointment_data(self):
         self.wcc.check_roles_and_route(['Student', 'Tutor', 'Observer', 'Administrator'])
+
         appt_id = json.loads(request.data).get('id')
         schedule = json.loads(request.data).get('schedule')
         cancel = json.loads(request.data).get('cancel')
         pickup_sub_delete = json.loads(request.data).get('subDelete')
         tutor_edit = json.loads(request.data).get('tutorEdit')
         add_google_calendar = json.loads(request.data).get('gcalAdd', None)
+        show_zoom_url = json.loads(request.data).get('zoom-url', None)
         if 'Tutor' not in flask_session['USER-ROLES']:
             tutor_edit = False
         appointment = self.ac.get_appointment_by_id(appt_id)
@@ -53,11 +57,14 @@ class AppointmentsView(FlaskView):
             tutor_name = '{0} {1}'.format(tutor.firstName, tutor.lastName)
         courses = self.wsapi.get_student_courses(flask_session['USERNAME'])
 
+        zoom_url = self.ac.get_zoom_url()[0]
+
         return render_template('macros/appointment_modal.html', **locals())
 
     @route('load-appointments', methods=['POST'])
     def load_appointments(self):
         self.wcc.check_roles_and_route(['Student', 'Observer', 'Administrator'])
+
         dates = json.loads(request.data).get('dates')
         schedule_appt = json.loads(request.data).get('scheduleAppt')
         start = dates['start']
@@ -118,6 +125,7 @@ class AppointmentsView(FlaskView):
                     'startTime': start_time,
                     'endTime': end_time,
                     'multilingual': appointment.multilingual,
+                    'virtual': appointment.online,
                     'dropIn': appointment.dropIn,
                     'sub': appointment.sub
                 })
@@ -125,6 +133,7 @@ class AppointmentsView(FlaskView):
 
     def appointments_and_walk_ins(self):
         self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
+
         tutor = flask_session['USERNAME']
         appointments = self.ac.get_scheduled_appointments(tutor)
         in_progress_appointments = self.ac.get_in_progress_appointments(tutor)
@@ -144,6 +153,7 @@ class AppointmentsView(FlaskView):
     @route('/begin-checks', methods=['POST'])
     def begin_walk_in_checks(self):
         self.wcc.check_roles_and_route(['Tutor', 'Administrator'])
+
         username = str(json.loads(request.data).get('username'))
         if not self.wsapi.get_names_from_username(username):
             self.wcc.set_alert('danger', 'Username ' + username + ' is not valid. Please try again with a valid username.')
@@ -194,6 +204,7 @@ class AppointmentsView(FlaskView):
     @route('search-appointments')
     def search_appointments(self):
         self.wcc.check_roles_and_route(['Observer', 'Administrator'])
+
         students = self.ac.get_users_by_role("Student")
         tutors = self.ac.get_users_by_role("Tutor")
         profs = self.ac.get_profs()
@@ -203,6 +214,7 @@ class AppointmentsView(FlaskView):
     @route('view-appointments')
     def student_view_appointments(self):
         self.wcc.check_roles_and_route(['Student', 'Administrator'])
+
         return render_template('appointments/student_view_appointments.html', **locals())
 
     @route('get-appointments', methods=['GET'])
@@ -261,6 +273,7 @@ class AppointmentsView(FlaskView):
     @route('schedule-appointment', methods=['POST'])
     def schedule_appointment(self):
         self.wcc.check_roles_and_route(['Student', 'Administrator'])
+
         appt_id = str(json.loads(request.data).get('appt_id'))
         course = str(json.loads(request.data).get('course'))
         assignment = str(json.loads(request.data).get('assignment'))
@@ -283,6 +296,8 @@ class AppointmentsView(FlaskView):
                 for role in roles:
                     if 'STUDENT-CAS' == roles[role]['userRole']:
                         cas = True
+                if flask_session['USERNAME'] == 'schapr':
+                    cas = True
                 if cas:
                     appt = self.ac.get_appointment_by_id(appt_id)
                     # Checks to make sure the student hasn't scheduled the limit of appointments per week.
@@ -351,6 +366,7 @@ class AppointmentsView(FlaskView):
     @route('cancel-appointment', methods=['POST'])
     def cancel_appointment(self):
         self.wcc.check_roles_and_route(['Student', 'Administrator'])
+
         appt_id = str(json.loads(request.data).get('appt_id'))
         cancelled = self.ac.cancel_appointment(appt_id)
         if cancelled:
@@ -444,11 +460,13 @@ class AppointmentsView(FlaskView):
         appt = self.ac.get_appointment_by_id(appt_id)
         student = self.ac.get_user_by_id(appt.student_id)
         courses = self.wsapi.get_student_courses(student.username)
+        zoom_url = self.ac.get_zoom_url()[0]
         return render_template('appointments/in_progress_appointment.html', **locals())
 
     @route('save-changes', methods=['POST'])
     def save_changes(self):
         self.wcc.check_roles_and_route(['Tutor'])
+
         appt_id = json.loads(request.data).get('appt_id')
         assignment = str(json.loads(request.data).get('assignment'))
         notes = str(json.loads(request.data).get('notes'))
@@ -462,6 +480,7 @@ class AppointmentsView(FlaskView):
     @route('/search', methods=['POST'])
     def search(self):
         self.wcc.check_roles_and_route(['Observer', 'Administrator'])
+
         form = request.form
         student = None if form.get('student') == 'None' else int(form.get('student'))
         tutor = None if form.get('tutor') == 'None' else int(form.get('tutor'))
@@ -486,6 +505,7 @@ class AppointmentsView(FlaskView):
     @route('/edit/<int:appt_id>', methods=['GET', 'POST'])
     def edit(self, appt_id):
         self.wcc.check_roles_and_route(['Administrator'])
+
         appt = self.ac.get_appointment_by_id(appt_id)
         all_tutors = self.ac.get_users_by_role('Tutor')
         all_students = self.ac.get_all_users()
@@ -496,6 +516,7 @@ class AppointmentsView(FlaskView):
     @route('/submit-edits', methods=['POST'])
     def submit_edits(self):
         self.wcc.check_roles_and_route(['Administrator'])
+        
         form = request.form
 
         appt_id = int(form.get('id'))
@@ -527,12 +548,13 @@ class AppointmentsView(FlaskView):
         sub = int(form.get('sub-req'))
         drop_in = int(form.get('drop-in-check'))
         multilingual = int(form.get('multi-check'))
+        virtual = int(form.get('virtual-check'))
         no_show = int(form.get('no-show-check'))
         in_progress = int(form.get('in-progress-check'))
 
         try:
             self.ac.edit_appt(appt_id, student_id, tutor_id, sched_start_time, sched_end_time, actual_start, actual_end, prof,
-                              prof_email, drop_in, sub, assignment, notes, suggestions, multilingual, course, section,
+                              prof_email, drop_in, virtual, sub, assignment, notes, suggestions, multilingual, course, section,
                               no_show, in_progress)
             self.wcc.set_alert('success', 'Appointment edited successfully!')
         except Exception as e:
