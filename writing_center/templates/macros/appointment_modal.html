@@ -56,6 +56,25 @@
                         <th>Virtual</th>
                         <td>{{ 'Yes' if appointment.online == 1 else 'No' }}</td>
                     </tr>
+                    <tr>
+                        <th>PSEO</th>
+                        <td>
+                            {% if not appointment.pseo %}
+                                {% if schedule or tutor_edit %}
+                                    <input type="checkbox" id="pseo" name="pseo" value="pseo">
+                                {% else %}
+                                    <input type="checkbox" id="pseo" name="pseo" value="pseo" disabled>
+                                {% endif %}
+                            {% else %}
+                                {% if schedule or tutor_edit %}
+                                    <input type="checkbox" id="pseo" name="pseo" value="pseo" checked>
+                                {% else %}
+                                    <input type="checkbox" id="pseo" name="pseo" value="pseo" checked disabled>
+                                {% endif %}
+                            {% endif %}
+                            <label for="pseo"> I am a PSEO student.</label><br>
+                        </td>
+                    </tr>
                     {% if appointment.online and show_zoom_url %}
                         <tr>
                             <th>Zoom Url</th>
@@ -258,13 +277,18 @@
             course = this.id;
         });
         let assignment = $('#assignment').val();
+        let pseo = false
+        if ($('#pseo').is(":checked")) {
+          pseo = true
+        }
         $.ajax({
             type: "POST",
             url: "{{ url_for('AppointmentsView:schedule_appointment') }}",
             data: JSON.stringify({
                 'appt_id': appt_id,
                 'course': course,
-                'assignment': assignment
+                'assignment': assignment,
+                'pseo': pseo
             }),
             contentType: 'application/json;charset=UTF-8',
             success: function (response) {
@@ -350,6 +374,10 @@
         let assignment = $('#assignment').val();
         let notes = $('#notes').val();
         let suggestions = $('#suggestions').val();
+        let pseo = false
+        if ($('#pseo').is(":checked")) {
+          pseo = true
+        }
         $.ajax({
             type: "POST",
             url: "{{ url_for('AppointmentsView:save_changes') }}",
@@ -357,7 +385,8 @@
                 'appt_id': appt_id,
                 'assignment': assignment,
                 'notes': notes,
-                'suggestions': suggestions
+                'suggestions': suggestions,
+                'pseo': pseo
             }),
             contentType: 'application/json;charset=UTF-8',
             success: function (response) {
