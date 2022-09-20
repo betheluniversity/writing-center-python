@@ -160,13 +160,12 @@ class AppointmentsController:
             .filter(AppointmentsTable.tutor_id == tutor.id)\
             .all()
 
-    def tutor_change_appt(self, appt_id, assignment, notes, suggestions, pseo):
+    def tutor_change_appt(self, appt_id, assignment, notes, suggestions):
         try:
             appt = self.get_appointment_by_id(appt_id)
             appt.assignment = assignment
             appt.notes = notes
             appt.suggestions = suggestions
-            appt.pseo = pseo
             db_session.commit()
             return True
         except Exception as e:

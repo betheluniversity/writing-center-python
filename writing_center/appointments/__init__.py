@@ -56,6 +56,7 @@ class AppointmentsView(FlaskView):
         if tutor:
             tutor_name = '{0} {1}'.format(tutor.firstName, tutor.lastName)
         courses = self.wsapi.get_student_courses(flask_session['USERNAME'])
+        pseo = self.wsapi.get_pseo_status(flask_session['USERNAME'])
 
         zoom_url = self.ac.get_zoom_url()[0]
 
@@ -166,6 +167,7 @@ class AppointmentsView(FlaskView):
             self.ac.create_user(username, name)
 
         courses = self.wsapi.get_student_courses(username)
+        pseo = self.wsapi.get_pseo_status(username)
         return render_template('appointments/appointment_sign_in.html', **locals())
 
     @route('begin-walk-in', methods=['POST'])
@@ -200,7 +202,7 @@ class AppointmentsView(FlaskView):
             self.wcc.set_alert('danger', 'Walk in appointment failed to be started.')
             return self.appointments_and_walk_ins()
         self.wcc.set_alert('success', 'Appointment for ' + user.firstName + ' ' + user.lastName + ' started.')
-        return redirect(url_for('AppointmentsView:in_progress_appointment', appt_id=appt.id))
+        return url_for('AppointmentsView:in_progress_appointment', appt_id=appt.id)
 
     @route('search-appointments')
     def search_appointments(self):
@@ -473,8 +475,7 @@ class AppointmentsView(FlaskView):
         assignment = str(json.loads(request.data).get('assignment'))
         notes = str(json.loads(request.data).get('notes'))
         suggestions = str(json.loads(request.data).get('suggestions'))
-        pseo = json.loads(request.data).get('pseo')
-        success = self.ac.tutor_change_appt(appt_id, assignment, notes, suggestions, pseo)
+        success = self.ac.tutor_change_appt(appt_id, assignment, notes, suggestions)
         if success:
             return 'close'
         else:

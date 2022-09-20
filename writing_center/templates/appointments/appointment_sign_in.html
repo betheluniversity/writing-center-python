@@ -3,14 +3,14 @@
     <div class="form-row">
         <h3><b>Please enter the reason for your appointment.</b></h3>
     </div>
-    <form action="{{ url_for('AppointmentsView:begin_walk_in') }}" method="post">
+    <form>
         <div class="form-row">
             <div class="col-md-4">
                 <div class="form-group">
                     <input id="username" type="hidden" value="{{ username }}" name="username">
                     <label for="course">Course/Reason:</label>
                     <select class="form-control" id="courses" name="course">
-                        <option value="no-course" class="select-hr" selected="selected">No Specific Course</option>
+                        <option value="" class="select-hr" selected>No Specific Course</option>
                         {% for course in courses %}
                             <option value="{{ courses[course]['crn'] }}">{{ courses[course]['subject'] }}{{ courses[course]['cNumber'] }} {{ courses[course]['title'] }}</option>
                         {% endfor %}
@@ -23,6 +23,8 @@
                     <textarea id="assignment" name="assignment" class="form-control"></textarea>
                 </div>
             </div>
+        </div>
+        <div class="form-row">
             <div class="col-md-4">
                 <div class="form-group">
                     <label>Multilingual:</label>
@@ -40,11 +42,19 @@
                 <div class="form-group">
                     <label>PSEO:</label>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="pseo" id="pseo-yes" value="1">
+                        {% if pseo %}
+                            <input class="form-check-input" type="radio" name="pseo" id="pseo-yes" value="1" checked disabled>
+                        {% else %}
+                            <input class="form-check-input" type="radio" name="pseo" id="pseo-yes" value="1" disabled>
+                        {% endif %}
                         <label class="form-check-label" for="pseo-yes">Yes</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="pseo" id="pseo-no" value="0" checked>
+                        {% if not pseo %}
+                            <input class="form-check-input" type="radio" name="pseo" id="pseo-no" value="0" checked disabled>
+                        {% else %}
+                            <input class="form-check-input" type="radio" name="pseo" id="pseo-no" value="0" disabled>
+                        {% endif %}
                         <label class="form-check-label" for="pseo-no">No</label>
                     </div>
                 </div>
@@ -52,33 +62,27 @@
         </div>
         <div class="form-row">
             <div class="col-md-3">
-                <button id="start-walk-in" type="submit" class="btn btn-primary btn-success">Start Appointment</button>
+                <button id="start-walk-in" type="button" class="btn btn-primary btn-success">Start Appointment</button>
             </div>
         </div>
     </form>
+
     <script>
-        function startWalkIn() {
-            let username = $('#username').val();
-            let course = '';
-            $('#courses option:selected').each(function () {
-                course = this.id;
+
+        $('#start-walk-in').click(function() {
+
+            let input_data = {
+                'username': $('#username').val(),
+                'course': $("#courses option:selected").val(),
+                'assignment': $('#assignment').val(),
+                'multi': $('input[name="multi"]:checked').val(),
+                'pseo': $('input[name="pseo"]:checked').val()
+            };
+
+            $.post("{{ url_for('AppointmentsView:begin_walk_in') }}", input_data, function (response) {
+                window.location = response;
             });
-            let assignment = $('#assignment').val();
-            $.ajax({
-                type: "POST",
-                url: "{{ url_for('AppointmentsView:begin_walk_in') }}",
-                data: JSON.stringify({
-                    'username': username,
-                    'course': course,
-                    'assignment': assignment
-                }),
-                contentType: 'application/json;charset=UTF-8',
-                success: function (response) {
-                    window.location.reload();
-                },
-                error: function (error) {
-                }
-            });
-        }
+        });
+
     </script>
 {% endif %}
