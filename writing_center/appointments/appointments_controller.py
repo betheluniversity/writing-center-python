@@ -60,7 +60,7 @@ class AppointmentsController:
             .filter(AppointmentsTable.student_id == user.id)\
             .all()
 
-    def schedule_appointment(self, appt_id, course, assignment):
+    def schedule_appointment(self, appt_id, course, assignment, pseo):
             appointment = db_session.query(AppointmentsTable)\
                 .filter(AppointmentsTable.id == appt_id)\
                 .one_or_none()
@@ -68,6 +68,7 @@ class AppointmentsController:
             appointment.profName = None
             appointment.profEmail = None
             appointment.assignment = None
+            appointment.pseo = None
             appointment.notes = None
             appointment.suggestions = None
             appointment.courseCode = None
@@ -78,6 +79,7 @@ class AppointmentsController:
             user = self.get_user_by_username(flask_session['USERNAME'])
             appointment.student_id = user.id
             appointment.assignment = assignment.encode('latin-1', 'ignore')  # this ignores invalid characters
+            appointment.pseo = pseo
             if course:
                 appointment.courseCode = course['course_code']
                 appointment.courseSection = course['section']
@@ -106,7 +108,7 @@ class AppointmentsController:
         except Exception as e:
             return False
 
-    def begin_walk_in_appointment(self, user, tutor, course, assignment, multilingual):
+    def begin_walk_in_appointment(self, user, tutor, course, assignment, multilingual, pseo):
         if course:
             course_code = course['course_code']
             course_section = course['section']
@@ -115,11 +117,11 @@ class AppointmentsController:
             begin_appt = AppointmentsTable(student_id=user.id, tutor_id=tutor.id,
                                            actualStart=datetime.now(), profName=prof_name, profEmail=prof_email,
                                            assignment=assignment, courseCode=course_code, courseSection=course_section,
-                                           inProgress=1, dropIn=1, sub=0, multilingual=multilingual, noShow=0, online=0)
+                                           inProgress=1, dropIn=1, sub=0, multilingual=multilingual, noShow=0, online=0, pseo=pseo)
         else:
             begin_appt = AppointmentsTable(student_id=user.id, tutor_id=tutor.id,
                                            actualStart=datetime.now(), assignment=assignment, inProgress=1, dropIn=1,
-                                           sub=0, multilingual=multilingual, noShow=0, online=0)
+                                           sub=0, multilingual=multilingual, noShow=0, online=0, pseo=pseo)
         db_session.add(begin_appt)
         try:
             db_session.commit()

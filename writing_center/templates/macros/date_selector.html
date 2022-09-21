@@ -80,11 +80,11 @@
                     if (start_populated == "" && end_populated == "") {
                         return null;
                     } else if (start_populated != "" && current_element.attr('id') == 'end-date') {
-                        if (new Date(start_populated) >= date) {
+                        if (new Date(start_populated) > date) {
                             return date;
                         }
                     } else if (end_populated != "" && current_element.attr('id') == 'start-date') {
-                        if (new Date(end_populated) <= date) {
+                        if (new Date(end_populated) < date) {
                             return date;
                         }
                     }

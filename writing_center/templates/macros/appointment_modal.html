@@ -56,6 +56,10 @@
                         <th>Virtual</th>
                         <td>{{ 'Yes' if appointment.online == 1 else 'No' }}</td>
                     </tr>
+                    <tr>
+                        <th>PSEO</th>
+                        <td>{{ 'Yes' if pseo == 1 else 'No' }}</td>
+                    </tr>
                     {% if appointment.online and show_zoom_url %}
                         <tr>
                             <th>Zoom Url</th>
@@ -146,7 +150,7 @@
                     {% endif %}
                     {% if schedule and not walk_in_hours %}
                         <tr>
-                            <th colspan="2"><button class="btn btn-primary darkblue" onclick="scheduleAppointment({{ appt_id }})">Schedule Appointment</button></th>
+                            <th colspan="2"><button class="btn btn-primary darkblue" onclick="scheduleAppointment({{ appt_id }}, {{ 'true' if pseo == 1 else 'false' }})">Schedule Appointment</button></th>
                         </tr>
                     {% endif %}
                     {% if cancel and appointment.scheduledStart and appointment.scheduledStart > now %}
@@ -252,19 +256,22 @@
         });
     });
 
-    function scheduleAppointment(appt_id) {
+    function scheduleAppointment(appt_id, pseo) {
         let course = '';
         $('#courses option:selected').each(function () {
             course = this.id;
         });
         let assignment = $('#assignment').val();
+        pseo = JSON.parse(pseo);
+
         $.ajax({
             type: "POST",
             url: "{{ url_for('AppointmentsView:schedule_appointment') }}",
             data: JSON.stringify({
                 'appt_id': appt_id,
                 'course': course,
-                'assignment': assignment
+                'assignment': assignment,
+                'pseo': pseo
             }),
             contentType: 'application/json;charset=UTF-8',
             success: function (response) {

@@ -7,6 +7,19 @@ from writing_center.statistics.statistics_controller import StatisticsController
 from writing_center.writing_center_controller import WritingCenterController
 
 
+def getPercentages(appointments, walk_in_appts, no_show_appts, pseo_appts):
+    pseo_percentage = 0
+    no_show_percentage = 0
+    len_total = len(appointments) + len(walk_in_appts)
+
+    if len_total > 0:
+        pseo_percentage = int((len(pseo_appts) / len_total) * 100)
+    if len(appointments) > 0:
+        no_show_percentage = int((len(no_show_appts) / len(appointments)) * 100)
+
+    return pseo_percentage, no_show_percentage
+
+
 class StatisticsView(FlaskView):
     def __init__(self):
         self.sc = StatisticsController()
@@ -20,7 +33,8 @@ class StatisticsView(FlaskView):
         end = flask_session['DATE-SELECTOR-END']
         value = flask_session['DATE-SELECTOR-VALUE']
 
-        appointments, walk_in_appts, no_show_appts = self.get_statistics_data(start, end, value)
+        appointments, walk_in_appts, no_show_appts, pseo_appts = self.get_statistics_data(start, end, value)
+        pseo_percentage, no_show_percentage = getPercentages(appointments, walk_in_appts, no_show_appts, pseo_appts)
 
         return render_template('statistics/statistics.html', **locals())
 
@@ -50,23 +64,26 @@ class StatisticsView(FlaskView):
     @route('/handle-stats-change', methods=['POST'])
     def handle_stats_change(self):
         self.wcc.check_roles_and_route(['Observer', 'Administrator'])
-        start = str(json.loads(request.data).get('startDate'))
-        end = str(json.loads(request.data).get('endDate'))
-        start = datetime.strptime(start, '%a %b %d %Y')
-        end = datetime.strptime(end, '%a %b %d %Y')
+        start_str = str(json.loads(request.data).get('startDate'))
+        end_str = str(json.loads(request.data).get('endDate')) + ' 23:59:59'
+        start = datetime.strptime(start_str, '%a %b %d %Y')
+        end = datetime.strptime(end_str, '%a %b %d %Y %H:%M:%S')
         value = str(json.loads(request.data).get('value'))
         stat_id = str(json.loads(request.data).get('id'))
         # We store what 'page' we are on last so check which 'page' we were last on and apply those tables to it
         if stat_id == 'busyness' or flask_session['STATISTICS-PAGE'] == 'busyness' and stat_id != 'course-busyness':
 
-            appointments, walk_in_appts, no_show_appts, busiest_day, busiest_tod, busiest_week, busiest_tutors \
+            appointments, walk_in_appts, no_show_appts, pseo_appts, busiest_day, busiest_tod, busiest_week, busiest_tutors \
                 = self.get_statistics_data(start, end, value, stat_id)
         elif stat_id == 'course-busyness' or flask_session['STATISTICS-PAGE'] == 'course-busyness':
-            appointments, walk_in_appts, no_show_appts, courses = self.get_statistics_data(start, end, value, stat_id)
+            appointments, walk_in_appts, no_show_appts, pseo_appts, courses = self.get_statistics_data(start, end, value, stat_id)
         else:
             # If we aren't on the busyness or course-busyness page, then we are on the homepage
-            appointments, walk_in_appts, no_show_appts, = self.get_statistics_data(start, end, value, stat_id)
+            appointments, walk_in_appts, no_show_appts, pseo_appts = self.get_statistics_data(start, end, value, stat_id)
         # print(flask_session['DATE-SELECTOR-START'])
+
+        pseo_percentage, no_show_percentage = getPercentages(appointments, walk_in_appts, no_show_appts, pseo_appts)
+
         return render_template('statistics/statistics_tables.html', **locals())
 
     def get_statistics_data(self, start, end, value, stat_id=''):
@@ -83,9 +100,8 @@ class StatisticsView(FlaskView):
             # Else we are changing which 'page' we are saving that we are on
             flask_session['STATISTICS-PAGE'] = stat_id
         # Gets some basic appointment data
-        appointments = self.sc.get_appointments(start, end, value)
-        walk_in_appts = self.sc.get_walk_in_appointments(start, end, value)
-        no_show_appts = self.sc.get_no_show_appointments(start, end, value)
+        appointments, walk_in_appts, pseo_appts, no_show_appts = self.sc.get_appointments(start, end, value)
+
         appts_list = []
         appts_list.extend(appointments)
         appts_list.extend(walk_in_appts)
@@ -229,7 +245,7 @@ class StatisticsView(FlaskView):
                     busiest_tutors.update({
                         tutor_str: 1
                     })
-            return appointments, walk_in_appts, no_show_appts, busiest_day, busiest_tod, busiest_week, busiest_tutors
+            return appointments, walk_in_appts, no_show_appts, pseo_appts, busiest_day, busiest_tod, busiest_week, busiest_tutors
         elif stat_id == 'course-busyness':
             # Else if stat_id == course-busyness we are only looking at courses so only return that data
             courses = {}
@@ -267,7 +283,7 @@ class StatisticsView(FlaskView):
                                     'count': 1
                                 }
                             })
-            return appointments, walk_in_appts, no_show_appts, courses
+            return appointments, walk_in_appts, no_show_appts, pseo_appts, courses
         else:
             # Else we are on the statistics homepage so only return general appointment information
-            return appointments, walk_in_appts, no_show_appts
+            return appointments, walk_in_appts, no_show_appts, pseo_appts

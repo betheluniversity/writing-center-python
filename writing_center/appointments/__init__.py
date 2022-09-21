@@ -56,6 +56,7 @@ class AppointmentsView(FlaskView):
         if tutor:
             tutor_name = '{0} {1}'.format(tutor.firstName, tutor.lastName)
         courses = self.wsapi.get_student_courses(flask_session['USERNAME'])
+        pseo = self.wsapi.get_pseo_status(flask_session['USERNAME'])
 
         zoom_url = self.ac.get_zoom_url()[0]
 
@@ -166,6 +167,7 @@ class AppointmentsView(FlaskView):
             self.ac.create_user(username, name)
 
         courses = self.wsapi.get_student_courses(username)
+        pseo = self.wsapi.get_pseo_status(username)
         return render_template('appointments/appointment_sign_in.html', **locals())
 
     @route('begin-walk-in', methods=['POST'])
@@ -177,6 +179,7 @@ class AppointmentsView(FlaskView):
         course = form.get('course')
         assignment = form.get('assignment')
         multilingual = int(form.get('multi'))
+        pseo = int(form.get('pseo'))
         if 'no-course' == course:
             course = None
         else:
@@ -194,12 +197,12 @@ class AppointmentsView(FlaskView):
                     break
         user = self.ac.get_user_by_username(username)
         tutor = self.ac.get_user_by_username(flask_session['USERNAME'])
-        appt = self.ac.begin_walk_in_appointment(user, tutor, course, assignment, multilingual)
+        appt = self.ac.begin_walk_in_appointment(user, tutor, course, assignment, multilingual, pseo)
         if not appt:
             self.wcc.set_alert('danger', 'Walk in appointment failed to be started.')
             return self.appointments_and_walk_ins()
         self.wcc.set_alert('success', 'Appointment for ' + user.firstName + ' ' + user.lastName + ' started.')
-        return redirect(url_for('AppointmentsView:in_progress_appointment', appt_id=appt.id))
+        return url_for('AppointmentsView:in_progress_appointment', appt_id=appt.id)
 
     @route('search-appointments')
     def search_appointments(self):
@@ -277,6 +280,7 @@ class AppointmentsView(FlaskView):
         appt_id = str(json.loads(request.data).get('appt_id'))
         course = str(json.loads(request.data).get('course'))
         assignment = str(json.loads(request.data).get('assignment'))
+        pseo = json.loads(request.data).get('pseo')
         username = flask_session['USERNAME']
         if username in ['Administrator', 'Observer', 'Tutor', 'Student']:
             self.wcc.set_alert('danger', 'You cannot schedule an appointment while acting as a role.')
@@ -338,7 +342,7 @@ class AppointmentsView(FlaskView):
                             # Schedules the appointment and sends an email to the student and tutor if it is scheduled
                             # successfully.
                             if not self.ac.get_appointment_by_id(appt_id).student_id:
-                                appt = self.ac.schedule_appointment(appt_id, course, assignment)
+                                appt = self.ac.schedule_appointment(appt_id, course, assignment, pseo)
                                 if appt:
                                     self.mcc.appointment_signup_student(appt_id)
                                     self.mcc.appointment_signup_tutor(appt_id)

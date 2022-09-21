@@ -25,6 +25,7 @@ class AppointmentsTable(base):
     noShow = Column(Integer)
     inProgress = Column(Integer)
     online = Column(Integer)
+    pseo = Column(Integer)
 
 
 class EmailPreferencesTable(base):

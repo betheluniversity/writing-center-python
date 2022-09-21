@@ -13,7 +13,7 @@ class WSAPIController:
     # This method helps us get WSAPI info that's behind HMAC Auth
     def get_hmac_request(self, path):
         path_and_query = path + '?TIMESTAMP=' + str(int(time.time())) + '&ACCOUNT_ID=labs'
-        host = 'https://wsapi.bethel.edu'
+        host = app.config['WSAPI_URL']
         sig = hmac.new(bytes(app.config['WSAPI_SECRET'], 'utf-8'), digestmod=hashlib.sha1,
                        msg=bytes(path_and_query, 'utf-8')).hexdigest()
         req = requests.get(host + path_and_query, headers={'X-Auth-Signature': sig})
@@ -38,3 +38,13 @@ class WSAPIController:
     def get_names_from_username(self, username):
         path = '/username/{0}/names'.format(username)
         return self.get_hmac_request(path)
+
+    def get_pseo_status(self, username):
+        path = '/username/{0}/pseo'.format(username)
+        response = self.get_hmac_request(path)
+        result = response.get('0')
+        if result:
+            if result["pseo"] == 'Y':
+                return True
+
+        return False
