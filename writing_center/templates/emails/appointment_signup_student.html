@@ -12,7 +12,7 @@
         <p>Tutor: {{ appt_info['tutor'] }}</p>
         <p>Location: Writing Center, HC 324C (inside AESC)</p>
         <br/>
-        <p>Cancel your appointment <a href="{{ url_for('AppointmentsView:student_view_appointments') }}">here</a></p>
+        <p>Cancel your appointment <a href="{{ url_for('AppointmentsView:student_view_appointments', _external=True) }}">here</a></p>
         <br/>
         <h4>Feedback Survey</h4>
         <p>
@@ -34,7 +34,7 @@
             <li>At the time of your appointment, open <a href="{{ zoom_url }}">the Zoom meeting</a> and wait for the meeting to begin or for the tutor to move you from the waiting room. (Be sure your video and audio are on.)</li>
         </ol>
         <br/>
-        <p>Cancel your appointment <a href="{{ url_for('AppointmentsView:student_view_appointments') }}">here</a></p>
+        <p>Cancel your appointment <a href="{{ url_for('AppointmentsView:student_view_appointments', _external=True) }}">here</a></p>
         <br/>
         <h4>Feedback Survey</h4>
         <p>
