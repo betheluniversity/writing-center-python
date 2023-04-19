@@ -10,4 +10,3 @@ config/*.py
 .vscode/settings.json
 **/.vscode/**
 */gc_client_secret.json
-rundocker.py
