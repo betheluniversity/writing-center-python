@@ -41,6 +41,10 @@
                     contentType: 'application/json;charset=UTF-8',
                     success: function (response) {
                         calendar.batchRendering(function() {
+                            let virtual_multilingual = 0;
+                            let multilingual = 0;
+                            let virtual = 0;
+                            let face_to_face = 0;
                             for (let i = 0; i < response.length; i ++) {
                                 if (response[i].multilingual === 1 && response[i].virtual === 1) {
                                     calendar.addEvent({
@@ -50,6 +54,7 @@
                                         end: response[i].endTime,
                                         color: '#9ee98d'
                                     });
+                                    virtual_multilingual++;
                                 } else if (response[i].virtual === 1) {
                                     calendar.addEvent({
                                         id: response[i].id,
@@ -58,6 +63,7 @@
                                         end: response[i].endTime,
                                         color: '#cbaacb'
                                     });
+                                    virtual++;
                                 } else if (response[i].multilingual === 1) {
                                     calendar.addEvent({
                                         id: response[i].id,
@@ -66,6 +72,7 @@
                                         end: response[i].endTime,
                                         color: '#f5c773'
                                     });
+                                    multilingual++;
                                 } else {
                                     calendar.addEvent({
                                         id: response[i].id,
@@ -74,7 +81,28 @@
                                         end: response[i].endTime,
                                         color: '#9cb3f7'
                                     });
+                                    face_to_face++;
                                 }
+                            }
+                            if (virtual_multilingual) {
+                                $('#virtual_multilingual_key').show();
+                            } else {
+                                $('#virtual_multilingual_key').hide();
+                            }
+                            if (multilingual) {
+                                $('#multilingual_key').show();
+                            } else {
+                                $('#multilingual_key').hide();
+                            }
+                            if (virtual) {
+                                $('#virtual_key').show();
+                            } else {
+                                $('#virtual_key').hide();
+                            }
+                            if (face_to_face) {
+                                $('#face_to_face_key').show();
+                            } else {
+                                $('#face_to_face_key').hide();
                             }
                         });
                         $('#spinner').hide();
