@@ -1,0 +1,180 @@
+version: "3.7"
+
+# Add to build for all Bethel flask apps
+x-flask-dockerfile: &flask-dockerfile
+  dockerfile_inline: |
+    # syntax=docker/dockerfile:1.4
+    FROM python:3.6
+
+    ARG ORACLE
+    ARG ENVIRON
+
+    ENV ENVIRON=$${ENVIRON:-dev}
+
+    EXPOSE 5000
+
+    RUN apt-get clean && \
+        apt-get update -y
+
+    RUN pip install --upgrade pip
+
+    # Install Oracle instant client if needed
+    WORKDIR    /opt/oracle
+    RUN <<"ORACLEINSTALL"
+    if [ "$$ORACLE" = "true" ]; then
+        apt-get -y install wget unzip ldap-utils libaio1
+        wget https://download.oracle.com/otn_software/linux/instantclient/instantclient-basiclite-linuxx64.zip
+        unzip instantclient-basiclite-linuxx64.zip
+        rm -f instantclient-basiclite-linuxx64.zip
+        cd /opt/oracle/instantclient*
+        rm -f *jdbc* *occi* *mysql* *README *jar uidrvci genezi adrci
+        echo /opt/oracle/instantclient* > /etc/ld.so.conf.d/oracle-instantclient.conf
+        ldconfig
+    fi
+    ORACLEINSTALL
+
+    WORKDIR /srv/flask_app
+
+    # Install the debug or the prod server
+    RUN <<"SERVERINSTALL"
+    if [ "$$ENVIRON" = "dev" ]; then
+        apt-get -y install python3-dev libldap2-dev libsasl2-dev
+        pip install debugpy -t /srv
+    elif [ "$$ENVIRON" = "prod" ]; then
+        pip install gunicorn
+    fi
+    SERVERINSTALL
+
+    # Install requirements
+    COPY . .
+    RUN pip install -r requirements.txt --src /usr/local/src
+
+    # Create start script
+    COPY <<-"START_SCRIPT" /srv/start.sh
+    #!/bin/sh
+
+    # Run docker_init.sh if needed
+    if [ -f "docker_init.sh" ]; then
+        sh docker_init.sh
+    fi
+
+    # Set up the Apache conf if sites present
+    if [ -d "/usr/local/apache2/conf/sites" ]; then
+
+    cat << APACHE_CONF > /usr/local/apache2/conf/sites/$(hostname).conf
+    <VirtualHost *:80>
+
+    ServerAlias $$(hostname).localhost
+
+    ProxyPass / http://$$(hostname):5000/ retry=0 connectiontimeout=300 timeout=300
+    ProxyPassReverse / http://$$(hostname):5000/
+
+    </VirtualHost>
+    APACHE_CONF
+    chmod 644 /usr/local/apache2/conf/sites/$$(hostname).conf
+
+    fi
+
+    # Start environment
+    if [ -z "$${FLASK_APP}" ]; then
+        if [ -d "app" ]; then
+            export FLASK_APP=app:app
+        else
+            export FLASK_APP=$$(hostname):app
+        fi
+    fi
+
+    if [ "$${ENVIRON}" = "dev" ]; then
+        export FLASK_ENV="development"
+
+        if [ "$${WAIT_FOR_CLIENT}" = "true" ]; then
+            python /srv/debugpy --wait-for-client --listen 0.0.0.0:$${DEBUG_PORT} -m flask run --host=0.0.0.0
+        else
+            python /srv/debugpy --listen 0.0.0.0:$${DEBUG_PORT} -m flask run --host=0.0.0.0
+        fi
+    else
+        export FLASK_ENV="production"
+        gunicorn -w 4 -b 0.0.0.0:5000 "$${FLASK_APP}" --access-logfile '-'
+    fi
+    START_SCRIPT
+
+    CMD ["sh", "/srv/start.sh"]
+
+# Add to environment for all Bethel flask apps
+x-flask-environment: &flask-environment
+  DEBUG_PORT: 5678
+  FLASK_APP: app:app
+  INSTALL_LOCATION: ${INSTALL_LOCATION:-/srv/flask_app/logs}
+  SENTRY_URL: ${SENTRY_URL:-}
+  WAIT_FOR_CLIENT: ${WAIT_FOR_CLIENT:-false}
+  TEST_NAME: ${TEST_NAME:-'Test User'}
+  TEST_USERNAME: ${TEST_USERNAME:-$USER}
+  TEST_EMAIL: ${TEST_EMAIL:-testuser@bethel.edu}
+
+# Add to flask apps that use the standard volumes
+x-flask-volumes: &flask-volumes
+  volumes:
+    - .:/srv/flask_app
+    - ${DATA_PATH:-./_data}/tmp:/tmp
+    - ${DATA_PATH:-./_data}/logs:/srv/flask_app/logs
+
+# Add to build args for all Bethel flask apps
+x-common-build-args: &common-build-args
+  ENVIRON: ${ENVIRON:-dev}
+
+# Add to build args if app needs to connect to Oracle
+x-oracle-build-args: &oracle-build-args
+  ORACLE: true
+
+# Add to environment for services that connect to wsapi
+x-wsapi-environment: &wsapi-environment
+  WSAPI_URL: ${WSAPI_URL:-https://wsapi.xp.bethel.edu}
+
+# Add to environment for services that use a redis cache
+x-redis-environment: &redis-environment
+  CACHE_REDIS_HOST: ${CACHE_REDIS_HOST:-redis}
+
+# Add to all services, unless another restart policy is desired
+x-restart-policy: &restart-policy
+  restart: always
+
+# Add to all services that are sciencelabs-python apps
+x-sciencelabs-python: &sciencelabs-python
+  build: 
+    context: .
+    <<: *flask-dockerfile
+    args:
+      <<: [*common-build-args]
+  volumes:
+    - .:/srv/flask_app
+    - ${DATA_PATH:-./_data}/tmp:/tmp
+    - ${DATA_PATH:-./_data}/logs:/srv/flask_app/logs
+  <<: [*restart-policy]
+
+# Add to environment for all services that are sciencelabs-python apps
+x-sciencelabs-python-environment: &sciencelabs-python-environment
+  <<: [*flask-environment, *wsapi-environment]
+  FLASK_APP: sciencelabs:app
+  DEV_SSH_TUNNEL_SQL_SERVER: mysqldevdb.its.bethel.edu
+  DEV_SSH_TUNNEL_SQL_SERVER_PORT: 3306
+  DEV_SSH_TUNNEL_USER: ${USER}
+  DEV_SSH_TUNNEL_SERVER: tutorlabs.xp.bethel.edu
+
+services:
+
+  writingctr:
+    build: 
+      context: .
+      <<: *flask-dockerfile
+      args:
+        <<: [*common-build-args]
+    container_name: writingctr
+    hostname: writingctr
+    environment:
+      <<: [*flask-environment, *wsapi-environment]
+      FLASK_APP: writing_center:app
+      DEV_SSH_TUNNEL_SQL_SERVER: mysqldevdb.its.bethel.edu
+      DEV_SSH_TUNNEL_SQL_SERVER_PORT: 3306
+      DEV_SSH_TUNNEL_USER: ${USER}
+      DEV_SSH_TUNNEL_SERVER: tutorlabs.xp.bethel.edu
+    <<: [*flask-volumes, *restart-policy]

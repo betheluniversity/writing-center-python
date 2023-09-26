@@ -1,0 +1,17 @@
+version: "3.7"
+
+x-secrets: &secrets
+  secrets:
+    - docker_ssh_key
+
+secrets:
+  docker_ssh_key:
+    file: ${HOME}/.ssh/id_rsa_docker
+
+services:
+
+  writingctr:
+    ports:
+      - "5678:5678"
+      - "5000:5000"
+    <<: [*secrets]
