@@ -55,8 +55,11 @@ class AppointmentsView(FlaskView):
         tutor_name = 'None'
         if tutor:
             tutor_name = '{0} {1}'.format(tutor.firstName, tutor.lastName)
-        courses = self.wsapi.get_student_courses(flask_session['USERNAME'])
-        pseo = self.wsapi.get_pseo_status(flask_session['USERNAME'])
+        if schedule:
+            courses = self.wsapi.get_student_courses(flask_session['USERNAME'])
+            pseo = self.wsapi.get_pseo_status(flask_session['USERNAME'])
+        else:
+            pseo = appointment.pseo
 
         zoom_url = self.ac.get_zoom_url()[0]
 
