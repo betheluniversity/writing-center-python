@@ -20,7 +20,8 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label for="assignment">Assignment:</label>
-                    <textarea id="assignment" name="assignment" class="form-control"></textarea>
+                    <textarea id="assignment" name="assignment" class="form-control" maxlength="255" onkeyup="countChar(this);"></textarea>
+                    <p><span id="assignmentCount">0</span> / 255</p>
                 </div>
             </div>
         </div>
@@ -67,7 +68,11 @@
         </div>
     </form>
 
-    <script>
+    <script type="text/javascript">
+        function countChar(val) {
+            var len = val.value.length;
+            $('#' + val.id + 'Count').text(len);
+        };
 
         $('#start-walk-in').click(function() {
 

@@ -30,21 +30,24 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="assignment">Assignment:</label>
-                            <textarea id="assignment" name="assignment" class="form-control" maxlength="255">{{ appt.assignment }}</textarea>
+                            <textarea id="assignment" name="assignment" class="form-control" maxlength="255" onkeyup="countChar(this);">{{ appt.assignment if appt.assignment else "" }}</textarea>
+                            <p><span id="assignmentCount">{{ appt.assignment|length if appt.assignment else "0" }}</span> / 255</p>
                         </div>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="col-md-12">
-                        <label for="notes">Notes</label>
-                        <textarea id="notes" class="form-control" name="notes" maxlength="500">{{ appt.notes if appt.notes else "" }}</textarea>
+                        <label for="notes">Notes:</label>
+                        <textarea id="notes" class="form-control" name="notes" maxlength="500" onkeyup="countChar(this);">{{ appt.notes if appt.notes else "" }}</textarea>
+                        <p><span id="notesCount">{{ appt.notes|length if appt.notes else "0" }}</span> / 500</p>
                     </div>
                 </div>
                 <br>
                 <div class="form-row">
                     <div class="col-md-12">
-                        <label for="suggestions">Suggestions</label>
-                        <textarea id="suggestions" class="form-control" name="suggestions" maxlength="255">{{ appt.suggestions if appt.suggestions else "" }}</textarea>
+                        <label for="suggestions">Suggestions:</label>
+                        <textarea id="suggestions" class="form-control" name="suggestions" maxlength="255" onkeyup="countChar(this);">{{ appt.suggestions if appt.suggestions else "" }}</textarea>
+                        <p><span id="suggestionsCount">{{ appt.suggestions|length if appt.suggestions else "0" }}</span> / 255</p>
                     </div>
                 </div>
                 {% if appt.online == 1 %}
@@ -87,4 +90,12 @@
             </div>
         </div>
     </div>
+<script type="text/javascript">
+
+function countChar(val) {
+  var len = val.value.length;
+  $('#' + val.id + 'Count').text(len);
+};
+
+</script>
 {% endblock %}

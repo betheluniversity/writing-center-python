@@ -109,7 +109,8 @@
                         <tr>
                             <th>Describe Your Assignment</th>
                             <td>
-                                <textarea id="assignment" name="assignment" class="form-control" maxlength="255"></textarea>
+                                <textarea id="assignment" name="assignment" class="form-control" maxlength="255" onkeyup="countChar(this);"></textarea>
+                                <p><span id="assignmentCount">0</span> / 255</p>
                             </td>
                         </tr>
                     {% endif %}
@@ -117,34 +118,37 @@
                         <tr>
                             <th>View/Edit Assignment</th>
                             <td>
-                                <textarea id="assignment" name="assignment" class="form-control" maxlength="255">{{ appointment.assignment if appointment.assignment else '' }}</textarea>
+                                <textarea id="assignment" name="assignment" class="form-control" maxlength="255" onkeyup="countChar(this);">{{ appointment.assignment if appointment.assignment else '' }}</textarea>
+                                <p><span id="assignmentCount">{{ appointment.assignment|length if appointment.assignment else '0' }}</span> / 255</p>
                             </td>
                         </tr>
                         <tr>
                             <th>View/Edit Notes</th>
                             <td>
-                                <textarea id="notes" name="notes" class="form-control" maxlength="500">{{ appointment.notes if appointment.notes else '' }}</textarea>
+                                <textarea id="notes" name="notes" class="form-control" maxlength="500" onkeyup="countChar(this);">{{ appointment.notes if appointment.notes else '' }}</textarea>
+                                <p><span id="notesCount">{{ appointment.notes|length if appointment.notes else '0' }}</span> / 500</p>
                             </td>
                         </tr>
                         <tr>
                             <th>View/Edit Suggestions</th>
                             <td>
                                 <textarea id="suggestions" name="suggestions" class="form-control" maxlength="255">{{ appointment.suggestions if appointment.suggestions else '' }}</textarea>
+                                <p><span id="suggestionsCount">{{ appointment.suggestions|length if appointment.suggestions else '0' }}</span> / 255</p>
                             </td>
                         </tr>
                     {% elif not schedule %}
                         <tr>
                             <th>Assignment</th>
-                            <td>{{ appointment.assignment if appointment.assignment else '' }}</td>
+                            <td>{{ appointment.assignment[:47] + '...' if appointment.assignment else '' }}</td>
                         </tr>
                         {% if appointment.actualStart and appointment.actualStart < now or appointment.scheduledStart and appointment.scheduledStart < now %}
                             <tr>
                                 <th>Notes</th>
-                                <td>{{ appointment.notes if appointment.notes else '' }}</td>
+                                <td>{{ appointment.notes[:47] + '...' if appointment.notes else '' }}</td>
                             </tr>
                             <tr>
                                 <th>Suggestions</th>
-                                <td>{{ appointment.suggestions if appointment.suggestions else '' }}</td>
+                                <td>{{ appointment.suggestions[:47] + '...' if appointment.suggestions else '' }}</td>
                             </tr>
                         {% endif %}
                     {% endif %}
@@ -239,6 +243,12 @@
 </div>
 
 <script type="text/javascript">
+
+    function countChar(val) {
+    var len = val.value.length;
+    $('#' + val.id + 'Count').text(len);
+    };
+
     $('#add-event-to-gcal').click(function() {
         let appt_id = $('#appt-id').val();
         $.ajax({
