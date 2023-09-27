@@ -10,6 +10,7 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        {% if session['USER-ROLES'] %}
         <div class="form-inline nav-item dropdown">
             <a class="nav-link dropdown-toggle {{ 'nav-bar-active' if 'AppointmentsView' in request.url_rule.endpoint }}" id="navbarDropdown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">Appointments</a>
@@ -27,6 +28,7 @@
                 {% endif %}
             </div>
         </div>
+        {% endif %}
 
         {% if 'Administrator' in session['USER-ROLES'] %}
             <div class="form-inline nav-item dropdown">

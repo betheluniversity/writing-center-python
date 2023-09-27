@@ -26,7 +26,11 @@
                     <li class="list-group-item"><strong>Administrators</strong> can view appointments and statistics, as
                         well as search appointments and manage tutor schedules.</li>
                 {% endif %}
-                <li class="list-group-item">You can find more options in the navigation at the top of the page.</li>
+                {% if session['USER-ROLES'] %}
+                    <li class="list-group-item">You can find more options in the navigation at the top of the page.</li>
+                {% else %}
+                    <li class="list-group-item">This application is only available for CAS Students.</li>
+                {% endif %}
             </ul>
         </div>
         <div class="col-md-8">
