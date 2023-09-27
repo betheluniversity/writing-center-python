@@ -180,6 +180,12 @@ class UsersController:
         if names['prefFirstName']:
             first_name = names['prefFirstName']
         last_name = names['lastName']
-        student = self.create_user(first_name, last_name, username, 0, 0)
-        self.set_user_roles(username, ['Student'])
+
+        student = None
+        roles = self.wsapi.get_roles_for_username(username)
+        for role in roles:
+            if 'STUDENT-CAS' == roles[role]['userRole']:
+                student = self.create_user(first_name, last_name, username, 0, 0)
+                self.set_user_roles(username, ['Student'])
+        
         return student
