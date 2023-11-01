@@ -4,7 +4,7 @@ from sqlalchemy import or_
 
 from writing_center.db_repository import db_session
 from writing_center.db_repository.tables import UserTable, AppointmentsTable, SettingsTable, UserRoleTable, RoleTable
-
+from writing_center import app
 
 class AppointmentsController:
     def __init__(self):
@@ -90,6 +90,10 @@ class AppointmentsController:
                 db_session.commit()
                 return True
             except Exception as e:
+                username = 'no username'
+                if 'USERNAME' in flask_session.keys():
+                    username = flask_session['USERNAME']
+                app.logger.error("{0} -- {1}".format(username, str(e)))
                 return False
 
     def cancel_appointment(self, appt_id):
