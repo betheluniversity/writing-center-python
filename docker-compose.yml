@@ -162,14 +162,14 @@ x-sciencelabs-python-environment: &sciencelabs-python-environment
 
 services:
 
-  writingctr:
+  writing-center-python:
     build: 
       context: .
       <<: *flask-dockerfile
       args:
         <<: [*common-build-args]
-    container_name: writingctr
-    hostname: writingctr
+    container_name: writing-center-python
+    hostname: writing-center-python
     environment:
       <<: [*flask-environment, *wsapi-environment]
       FLASK_APP: writing_center:app
