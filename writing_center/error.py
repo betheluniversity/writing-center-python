@@ -27,7 +27,11 @@ def error_render_template(template, error, code=None):
 
         app.logger.error("{0} -- {1}".format(username, str(error)))
 
-    return render_template(template, code=code), code
+    error_message = None
+    if code == 503 and app.config['SERVER_DOWN']:
+        error_message = error
+
+    return render_template(template, code=code, error_message=error_message), code
 
 
 @app.errorhandler(403)
@@ -47,6 +51,8 @@ def server_error(e):
 
 @app.errorhandler(503)
 def transport_error(e):
+    if app.config['SERVER_DOWN']:
+        return error_render_template('error/503.html', app.config['ERROR_MESSAGE'], 503)
     return error_render_template('error/503.html', e, 503)
 
 

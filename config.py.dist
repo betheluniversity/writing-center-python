@@ -1,3 +1,6 @@
+SERVER_DOWN = False
+ERROR_MESSAGE = "Sorry! The server is temporarily down. Please try again later."
+
 TEST_NAME = ""
 TEST_EMAILS = ""
 

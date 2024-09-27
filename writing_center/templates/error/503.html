@@ -4,11 +4,16 @@
 
 {% block body_content %}
 
-    <h1>Server Error</h1>
+    <h1>Temporarily Unavailable</h1>
     <h5>Writing Center failed with the following error: <span class="error-span">{{ error }}</span></h5>
 
-    <p>This page is having trouble loading. Sorry about that! Try returning to the
-        <a href="{{ url_for('View:index') }}">Writing Center homepage</a>, or contact the Help Desk at
-        <a href="mailto:helpdesk@bethel.edu">helpdesk@bethel.edu</a> if you need assistance. </p>
-
+    {% if error_message %}
+        <p>{{ error_message }} Try returning to the
+            <a href="{{ url_for('View:index') }}">Writing Center homepage</a>, or contact the Help Desk at
+            <a href="mailto:helpdesk@bethel.edu">helpdesk@bethel.edu</a> if you need assistance. </p>
+    {% else %}
+        <p>This page is having trouble loading. Sorry about that! Try returning to the
+            <a href="{{ url_for('View:index') }}">Writing Center homepage</a>, or contact the Help Desk at
+            <a href="mailto:helpdesk@bethel.edu">helpdesk@bethel.edu</a> if you need assistance. </p>
+    {% endif %}
 {% endblock %}
