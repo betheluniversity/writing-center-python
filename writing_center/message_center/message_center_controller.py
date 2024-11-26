@@ -70,11 +70,11 @@ class MessageCenterController:
 
     def get_substitute_email_recipients(self):
         users = db_session.query(UserTable)\
-            .filter(UserTable.id == EmailPreferencesTable.user_id)\
+            .join(EmailPreferencesTable, UserTable.id == EmailPreferencesTable.user_id)\
+            .join(UserRoleTable, UserTable.id == UserRoleTable.user_id)\
+            .join(RoleTable, UserRoleTable.role_id == RoleTable.id)\
             .filter(EmailPreferencesTable.subRequestEmail == 1)\
-            .filter(UserRoleTable.user_id == UserTable.id)\
-            .filter(RoleTable.id == UserRoleTable.role_id)\
-            .filter(RoleTable.name == 'Tutor' or RoleTable.name == 'Administrator')\
+            .filter((RoleTable.name == 'Tutor') | (RoleTable.name == 'Administrator'))\
             .filter(UserTable.deletedAt == None)\
             .all()
 
