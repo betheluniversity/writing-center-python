@@ -30,6 +30,8 @@ x-flask-dockerfile: &flask-dockerfile
         rm -f *jdbc* *occi* *mysql* *README *jar uidrvci genezi adrci
         echo /opt/oracle/instantclient* > /etc/ld.so.conf.d/oracle-instantclient.conf
         ldconfig
+        cd network/admin
+        echo "TCP.CONNECT_TIMEOUT=10 sec" > sqlnet.ora
     fi
     ORACLEINSTALL
 
@@ -157,7 +159,7 @@ x-sciencelabs-python-environment: &sciencelabs-python-environment
   FLASK_APP: sciencelabs:app
   DEV_SSH_TUNNEL_SQL_SERVER: mysqldevdb.its.bethel.edu
   DEV_SSH_TUNNEL_SQL_SERVER_PORT: 3306
-  DEV_SSH_TUNNEL_USER: ${USER}
+  DEV_SSH_TUNNEL_USER: jenjac
   DEV_SSH_TUNNEL_SERVER: tutorlabs.xp.bethel.edu
 
 services:
@@ -173,8 +175,8 @@ services:
     environment:
       <<: [*flask-environment, *wsapi-environment]
       FLASK_APP: writing_center:app
-      DEV_SSH_TUNNEL_SQL_SERVER: mysqldevdb.its.bethel.edu
-      DEV_SSH_TUNNEL_SQL_SERVER_PORT: 3306
-      DEV_SSH_TUNNEL_USER: ${USER}
-      DEV_SSH_TUNNEL_SERVER: tutorlabs.xp.bethel.edu
+      #DEV_SSH_TUNNEL_SQL_SERVER: mysqldevdb.its.bethel.edu
+      #DEV_SSH_TUNNEL_SQL_SERVER_PORT: 3306
+      #DEV_SSH_TUNNEL_USER: jenjac
+      #DEV_SSH_TUNNEL_SERVER: tutorlabs.xp.bethel.edu
     <<: [*flask-volumes, *restart-policy]
