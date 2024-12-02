@@ -1,6 +1,6 @@
 import logging
 
-from flask import Flask, request
+from flask import Flask, request, abort
 from flask import session as flask_session
 from datetime import datetime
 
@@ -9,6 +9,7 @@ import sentry_sdk
 app = Flask(__name__)
 app.config.from_object('config')
 
+from writing_center.error import error_render_template
 from writing_center.db_repository import db_session
 
 if app.config['ENVIRON'] == 'prod' and app.config['SENTRY_URL']:
@@ -87,6 +88,9 @@ app.jinja_env.filters['datetimeformat'] = datetimeformat
 
 @app.before_request
 def before_request():
+    if app.config['SERVER_DOWN']:
+        abort(503)
+
     if '/static/' in request.path \
             or '/assets/' in request.path \
             or '/cron/' in request.path \
